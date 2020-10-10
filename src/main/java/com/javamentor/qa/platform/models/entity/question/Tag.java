@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.models.entity.question;
 
+import com.javamentor.qa.platform.exception.ConstrainException;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
@@ -20,7 +21,7 @@ import java.util.Objects;
 public class Tag {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotNull
@@ -51,10 +52,10 @@ public class Tag {
 
     private void checkConstraints() {
         if (this.description.isEmpty()) {
-            throw new RuntimeException("Поле description не должно быть пустым");
+            throw new ConstrainException("Поле description не должно быть пустым");
         }
         if (this.name.isEmpty()) {
-            throw new RuntimeException("Поле name не должно быть пустым");
+            throw new ConstrainException("Поле name не должно быть пустым");
         }
     }
 

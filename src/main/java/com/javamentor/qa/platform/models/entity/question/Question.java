@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.models.entity.question;
 
+import com.javamentor.qa.platform.exception.ConstrainException;
 import com.javamentor.qa.platform.models.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,7 +41,7 @@ import java.util.Objects;
 public class Question {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column
@@ -92,7 +93,7 @@ public class Question {
 
     private void checkConstraints() {
         if (this.tags == null || this.tags.isEmpty()) {
-            throw new RuntimeException("Экземпляр Question должен иметь в поле tags хотя бы один элемент");
+            throw new ConstrainException("Экземпляр Question должен иметь в поле tags хотя бы один элемент");
         }
         if (this.isDeleted == null) {
             this.isDeleted = false;

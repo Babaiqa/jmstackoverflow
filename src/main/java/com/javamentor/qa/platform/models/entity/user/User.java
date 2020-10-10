@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.sql.Blob;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,7 +24,7 @@ import java.util.Objects;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotNull
@@ -66,8 +65,8 @@ public class User implements UserDetails {
     private String about;
 
     @Lob
-    @Column(name = "image")
-    private Blob imageUser;
+    @Column(name = "image_link")
+    private String imageLink;
 
     @Column(name = "last_redaction_date", nullable = false)
     @Type(type = "org.hibernate.type.LocalDateTimeType")
@@ -131,13 +130,12 @@ public class User implements UserDetails {
                 Objects.equals(linkGitHub, user.linkGitHub) &&
                 Objects.equals(linkVk, user.linkVk) &&
                 Objects.equals(about, user.about) &&
-                Objects.equals(imageUser, user.imageUser) &&
                 Objects.equals(lastUpdateDateTime, user.lastUpdateDateTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, password, fullName, persistDateTime, isEnabled, reputationCount, city, linkSite, linkGitHub, linkVk, about, imageUser, lastUpdateDateTime);
+        return Objects.hash(id, email, password, fullName, persistDateTime, isEnabled, reputationCount, city, linkSite, linkGitHub, linkVk, about, lastUpdateDateTime);
     }
 
     @Override

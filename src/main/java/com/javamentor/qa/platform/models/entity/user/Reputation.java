@@ -17,7 +17,7 @@ import java.util.Objects;
 @Table(name = "reputation")
 public class Reputation {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @CreationTimestamp

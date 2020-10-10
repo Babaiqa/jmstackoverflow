@@ -15,7 +15,7 @@ import java.util.Objects;
 public class RelatedTag {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
