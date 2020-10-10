@@ -7,6 +7,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
@@ -16,8 +17,9 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "comment_question")
-public class CommentQuestion {
+public class CommentQuestion implements Serializable {
 
+    private static final long serialVersionUID = -5612025796504179957L;
     @Id
     private Long id;
 

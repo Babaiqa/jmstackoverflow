@@ -5,6 +5,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -15,7 +16,8 @@ import java.util.Objects;
 @AllArgsConstructor
 @Builder
 @Table(name = "reputation")
-public class Reputation {
+public class Reputation implements Serializable {
+    private static final long serialVersionUID = 7177182244933788025L;
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;

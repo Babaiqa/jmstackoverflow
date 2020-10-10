@@ -7,8 +7,17 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,29 +29,32 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "users")
+@Table(name = "user_entity")
 public class User implements UserDetails {
+
+    private static final long serialVersionUID = 8086496705293852501L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
+    @Column
+    @NonNull
     private String email;
 
-    @NotNull
+    @Column
+    @NonNull
     private String password;
 
     @Column
     private String fullName;
 
-    @Column(name = "persist_date", nullable = false, updatable = false)
+    @Column(name = "persist_date", updatable = false)
     @Type(type = "org.hibernate.type.LocalDateTimeType")
     @CreationTimestamp
     private LocalDateTime persistDateTime;
 
-    @Column(name = "is_enabled", nullable = false, columnDefinition = "TINYINT")
-    @Type(type = "org.hibernate.type.NumericBooleanType")
+    @Column(name = "is_enabled")
     private Boolean isEnabled = true;
 
     @Column(name = "reputation_count")
@@ -64,7 +76,6 @@ public class User implements UserDetails {
     @Column
     private String about;
 
-    @Lob
     @Column(name = "image_link")
     private String imageLink;
 
@@ -73,9 +84,9 @@ public class User implements UserDetails {
     @UpdateTimestamp
     private LocalDateTime lastUpdateDateTime;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = Role.class, cascade = {CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Role.class, cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "role_id", nullable = false)
+    @NonNull
     private Role role;
 
     @Override
@@ -121,29 +132,11 @@ public class User implements UserDetails {
         return Objects.equals(id, user.id) &&
                 Objects.equals(email, user.email) &&
                 Objects.equals(password, user.password) &&
-                Objects.equals(fullName, user.fullName) &&
-                Objects.equals(persistDateTime, user.persistDateTime) &&
-                Objects.equals(isEnabled, user.isEnabled) &&
-                Objects.equals(reputationCount, user.reputationCount) &&
-                Objects.equals(city, user.city) &&
-                Objects.equals(linkSite, user.linkSite) &&
-                Objects.equals(linkGitHub, user.linkGitHub) &&
-                Objects.equals(linkVk, user.linkVk) &&
-                Objects.equals(about, user.about) &&
-                Objects.equals(lastUpdateDateTime, user.lastUpdateDateTime);
+                Objects.equals(fullName, user.fullName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, password, fullName, persistDateTime, isEnabled, reputationCount, city, linkSite, linkGitHub, linkVk, about, lastUpdateDateTime);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", role=" + role +
-                '}';
+        return Objects.hash(id, email, password, fullName);
     }
 }

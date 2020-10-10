@@ -1,9 +1,22 @@
 package com.javamentor.qa.platform.models.entity.user;
 
-import com.javamentor.qa.platform.models.entity.Badges;
-import lombok.*;
+import com.javamentor.qa.platform.models.entity.Badge;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
@@ -13,8 +26,9 @@ import java.util.Objects;
 @AllArgsConstructor
 @Builder
 @Table(name = "user_badges")
-public class UserBadges {
+public class UserBadges implements Serializable {
 
+    private static final long serialVersionUID = 7887575908980210093L;
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -28,7 +42,7 @@ public class UserBadges {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="badges_id")
-    private Badges badges;
+    private Badge badge;
 
     @Override
     public boolean equals(Object obj) {

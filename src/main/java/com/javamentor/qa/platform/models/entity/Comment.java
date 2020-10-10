@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -18,8 +19,9 @@ import java.util.Objects;
 @AllArgsConstructor
 @Builder
 @Table(name = "comment")
-public class Comment {
+public class Comment implements Serializable {
 
+    private static final long serialVersionUID = -5103534612783672462L;
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;

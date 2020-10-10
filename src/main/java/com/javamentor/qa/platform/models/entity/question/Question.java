@@ -27,6 +27,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -38,8 +39,9 @@ import java.util.Objects;
 @AllArgsConstructor
 @Builder
 @Table(name = "question")
-public class Question {
+public class Question implements Serializable {
 
+    private static final long serialVersionUID = -4612026867697897418L;
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -71,7 +73,7 @@ public class Question {
     @JoinTable(name = "question_has_tag",
             joinColumns = @JoinColumn(name = "question_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private List<Tag> tags;
+    private transient List<Tag> tags;
 
     @Column(name = "last_redaction_date", nullable = false)
     @Type(type = "org.hibernate.type.LocalDateTimeType")

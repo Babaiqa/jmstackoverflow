@@ -5,7 +5,6 @@ import lombok.*;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,31 +16,20 @@ import java.time.LocalDateTime;
 @Builder
 public class AnswerVote {
 
-    @EmbeddedId
-    private VoteAnswerPK voteAnswerPK;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private User user;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Answer answer;
+
+    @Column(name = "persist_date", updatable = false)
+    @Type(type = "org.hibernate.type.LocalDateTimeType")
+    private LocalDateTime persistDateTime;
+
     private int vote;
-
-    @Embeddable
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class VoteAnswerPK implements Serializable {
-        @ManyToOne
-        private User user;
-
-        @ManyToOne
-        private Answer answer;
-
-        @Column(name = "persist_date", updatable = false)
-        @Type(type = "org.hibernate.type.LocalDateTimeType")
-        private LocalDateTime persistDateTime;
-
-        public VoteAnswerPK(User user, Answer answer) {
-            this.user = user;
-            this.answer = answer;
-        }
-    }
 
 }

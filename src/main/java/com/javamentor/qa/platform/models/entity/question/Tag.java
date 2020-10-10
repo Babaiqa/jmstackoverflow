@@ -7,6 +7,7 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -18,8 +19,9 @@ import java.util.Objects;
 @AllArgsConstructor
 @Builder
 @Table(name = "tag")
-public class Tag {
+public class Tag implements Serializable {
 
+    private static final long serialVersionUID = 6264105282197120461L;
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -38,7 +40,7 @@ public class Tag {
     private LocalDateTime persistDateTime;
 
     @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
-    private List<Question> questions;
+    private transient List<Question> questions;
 
     @PrePersist
     private void prePersistFunction() {
