@@ -30,6 +30,7 @@ public class AnswerVote {
     @Type(type = "org.hibernate.type.LocalDateTimeType")
     private LocalDateTime persistDateTime;
 
-    private int vote;
+    @Column
+    private Integer vote;
 
 }
