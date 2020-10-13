@@ -8,7 +8,7 @@ import java.util.Collection;
 
 public abstract class ReadWriteServiceImpl<E, K> extends ReadOnlyServiceImpl<E, K> {
 
-    private ReadWriteDaoImpl<E, K> readWriteDao;
+    private final ReadWriteDaoImpl<E, K> readWriteDao;
 
     public ReadWriteServiceImpl(ReadWriteDaoImpl<E, K> readWriteDao) {
         super(readWriteDao);
