@@ -12,6 +12,7 @@ public abstract class ReadWriteServiceImpl<E, K> extends ReadOnlyServiceImpl<E, 
 
     public ReadWriteServiceImpl(ReadWriteDaoImpl<E, K> readWriteDao) {
         super(readWriteDao);
+        this.readWriteDao = readWriteDao;
     }
 
     @Transactional

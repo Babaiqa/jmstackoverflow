@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public abstract class ReadOnlyServiceImpl<E, K> {
 
-    private ReadOnlyDaoImpl<E, K> readOnlyDao;
+    private final ReadOnlyDaoImpl<E, K> readOnlyDao;
 
     public ReadOnlyServiceImpl(ReadOnlyDaoImpl<E, K> readOnlyDao) {
         this.readOnlyDao = readOnlyDao;
