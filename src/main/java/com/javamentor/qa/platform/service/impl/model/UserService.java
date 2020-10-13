@@ -4,11 +4,10 @@ package com.javamentor.qa.platform.service.impl.model;
 import com.javamentor.qa.platform.dao.impl.model.UserDao;
 import com.javamentor.qa.platform.models.entity.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
 
-@Repository
-@Transactional
+
+@Service
 public class UserService extends ReadWriteServiceImpl<User, Long> {
 
     @Autowired
