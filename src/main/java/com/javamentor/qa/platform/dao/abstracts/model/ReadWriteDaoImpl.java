@@ -1,10 +1,13 @@
 package com.javamentor.qa.platform.dao.abstracts.model;
 
 
+import org.springframework.stereotype.Repository;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Collection;
 
+@Repository
 public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
 
     @PersistenceContext

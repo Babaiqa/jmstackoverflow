@@ -2,14 +2,21 @@ package com.javamentor.qa.platform.service.abstracts.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.ReadWriteDaoImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 
+@Service
+@Transactional
+public abstract class ReadWriteServiceImpl<E, K> extends ReadOnlyServiceImpl<E, K> {
 
-public class ReadWriteServiceImpl<E, K> extends ReadOnlyServiceImpl<E, K> {
+    private ReadWriteDaoImpl<E, K> readWriteDao;
 
     @Autowired
-    private ReadWriteDaoImpl<E, K> readWriteDao;
+    public void setReadWriteDao(ReadWriteDaoImpl<E, K> readWriteDao) {
+        this.readWriteDao = readWriteDao;
+    }
 
     public void persist(E e) {
         readWriteDao.persist(e);
