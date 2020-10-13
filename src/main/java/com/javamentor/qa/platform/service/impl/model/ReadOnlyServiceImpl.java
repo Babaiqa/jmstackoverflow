@@ -1,16 +1,23 @@
 package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.impl.model.ReadOnlyDaoImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
+@Transactional
 public abstract class ReadOnlyServiceImpl<E, K> {
 
-    private ReadOnlyDaoImpl readOnlyDao;
+    private ReadOnlyDaoImpl<E, K> readOnlyDao;
 
-    public ReadOnlyServiceImpl(ReadOnlyDaoImpl readOnlyDao) {
+    @Autowired
+    public ReadOnlyServiceImpl(@Qualifier("readOnlyDaoImpl") ReadOnlyDaoImpl<E, K> readOnlyDao) {
         this.readOnlyDao = readOnlyDao;
     }
 
@@ -31,6 +38,6 @@ public abstract class ReadOnlyServiceImpl<E, K> {
     }
 
     public boolean existsByAllIds(Collection<K> ids) {
-        return existsByAllIds(ids);
+        return readOnlyDao.existsByAllIds(ids);
     }
 }
