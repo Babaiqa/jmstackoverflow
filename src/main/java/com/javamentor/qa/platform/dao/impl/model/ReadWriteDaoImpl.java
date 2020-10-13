@@ -1,13 +1,10 @@
-package com.javamentor.qa.platform.dao.abstracts.model;
+package com.javamentor.qa.platform.dao.impl.model;
 
-
-import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Collection;
 
-@Repository
 public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
 
     @PersistenceContext
@@ -25,11 +22,19 @@ public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
         entityManager.remove(e);
     }
 
-    public abstract void persistAll(E... entities);
+    public void persistAll(E... entities) {
 
-    public abstract void persistAll(Collection<E> entities);
+    }
 
-    public abstract void deleteAll(Collection<E> entities);
+    public void persistAll(Collection<E> entities) {
 
-    public abstract void updateAll(Iterable<? extends E> entities);
+    }
+
+    public void deleteAll(Collection<E> entities) {
+
+    }
+
+    public void updateAll(Iterable<? extends E> entities) {
+
+    }
 }
