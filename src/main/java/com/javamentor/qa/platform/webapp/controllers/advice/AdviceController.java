@@ -13,7 +13,7 @@ import javax.persistence.EntityNotFoundException;
 public class AdviceController {
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public static ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
+    public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
          return  ResponseEntity.badRequest().header(e.getMessage()).build();
     }
 
