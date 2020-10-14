@@ -1,14 +1,15 @@
 package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.impl.model.ReadWriteDaoImpl;
+import com.javamentor.qa.platform.exception.ConstrainException;
 import org.springframework.transaction.annotation.Transactional;
-
 
 import java.util.Collection;
 
 public abstract class ReadWriteServiceImpl<E, K> extends ReadOnlyServiceImpl<E, K> {
 
     private final ReadWriteDaoImpl<E, K> readWriteDao;
+    private static final String ENTITIES_MUST_NOT_BE_NULL = "Entities cannot be null and empty";
 
     public ReadWriteServiceImpl(ReadWriteDaoImpl<E, K> readWriteDao) {
         super(readWriteDao);
@@ -37,21 +38,36 @@ public abstract class ReadWriteServiceImpl<E, K> extends ReadOnlyServiceImpl<E, 
 
     @Transactional
     public void persistAll(E... entities) {
+        if (entities == null || entities.length == 0) {
+            throw new ConstrainException(ENTITIES_MUST_NOT_BE_NULL);
+        }
         readWriteDao.persistAll(entities);
     }
 
+
     @Transactional
     public void persistAll(Collection<E> entities) {
+        if (entities == null || entities.isEmpty()) {
+            throw new ConstrainException(ENTITIES_MUST_NOT_BE_NULL);
+        }
         readWriteDao.persistAll(entities);
     }
 
     @Transactional
     public void deleteAll(Collection<E> entities) {
+        if (entities == null || entities.isEmpty()) {
+            throw new ConstrainException(ENTITIES_MUST_NOT_BE_NULL);
+        }
         readWriteDao.deleteAll(entities);
     }
 
+
     @Transactional
     public void updateAll(Iterable<? extends E> entities) {
+        if (entities == null || !entities.iterator().hasNext()) {
+            throw new ConstrainException(ENTITIES_MUST_NOT_BE_NULL);
+        }
         readWriteDao.updateAll(entities);
     }
+
 }
