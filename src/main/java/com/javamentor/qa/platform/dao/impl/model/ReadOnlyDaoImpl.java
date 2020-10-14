@@ -5,9 +5,7 @@ import org.apache.poi.ss.formula.functions.T;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.lang.reflect.ParameterizedType;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public abstract class ReadOnlyDaoImpl<E, K> {
 
@@ -35,8 +33,12 @@ public abstract class ReadOnlyDaoImpl<E, K> {
     }
 
     public List<E> getAllByIds(Iterable<K> ids) {
-        return entityManager.createQuery("from " + genericClass.getName() + "e WHERE e.id IN :ids")
-                .setParameter("ids", ids).getResultList();
+        if (ids != null && ids.iterator().hasNext()) {
+            return entityManager.createQuery("from " + genericClass.getName() + " e WHERE e.id IN :ids")
+                    .setParameter("ids", ids).getResultList();
+        } else {
+            return new ArrayList<E>();
+        }
     }
 
     public boolean existsByAllIds(Collection<K> ids) {
