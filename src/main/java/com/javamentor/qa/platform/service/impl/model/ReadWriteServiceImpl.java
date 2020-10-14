@@ -31,6 +31,11 @@ public abstract class ReadWriteServiceImpl<E, K> extends ReadOnlyServiceImpl<E, 
     }
 
     @Transactional
+    public void deleteById(K id) {
+        readWriteDao.deleteById(id);
+    }
+
+    @Transactional
     public void persistAll(E... entities) {
         readWriteDao.persistAll(entities);
     }
