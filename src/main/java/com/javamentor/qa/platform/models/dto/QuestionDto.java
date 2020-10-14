@@ -24,5 +24,6 @@ public class QuestionDto implements Serializable {
     private LocalDateTime persistDateTime;
     private LocalDateTime lastUpdateDateTime;
     private Boolean isHelpful;
+    private List<TagDto> listTagDto;
 }
 
