@@ -1,5 +1,7 @@
 package com.javamentor.qa.platform.dao.impl.model;
 
+import org.apache.poi.ss.formula.functions.T;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.lang.reflect.ParameterizedType;
@@ -12,14 +14,12 @@ public abstract class ReadOnlyDaoImpl<E, K> {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private final Class<E> genericClass;
+    protected Class<E> genericClass;
 
     public ReadOnlyDaoImpl() {
-        this.genericClass = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-    }
-
-    public ReadOnlyDaoImpl(Class<E> type) {
-        this.genericClass = type;
+        this.genericClass = (Class<E>) ((ParameterizedType) getClass()
+                .getGenericSuperclass())
+                .getActualTypeArguments()[0];
     }
 
     public List<E> getAll() {
@@ -35,7 +35,8 @@ public abstract class ReadOnlyDaoImpl<E, K> {
     }
 
     public List<E> getAllByIds(Iterable<K> ids) {
-        return entityManager.createQuery("SELECT e FROM genericClass e WHERE e.id IN :ids", genericClass).setParameter("ids", ids).getResultList();
+        return entityManager.createQuery("from " + genericClass.getName() + "e WHERE e.id IN :ids")
+                .setParameter("ids", ids).getResultList();
     }
 
     public boolean existsByAllIds(Collection<K> ids) {
