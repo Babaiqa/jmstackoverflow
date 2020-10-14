@@ -3,6 +3,8 @@ package com.javamentor.qa.platform.dao.impl.model;
 import org.springframework.beans.factory.annotation.Value;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 
 
@@ -25,6 +27,13 @@ public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
 
     public void delete(E e) {
         entityManager.remove(e);
+    }
+
+    public void deleteById(K id) {
+        Class<E> clazz = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass())
+                .getActualTypeArguments()[0];
+        String hql = "DELETE " + clazz.getName() + " WHERE id = :id";
+        entityManager.createQuery(hql).setParameter("id", id).executeUpdate();
     }
 
     public void persistAll(E... entities) {

@@ -32,6 +32,11 @@ public abstract class ReadWriteServiceImpl<E, K> extends ReadOnlyServiceImpl<E, 
     }
 
     @Transactional
+    public void deleteById(K id) {
+        readWriteDao.deleteById(id);
+    }
+
+    @Transactional
     public void persistAll(E... entities) {
         if (entities == null || entities.length == 0) {
             throw new ConstrainException(ENTITIES_MUST_NOT_BE_NULL);
