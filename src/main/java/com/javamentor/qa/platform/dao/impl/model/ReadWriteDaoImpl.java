@@ -1,8 +1,6 @@
 package com.javamentor.qa.platform.dao.impl.model;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Collection;
@@ -75,7 +73,7 @@ public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
     }
 
 
-    @Transactional
+
     public void deleteAll(Collection<E> entities) {
         for (E entity : entities) {
             entityManager.remove(entityManager.contains(entity) ? entity : entityManager.merge(entity));
