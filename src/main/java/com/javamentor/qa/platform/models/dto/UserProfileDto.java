@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @NoArgsConstructor
 public class UserProfileDto implements Serializable {
+    private static final long serialVersionUID = -2073789687153413140L;
     private Long id;
     private String fullName;
     private String password;

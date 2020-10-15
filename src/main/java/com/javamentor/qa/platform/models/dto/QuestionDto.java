@@ -6,12 +6,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
 @RequiredArgsConstructor
 @NoArgsConstructor
 public class QuestionDto implements Serializable {
+    private static final long serialVersionUID = -3497942278821733961L;
     private Long id;
     private String title;
     private Long authorId;
