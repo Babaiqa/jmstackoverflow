@@ -26,7 +26,7 @@ public abstract class ReadOnlyDaoImpl<E, K> {
     }
 
     public boolean existsById(K id) {
-        int count = (int) entityManager.createQuery("SELECT COUNT(e) FROM " + genericClass.getName() + " e WHERE e.id =: id").getSingleResult();
+        int count = (int) entityManager.createQuery("SELECT COUNT(e) FROM " + genericClass.getName() + " e WHERE e.id =: id").setParameter("id", id).getSingleResult();
         return count == 1;
     }
 
