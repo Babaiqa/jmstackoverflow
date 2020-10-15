@@ -30,10 +30,10 @@ public class QuestionController {
 
     // Examples for Swagger
     @GetMapping("{id}")
-    @ApiOperation(value = "QuestionDto", response = String.class)
+    @ApiOperation(value = "QuestionDto", response = QuestionDto.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the QuestionDto.", response = QuestionDto.class),
-            @ApiResponse(code = 400, message = " throw  EntityNotFoundException(\"Question not found\")", response = String.class)
+            @ApiResponse(code = 400, message = "Question not found", response = String.class)
     })
 
     public ResponseEntity<QuestionDto> getUserById(
