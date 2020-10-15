@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class QuestionServise extends ReadWriteServiceImpl<Question,Long> {
-    
+
     @Autowired
     public QuestionServise(QuestionDao questionDao) {
         super(questionDao);
