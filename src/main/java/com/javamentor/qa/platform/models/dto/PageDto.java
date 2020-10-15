@@ -1,15 +1,13 @@
 package com.javamentor.qa.platform.models.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 public class PageDto<T, V>  implements Serializable {
         private int currentPageNumber;
@@ -17,5 +15,5 @@ public class PageDto<T, V>  implements Serializable {
         private int totalResultCount;
         private List<T> items;
         private List<V> meta;
-        private static final int itemsOnPage = 12;
+        private int itemsOnPage = 12;
 }
