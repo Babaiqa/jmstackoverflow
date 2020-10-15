@@ -1,11 +1,12 @@
 package com.javamentor.qa.platform.dao.impl.model;
 
-import org.apache.poi.ss.formula.functions.T;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.lang.reflect.ParameterizedType;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 public abstract class ReadOnlyDaoImpl<E, K> {
 
@@ -34,10 +35,14 @@ public abstract class ReadOnlyDaoImpl<E, K> {
 
     public List<E> getAllByIds(Iterable<K> ids) {
         if (ids != null && ids.iterator().hasNext()) {
+            List<K> idsList = new ArrayList<>();
+            while (ids.iterator().hasNext()) {
+                idsList.add(ids.iterator().next());
+            }
             return entityManager.createQuery("from " + genericClass.getName() + " e WHERE e.id IN :ids")
-                    .setParameter("ids", ids).getResultList();
+                    .setParameter("ids", idsList).getResultList();
         } else {
-            return new ArrayList<E>();
+            return new ArrayList<>();
         }
     }
 
