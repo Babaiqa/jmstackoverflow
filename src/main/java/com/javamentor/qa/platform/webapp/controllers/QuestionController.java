@@ -30,13 +30,13 @@ public class QuestionController {
 
     // Examples for Swagger
     @GetMapping("{id}")
-    @ApiOperation(value = "QuestionDto", response = QuestionDto.class)
+    @ApiOperation(value = "get QuestionDto", response = String.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the QuestionDto.", response = QuestionDto.class),
             @ApiResponse(code = 400, message = "Question not found", response = String.class)
     })
 
-    public ResponseEntity<QuestionDto> getUserById(
+    public ResponseEntity<QuestionDto> getQuestionById(
             @ApiParam(name = "id", value = "type Long", required = true, example = "0")
             @PathVariable Long id) {
         Optional<Question> question = questionServise.getById(id);
