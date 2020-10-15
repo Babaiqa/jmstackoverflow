@@ -15,5 +15,5 @@ public class PageDto<T, V>  implements Serializable {
         private int totalResultCount;
         private List<T> items;
         private List<V> meta;
-        private static final int itemsOnPage = 12;
+        private int itemsOnPage = 12;
 }
