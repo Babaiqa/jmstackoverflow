@@ -7,7 +7,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @AllArgsConstructor
-//@NoArgsConstructor
+@NoArgsConstructor
 public class UserRegistrationDto  implements Serializable {
     public String fullName;
     public String email;

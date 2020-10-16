@@ -7,7 +7,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @AllArgsConstructor
-//@NoArgsConstructor
+@NoArgsConstructor
 public class UserDto implements Serializable {
     private Long id;
     private String email;
