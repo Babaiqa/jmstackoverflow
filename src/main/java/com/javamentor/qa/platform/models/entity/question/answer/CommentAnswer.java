@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
+@Setter
 @Getter
 @Builder
 @NoArgsConstructor
@@ -80,4 +81,6 @@ public class CommentAnswer implements Serializable {
     public void setUser(User user){
         comment.setUser(user);
     }
+
+
 }
