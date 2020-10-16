@@ -28,14 +28,14 @@ public abstract class ReadOnlyDaoImpl<E, K> {
         Class<E> clazz = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass())
                 .getActualTypeArguments()[0];
         String hql = "FROM " + clazz.getName() + " WHERE id = :id";
-        TypedQuery<E> query= (TypedQuery<E>) entityManager.createQuery(hql).setParameter("id", id);
+        TypedQuery<E> query = (TypedQuery<E>) entityManager.createQuery(hql).setParameter("id", id);
         return SingleResultUtil.getSingleResultOrNull(query);
     }
 
     public List<E> getAllByIds(Iterable<K> ids) {
-        Class<E> clazz = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass())
-                .getActualTypeArguments()[0];
         if (ids != null && ids.iterator().hasNext()) {
+            Class<E> clazz = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass())
+                    .getActualTypeArguments()[0];
             return entityManager.createQuery("from " + clazz.getName() + " e WHERE e.id IN :ids")
                     .setParameter("ids", ids).getResultList();
         } else {
