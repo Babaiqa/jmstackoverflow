@@ -1,17 +1,17 @@
 package com.javamentor.qa.platform.models.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 public class QuestionDto implements Serializable {
+    private static final long serialVersionUID = -3497942278821733961L;
     private Long id;
     private String title;
     private Long authorId;

@@ -8,12 +8,8 @@ import java.io.Serializable;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TagQuestionDto implements Serializable {
-    Long id;
-    String name;
+public class TagRecentDto implements Serializable {
+    private Long id;
+    private String name;
+    private int countTagToQuestion;
 }
-
-
-
-
-
