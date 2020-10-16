@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
+//@NoArgsConstructor
 public class PageDto<T, V>  implements Serializable {
         private int currentPageNumber;
         private  int totalPageCount;
