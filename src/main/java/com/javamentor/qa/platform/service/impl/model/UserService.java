@@ -14,4 +14,5 @@ public class UserService extends ReadWriteServiceImpl<User, Long> {
     public UserService(UserDao userDao) {
         super(userDao);
     }
+
 }
