@@ -35,12 +35,8 @@ public abstract class ReadOnlyDaoImpl<E, K> {
 
     public List<E> getAllByIds(Iterable<K> ids) {
         if (ids != null && ids.iterator().hasNext()) {
-            List<K> idsList = new ArrayList<>();
-            while (ids.iterator().hasNext()) {
-                idsList.add(ids.iterator().next());
-            }
             return entityManager.createQuery("from " + genericClass.getName() + " e WHERE e.id IN :ids")
-                    .setParameter("ids", idsList).getResultList();
+                    .setParameter("ids", ids).getResultList();
         } else {
             return new ArrayList<>();
         }
