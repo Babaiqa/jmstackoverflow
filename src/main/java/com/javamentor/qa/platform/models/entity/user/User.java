@@ -72,7 +72,6 @@ public class User implements UserDetails {
     @Column(name = "link_vk")
     private String linkVk;
 
-    @Lob
     @Column
     private String about;
 
