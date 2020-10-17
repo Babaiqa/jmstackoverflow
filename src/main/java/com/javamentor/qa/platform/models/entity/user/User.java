@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
+@ToString
 @Entity
 @Getter
 @Setter

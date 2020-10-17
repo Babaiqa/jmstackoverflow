@@ -31,6 +31,13 @@ public abstract class ReadOnlyDaoImpl<E, K> {
         return SingleResultUtil.getSingleResultOrNull(query);
     }
 
+    public Optional<E> getByEmail(String email) {
+        Class<E> eClass = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        String hql = "FROM " + eClass.getName() + " WHERE email = :email";
+        TypedQuery<E> query = (TypedQuery<E>) entityManager.createQuery(hql).setParameter("email", email);
+        return SingleResultUtil.getSingleResultOrNull(query);
+    }
+
     public List<E> getAllByIds(Iterable<K> ids) {
         return null;
     }

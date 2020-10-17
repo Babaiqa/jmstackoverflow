@@ -1,18 +1,17 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
-import com.javamentor.qa.platform.dao.impl.model.UserDao;
 import com.javamentor.qa.platform.mappers.UserMapper;
-import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserRegistrationDto;
-import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.service.impl.model.UserService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @Validated
@@ -21,15 +20,13 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-
-    private final UserDao userDao;
+    private final UserMapper userMapper;
 
     @Autowired
-    public UserController(UserService userService, UserDao userDao) {
+    public UserController(UserService userService, UserMapper userMapper) {
         this.userService = userService;
-        this.userDao = userDao;
+        this.userMapper = userMapper;
     }
-
 
     // Examples for Swagger
     @GetMapping("{id}")
@@ -39,31 +36,29 @@ public class UserController {
             @ApiResponse(code = 400, message = "Wrong ID",response = String.class)
     })
     public  ResponseEntity<String> getUserById(
-          @ApiParam(name="id",value="type Long(or other descriped)", required = true, example="0")
-          @PathVariable Long id){
-
-        return id!=null ? ResponseEntity.ok("Swagger work"):
-                ResponseEntity.badRequest()
-                        .body("Wrong ID");
-   }
-
-    @PostMapping(value = "registration", consumes = MediaType.APPLICATION_JSON_VALUE, produces =
-           MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> createUser(@RequestBody UserRegistrationDto userRegistrationDto) {
-        String email = userRegistrationDto.getEmail();
-        if (userDao.getUserByEmail(email) != null) {
-            String message = "Пользователь с данным email уже существует";
-            return ResponseEntity.badRequest().header(message).build();
+        @ApiParam(name="id",value="type Long(or other descriped)", required = true, example="0")
+        @PathVariable Long id){
+        if (!userService.getById(id).isPresent()) {
+            return ResponseEntity.badRequest().body("User with id " + id + " not found");
         } else {
-            User user = UserMapper.INSTANCE.userRegistrationDtoToUser(userRegistrationDto);
-            Role role = null;
-            assert false;
-            role.setName("USER");
-            user.setRole(role);
-            userService.persist(user);
-            User us = userDao.getUserByEmail(email);
-            UserDto userDto = UserMapper.INSTANCE.userToUserDto(us);
-            return ResponseEntity.ok().body(userDto.toString());
+            User user = userService.getById(id).get();
+            return ResponseEntity.ok().body(userMapper.userToUserDto(user).toString());
         }
+//        return id!=null ? ResponseEntity.ok("Swagger work"):
+//                ResponseEntity.badRequest()
+//                        .body("Wrong ID");
    }
+
+    @PostMapping(value = "registration")
+    @Validated(OnCreate.class)
+    public ResponseEntity<String> createUser(@Valid @RequestBody UserRegistrationDto userRegistrationDto) {
+        if (!userService.getByEmail(userRegistrationDto.getEmail()).isPresent()) {
+            User user  = userMapper.userRegistrationDtoToUser(userRegistrationDto);
+            userService.persist(user);
+            return ResponseEntity.ok().body(userMapper.userToUserDto(user).toString());
+        } else {
+            return ResponseEntity.badRequest().body("User with email " + userRegistrationDto.getEmail() + " already exist");
+        }
+    }
+
 }

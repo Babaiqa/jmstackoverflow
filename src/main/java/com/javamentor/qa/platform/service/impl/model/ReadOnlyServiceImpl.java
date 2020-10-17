@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public abstract class ReadOnlyServiceImpl<E, K> {
+public abstract class ReadOnlyServiceImpl<E, K>  {
 
     private final ReadOnlyDaoImpl<E, K> readOnlyDao;
 
@@ -29,6 +29,11 @@ public abstract class ReadOnlyServiceImpl<E, K> {
     @Transactional
     public Optional<E> getById(K id) {
         return readOnlyDao.getById(id);
+    }
+
+    @Transactional
+    public Optional<E> getByEmail(String email) {
+        return readOnlyDao.getByEmail(email);
     }
 
     @Transactional
