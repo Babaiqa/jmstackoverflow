@@ -10,11 +10,8 @@ import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.user.*;
 import com.javamentor.qa.platform.service.impl.model.*;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-
 import java.util.*;
 
 @Data
@@ -38,6 +35,8 @@ public class TestDataInitService {
 
     int numberOfUsers = 50;
     List<Tag> tagList = new ArrayList<>();
+    Role USER_ROLE = Role.builder().name("USER").build();
+    Role ADMIN_ROLE = Role.builder().name("ADMIN").build();
 
     public TestDataInitService(UserService userService, BadgeService badgeService, QuestionService questionService,
                 CommentService commentService, ReputationService reputationService, UserBadgesService userBadgesService,
@@ -62,20 +61,27 @@ public class TestDataInitService {
         }
 
         @Transactional
-        public void createUserEntity () {
+        public void createTagEntity(){
+            for (int i = 0; i < numberOfUsers; i++){
+                Tag childTag = Tag.builder().name("Child").description("DescriptionChildTag").build();
+                Tag tag = new Tag();
+                tag.setName("Tag Name"+i);
+                tag.setDescription("Tag Description "+i);
+                tagService.persist(tag);
+                tagService.persist(childTag);
+
+                RelatedTag relatedTag = new RelatedTag();
+                relatedTag.setChildTag(childTag);
+                relatedTag.setMainTag(tag);
+                relatedTagService.persist(relatedTag);
+
+                tagList.add(tag);
+            }
+        }
+
+        @Transactional
+        public void createEntity () {
         for (int i = 0; i < numberOfUsers; i++){
-            Tag tag = new Tag();
-            tag.setName("Tag Name"+i);
-            tag.setDescription("Tag Description "+i);
-            tagService.persist(tag);
-
-            RelatedTag relatedTag = new RelatedTag();
-            relatedTag.setChildTag(tag);
-            relatedTag.setMainTag(tag);
-            relatedTagService.persist(relatedTag);
-
-            tagList.add(tag);
-
             User user = new User();
             user.setEmail("ivanov@mail.com"+i);
             user.setPassword("password"+i);
@@ -88,8 +94,9 @@ public class TestDataInitService {
             user.setLinkVk("http://vk.com");
             user.setAbout("very good man");
             user.setImageLink("https://www.google.com/search?q=%D0%");
-            user.setRole(Role.builder().name("USER").build());
             user.setReputationCount(1);
+            if(i == 0) user.setRole(ADMIN_ROLE);
+            else user.setRole(USER_ROLE);
             userService.persist(user);
 
             Reputation reputation = new Reputation();
@@ -157,6 +164,4 @@ public class TestDataInitService {
 
         }
         }
-
-
 }

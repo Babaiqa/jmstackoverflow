@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-//@Setter
 @Getter
 @Builder
 @NoArgsConstructor

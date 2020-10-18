@@ -20,19 +20,8 @@ public class TestEntityInit implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        testDataInitService.createUserEntity();
-//        testDataInitService.createBadgeEntity();
-//        testDataInitService.createQuestionEntity();
-//        testDataInitService.createAnswerEntity();
-//        testDataInitService.createReputationEntity();
-//        testDataInitService.createUserBadgesEntity();
-//        testDataInitService.createTagEntity();
-//        testDataInitService.createUserFavoriteQuestionEntity();
-//        testDataInitService.createCommentQuestionEntity();
-//        testDataInitService.createCommentAnswerEntity();
-//        testDataInitService.createRelatedTagEntity();
-//        testDataInitService.createAnswerVoteEntity();
-//        testDataInitService.createVoteQuestionEntity();
+        testDataInitService.createTagEntity();
+        testDataInitService.createEntity();
 
     }
 }
