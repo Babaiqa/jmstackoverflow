@@ -4,5 +4,5 @@ import com.javamentor.qa.platform.models.entity.Badge;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class BadgeDao extends ReadWriteDaoImpl<Badge, Long>{
+public class BadgeDaoImpl extends ReadWriteDaoImpl<Badge, Long>{
 }

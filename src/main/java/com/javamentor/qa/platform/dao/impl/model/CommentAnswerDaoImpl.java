@@ -4,5 +4,5 @@ import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class CommentAnswerDao extends ReadWriteDaoImpl<CommentAnswer, Long> {
+public class CommentAnswerDaoImpl extends ReadWriteDaoImpl<CommentAnswer, Long> {
 }

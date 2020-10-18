@@ -4,5 +4,5 @@ import com.javamentor.qa.platform.models.entity.question.Tag;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class TagDao extends ReadWriteDaoImpl <Tag, Long> {
+public class TagDaoImpl extends ReadWriteDaoImpl <Tag, Long> {
 }

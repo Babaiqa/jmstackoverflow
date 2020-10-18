@@ -5,5 +5,5 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class QuestionDao extends ReadWriteDaoImpl<Question, Long>{
+public class QuestionDaoImpl extends ReadWriteDaoImpl<Question, Long>{
 }

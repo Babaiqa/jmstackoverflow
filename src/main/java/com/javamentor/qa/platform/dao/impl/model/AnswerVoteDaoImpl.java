@@ -4,5 +4,5 @@ import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class AnswerVoteDao extends ReadWriteDaoImpl<AnswerVote, Long>{
+public class AnswerVoteDaoImpl extends ReadWriteDaoImpl<AnswerVote, Long>{
 }

@@ -4,5 +4,5 @@ import com.javamentor.qa.platform.models.entity.user.Reputation;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ReputationDao extends ReadWriteDaoImpl<Reputation, Long> {
+public class ReputationDaoImpl extends ReadWriteDaoImpl<Reputation, Long> {
 }

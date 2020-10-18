@@ -4,5 +4,5 @@ import com.javamentor.qa.platform.models.entity.user.UserFavoriteQuestion;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class UserFavoriteQuestionDao extends ReadWriteDaoImpl <UserFavoriteQuestion, Long> {
+public class UserFavoriteQuestionDaoImpl extends ReadWriteDaoImpl <UserFavoriteQuestion, Long> {
 }
