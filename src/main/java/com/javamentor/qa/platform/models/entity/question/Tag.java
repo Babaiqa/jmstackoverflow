@@ -30,7 +30,7 @@ public class Tag implements Serializable {
     @Column
     private String name;
 
-    @Lob
+
     @Column
     private String description;
 
