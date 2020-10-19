@@ -1,16 +1,19 @@
 package com.javamentor.qa.platform.service.impl.model;
 
-import com.javamentor.qa.platform.dao.impl.model.UserDao;
+
+import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 @Service
-public class UserService extends ReadWriteServiceImpl<User, Long> {
+public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements UserService {
 
     @Autowired
-    public UserService(UserDao userDao) {
+    public UserServiceImpl(UserDao userDao) {
         super(userDao);
     }
+
 }

@@ -26,7 +26,7 @@ public class Comment implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Lob
+
     @NotNull
     @Column
     private String text;
