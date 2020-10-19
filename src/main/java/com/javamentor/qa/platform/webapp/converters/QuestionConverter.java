@@ -7,8 +7,17 @@ import org.mapstruct.*;
 @Mapper
 public interface QuestionConverter {
 
-        @Mapping(source="question.id",target="id")
+        @Mapping(source="serialVersionUID",target="serialVersionUID")
+        @Mapping(source="question.user.getId()",target="authorId")
         @Mapping(source="question.title",target="title")
+        @Mapping(source="question.description",target="description")
+        @Mapping(source="question.user.getUserName()",target="authorName")
+        @Mapping(source="question.user.getImageLink()",target="authorImage")
+        @Mapping(source="question.viewCount",target="viewCount")
+        @Mapping(source="question.tags",target="listTagDto")
+        @Mapping(source="question.persistDateTime",target="persistDateTime")
+        @Mapping(source="question.lastUpdateDateTime",target="lastUpdateDateTime")
+        @Mapping(source="question.isDeleted",target="isHelpful")
 
 
 QuestionDto questionToQuestionDto(Question question);
