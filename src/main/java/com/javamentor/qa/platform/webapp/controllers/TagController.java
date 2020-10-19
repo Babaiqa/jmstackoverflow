@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
+import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
 import io.swagger.annotations.*;
@@ -21,7 +22,9 @@ import java.util.List;
 public class TagController {
 
     private final TagDtoService tagDtoService;
-    private final int MAX_SIZE_ENTRIES_ON_PAGE = 100;
+
+    private final int MAX_ITEMS_ON_PAGE = 100;
+    private final String DEFAULT_VALUE_ITEMS_ON_PAGE="12";
 
     @Autowired
     public TagController(TagDtoService tagDtoService) {
@@ -35,18 +38,20 @@ public class TagController {
             @ApiResponse(code = 400, message = "Page not found", response = String.class)
     })
     public ResponseEntity<?> getTagDtoPaginationByPopular(
-            @ApiParam(name = "page", value = "number Page. type int", required = true, example = "0")
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "0")
             @RequestParam("page") int page,
-            @ApiParam(name = "size", value = "Number of entries per page.Type int. By default = 12", required = false, example = "0")
-            @RequestParam(name="size", required = false) int size) {
+            @ApiParam(name = "size", value = "Number of entries per page.Type int. By default = "
+                    +DEFAULT_VALUE_ITEMS_ON_PAGE, required = false, example = "0")
+            @RequestParam(name="size", required = false, defaultValue = DEFAULT_VALUE_ITEMS_ON_PAGE) int size) {
 
-        if (page <= 0 || size <= 0 || size > MAX_SIZE_ENTRIES_ON_PAGE) {
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
             return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
-                    "положительными. Максимальное количество записей на странице " + MAX_SIZE_ENTRIES_ON_PAGE);
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
-        List<TagDto> resultPage = tagDtoService.getTagDtoPagination(page, size);
+        PageDto<TagDto,?> resultPage = tagDtoService.getTagDtoPagination(page, size);
 
-        return !resultPage.isEmpty() ? ResponseEntity.ok(resultPage) : ResponseEntity.badRequest().body("Page not found");
+        return !resultPage.getItems().isEmpty() ? ResponseEntity.ok(resultPage)
+                : ResponseEntity.badRequest().body("Page not found");
     }
 
 }

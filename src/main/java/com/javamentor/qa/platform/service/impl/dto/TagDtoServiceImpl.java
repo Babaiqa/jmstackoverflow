@@ -18,17 +18,21 @@ public class TagDtoServiceImpl implements TagDtoService {
     public TagDtoServiceImpl(TagDtoDao tagDtoDao) {
         this.tagDtoDAO = tagDtoDao;
     }
+
+
    @Override
-    public List<TagDto> getTagDtoPagination(int page, int size) {
+    public PageDto<TagDto,?> getTagDtoPagination(int page, int size) {
        PageDto<TagDto,?> pageDto = new PageDto<>();
 
-       pageDto.setItems(tagDtoDAO.getTagDtoPagination(page, size));
        int totalResultCount=tagDtoDAO.getTotalResultCountTagDto();
+
+       pageDto.setItems(tagDtoDAO.getTagDtoPagination(page, size));
        pageDto.setTotalResultCount(totalResultCount);
        pageDto.setCurrentPageNumber(page);
+       pageDto.setItemsOnPage(size);
        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount/size));
 
-        return tagDtoDAO.getTagDtoPagination(page, size);
+        return pageDto;
     }
 
 }
