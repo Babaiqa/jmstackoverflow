@@ -15,13 +15,16 @@ public class TagDtoDAO {
 
 
     public List<TagDto> getTagDtoPagination(int page, int size) {
-
-        return entityManager.createQuery(
+        List<TagDto> р=entityManager.createQuery(
                 "select new com.javamentor.qa.platform.models.dto.TagDto(et.id,et.name)" +
                         " from Tag  et order by et.questions.size desc")
                 .setFirstResult(page*size-size)
                 .setMaxResults(size)
                 .getResultList();
+        return р;
+
+
+
     }
 
 }
