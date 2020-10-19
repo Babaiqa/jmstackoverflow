@@ -21,7 +21,7 @@ import java.util.List;
 public class TagController {
 
     private final TagDtoService tagDtoService;
-    private final int MAX_SIZE_ENTRIES_ON_PAGE=100;
+    private final int MAX_SIZE_ENTRIES_ON_PAGE = 100;
 
 
     @GetMapping("popular")
@@ -31,18 +31,18 @@ public class TagController {
             @ApiResponse(code = 400, message = "Page not found", response = String.class)
     })
     public ResponseEntity<?> getTagDtoPaginationByPopular(
-            @ApiParam(name="page",value="number Page. type int", required = true, example="0")
+            @ApiParam(name = "page", value = "number Page. type int", required = true, example = "0")
             @RequestParam("page") int page,
-            @ApiParam(name="size",value="Number of entries per page.type int", required = true, example="0")
-                                                          @RequestParam("size") int size){
+            @ApiParam(name = "size", value = "Number of entries per page.type int", required = true, example = "0")
+            @RequestParam("size") int size) {
 
-        if(page<=0||size<=0||size>MAX_SIZE_ENTRIES_ON_PAGE){
+        if (page <= 0 || size <= 0 || size > MAX_SIZE_ENTRIES_ON_PAGE) {
             return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
-                    "положительными. Максимальное количество записей на странице "+ MAX_SIZE_ENTRIES_ON_PAGE);
+                    "положительными. Максимальное количество записей на странице " + MAX_SIZE_ENTRIES_ON_PAGE);
         }
-        List<TagDto> resultPage =tagDtoService.getTagDtoPagination(page, size);
+        List<TagDto> resultPage = tagDtoService.getTagDtoPagination(page, size);
 
-        return !resultPage.isEmpty()?ResponseEntity.ok(resultPage):ResponseEntity.badRequest().body("Page not found");
+        return !resultPage.isEmpty() ? ResponseEntity.ok(resultPage) : ResponseEntity.badRequest().body("Page not found");
     }
 
 }
