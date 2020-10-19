@@ -2,7 +2,6 @@ package com.javamentor.qa.platform.dao.impl.model;
 
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 
-import javax.management.Query;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -23,7 +22,10 @@ public abstract class ReadOnlyDaoImpl<E, K> {
     }
 
     public boolean existsById(K id) {
-        return false;
+        Class<E> clazz = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass())
+                .getActualTypeArguments()[0];
+        long count = (long) entityManager.createQuery("SELECT COUNT(e) FROM " + clazz.getName() + " e WHERE e.id =: id").setParameter("id", id).getSingleResult();
+        return count > 0;
     }
 
     public Optional<E> getById(K id) {
