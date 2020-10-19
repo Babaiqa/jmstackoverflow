@@ -17,7 +17,9 @@ public abstract class ReadOnlyDaoImpl<E, K> {
     private EntityManager entityManager;
 
     public List<E> getAll() {
-        return null;
+        Class<E> clazz = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass())
+                .getActualTypeArguments()[0];
+        return entityManager.createQuery("from " + clazz.getName()).getResultList();
     }
 
     public boolean existsById(K id) {

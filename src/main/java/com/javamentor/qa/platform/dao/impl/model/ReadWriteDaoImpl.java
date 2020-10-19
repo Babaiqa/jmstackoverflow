@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.dao.impl.model;
 
 import org.springframework.beans.factory.annotation.Value;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -15,7 +16,6 @@ public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
 
     @PersistenceContext
     private EntityManager entityManager;
-
 
     public void persist(E e) {
         entityManager.persist(e);
@@ -80,7 +80,6 @@ public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
             entityManager.clear();
         }
     }
-
 
 
     public void deleteAll(Collection<E> entities) {
