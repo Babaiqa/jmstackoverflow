@@ -12,7 +12,6 @@ import java.util.Objects;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -64,5 +63,25 @@ public class CommentAnswer implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setAnswer(Answer answer) {
+        this.answer = answer;
+    }
+
+    public void setText(String text){
+        comment.setText(text);
+    }
+
+    public void setUser(User user){
+        comment.setUser(user);
+    }
+
+    public void setComment(Comment comment) {
+        this.comment = comment;
     }
 }
