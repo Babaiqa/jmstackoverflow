@@ -73,7 +73,7 @@ public class Question implements Serializable {
     @JoinTable(name = "question_has_tag",
             joinColumns = @JoinColumn(name = "question_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private transient List<Tag> tags;
+    private  List<Tag> tags;
 
     @Column(name = "last_redaction_date", nullable = false)
     @Type(type = "org.hibernate.type.LocalDateTimeType")
