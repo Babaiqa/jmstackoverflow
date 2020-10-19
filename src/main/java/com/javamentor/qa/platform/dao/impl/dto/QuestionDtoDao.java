@@ -30,7 +30,7 @@ public class QuestionDtoDao {
             "q.persistDateTime as q_persistDateTime," +
             "q.lastUpdateDateTime as q_lastUpdateDateTime, " +
 
-            " t.id as t_id,t.name as t_name " +
+            " t.id as id,t.name as name " +
             "from Question q  " +
             "INNER JOIN  q.user u" +
             "  join q.tags t";
