@@ -23,7 +23,6 @@ public class QuestionDto implements Serializable {
     private int countValuable;
     private LocalDateTime persistDateTime;
     private LocalDateTime lastUpdateDateTime;
-    private Boolean isHelpful;
     private List<TagDto> listTagDto;
 }
 
