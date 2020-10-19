@@ -5,4 +5,6 @@ import java.util.List;
 
 public interface TagDtoDao {
     List<TagDto> getTagDtoPagination(int page, int size);
+
+    public int getTotalResultCountTagDto();
 }

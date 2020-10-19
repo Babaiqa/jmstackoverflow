@@ -1,9 +1,9 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.TagDto;
-import com.javamentor.qa.platform.service.impl.dto.TagDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
 import io.swagger.annotations.*;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,12 +17,16 @@ import java.util.List;
 @Validated
 @RequestMapping("/api/taq/")
 @Api(value = "TaqApi")
-@RequiredArgsConstructor
+
 public class TagController {
 
     private final TagDtoService tagDtoService;
     private final int MAX_SIZE_ENTRIES_ON_PAGE = 100;
 
+    @Autowired
+    public TagController(TagDtoService tagDtoService) {
+        this.tagDtoService = tagDtoService;
+    }
 
     @GetMapping("popular")
     @ApiOperation(value = "get page TagDto by popular. MAX SIZE ENTRIES ON PAGE=100", response = String.class)
@@ -33,8 +37,8 @@ public class TagController {
     public ResponseEntity<?> getTagDtoPaginationByPopular(
             @ApiParam(name = "page", value = "number Page. type int", required = true, example = "0")
             @RequestParam("page") int page,
-            @ApiParam(name = "size", value = "Number of entries per page.type int", required = true, example = "0")
-            @RequestParam("size") int size) {
+            @ApiParam(name = "size", value = "Number of entries per page.Type int. By default = 12", required = false, example = "0")
+            @RequestParam(name="size", required = false) int size) {
 
         if (page <= 0 || size <= 0 || size > MAX_SIZE_ENTRIES_ON_PAGE) {
             return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +

@@ -25,4 +25,9 @@ public class TagDtoDaoImpl implements TagDtoDao {
                 .setMaxResults(size)
                 .getResultList();
     }
+
+    @Override
+    public int getTotalResultCountTagDto(){
+        return (int)entityManager.createQuery("select count(tag) from Tag tag").getSingleResult();
+    }
 }
