@@ -21,10 +21,11 @@ import java.util.List;
 public class TagController {
 
     private final TagDtoService tagDtoService;
+    private final int MAX_SIZE_ENTRIES_ON_PAGE=100;
 
 
-    @GetMapping("popular}")
-    @ApiOperation(value = "get page TagDto by popular", response = String.class)
+    @GetMapping("popular")
+    @ApiOperation(value = "get page TagDto by popular. MAX SIZE ENTIES ON PAGE=100", response = String.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the pagination List<TagDto> by popular", response = List.class),
             @ApiResponse(code = 400, message = "Page not found", response = String.class)
@@ -35,8 +36,9 @@ public class TagController {
             @ApiParam(name="size",value="Number of entries per page.type int", required = true, example="0")
                                                           @RequestParam("size") int size){
 
-        if(page<=0||size<=0){
-            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть положительными");
+        if(page<=0||size<=0||size>MAX_SIZE_ENTRIES_ON_PAGE){
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице "+ MAX_SIZE_ENTRIES_ON_PAGE);
         }
         List<TagDto> resultPage =tagDtoService.getTagDtoPagination(page, size);
 
