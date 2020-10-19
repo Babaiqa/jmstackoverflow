@@ -1,6 +1,6 @@
 package com.javamentor.qa.platform.service.impl.model;
 
-import com.javamentor.qa.platform.dao.impl.model.ReadOnlyDaoImpl;
+import com.javamentor.qa.platform.dao.abstracts.model.ReadOnlyDao;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
@@ -10,9 +10,9 @@ import java.util.Optional;
 
 public abstract class ReadOnlyServiceImpl<E, K> {
 
-    private final ReadOnlyDaoImpl<E, K> readOnlyDao;
+    private final ReadOnlyDao<E, K> readOnlyDao;
 
-    public ReadOnlyServiceImpl(ReadOnlyDaoImpl<E, K> readOnlyDao) {
+    public ReadOnlyServiceImpl(ReadOnlyDao<E, K> readOnlyDao) {
         this.readOnlyDao = readOnlyDao;
     }
 
