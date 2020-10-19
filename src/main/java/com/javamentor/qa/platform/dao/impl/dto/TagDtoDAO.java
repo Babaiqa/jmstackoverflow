@@ -16,8 +16,8 @@ public class TagDtoDAO {
     public List<TagDto> getTagDtoPagination(int page, int size) {
 
         return entityManager.createQuery(
-                "select new com.javamentor.qa.platform.models.dto.TagDto(et.id,et.name)" +
-                        " from Tag  et order by et.questions.size desc")
+                "select new com.javamentor.qa.platform.models.dto.TagDto(tag.id,tag.name)" +
+                        " from Tag  tag order by tag.questions.size desc, tag.id ")
                 .setFirstResult(page*size-size)
                 .setMaxResults(size)
                 .getResultList();
