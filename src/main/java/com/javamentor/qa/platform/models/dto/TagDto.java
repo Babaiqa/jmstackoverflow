@@ -15,7 +15,8 @@ import static ognl.OgnlOps.stringValue;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TagDto implements Serializable {
-
+    public static final String ID_ALIAS = "id";
+    public static final String TITLE_ALIAS = "name";
 
     private static final long serialVersionUID = -8087563918115872879L;
     private Long id;
@@ -25,8 +26,8 @@ public class TagDto implements Serializable {
     public TagDto(
             Object[] tuples,
             Map<String, Integer> aliasToIndexMap) {
-        this.id = ((Number) tuples[aliasToIndexMap.get(id)]).longValue();
-        this.name = tuples[aliasToIndexMap.get(name)].toString();
+        this.id = ((Number) tuples[aliasToIndexMap.get(ID_ALIAS)]).longValue();
+        this.name = tuples[aliasToIndexMap.get(TITLE_ALIAS)].toString();
     }
 
 }
