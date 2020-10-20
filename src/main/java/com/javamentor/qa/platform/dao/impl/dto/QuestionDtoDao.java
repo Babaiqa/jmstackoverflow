@@ -42,56 +42,52 @@ public class QuestionDtoDao {
                 .createQuery(QUERY_QUESTIONDTO+" where q.id=:id")
                 .setParameter("id", id)
                 .unwrap(org.hibernate.query.Query.class)
-                .setResultTransformer(new QuestionResultTransformer())
+                .setResultTransformer(new ResultTransformer() {
+                    private Map<Long, QuestionDto> questionDtoMap = new LinkedHashMap<>();
+
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] aliases) {
+
+                        Map<String,Integer> aliasToIndexMap= aliasToIndexMap(aliases);
+                        Long questionId=((Number)tuple[aliasToIndexMap.get(QuestionDto.ID_ALIAS)]).longValue();
+
+                        QuestionDto questionDto = questionDtoMap.computeIfAbsent(
+                                questionId,
+                                id -> new QuestionDto(tuple, aliasToIndexMap)
+                        );
+
+                        questionDto.getListTagDto().add(
+                                new TagDto(tuple,aliasToIndexMap)
+                        );
+
+                        return questionDto;
+                    }
+
+
+                    @Override
+                    public List transformList(List list) {
+                        return new ArrayList<>(questionDtoMap.values());
+                    }
+
+
+                    public  Map<String, Integer> aliasToIndexMap(
+                            String[] aliases) {
+
+                        Map<String, Integer> aliasToIndexMap = new LinkedHashMap<>();
+
+                        for (int i = 0; i < aliases.length; i++) {
+                            aliasToIndexMap.put(aliases[i], i);
+                        }
+
+                        return aliasToIndexMap;
+                    }
+                })
                 .uniqueResultOptional();
         return  questionDto;
     }
 
 
 
-    //* Определяет отображение между
-// Object[] проекцией и PostDTOобъектом, содержащим PostCommentDTOдочерние объекты DTO:*/
-    class QuestionResultTransformer implements ResultTransformer {
-
-        private Map<Long, QuestionDto> questionDtoMap = new LinkedHashMap<>();
-
-        @Override
-        public Object transformTuple(Object[] tuple, String[] aliases) {
-
-            Map<String,Integer> aliasToIndexMap= aliasToIndexMap(aliases);
-            Long questionId=((Number)tuple[aliasToIndexMap.get(QuestionDto.ID_ALIAS)]).longValue();
-
-            QuestionDto questionDto = questionDtoMap.computeIfAbsent(
-                    questionId,
-                    id -> new QuestionDto(tuple, aliasToIndexMap)
-            );
-
-            questionDto.getListTagDto().add(
-                    new TagDto(tuple,aliasToIndexMap)
-            );
-
-            return questionDto;
-        }
-
-
-        @Override
-        public List transformList(List list) {
-            return new ArrayList<>(questionDtoMap.values());
-        }
-
-
-        public  Map<String, Integer> aliasToIndexMap(
-                String[] aliases) {
-
-            Map<String, Integer> aliasToIndexMap = new LinkedHashMap<>();
-
-            for (int i = 0; i < aliases.length; i++) {
-                aliasToIndexMap.put(aliases[i], i);
-            }
-
-            return aliasToIndexMap;
-        }
-    }
 
 
 }
