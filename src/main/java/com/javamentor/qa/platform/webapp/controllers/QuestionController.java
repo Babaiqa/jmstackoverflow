@@ -3,7 +3,6 @@ package com.javamentor.qa.platform.webapp.controllers;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.service.impl.dto.QuestionDtoService;
 import io.swagger.annotations.*;
-import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -17,11 +16,13 @@ import java.util.Optional;
 @Validated
 @RequestMapping("/api/question/")
 @Api(value = "QuestionApi")
-@RequiredArgsConstructor
 public class QuestionController {
 
     private final QuestionDtoService questionDtoService;
 
+    public QuestionController(QuestionDtoService questionDtoService) {
+        this.questionDtoService = questionDtoService;
+    }
 
     @GetMapping("{id}")
     @ApiOperation(value = "get QuestionDto", response = String.class)
