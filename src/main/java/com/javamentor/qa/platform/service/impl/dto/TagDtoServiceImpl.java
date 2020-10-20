@@ -7,8 +7,6 @@ import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class TagDtoServiceImpl implements TagDtoService {
 
@@ -21,8 +19,8 @@ public class TagDtoServiceImpl implements TagDtoService {
 
 
    @Override
-    public PageDto<TagDto,?> getTagDtoPagination(int page, int size) {
-       PageDto<TagDto,?> pageDto = new PageDto<>();
+    public PageDto<TagDto,Object> getTagDtoPagination(int page, int size) {
+       PageDto<TagDto,Object> pageDto = new PageDto<>();
 
        int totalResultCount=tagDtoDAO.getTotalResultCountTagDto();
 

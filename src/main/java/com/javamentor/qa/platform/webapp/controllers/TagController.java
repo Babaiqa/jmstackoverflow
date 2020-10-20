@@ -18,7 +18,6 @@ import java.util.List;
 @Validated
 @RequestMapping("/api/taq/")
 @Api(value = "TaqApi")
-
 public class TagController {
 
     private final TagDtoService tagDtoService;
@@ -41,7 +40,8 @@ public class TagController {
             @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "0")
             @RequestParam("page") int page,
             @ApiParam(name = "size", value = "Number of entries per page.Type int. By default = "
-                    +DEFAULT_VALUE_ITEMS_ON_PAGE, required = false, example = "0")
+                    + DEFAULT_VALUE_ITEMS_ON_PAGE+" Максимальное количество записей на странице"+ MAX_ITEMS_ON_PAGE ,
+                     example = "10")
             @RequestParam(name="size", required = false, defaultValue = DEFAULT_VALUE_ITEMS_ON_PAGE) int size) {
 
         if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
