@@ -27,7 +27,6 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
             "question.description as question_description," +
             " question.viewCount as question_viewCount," +
             "(select count(a.question.id) from Answer a where a.question.id=:id) as question_countAnswer," +
-//                 "(select CASE WHEN count(an.isHelpful) > 0 THEN true ELSE false END from Answer an where an.question.id=:id and an.isHelpful=true) as q_isHelpful," +
             "(select count(v.question.id) from VoteQuestion v where v.question.id=:id) as question_countValuable," +
             "question.persistDateTime as question_persistDateTime," +
             "question.lastUpdateDateTime as question_lastUpdateDateTime, " +
