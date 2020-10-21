@@ -30,7 +30,7 @@ public interface QuestionConverter {
 //    @Mapping(source="questionDto.id",target="id")
     @Mapping(source="questionDto.authorId",target="id")
     @Mapping(source="questionDto.title",target="title")
-//    @Mapping(source="questionDto.description",target="description")
+    @Mapping(source="questionDto.description",target="description")
     @Mapping(source="questionDto.authorName",target="user.fullName")
     @Mapping(source="questionDto.authorImage",target="user.imageLink")
     @Mapping(source="questionDto.viewCount",target="viewCount")
