@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
+import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 
 import io.swagger.annotations.*;
@@ -7,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @Validated
@@ -28,7 +31,7 @@ public class QuestionController {
     })
     public ResponseEntity<String> deleteQuestionById(@ApiParam(name = "id") @PathVariable Long id) {
         if (Boolean.TRUE.equals(questionService.existsById(id))) {
-            questionService.deleteById(id);
+            questionService.delete(questionService.getById(id).get());
             return ResponseEntity.ok("Question was deleted");
         } else {
             return ResponseEntity.badRequest().body("Wrong ID");
