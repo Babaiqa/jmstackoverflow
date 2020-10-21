@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
@@ -38,6 +39,7 @@ public class AnswerVote {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Answer answer;
 
+    @CreationTimestamp
     @Column(name = "persist_date", updatable = false)
     @Type(type = "org.hibernate.type.LocalDateTimeType")
     private LocalDateTime persistDateTime;
