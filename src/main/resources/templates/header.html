@@ -1,25 +1,30 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="../static/css/header.css">
+
+    <div th:insert="~{fragment/generalFragments.html :: styleheader}"></div>
 </head>
+
 
 <body>
 
-<header class="tool-bar">
-    <div class="container">
-        <a href="/" class="logo">LOGO</a>
-        <nav>
-            <ul>
-                <input type="text" name="Search" size="40" placeholder="Search"/>
-                <input type="button" value="Log in" class="btn"/>
-                <input type="button" value="Sign up" class="btn warning"/>
-            </ul>
-        </nav>
-    </div>
-</header>
+
+    <nav class="navbar navbar-expand-sm  navbar-dark bg-dark text-white">
+        <div class="collapse navbar-collapse "  id=upNavBar>
+            <a href="/" class="logo mr22">LOGO</a>
+        </div>
+
+        <input class="form-control mr-sm-2 w-25 p-3"  type="search" placeholder="Search" aria-label="Search">
+        <input type="button" class="btn btn-primary" value="Log in" />
+        <input type="button" class="btn btn-primary ml-2" value="Sign up"/>
+    </nav>
+
+
+
+<div th:insert="~{fragment/generalFragments.html :: scriptfooter}"></div>
 
 </body>
 </html>
+
+
+
