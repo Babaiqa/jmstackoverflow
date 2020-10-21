@@ -27,17 +27,16 @@ public interface QuestionConverter {
 
 
 
-    @Mapping(source="questionDto.id",target="id")
-    @Mapping(source="questionDto.authorId",target="user.setId()")
+//    @Mapping(source="questionDto.id",target="id")
+    @Mapping(source="questionDto.authorId",target="id")
     @Mapping(source="questionDto.title",target="title")
-    @Mapping(source="questionDto.description",target="description")
-    @Mapping(source="questionDto.user.getUserName()",target="authorName")
-    @Mapping(source="questionDto.user.getImageLink()",target="authorImage")
+//    @Mapping(source="questionDto.description",target="description")
+    @Mapping(source="questionDto.authorName",target="user.fullName")
+    @Mapping(source="questionDto.authorImage",target="user.imageLink")
     @Mapping(source="questionDto.viewCount",target="viewCount")
-    @Mapping(source="questionDto.tags",target="listTagDto")
+    @Mapping(source="questionDto.listTagDto",target="tags")
     @Mapping(source="questionDto.persistDateTime",target="persistDateTime")
     @Mapping(source="questionDto.lastUpdateDateTime",target="lastUpdateDateTime")
-    @Mapping(source="questionDto.isDeleted",target="isHelpful")
 
 
     Question questionDtoToQuestion(QuestionDto questionDto);
