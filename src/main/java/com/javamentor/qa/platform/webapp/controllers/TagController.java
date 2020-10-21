@@ -23,7 +23,6 @@ public class TagController {
     private final TagDtoService tagDtoService;
 
     private final int MAX_ITEMS_ON_PAGE = 100;
-    private final String DEFAULT_VALUE_ITEMS_ON_PAGE="12";
 
     @Autowired
     public TagController(TagDtoService tagDtoService) {
@@ -34,24 +33,23 @@ public class TagController {
     @ApiOperation(value = "get page TagDto by popular. MAX SIZE ENTRIES ON PAGE=100", response = String.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the pagination List<TagDto> by popular", response = List.class),
-            @ApiResponse(code = 400, message = "Page not found", response = String.class)
     })
     public ResponseEntity<?> getTagDtoPaginationByPopular(
             @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "0")
             @RequestParam("page") int page,
-            @ApiParam(name = "size", value = "Number of entries per page.Type int. By default = "
-                    + DEFAULT_VALUE_ITEMS_ON_PAGE+" Максимальное количество записей на странице"+ MAX_ITEMS_ON_PAGE ,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице"+ MAX_ITEMS_ON_PAGE ,
                      example = "10")
-            @RequestParam(name="size", required = false, defaultValue = DEFAULT_VALUE_ITEMS_ON_PAGE) int size) {
+            @RequestParam("size") int size) {
 
         if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
             return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
-        PageDto<TagDto,?> resultPage = tagDtoService.getTagDtoPagination(page, size);
+        PageDto<TagDto,Object> resultPage = tagDtoService.getTagDtoPaginationByPopular(page, size);
 
-        return !resultPage.getItems().isEmpty() ? ResponseEntity.ok(resultPage)
-                : ResponseEntity.badRequest().body("Page not found");
+        return  ResponseEntity.ok(resultPage);
+
     }
 
 }

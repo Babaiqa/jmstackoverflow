@@ -19,7 +19,8 @@ public class TagDtoServiceImpl implements TagDtoService {
 
 
    @Override
-    public PageDto<TagDto,Object> getTagDtoPagination(int page, int size) {
+    public PageDto<TagDto,Object> getTagDtoPaginationByPopular(int page, int size) {
+
        PageDto<TagDto,Object> pageDto = new PageDto<>();
 
        int totalResultCount=tagDtoDAO.getTotalResultCountTagDto();

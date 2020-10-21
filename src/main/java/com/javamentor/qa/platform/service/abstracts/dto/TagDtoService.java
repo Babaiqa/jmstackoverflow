@@ -5,5 +5,5 @@ import com.javamentor.qa.platform.models.dto.TagDto;
 
 
 public interface TagDtoService {
-     PageDto<TagDto,Object> getTagDtoPagination(int page, int size);
+     PageDto<TagDto,Object> getTagDtoPaginationByPopular(int page, int size);
 }
