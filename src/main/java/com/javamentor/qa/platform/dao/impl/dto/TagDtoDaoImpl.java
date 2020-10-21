@@ -27,6 +27,17 @@ public class TagDtoDaoImpl implements TagDtoDao {
     }
 
     @Override
+    public List<TagDto> getTagDtoPaginationOrderByAlphabet(int page, int size) {
+
+        return entityManager.createQuery(
+                "select new com.javamentor.qa.platform.models.dto.TagDto(tag.id,tag.name)" +
+                        " from Tag  tag order by tag.name, tag.id ")
+                .setFirstResult(page*size-size)
+                .setMaxResults(size)
+                .getResultList();
+    }
+
+    @Override
     public int getTotalResultCountTagDto(){
         long totalResultCount= (long) entityManager.createQuery("select count(tag) from Tag tag").getSingleResult();
         return (int)totalResultCount;
