@@ -51,7 +51,7 @@ public abstract class ReadOnlyDaoImpl<E, K> {
                     .getActualTypeArguments()[0];
             Long count = (Long) entityManager.createQuery("select count(*) from" + clazz.getName() + " e WHERE e.id IN :ids")
                     .setParameter("ids", ids).getSingleResult();
-            return ids.size() == count ? true : false;
+            return ids.size() == count;
         }
         return false;
     }
