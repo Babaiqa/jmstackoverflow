@@ -9,13 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
-
-public class QuestionDtoService {
+public class QuestionDtoServiceImpl {
 
     private final QuestionDtoDao questionDtoDao;
 
     @Autowired
-    public QuestionDtoService(QuestionDtoDao questionDtoDao) {
+    public QuestionDtoServiceImpl(QuestionDtoDao questionDtoDao) {
         this.questionDtoDao = questionDtoDao;
     }
 
@@ -23,4 +22,5 @@ public class QuestionDtoService {
     public Optional<QuestionDto> getQuestionDtoById(Long id) {
         return questionDtoDao.getQuestionDtoById(id);
     }
+
 }
