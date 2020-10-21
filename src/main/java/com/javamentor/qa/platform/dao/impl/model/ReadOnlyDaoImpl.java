@@ -48,6 +48,13 @@ public abstract class ReadOnlyDaoImpl<E, K> {
     }
 
     public boolean existsByAllIds(Collection<K> ids) {
+        if (ids != null && ids.size() > 0) {
+            Class<E> clazz = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass())
+                    .getActualTypeArguments()[0];
+            Long count = (Long) entityManager.createQuery("select count(*) from" + clazz.getName() + " e WHERE e.id IN :ids")
+                    .setParameter("ids", ids).getSingleResult();
+            return ids.size() == count;
+        }
         return false;
     }
 }
