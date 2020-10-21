@@ -40,7 +40,7 @@ public class Tag implements Serializable {
     private LocalDateTime persistDateTime;
 
     @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
-    private transient List<Question> questions;
+    private  List<Question> questions;
 
     @PrePersist
     private void prePersistFunction() {
