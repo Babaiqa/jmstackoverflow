@@ -1,9 +1,8 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.QuestionDto;
-import com.javamentor.qa.platform.service.impl.dto.QuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import io.swagger.annotations.*;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +18,7 @@ import java.util.Optional;
 public class QuestionController {
 
     private final QuestionDtoService questionDtoService;
+
 
     public QuestionController(QuestionDtoService questionDtoService) {
         this.questionDtoService = questionDtoService;
