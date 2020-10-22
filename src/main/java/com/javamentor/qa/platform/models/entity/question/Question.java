@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.models.entity.question;
 import com.javamentor.qa.platform.exception.ConstrainException;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.entity.user.UserFavoriteQuestion;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -70,13 +71,17 @@ public class Question implements Serializable {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
-    @Transient
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "question", orphanRemoval = true)
     private List<Answer> answers;
 
-    @Transient
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "question", orphanRemoval = true)
     private List<CommentQuestion> commentQuestions;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "question", orphanRemoval = true)
+    private List<UserFavoriteQuestion> userFavoriteQuestions;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "question", orphanRemoval = true)
+    private List<VoteQuestion> voteQuestions;
 
     @PrePersist
     private void prePersistFunction() {

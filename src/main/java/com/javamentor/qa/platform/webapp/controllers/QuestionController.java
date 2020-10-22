@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
-import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.dto.QuestionDto;
+import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 
 import io.swagger.annotations.*;
@@ -17,10 +18,12 @@ import java.util.Optional;
 @Api(value = "QuestionApi")
 public class QuestionController {
     private QuestionService questionService;
+    private final QuestionDtoService questionDtoService;
 
     @Autowired
-    public QuestionController(QuestionService questionService) {
+    public QuestionController(QuestionService questionService, QuestionDtoService questionDtoService) {
         this.questionService = questionService;
+        this.questionDtoService = questionDtoService;
     }
 
     @DeleteMapping("/{id}/delete")
@@ -39,17 +42,23 @@ public class QuestionController {
     }
 
     @GetMapping("{id}")
-    @ApiOperation(value = "Return message(Object)", response = String.class)
+    @ApiOperation(value = "get QuestionDto", response = String.class)
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns the object.", response = String.class),
-            @ApiResponse(code = 400, message = "Wrong ID", response = String.class)
+            @ApiResponse(code = 200, message = "Returns the QuestionDto", response = QuestionDto.class),
+            @ApiResponse(code = 400, message = "Question not found", response = String.class)
     })
-    public ResponseEntity<String> getQuestionById(
-            @ApiParam(name = "id", value = "type Long(or other described)", required = true, example = "0")
+
+    public ResponseEntity<?> getQuestionById(
+            @ApiParam(name = "id", value = "type Long", required = true, example = "0")
             @PathVariable Long id) {
 
-        return id != null ? ResponseEntity.ok("Swagger work") :
-                ResponseEntity.badRequest()
-                        .body("Wrong ID");
+        Optional<QuestionDto> questionDto = questionDtoService.getQuestionDtoById(id);
+
+        return questionDto.isPresent() ? ResponseEntity.ok(questionDto.get()) :
+                ResponseEntity.badRequest().body("Question not found");
     }
 }
+
+
+
+
