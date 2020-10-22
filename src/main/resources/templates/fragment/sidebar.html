@@ -2,15 +2,14 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-
 </head>
 
 <body>
 
 
-
 <div th:fragment="sidebar">
                 <ul class="sidebar_ul">
+                    <p class="text md-5" th:href="@{/}">Home</p>
                     <p class="text mt-5">PUBLIC</p>
                     <li class="active">
                         <a data-toggle="collapse" aria-expanded="false" class="dropdown-toogle">Stack Overflow</a>
@@ -40,9 +39,7 @@
                     <li class="sidebar_li">
                         <a th:href="@{/}"> Contact</a>
                     </li>
-
                 </ul>
-            </div>
 </div>
 
 </body>
