@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+
+</head>
+
+<body>
+
+
+
+<div th:fragment="sidebar">
+                <ul class="sidebar_ul">
+                    <p class="text mt-5">PUBLIC</p>
+                    <li class="active">
+                        <a data-toggle="collapse" aria-expanded="false" class="dropdown-toogle">Stack Overflow</a>
+                        <ul class="sidebar_ul" id="homeSubMenu">
+                            <li class="sidebar_li">
+                                <a th:href="@{/}">Users</a>
+                            </li>
+                            <li class="sidebar_li">
+                                <a th:href="@{/}">Tags</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a data-toggle="collapse" aria-expanded="false" class="dropdown-toogle">Some text</a>
+                        <ul class="sidebar_ul" id="someSubMenu">
+                            <li class="sidebar_li">
+                                <a th:href="@{/}">Some text</a>
+                            </li>
+                            <li class="sidebar_li">
+                                <a th:href="@{/}">Some text</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="sidebar_li">
+                        <a th:href="@{/}"> About us</a>
+                    </li>
+                    <li class="sidebar_li">
+                        <a th:href="@{/}"> Contact</a>
+                    </li>
+
+                </ul>
+            </div>
+</div>
+
+</body>
+</html>

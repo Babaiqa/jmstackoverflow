@@ -1,7 +1,12 @@
-li {
-    list-style-type: none; /* Убираем маркеры */
+
+.sidebar_li {
+    list-style-type: none;
+    margin-top: 10px; /* Убираем маркеры */
 }
-ul {
-    margin-left: 1px; /* Отступ слева в браузере IE и Opera */
-    padding-left: 1px; /* Отступ слева в браузере Firefox, Safari, Chrome */
+
+.sidebar_ul {
+    margin-left: 6px; /* Отступ слева в браузере IE и Opera */
+    padding-left: 6px; /* Отступ слева в браузере Firefox, Safari, Chrome */
+    list-style-type: none;
 }
+
