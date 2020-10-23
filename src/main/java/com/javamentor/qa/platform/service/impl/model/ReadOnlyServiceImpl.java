@@ -31,9 +31,13 @@ public abstract class ReadOnlyServiceImpl<E, K>  {
         return readOnlyDao.getById(id);
     }
 
-    @Transactional
-    public Optional<E> getByEmail(String email) {
-        return readOnlyDao.getByEmail(email);
+
+    public Optional<E> getUserByEmail(String email) {
+        return readOnlyDao.getUserByEmail(email);
+    }
+
+    public Optional<E> getRoleByName(String name) {
+        return readOnlyDao.getRoleByName(name);
     }
 
     @Transactional

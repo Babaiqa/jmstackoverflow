@@ -34,18 +34,20 @@ public class TestDataInitService {
     final AnswerService answerService;
     final AnswerVoteService answerVoteService;
     final VoteQuestionService voteQuestionService;
+    final RoleService roleService;
 
     int numberOfUsers = 50;
     List<Tag> tagList = new ArrayList<>();
     Role USER_ROLE = Role.builder().name("USER").build();
     Role ADMIN_ROLE = Role.builder().name("ADMIN").build();
 
+
     public TestDataInitService(UserService userService, BadgeService badgeService, QuestionService questionService,
                                CommentService commentService, ReputationService reputationService, UserBadgesService userBadgesService,
                                TagService tagService, UserFavoriteQuestionService userFavoriteQuestionService,
                                RelatedTagService relatedTagService, CommentQuestionService commentQuestionService,
                                CommentAnswerService commentAnswerService, AnswerService answerService,
-                               AnswerVoteService answerVoteService, VoteQuestionService voteQuestionService) {
+                               AnswerVoteService answerVoteService, VoteQuestionService voteQuestionService, RoleService roleService) {
         this.userService = userService;
         this.badgeService = badgeService;
         this.questionService = questionService;
@@ -60,10 +62,13 @@ public class TestDataInitService {
         this.answerService = answerService;
         this.answerVoteService = answerVoteService;
         this.voteQuestionService = voteQuestionService;
+        this.roleService = roleService;
     }
 
 
     public void createTagEntity() {
+        roleService.persist(USER_ROLE);
+        roleService.persist(ADMIN_ROLE);
         for (int i = 0; i < numberOfUsers; i++) {
             Tag childTag = Tag.builder().name("Child").description("DescriptionChildTag").build();
             Tag tag = new Tag();

@@ -13,5 +13,5 @@ public class UserDto implements Serializable {
     private String email;
     private String fullName;
     private String linkImage;
-    private Long reputation;
+    private int reputation;
 }

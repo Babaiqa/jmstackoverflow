@@ -22,4 +22,5 @@ public class UserRegistrationDto  implements Serializable {
 
     @NotNull(groups = OnCreate.class, message = "Значение должно быть заполнено")
     public String password;
+
 }

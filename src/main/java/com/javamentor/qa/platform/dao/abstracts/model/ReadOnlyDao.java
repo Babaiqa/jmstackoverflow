@@ -13,5 +13,9 @@ public interface ReadOnlyDao<E, K> {
 
     List<E> getAllByIds(Iterable<K> ids);
 
+    Optional<E> getUserByEmail(String email);
+
     boolean existsByAllIds(Collection<K> ids);
+
+    Optional<E> getRoleByName(String name);
 }
