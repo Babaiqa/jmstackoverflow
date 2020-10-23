@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
+import com.javamentor.qa.platform.models.dto.TagListDto;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +73,7 @@ public class TagController {
             return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
-        PageDto<TagDto,Object> resultPage = tagDtoService.getTagDtoPaginationOrderByAlphabet(page, size);
+        PageDto<TagListDto,Object> resultPage = tagDtoService.getTagDtoPaginationOrderByAlphabet(page, size);
 
         return  ResponseEntity.ok(resultPage);
 

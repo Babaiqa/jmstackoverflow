@@ -13,7 +13,19 @@ public class TagListDto {
     long id;
     String name;
     String description;
-    int countQuestion;
-    int countQuestionToWeek;
-    int countQuestionToDay;
+    long countQuestion;
+    long countQuestionToWeek;
+    long countQuestionToDay;
+
+    @Override
+    public String toString() {
+        return "TagListDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", countQuestion=" + countQuestion +
+                ", countQuestionToWeek=" + countQuestionToWeek +
+                ", countQuestionToDay=" + countQuestionToDay +
+                '}';
+    }
 }
