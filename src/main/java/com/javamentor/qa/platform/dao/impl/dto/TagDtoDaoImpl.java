@@ -39,12 +39,14 @@ public class TagDtoDaoImpl implements TagDtoDao {
     @Override
     public List<TagListDto> getTagDtoPaginationOrderByAlphabet(int page, int size) {
 
+
         String qwery = "Select tag.id as id, tag.name as  name , tag.description as description," +
-                " (SELECT COUNT(question_has_tag.question_id) FROM question_has_tag WHERE question_has_tag.tag_id = tag.id) as countQuestion," +
-                " (SELECT COUNT(question_has_tag.question_id) FROM question_has_tag WHERE question_has_tag.tag_id = tag.id and tag.persist_date >= now() - interval '1 week')as countQuestionToWeek," +
-                " (SELECT COUNT(question_has_tag.question_id) FROM question_has_tag WHERE question_has_tag.tag_id = tag.id and tag.persist_date >= now() - interval '1 day')as countQuestionToDay" +
-                " from tag" +
+                " (SELECT COUNT(question_has_tag.question_id) FROM question_has_tag join question on question_has_tag.question_id=question.id WHERE question_has_tag.tag_id = tag.id) as countQuestion," +
+                " (SELECT COUNT(question_has_tag.question_id) FROM question_has_tag join question on question_has_tag.question_id=question.id WHERE question_has_tag.tag_id = tag.id and question.persist_date >= now() - interval '1 week')as countQuestionToWeek," +
+                " (SELECT COUNT(question_has_tag.question_id) FROM question_has_tag join question on question_has_tag.question_id=question.id WHERE question_has_tag.tag_id = tag.id and question.persist_date >= now() - interval '1 day')as countQuestionToDay" +
+                " from question_has_tag join question on question.id = question_has_tag.question_id join tag on tag.id =question_has_tag.tag_id" +
                 " GROUP BY tag.id";
+
 
 
 
