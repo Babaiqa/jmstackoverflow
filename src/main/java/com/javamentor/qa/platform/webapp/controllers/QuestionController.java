@@ -1,14 +1,16 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.QuestionDto;
+import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.Optional;
 
 @RestController
@@ -19,6 +21,9 @@ public class QuestionController {
 
     private final QuestionDtoService questionDtoService;
 
+    private QuestionConverter questionConverter;
+
+    private QuestionService questionService;
 
     public QuestionController(QuestionDtoService questionDtoService) {
         this.questionDtoService = questionDtoService;
@@ -39,5 +44,14 @@ public class QuestionController {
 
         return questionDto.isPresent()?ResponseEntity.ok(questionDto.get()):
                 ResponseEntity.badRequest().body("Question not found");
+    }
+
+    @GetMapping("add")
+    public Long addQuestion(@RequestParam Question question ) {
+//        Question question = new Question();
+//        question = questionConverter.questionDtoToQuestion(addQuestionDto);
+        questionService.persist(question);
+        System.out.println(question.getId());
+        return question.getId() ;
     }
 }
