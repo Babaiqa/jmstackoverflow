@@ -2,7 +2,9 @@ package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
+import com.javamentor.qa.platform.models.dto.TagListDto;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.TagListDtoService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +23,15 @@ import java.util.List;
 public class TagController {
 
     private final TagDtoService tagDtoService;
+    private final TagListDtoService tagListDtoService;
 
     private final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
-    public TagController(TagDtoService tagDtoService) {
+    public TagController(TagDtoService tagDtoService, TagListDtoService tagListDtoService) {
+
         this.tagDtoService = tagDtoService;
+        this.tagListDtoService = tagListDtoService;
     }
 
     @GetMapping("popular")
@@ -50,6 +55,14 @@ public class TagController {
 
         return  ResponseEntity.ok(resultPage);
 
+    }
+
+    @GetMapping(value = "new/order", params = {"page", "size"})
+    public ResponseEntity<PageDto<TagListDto, Object>> getTagListDtoPaginationOrderByNewTag(@RequestParam("page") int page,
+                                                                  @RequestParam("size") int size) {
+        PageDto<TagListDto, Object> pageDto = tagListDtoService.getTagListDtoPaginationOrderByNewTag(page, size);
+
+        return ResponseEntity.ok(pageDto);
     }
 
 }
