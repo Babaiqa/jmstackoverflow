@@ -23,7 +23,7 @@ public class QuestionController {
     @Autowired
     private final QuestionDtoService questionDtoService;
 
-    private QuestionConverterImpl questionConverterImpl = new QuestionConverterImpl();
+    private QuestionConverter questionConverter = new QuestionConverterImpl();
 
     @Autowired
     private QuestionService questionService;
@@ -49,34 +49,14 @@ public class QuestionController {
                 ResponseEntity.badRequest().body("Question not found");
     }
 
-//    @PostMapping("add")
-////    public void addQuestion(@RequestParam Question question ) {
-//    public void addQuestion(@RequestParam ("question") QuestionDto question) {
-////        Question question = new Question();
-////        question = questionConverter.questionDtoToQuestion(addQuestionDto);
-////        questionService.persist(question);
-////        System.out.println(question.getId());
-////        return question.getId() ;
-////        Optional<QuestionDto> questionDto = questionDtoService.getQuestionDtoById(694L);
-//        System.out.println(question);
-////        if (questionDto.isPresent()) {
-////            return ResponseEntity.ok(questionDto.get());
-////        } else {
-////            return ResponseEntity.badRequest().body("Question not found");
-////        }
-//    }
-
 
     @PostMapping("add")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public QuestionDto addQuestion(@RequestBody QuestionDto questionDto) {
-//    public QuestionDto addQuestion(@RequestBody String tx) {
-//        System.out.println(tx);
-        Question question = questionConverterImpl.questionDtoToQuestion(questionDto);
+        Question question = questionConverter.questionDtoToQuestion(questionDto);
         questionService.persist(question);
-        QuestionDto addQuestionDto = questionConverterImpl.questionToQuestionDto(question);
-        return addQuestionDto;
+        return  questionConverter.questionToQuestionDto(question);
     }
 
 
