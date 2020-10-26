@@ -29,7 +29,7 @@ public class TagDtoServiceImpl implements TagDtoService {
        pageDto.setTotalResultCount(totalResultCount);
        pageDto.setCurrentPageNumber(page);
        pageDto.setItemsOnPage(size);
-       pageDto.setTotalPageCount((int) Math.ceil(totalResultCount/size));
+       pageDto.setTotalPageCount((int) Math.ceil(totalResultCount/(double)size));
 
         return pageDto;
     }
