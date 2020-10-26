@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.dao.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
+import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.dto.TagRecentDto;
 import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,17 @@ public class TagDtoDaoImpl implements TagDtoDao {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Override
+    public List<TagDto> getTagDtoPagination(int page, int size) {
+
+        return entityManager.createQuery(
+                "select new com.javamentor.qa.platform.models.dto.TagDto(tag.id,tag.name)" +
+                        " from Tag  tag order by tag.questions.size desc, tag.id ")
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
+    }
 
     @Override
     public List<TagRecentDto> getTagRecentDtoPagination(int page, int size) {
