@@ -7,15 +7,12 @@ import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.javamentor.qa.platform.webapp.converters.abstracts.TagMapper;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -27,7 +24,6 @@ import java.util.Optional;
 @RequestMapping("/api/question/")
 @Api(value = "QuestionApi")
 public class QuestionController {
-    private QuestionService questionService;
 
     private final QuestionService questionService;
     private final TagMapper tagMapper;
@@ -35,8 +31,7 @@ public class QuestionController {
     private final QuestionDtoService questionDtoService;
 
     @Autowired
-    public QuestionController(QuestionService questionService, QuestionDtoService questionDtoService) {
-        this.questionService = questionService;
+
     public QuestionController(QuestionService questionService, TagMapper tagMapper, TagService tagService,
                               QuestionDtoService questionDtoService) {
         this.questionService = questionService;
