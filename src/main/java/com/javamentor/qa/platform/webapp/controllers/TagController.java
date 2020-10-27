@@ -24,6 +24,7 @@ public class TagController {
     private final TagDtoService tagDtoService;
 
     private final int MAX_ITEMS_ON_PAGE = 100;
+    private final String NOT_FOUND = "Not Found";
 
     @Autowired
     public TagController(TagDtoService tagDtoService) {
@@ -73,7 +74,7 @@ public class TagController {
         }
         PageDto<TagRecentDto, Object> resultPage = tagDtoService.getTagRecentDtoPagination(page, size);
         if (resultPage.getItems().isEmpty()) {
-            return ResponseEntity.status(404).body("Not Found");
+            return ResponseEntity.status(404).body(NOT_FOUND);
         }
 
         return ResponseEntity.ok(resultPage);

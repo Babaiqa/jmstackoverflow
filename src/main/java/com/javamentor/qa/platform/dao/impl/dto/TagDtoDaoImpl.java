@@ -29,13 +29,12 @@ public class TagDtoDaoImpl implements TagDtoDao {
 
     @Override
     public List<TagRecentDto> getTagRecentDtoPagination(int page, int size) {
-        return entityManager.createNativeQuery(
-                "SELECT id, name, coalesce(COUNT(tag_id), 0) AS countTagToQuestion " +
-                        "FROM tag " +
-                        "LEFT JOIN question_has_tag ON tag.id = question_has_tag.tag_id " +
-                        "WHERE persist_date >= date(now() - interval '1 month') AND persist_date <= date(now()) " +
-                        "GROUP BY id " +
-                        "ORDER BY countTagToQuestion desc")
+        return entityManager.createQuery("" +
+                "SELECT t.id AS id, t.name AS name, count(q.id) as countTagToQuestion " +
+                "FROM Tag AS t, Question AS q " +
+                "WHERE t.persistDateTime >= current_date() - 30 AND t.persistDateTime <= CURRENT_DATE() " +
+                "GROUP BY id " +
+                "ORDER BY countTagToQuestion DESC")
                 .setFirstResult(page * size - size)
                 .setMaxResults(size)
                 .unwrap(org.hibernate.query.Query.class)
