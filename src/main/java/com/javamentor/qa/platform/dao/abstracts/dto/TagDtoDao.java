@@ -9,5 +9,5 @@ public interface TagDtoDao {
     List<TagDto> getTagDtoPagination(int page, int size);
     List<TagListDto> getTagDtoPaginationOrderByAlphabet(int page, int size);
 
-    public int getTotalResultCountTagDto();
+     int getTotalResultCountTagDto();
 }
