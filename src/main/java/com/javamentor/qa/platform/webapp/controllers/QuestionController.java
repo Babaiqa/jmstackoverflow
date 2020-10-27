@@ -6,8 +6,8 @@ import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
-import com.javamentor.qa.platform.webapp.converters.QuestionConverterImpl;
 import io.swagger.annotations.*;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ public class QuestionController {
     private QuestionService questionService;
     private final QuestionDtoService questionDtoService;
 
-    private QuestionConverter questionConverter = new QuestionConverterImpl();
+    private QuestionConverter questionConverter =  Mappers.getMapper(QuestionConverter.class);
 
     @Autowired
     public QuestionController(QuestionService questionService, QuestionDtoService questionDtoService) {
