@@ -1,11 +1,15 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.QuestionDto;
+import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 
+import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
+import com.javamentor.qa.platform.webapp.converters.QuestionConverterImpl;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +23,8 @@ import java.util.Optional;
 public class QuestionController {
     private QuestionService questionService;
     private final QuestionDtoService questionDtoService;
+
+    private QuestionConverter questionConverter = new QuestionConverterImpl();
 
     @Autowired
     public QuestionController(QuestionService questionService, QuestionDtoService questionDtoService) {
@@ -57,6 +63,16 @@ public class QuestionController {
         return questionDto.isPresent() ? ResponseEntity.ok(questionDto.get()) :
                 ResponseEntity.badRequest().body("Question not found");
     }
+
+    @PostMapping("add")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    public QuestionDto addQuestion(@RequestBody QuestionDto questionDto) {
+        Question question = questionConverter.questionDtoToQuestion(questionDto);
+        questionService.persist(question);
+        return  questionConverter.questionToQuestionDto(question);
+    }
+
 }
 
 
