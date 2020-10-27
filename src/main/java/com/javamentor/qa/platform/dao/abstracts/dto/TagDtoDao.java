@@ -9,6 +9,7 @@ import java.util.Optional;
 public interface TagDtoDao {
     List<TagDto> getTagDtoPagination(int page, int size);
 
+     int getTotalResultCountTagDto();
     int getTotalResultCountTagDto();
 
 }
