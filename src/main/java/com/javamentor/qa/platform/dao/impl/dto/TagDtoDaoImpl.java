@@ -36,9 +36,4 @@ public class TagDtoDaoImpl implements TagDtoDao {
         return (int)totalResultCount;
     }
 
-//    @Override
-//    public Optional<Tag> getTagByName(String name) {
-//        return (Optional<Tag>) entityManager.unwrap(Session.class).createQuery("SELECT tag FROM Tag tag WHERE tag.name = :name")
-//                .setParameter("name", name).uniqueResultOptional();
-//    }
 }

@@ -62,7 +62,6 @@ public class QuestionController {
             @ApiResponse(code = 400, message = "Question not found",response = String.class)
     })
     public ResponseEntity<?> setTagForQuestion(
-            //@RequestBody List<TagDto> tagDto, @PathVariable Long QuestionId )
             @ApiParam(name = "QuestionId", value = "type Long", required = true, example = "0")
             @PathVariable Long QuestionId,
             @ApiParam(name = "tagDto", value = "type List<TagDto>", required = true)
@@ -78,19 +77,8 @@ public class QuestionController {
         if (!question.isPresent()){
             return ResponseEntity.badRequest().body("Question not found");
         }
-        List<Tag> listTagQuestion = Collections.emptyList();
-        for (Tag tag : listTag) {
-            Optional <Tag> tagFromDB = tagService.getTagByName(tag.getName());
-            if (!tagFromDB.isPresent()) {
-                tag.setDescription("new "+ tag.getName());
-                tagService.persist(tag);
-            }
-            else {tag = tagFromDB.get();}
+        tagService.addTagToQuestion(listTag,question.get());
 
-            listTagQuestion = question.get().getTags();
-            if (!listTagQuestion.contains(tag)) listTagQuestion.add(tag);
-            question.get().setTags(listTagQuestion);
-        }
         return  ResponseEntity.ok().body("Tags were added");
     }
 
