@@ -4,7 +4,6 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.dto.TagListDto;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.TagListDtoService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,15 +22,13 @@ import java.util.List;
 public class TagController {
 
     private final TagDtoService tagDtoService;
-    private final TagListDtoService tagListDtoService;
 
     private final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
-    public TagController(TagDtoService tagDtoService, TagListDtoService tagListDtoService) {
+    public TagController(TagDtoService tagDtoService) {
 
         this.tagDtoService = tagDtoService;
-        this.tagListDtoService = tagListDtoService;
     }
 
     @GetMapping("popular")
@@ -74,7 +71,7 @@ public class TagController {
                     "Max number of items per page " + MAX_ITEMS_ON_PAGE);
         }
 
-        PageDto<TagListDto, Object> pageDto = tagListDtoService.getTagListDtoPaginationOrderByNewTag(page, size);
+        PageDto<TagListDto, Object> pageDto = tagDtoService.getTagListDtoPaginationOrderByNewTag(page, size);
 
         if (pageDto.getItems().isEmpty()) {
             return ResponseEntity.status(404).body("Not Found");

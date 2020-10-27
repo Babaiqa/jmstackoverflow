@@ -19,9 +19,8 @@ public class TagListDto implements Serializable {
     private int countQuestionToWeek;
     private int countQuestionToDay;
 
-    public TagListDto(Long id, String name, String description) {
+    public TagListDto(Long id, String name) {
         this.id = id;
         this.name = name;
-        this.description = description;
     }
 }
