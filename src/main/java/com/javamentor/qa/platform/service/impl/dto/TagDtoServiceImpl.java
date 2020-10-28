@@ -41,13 +41,12 @@ public class TagDtoServiceImpl implements TagDtoService {
         PageDto<TagListDto,Object> pagelistDto = new PageDto<>();
 
         int totalResultCount=tagDtoDAO.getTotalResultCountTagDto();
-        //tagDtoDAO.getTagDtoPaginationOrderByAlphabet(1, 100).stream().forEach(x -> System.out.println(x));
 
         pagelistDto.setItems(tagDtoDAO.getTagDtoPaginationOrderByAlphabet(page, size));
         pagelistDto.setTotalResultCount(totalResultCount);
         pagelistDto.setCurrentPageNumber(page);
         pagelistDto.setItemsOnPage(size);
-        pagelistDto.setTotalPageCount((int) Math.ceil(totalResultCount/size));
+        pagelistDto.setTotalPageCount((int) Math.ceil(totalResultCount/(double)size));
 
         return pagelistDto;
     }
