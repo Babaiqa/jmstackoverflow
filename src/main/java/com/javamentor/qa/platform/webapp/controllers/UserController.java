@@ -36,7 +36,7 @@ public class UserController {
     @GetMapping("{id}")
     @ApiOperation(value = "Return message(Object)", response = String.class)
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns the object.", response = String.class),
+            @ApiResponse(code = 200, message = "Returns the object.", response = UserDto.class),
             @ApiResponse(code = 400, message = "Wrong ID",response = String.class)
     })
     public  ResponseEntity<?> getUserById(

@@ -67,8 +67,6 @@ public class TestDataInitService {
 
 
     public void createTagEntity() {
-//        roleService.persist(USER_ROLE);
-//        roleService.persist(ADMIN_ROLE);
         for (int i = 0; i < numberOfUsers; i++) {
             Tag childTag = Tag.builder().name("Child").description("DescriptionChildTag").build();
             Tag tag = new Tag();

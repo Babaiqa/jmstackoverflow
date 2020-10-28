@@ -10,6 +10,9 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.persistence.EntityNotFoundException;
+import java.util.Optional;
+
 @Mapper(componentModel = "spring")
 public abstract  class UserDtoToUserConverter {
     @Autowired
@@ -22,6 +25,10 @@ public abstract  class UserDtoToUserConverter {
 
     @Named("roleName")
     public Role roleName(String role) {
-        return roleService.getRoleByName(role).orElse(new Role(1L, role));
+        Optional<Role> rol = roleService.getRoleByName(role);
+        if (! rol.isPresent()) {
+            throw new EntityNotFoundException("Role USER not found");
+        }
+        return rol.get();
     }
 }
