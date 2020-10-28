@@ -11,22 +11,21 @@ import org.springframework.stereotype.Service;
 @Service
 public class TagDtoServiceImpl implements TagDtoService {
 
-    private final TagDtoDao tagDtoDAO;
+    private TagDtoDao tagDtoDao;
 
     @Autowired
     public TagDtoServiceImpl(TagDtoDao tagDtoDao) {
-        this.tagDtoDAO = tagDtoDao;
+        this.tagDtoDao = tagDtoDao;
     }
-
 
     @Override
     public PageDto<TagDto, Object> getTagDtoPaginationByPopular(int page, int size) {
 
         PageDto<TagDto, Object> pageDto = new PageDto<>();
 
-        int totalResultCount = tagDtoDAO.getTotalResultCountTagDto();
+        int totalResultCount = tagDtoDao.getTotalResultCountTagDto();
 
-        pageDto.setItems(tagDtoDAO.getTagDtoPagination(page, size));
+        pageDto.setItems(tagDtoDao.getTagDtoPagination(page, size));
         pageDto.setTotalResultCount(totalResultCount);
         pageDto.setCurrentPageNumber(page);
         pageDto.setItemsOnPage(size);
@@ -34,15 +33,16 @@ public class TagDtoServiceImpl implements TagDtoService {
 
         return pageDto;
     }
+
 
     @Override
     public PageDto<TagListDto, Object> getTagListDtoByPopularPagination(int page, int size) {
 
         PageDto<TagListDto, Object> pageDto = new PageDto<>();
 
-        int totalResultCount = tagDtoDAO.getTotalResultCountTagDto();
+        int totalResultCount = tagDtoDao.getTotalResultCountTagDto();
 
-        pageDto.setItems(tagDtoDAO.getTagListDtoByPopularPagination(page, size));
+        pageDto.setItems(tagDtoDao.getTagListDtoByPopularPagination(page, size));
         pageDto.setTotalResultCount(totalResultCount);
         pageDto.setCurrentPageNumber(page);
         pageDto.setItemsOnPage(size);
@@ -50,6 +50,5 @@ public class TagDtoServiceImpl implements TagDtoService {
 
         return pageDto;
     }
-
 
 }
