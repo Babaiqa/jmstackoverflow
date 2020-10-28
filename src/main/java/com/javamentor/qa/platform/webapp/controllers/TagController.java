@@ -23,8 +23,7 @@ public class TagController {
 
     private final TagDtoService tagDtoService;
 
-    private final int MAX_ITEMS_ON_PAGE = 100;
-    private final String NOT_FOUND = "Not Found";
+    private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
     public TagController(TagDtoService tagDtoService) {
@@ -54,16 +53,19 @@ public class TagController {
 
     }
 
-    @GetMapping("order/popular")
-    @ApiOperation(value = "get page TagListDto by popular. MAX SIZE ENTRIES ON PAGE=100", response = String.class)
+
+
+
+    @GetMapping("alphabet/order")
+    @ApiOperation(value = "get page TagDto by alphabet. MAX SIZE ENTRIES ON PAGE=100", response = String.class)
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns the pagination List<TagListDto> by popular", response = List.class),
+            @ApiResponse(code = 200, message = "Returns the pagination List<TagDto> by alphabet", response = List.class),
     })
-    public ResponseEntity<?> getTagListDtoByPopularPagination(
+    public ResponseEntity<?> getTagDtoPaginationOrderByAlphabet(
             @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "0")
             @RequestParam("page") int page,
             @ApiParam(name = "size", value = "Number of entries per page.Type int." +
-                    " Максимальное количество записей на странице" + MAX_ITEMS_ON_PAGE,
+                    " Максимальное количество записей на странице"+ MAX_ITEMS_ON_PAGE ,
                     example = "10")
             @RequestParam("size") int size) {
 
@@ -71,14 +73,10 @@ public class TagController {
             return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
-        PageDto<TagListDto, Object> resultPage = tagDtoService.getTagListDtoByPopularPagination(page, size);
-        if (resultPage.getItems().isEmpty()) {
-            return ResponseEntity.status(404).body(NOT_FOUND);
-        }
+        PageDto<TagListDto,Object> resultPage = tagDtoService.getTagDtoPaginationOrderByAlphabet(page, size);
 
-        return ResponseEntity.ok(resultPage);
+        return  ResponseEntity.ok(resultPage);
 
     }
-
 
 }
