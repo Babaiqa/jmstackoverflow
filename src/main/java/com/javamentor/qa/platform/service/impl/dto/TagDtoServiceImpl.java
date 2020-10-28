@@ -19,18 +19,18 @@ public class TagDtoServiceImpl implements TagDtoService {
     }
 
 
-   @Override
-    public PageDto<TagDto,Object> getTagDtoPaginationByPopular(int page, int size) {
+    @Override
+    public PageDto<TagDto, Object> getTagDtoPaginationByPopular(int page, int size) {
 
-       PageDto<TagDto,Object> pageDto = new PageDto<>();
+        PageDto<TagDto, Object> pageDto = new PageDto<>();
 
-       int totalResultCount=tagDtoDAO.getTotalResultCountTagDto();
+        int totalResultCount = tagDtoDAO.getTotalResultCountTagDto();
 
-       pageDto.setItems(tagDtoDAO.getTagDtoPagination(page, size));
-       pageDto.setTotalResultCount(totalResultCount);
-       pageDto.setCurrentPageNumber(page);
-       pageDto.setItemsOnPage(size);
-       pageDto.setTotalPageCount((int) Math.ceil(totalResultCount/(double)size));
+        pageDto.setItems(tagDtoDAO.getTagDtoPagination(page, size));
+        pageDto.setTotalResultCount(totalResultCount);
+        pageDto.setCurrentPageNumber(page);
+        pageDto.setItemsOnPage(size);
+        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount / (double) size));
 
         return pageDto;
     }
@@ -46,7 +46,7 @@ public class TagDtoServiceImpl implements TagDtoService {
         pageDto.setTotalResultCount(totalResultCount);
         pageDto.setCurrentPageNumber(page);
         pageDto.setItemsOnPage(size);
-        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount / size));
+        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount / (double) size));
 
         return pageDto;
     }
