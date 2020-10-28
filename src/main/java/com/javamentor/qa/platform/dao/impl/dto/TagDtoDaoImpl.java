@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -30,11 +31,14 @@ public class TagDtoDaoImpl implements TagDtoDao {
     @Override
     public List<TagRecentDto> getTagRecentDtoPagination(int page, int size) {
         return entityManager.createQuery("" +
-                "SELECT t.id AS id, t.name AS name, count(q.id) as countTagToQuestion " +
-                "FROM Tag AS t, Question AS q " +
-                "WHERE t.persistDateTime >= current_date() - 30 AND t.persistDateTime <= CURRENT_DATE() " +
+                "SELECT t.id AS id, t.name AS name, count(q.id) AS countTagToQuestion " +
+                "FROM Tag AS t " +
+                "LEFT JOIN t.questions AS q " +
+                "WHERE q.persistDateTime BETWEEN :start AND :end " +
                 "GROUP BY id " +
                 "ORDER BY countTagToQuestion DESC")
+                .setParameter("start", LocalDateTime.now().minusMonths(1))
+                .setParameter("end", LocalDateTime.now())
                 .setFirstResult(page * size - size)
                 .setMaxResults(size)
                 .unwrap(org.hibernate.query.Query.class)
