@@ -6,6 +6,8 @@ import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserDtoServiceImpl implements UserDtoService {
 
@@ -17,7 +19,7 @@ public class UserDtoServiceImpl implements UserDtoService {
     }
 
     @Override
-    public UserDto getUserDtoById(long id) {
+    public Optional<UserDto> getUserDtoById(long id) {
         return userDtoDao.getUserById(id);
     }
 }

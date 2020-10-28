@@ -67,8 +67,8 @@ public class TestDataInitService {
 
 
     public void createTagEntity() {
-        roleService.persist(USER_ROLE);
-        roleService.persist(ADMIN_ROLE);
+//        roleService.persist(USER_ROLE);
+//        roleService.persist(ADMIN_ROLE);
         for (int i = 0; i < numberOfUsers; i++) {
             Tag childTag = Tag.builder().name("Child").description("DescriptionChildTag").build();
             Tag tag = new Tag();
@@ -89,6 +89,8 @@ public class TestDataInitService {
     @Transactional
     public void createEntity() {
         createTagEntity();
+        roleService.persist(USER_ROLE);
+        roleService.persist(ADMIN_ROLE);
         for (int i = 0; i < numberOfUsers; i++) {
             User user = new User();
             user.setEmail("ivanov@mail.com" + i);
