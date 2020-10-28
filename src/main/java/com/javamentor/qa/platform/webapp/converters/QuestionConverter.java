@@ -4,7 +4,7 @@ import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import org.mapstruct.*;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public abstract class QuestionConverter {
 
     @Mapping(source = "question.id", target = "id")

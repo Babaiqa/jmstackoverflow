@@ -24,7 +24,8 @@ public class QuestionController {
     private QuestionService questionService;
     private final QuestionDtoService questionDtoService;
 
-    private QuestionConverter questionConverter =  Mappers.getMapper(QuestionConverter.class);
+    @Autowired
+    private QuestionConverter questionConverter ;
 
     @Autowired
     public QuestionController(QuestionService questionService, QuestionDtoService questionDtoService) {
