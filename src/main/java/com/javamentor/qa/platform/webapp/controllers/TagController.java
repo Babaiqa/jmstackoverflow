@@ -23,7 +23,7 @@ public class TagController {
 
     private final TagDtoService tagDtoService;
 
-    private final int MAX_ITEMS_ON_PAGE = 100;
+    private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
     public TagController(TagDtoService tagDtoService) {
