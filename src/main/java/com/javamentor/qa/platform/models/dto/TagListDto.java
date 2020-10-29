@@ -17,6 +17,12 @@ public class TagListDto {
     long countQuestionToWeek;
     long countQuestionToDay;
 
+
+    public TagListDto(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     @Override
     public String toString() {
         return "TagListDto{" +
