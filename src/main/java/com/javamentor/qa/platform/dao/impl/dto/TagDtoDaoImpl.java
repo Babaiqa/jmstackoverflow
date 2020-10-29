@@ -65,10 +65,10 @@ public class TagDtoDaoImpl implements TagDtoDao {
     @Override
     public List<TagRecentDto> getTagRecentDtoPagination(int page, int size) {
         return entityManager.createQuery("" +
-                "SELECT t.id AS id, t.name AS name, COUNT(q.id) AS countTagToQuestion " +
+                "SELECT t.id AS id, t.name AS name, " +
+                "(SELECT COUNT(q.id) FROM t.questions AS q WHERE q.persistDateTime BETWEEN :start AND :end ) AS countTagToQuestion " +
                 "FROM Tag AS t " +
-                "LEFT JOIN t.questions AS q " +
-                "WHERE q.persistDateTime BETWEEN :start AND :end " +
+                "LEFT JOIN t.questions AS questions " +
                 "GROUP BY id " +
                 "ORDER BY countTagToQuestion DESC")
                 .setParameter("start", LocalDateTime.now().minusMonths(1))
