@@ -29,9 +29,11 @@ public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
         entityManager.remove(e);
     }
 
+
     public void deleteById(K id) {
         Class<E> clazz = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass())
                 .getActualTypeArguments()[0];
+        System.out.println(clazz.getName());
         String hql = "DELETE " + clazz.getName() + " WHERE id = :id";
         entityManager.createQuery(hql).setParameter("id", id).executeUpdate();
     }
