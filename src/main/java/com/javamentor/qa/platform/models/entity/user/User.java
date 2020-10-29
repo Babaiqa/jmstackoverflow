@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
+@ToString
 @Entity
 @Getter
 @Setter
@@ -82,7 +83,7 @@ public class User implements UserDetails {
     @UpdateTimestamp
     private LocalDateTime lastUpdateDateTime;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Role.class, cascade = {CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Role.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "role_id", nullable = false)
     @NonNull
     private Role role;
