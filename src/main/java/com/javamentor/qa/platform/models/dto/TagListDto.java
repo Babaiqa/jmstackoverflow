@@ -5,22 +5,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serializable;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TagListDto implements Serializable {
-    private Long id;
-    private String name;
-    private String description;
-    private int countQuestion;
-    private int countQuestionToWeek;
-    private int countQuestionToDay;
+public class TagListDto {
+    long id;
+    String name;
+    String description;
+    long countQuestion;
+    long countQuestionToWeek;
+    long countQuestionToDay;
 
-    public TagListDto(Long id, String name) {
-        this.id = id;
-        this.name = name;
+    @Override
+    public String toString() {
+        return "TagListDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", countQuestion=" + countQuestion +
+                ", countQuestionToWeek=" + countQuestionToWeek +
+                ", countQuestionToDay=" + countQuestionToDay +
+                '}';
     }
 }

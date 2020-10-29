@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface TagDtoDao {
     List<TagDto> getTagDtoPagination(int page, int size);
-    List<TagListDto> getTagListDtoPaginationOrderByNewTag(int page, int size);
-    int getTotalResultCountTagDto();
+    List<TagListDto> getTagDtoPaginationOrderByAlphabet(int page, int size);
+
+     int getTotalResultCountTagDto();
 }

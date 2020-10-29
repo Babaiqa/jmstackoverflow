@@ -3,11 +3,16 @@ package com.javamentor.qa.platform.dao.impl.dto;
 import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.dto.TagListDto;
+import org.hibernate.Session;
+import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
+
+import java.util.*;
+import java.time.LocalDateTime;
+
 
 @Repository
 public class TagDtoDaoImpl implements TagDtoDao {
@@ -28,14 +33,32 @@ public class TagDtoDaoImpl implements TagDtoDao {
     }
 
     @Override
-    public List<TagListDto> getTagListDtoPaginationOrderByNewTag(int page, int size) {
+    public List<TagListDto> getTagDtoPaginationOrderByAlphabet(int page, int size) {
 
-        return entityManager.createQuery("select new " +
-                "com.javamentor.qa.platform.models.dto.TagListDto(tag.id,tag.name) " +
-                "from Tag tag order by tag.persistDateTime")
+        String query = "Select t.id as id, t.name as name, t.description as description," +
+                " count(q.id) as countquestion," +
+                " (select count(q.id) from t.questions q where q.persistDateTime between :stDate1 AND :edDate1 or t.questions.size = 0) as countquestiontoweek," +
+                " (select count(q.id) from t.questions q where q.persistDateTime between :stDate2 AND :edDate2 or t.questions.size = 0) as countquestiontoday" +
+                " from Tag t left join t.questions  q" +
+                " where q.persistDateTime between :stDate1 AND :edDate1" +
+                " or t.questions.size = 0" +
+                " group by t.id" +
+                " order by t.name";
+
+        LocalDateTime timeNow = LocalDateTime.now();
+
+        return entityManager.unwrap(Session.class)
+                .createQuery(query)
+                .setParameter("stDate1", timeNow.minusDays(7))
+                .setParameter("edDate1", timeNow)
+                .setParameter("stDate2", timeNow.minusDays(1))
+                .setParameter("edDate2", timeNow)
+                .unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE)
                 .setFirstResult(page*size-size)
                 .setMaxResults(size)
                 .getResultList();
+
     }
 
     @Override
@@ -43,5 +66,4 @@ public class TagDtoDaoImpl implements TagDtoDao {
         long totalResultCount= (long) entityManager.createQuery("select count(tag) from Tag tag").getSingleResult();
         return (int)totalResultCount;
     }
-
 }
