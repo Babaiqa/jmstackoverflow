@@ -34,6 +34,15 @@ public class TagServiceImpl extends ReadWriteServiceImpl<Tag, Long> implements T
     @Override
     public void addTagToQuestion(List<Tag> listOfTags, Question question) {
         for(Tag tag : listOfTags){
+            if(!(tag.getId()==null)) {
+                String name = tag.getName();
+                tag= Tag.builder().name(name).description(tag.getDescription()).build();
+
+            }
+            if(tag.getName()==null) {
+                tag.setName("Unknown tag "+ tag.getDescription());
+
+            }
             if(!getTagByName(tag.getName()).isPresent()) {
                 tag.setDescription(tag.getName());
                 tagDao.persist(tag);
