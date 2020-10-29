@@ -96,9 +96,6 @@ public class TagController {
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
         PageDto<TagListDto, Object> resultPage = tagDtoService.getTagListDtoByPopularPagination(page, size);
-        if (resultPage.getItems().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not Found");
-        }
 
         return ResponseEntity.ok(resultPage);
 
