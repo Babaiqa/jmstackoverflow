@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.models.dto.TagListDto;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,9 +57,6 @@ public class TagController {
 
     @GetMapping("new/order")
     @ApiOperation(value = "Get page TagListDto by new tags. MAX SIZE ENTRIES ON PAGE = 100", response = String.class)
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Return the pagination List<TagListDto> ordered by new tags", response = List.class)
-    })
     public ResponseEntity<?> getTagListDtoPaginationOrderByNewTag(
             @ApiParam(name = "page", value = "Number page. Type int.", required = true, example = "1")
             @RequestParam("page") int page,
@@ -74,7 +72,7 @@ public class TagController {
         PageDto<TagListDto, Object> pageDto = tagDtoService.getTagListDtoPaginationOrderByNewTag(page, size);
 
         if (pageDto.getItems().isEmpty()) {
-            return ResponseEntity.status(404).body("Not Found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not found");
         }
 
         return ResponseEntity.ok(pageDto);
