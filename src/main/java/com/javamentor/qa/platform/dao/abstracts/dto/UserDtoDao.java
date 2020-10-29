@@ -9,5 +9,7 @@ import java.util.Optional;
 public interface UserDtoDao {
     Optional<UserDto> getUserById(long id);
 
-    List<UserDtoList> getPageUserDtoListByReputationOverPeriod();
+    List<UserDtoList> getPageUserDtoListByReputationOverPeriod(int page, int size);
+
+    public int getTotalResultCountUsers();
 }
