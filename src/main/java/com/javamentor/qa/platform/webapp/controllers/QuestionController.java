@@ -63,7 +63,6 @@ public class QuestionController {
     }
 
     @GetMapping(
-            value = "/api/question",
             params = {"page", "size"}
     )
     @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)", response = String.class)
@@ -75,7 +74,7 @@ public class QuestionController {
             @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
             @RequestParam("page") int page,
             @ApiParam(name = "size", value = "Number of entries per page.Type int." +
-                    " Максимальное количество записей на странице" + MAX_ITEMS_ON_PAGE,
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
                     example = "10")
             @RequestParam("size") int size) {
 
