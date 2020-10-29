@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
+import com.javamentor.qa.platform.models.dto.TagListDto;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class TagController {
 
     private final TagDtoService tagDtoService;
 
-    private final int MAX_ITEMS_ON_PAGE = 100;
+    private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
     public TagController(TagDtoService tagDtoService) {
@@ -47,6 +48,32 @@ public class TagController {
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
         PageDto<TagDto,Object> resultPage = tagDtoService.getTagDtoPaginationByPopular(page, size);
+
+        return  ResponseEntity.ok(resultPage);
+
+    }
+
+
+
+
+    @GetMapping("alphabet/order")
+    @ApiOperation(value = "get page TagDto by alphabet. MAX SIZE ENTRIES ON PAGE=100", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination List<TagDto> by alphabet", response = List.class),
+    })
+    public ResponseEntity<?> getTagDtoPaginationOrderByAlphabet(
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "0")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице"+ MAX_ITEMS_ON_PAGE ,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+        PageDto<TagListDto,Object> resultPage = tagDtoService.getTagDtoPaginationOrderByAlphabet(page, size);
 
         return  ResponseEntity.ok(resultPage);
 

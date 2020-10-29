@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public abstract class ReadOnlyServiceImpl<E, K> {
+public abstract class ReadOnlyServiceImpl<E, K>  {
 
     private final ReadOnlyDao<E, K> readOnlyDao;
 
