@@ -4,9 +4,12 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.dto.TagListDto;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -79,9 +82,9 @@ public class TagController {
     }
 
     @GetMapping("order/popular")
-    @ApiOperation(value = "get page TagListDto by popular. MAX SIZE ENTRIES ON PAGE=100", response = String.class)
+    @ApiOperation(value = "get page TagListDto by popular. MAX SIZE ENTRIES ON PAGE=100")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns the pagination List<TagListDto> by popular", response = List.class),
+            @ApiResponse(code = 200, message = "Returns the pagination List<TagListDto> by popular"),
     })
     public ResponseEntity<?> getTagListDtoByPopularPagination(
             @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "0")

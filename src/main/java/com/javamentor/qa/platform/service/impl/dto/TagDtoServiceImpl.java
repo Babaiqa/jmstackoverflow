@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TagDtoServiceImpl implements TagDtoService {
 
-    private TagDtoDao tagDtoDao;
+    private final TagDtoDao tagDtoDao;
 
     @Autowired
     public TagDtoServiceImpl(TagDtoDao tagDtoDao) {
