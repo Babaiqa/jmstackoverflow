@@ -23,6 +23,23 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
     private EntityManager entityManager;
 
     //Запрос возвращает List QUESTIONDTO
+//    final String QUERY_QUESTIONDTO = "select question.id as question_id, " +
+//            " question.title as question_title," +
+//            "u.fullName as question_authorName," +
+//            " u.id as question_authorId, " +
+//            "u.imageLink as question_authorImage," +
+//            "question.description as question_description," +
+//            " question.viewCount as question_viewCount," +
+//            "(select count(a.question.id) from Answer a where a.question.id=:id) as question_countAnswer," +
+//            "(select count(v.question.id) from VoteQuestion v where v.question.id=:id) as question_countValuable," +
+//            "question.persistDateTime as question_persistDateTime," +
+//            "question.lastUpdateDateTime as question_lastUpdateDateTime, " +
+//
+//            " tag.id as tag_id,tag.name as tag_name " +
+//            "from Question question  " +
+//            "INNER JOIN  question.user u" +
+//            "  join question.tags tag";
+
     final String QUERY_QUESTIONDTO = "select question.id as question_id, " +
             " question.title as question_title," +
             "u.fullName as question_authorName," +
@@ -56,7 +73,18 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
     @Transactional
     public List<QuestionDto> getPagination(int page, int size) {
         List<Question> qList = entityManager.createQuery("from Question ")
-                .setFirstResult(page*size-size)
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
+
+        return updateQuestionDtoWithTags(qList.stream().map(Question::getId).collect(Collectors.toList()));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Transactional
+    public List<QuestionDto> getPaginationPopular(int page, int size) {
+        List<Question> qList = entityManager.createQuery("select q from Question q order by q.viewCount desc")
+                .setFirstResult(page * size - size)
                 .setMaxResults(size)
                 .getResultList();
 
@@ -65,7 +93,8 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
 
     private List<QuestionDto> updateQuestionDtoWithTags(List<Long> ids) {
         List<QuestionDto> resultList = (List<QuestionDto>) entityManager.unwrap(Session.class)
-                .createQuery(QUERY_QUESTIONDTO.replace("=:id", "=question_id") + " where question_id IN :ids")
+                .createQuery(QUERY_QUESTIONDTO.replace("=:id", "=question_id") +
+                        " where question_id IN :ids order by question.viewCount desc")
                 .setParameter("ids", ids)
                 .unwrap(Query.class)
                 .setResultTransformer(new QuestionResultTransformer())
