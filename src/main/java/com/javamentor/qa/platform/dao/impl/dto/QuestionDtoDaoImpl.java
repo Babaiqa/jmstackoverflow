@@ -23,23 +23,6 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
     private EntityManager entityManager;
 
     //Запрос возвращает List QUESTIONDTO
-//    final String QUERY_QUESTIONDTO = "select question.id as question_id, " +
-//            " question.title as question_title," +
-//            "u.fullName as question_authorName," +
-//            " u.id as question_authorId, " +
-//            "u.imageLink as question_authorImage," +
-//            "question.description as question_description," +
-//            " question.viewCount as question_viewCount," +
-//            "(select count(a.question.id) from Answer a where a.question.id=:id) as question_countAnswer," +
-//            "(select count(v.question.id) from VoteQuestion v where v.question.id=:id) as question_countValuable," +
-//            "question.persistDateTime as question_persistDateTime," +
-//            "question.lastUpdateDateTime as question_lastUpdateDateTime, " +
-//
-//            " tag.id as tag_id,tag.name as tag_name " +
-//            "from Question question  " +
-//            "INNER JOIN  question.user u" +
-//            "  join question.tags tag";
-
     final String QUERY_QUESTIONDTO = "select question.id as question_id, " +
             " question.title as question_title," +
             "u.fullName as question_authorName," +
