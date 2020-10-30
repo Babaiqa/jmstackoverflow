@@ -26,7 +26,6 @@ public class QuestionDtoServiceImpl implements QuestionDtoService {
         return questionDtoDao.getQuestionDtoById(id);
     }
 
-    @SuppressWarnings("unchecked")
     public PageDto<QuestionDto, Object> getPagination(int page, int size) {
         int totalResultCount = questionDtoDao.getTotalResultCountQuestionDto();
 

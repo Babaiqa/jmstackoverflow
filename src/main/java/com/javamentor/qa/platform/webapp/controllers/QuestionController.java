@@ -4,14 +4,21 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -19,10 +26,11 @@ import java.util.Optional;
 @RequestMapping("/api/question/")
 @Api(value = "QuestionApi")
 public class QuestionController {
-    private QuestionService questionService;
+
+    private final QuestionService questionService;
     private final QuestionDtoService questionDtoService;
 
-    private final int MAX_ITEMS_ON_PAGE = 100;
+    private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
     public QuestionController(QuestionService questionService, QuestionDtoService questionDtoService) {
@@ -65,9 +73,9 @@ public class QuestionController {
     @GetMapping(
             params = {"page", "size"}
     )
-    @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)", response = String.class)
+    @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDto>", response = List.class),
+            @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDto>"),
     })
     public ResponseEntity<?> findPagination(
 
