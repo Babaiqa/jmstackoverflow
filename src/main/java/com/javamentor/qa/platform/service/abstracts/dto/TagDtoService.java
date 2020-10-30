@@ -11,5 +11,7 @@ public interface TagDtoService {
 
     PageDto<TagListDto, Object> getTagDtoPaginationOrderByAlphabet(int page, int size);
 
+    PageDto<TagListDto, Object> getTagListDtoByPopularPagination(int page, int size);
+
     PageDto<TagRecentDto, Object> getTagRecentDtoPagination(int page, int size);
 }
