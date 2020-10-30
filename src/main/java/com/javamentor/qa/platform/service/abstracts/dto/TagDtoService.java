@@ -6,6 +6,9 @@ import com.javamentor.qa.platform.models.dto.TagListDto;
 
 
 public interface TagDtoService {
-     PageDto<TagDto,Object> getTagDtoPaginationByPopular(int page, int size);
-     PageDto<TagListDto,Object> getTagDtoPaginationOrderByAlphabet(int page, int size);
+    PageDto<TagDto, Object> getTagDtoPaginationByPopular(int page, int size);
+
+    PageDto<TagListDto, Object> getTagDtoPaginationOrderByAlphabet(int page, int size);
+
+    PageDto<TagListDto, Object> getTagListDtoByPopularPagination(int page, int size);
 }
