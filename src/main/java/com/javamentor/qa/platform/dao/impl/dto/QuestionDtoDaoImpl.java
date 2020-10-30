@@ -3,14 +3,18 @@ package com.javamentor.qa.platform.dao.impl.dto;
 import com.javamentor.qa.platform.dao.abstracts.dto.QuestionDtoDao;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
+import com.javamentor.qa.platform.models.entity.question.Question;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public class QuestionDtoDaoImpl implements QuestionDtoDao {
@@ -19,7 +23,7 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
     private EntityManager entityManager;
 
     //Запрос возвращает List QUESTIONDTO
-    final String QUERY_QUESTIONDTO ="select question.id as question_id, " +
+    final String QUERY_QUESTIONDTO = "select question.id as question_id, " +
             " question.title as question_title," +
             "u.fullName as question_authorName," +
             " u.id as question_authorId, " +
@@ -38,76 +42,106 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
 
 
     @Override
-    public  Optional<QuestionDto> getQuestionDtoById(Long id) {
+    public Optional<QuestionDto> getQuestionDtoById(Long id) {
 
         return (Optional<QuestionDto>) entityManager.unwrap(Session.class)
-                .createQuery(QUERY_QUESTIONDTO+" where question.id=:id")
+                .createQuery(QUERY_QUESTIONDTO + " where question.id=:id")
                 .setParameter("id", id)
                 .unwrap(org.hibernate.query.Query.class)
-                .setResultTransformer(new ResultTransformer() {
-                    private Map<Long, QuestionDto> questionDtoMap = new LinkedHashMap<>();
+                .setResultTransformer(new QuestionResultTransformer())
+                .uniqueResultOptional();
+    }
 
-                                @Override
-                                public Object transformTuple(Object[] tuple, String[] aliases) {
+    @SuppressWarnings("unchecked")
+    @Transactional
+    public List<QuestionDto> getPagination(int page, int size) {
+        List<Question> qList = entityManager.createQuery("from Question ")
+                .setFirstResult(page*size-size)
+                .setMaxResults(size)
+                .getResultList();
 
-                                    Map<String,Integer> aliasToIndexMap= aliasToIndexMap(aliases);
-                                    Long questionId=((Number) tuple[0]).longValue();
+        return updateQuestionDtoWithTags(qList.stream().map(Question::getId).collect(Collectors.toList()));
+    }
 
-                                    QuestionDto questionDto1 = questionDtoMap.computeIfAbsent(
-                                            questionId,
-                                            id1 -> {
-                                                QuestionDto questionDtoTemp = new QuestionDto();
-                                                questionDtoTemp.setId(((Number) tuple[aliasToIndexMap.get("question_id")]).longValue());
-                                                questionDtoTemp.setTitle(((String) tuple[aliasToIndexMap.get("question_title")]));
+    private List<QuestionDto> updateQuestionDtoWithTags(List<Long> ids) {
+        List<QuestionDto> resultList = (List<QuestionDto>) entityManager.unwrap(Session.class)
+                .createQuery(QUERY_QUESTIONDTO.replace("=:id", "=question_id") + " where question_id IN :ids")
+                .setParameter("ids", ids)
+                .unwrap(Query.class)
+                .setResultTransformer(new QuestionResultTransformer())
+                .getResultList();
 
-                                                questionDtoTemp.setAuthorName(((String) tuple[aliasToIndexMap.get("question_authorName")]));
-                                                questionDtoTemp.setAuthorId(((Number) tuple[aliasToIndexMap.get("question_authorId")]).longValue());
-                                                questionDtoTemp.setAuthorImage(((String) tuple[aliasToIndexMap.get("question_authorImage")]));
+        return resultList;
+    }
 
-                                                questionDtoTemp.setDescription(((String) tuple[aliasToIndexMap.get("question_description")]));
+    @Override
+    public int getTotalResultCountQuestionDto() {
+        long totalResultCount = (long) entityManager.createQuery("select count(*) from Question").getSingleResult();
+        return (int) totalResultCount;
+    }
 
-                                                questionDtoTemp.setViewCount(((Number) tuple[aliasToIndexMap.get("question_viewCount")]).intValue());
-                                                questionDtoTemp.setCountAnswer(((Number) tuple[aliasToIndexMap.get("question_countAnswer")]).intValue());
-                                                questionDtoTemp.setCountValuable(((Number) tuple[aliasToIndexMap.get("question_countValuable")]).intValue());
+    private class QuestionResultTransformer implements ResultTransformer {
 
-                                                questionDtoTemp.setPersistDateTime((LocalDateTime) tuple[aliasToIndexMap.get("question_persistDateTime")]);
-                                                questionDtoTemp.setLastUpdateDateTime((LocalDateTime) tuple[aliasToIndexMap.get("question_lastUpdateDateTime")]);
-                                                questionDtoTemp.setListTagDto(new ArrayList<>());
-                                                return questionDtoTemp;
-                                            }
-                                    );
+        private Map<Long, QuestionDto> questionDtoMap = new LinkedHashMap<>();
+
+        @Override
+        public Object transformTuple(Object[] tuple, String[] aliases) {
+
+            Map<String, Integer> aliasToIndexMap = aliasToIndexMap(aliases);
+            Long questionId = ((Number) tuple[0]).longValue();
+
+            QuestionDto questionDto = questionDtoMap.computeIfAbsent(
+                    questionId,
+                    id1 -> {
+                        QuestionDto questionDtoTemp = new QuestionDto();
+                        questionDtoTemp.setId(((Number) tuple[aliasToIndexMap.get("question_id")]).longValue());
+                        questionDtoTemp.setTitle(((String) tuple[aliasToIndexMap.get("question_title")]));
+
+                        questionDtoTemp.setAuthorName(((String) tuple[aliasToIndexMap.get("question_authorName")]));
+                        questionDtoTemp.setAuthorId(((Number) tuple[aliasToIndexMap.get("question_authorId")]).longValue());
+                        questionDtoTemp.setAuthorImage(((String) tuple[aliasToIndexMap.get("question_authorImage")]));
+
+                        questionDtoTemp.setDescription(((String) tuple[aliasToIndexMap.get("question_description")]));
+
+                        questionDtoTemp.setViewCount(((Number) tuple[aliasToIndexMap.get("question_viewCount")]).intValue());
+                        questionDtoTemp.setCountAnswer(((Number) tuple[aliasToIndexMap.get("question_countAnswer")]).intValue());
+                        questionDtoTemp.setCountValuable(((Number) tuple[aliasToIndexMap.get("question_countValuable")]).intValue());
+
+                        questionDtoTemp.setPersistDateTime((LocalDateTime) tuple[aliasToIndexMap.get("question_persistDateTime")]);
+                        questionDtoTemp.setLastUpdateDateTime((LocalDateTime) tuple[aliasToIndexMap.get("question_lastUpdateDateTime")]);
+                        questionDtoTemp.setListTagDto(new ArrayList<>());
+                        return questionDtoTemp;
+                    }
+            );
+
+            questionDto.getListTagDto().add(
+                    new TagDto(
+                            ((Number) tuple[aliasToIndexMap.get("tag_id")]).longValue(),
+                            ((String) tuple[aliasToIndexMap.get("tag_name")])
+                    )
+            );
+
+            return questionDto;
+        }
 
 
-                                    questionDto1.getListTagDto().add(
-                                            new TagDto(
-                                                    ((Number) tuple[aliasToIndexMap.get("tag_id")]).longValue(),
-                                                    ((String) tuple[aliasToIndexMap.get("tag_name")])
-                                            )
-                                    );
-
-                                    return questionDto1;
-                                }
+        @Override
+        public List transformList(List list) {
+            return new ArrayList<>(questionDtoMap.values());
+        }
 
 
-                                @Override
-                                public List transformList(List list) {
-                                    return new ArrayList<>(questionDtoMap.values());
-                                }
+        public Map<String, Integer> aliasToIndexMap(
+                String[] aliases) {
 
+            Map<String, Integer> aliasToIndexMap = new LinkedHashMap<>();
 
-                                public  Map<String, Integer> aliasToIndexMap(
-                                        String[] aliases) {
+            for (int i = 0; i < aliases.length; i++) {
+                aliasToIndexMap.put(aliases[i], i);
+            }
 
-                                    Map<String, Integer> aliasToIndexMap = new LinkedHashMap<>();
-
-                                    for (int i = 0; i < aliases.length; i++) {
-                                        aliasToIndexMap.put(aliases[i], i);
-                                    }
-
-                                    return aliasToIndexMap;
-                                }
-                            })
-                            .uniqueResultOptional();
+            return aliasToIndexMap;
+        }
     }
 
 }
