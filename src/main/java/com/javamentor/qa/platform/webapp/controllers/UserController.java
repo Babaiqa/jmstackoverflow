@@ -86,7 +86,7 @@ public class UserController {
             return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
-        PageDto<UserDtoList,Object> resultPage = userDtoService.getPageUserDtoListByReputationOverPeriod(page, size);
+        PageDto<UserDtoList,Object> resultPage = userDtoService.getPageUserDtoListByReputationOverWeek(page, size);
 
         return  ResponseEntity.ok(resultPage);
     }

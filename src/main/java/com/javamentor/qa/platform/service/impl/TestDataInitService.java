@@ -13,6 +13,7 @@ import lombok.Data;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,8 +37,12 @@ public class TestDataInitService {
     final VoteQuestionService voteQuestionService;
     final RoleService roleService;
 
-    int numberOfUsers = 50;
+    int numberOfUsers = 15;
+    int numberTagsOfQuestion =4;
+
+
     List<Tag> tagList = new ArrayList<>();
+    List<Question> questionList = new ArrayList<>();
     Role USER_ROLE = Role.builder().name("USER").build();
     Role ADMIN_ROLE = Role.builder().name("ADMIN").build();
 
@@ -84,6 +89,9 @@ public class TestDataInitService {
         }
     }
 
+
+
+
     @Transactional
     public void createEntity() {
         createTagEntity();
@@ -91,6 +99,7 @@ public class TestDataInitService {
         roleService.persist(ADMIN_ROLE);
         for (int i = 0; i < numberOfUsers; i++) {
             User user = new User();
+
             user.setEmail("ivanov@mail.com" + i);
             user.setPassword("password" + i);
             user.setFullName("Ivanov Ivan" + i);
@@ -102,55 +111,77 @@ public class TestDataInitService {
             user.setLinkVk("http://vk.com");
             user.setAbout("very good man");
             user.setImageLink("https://www.google.com/search?q=%D0%");
-            user.setReputationCount(1);
+
             if (i == 0) user.setRole(ADMIN_ROLE);
             else user.setRole(USER_ROLE);
             userService.persist(user);
 
+
             Reputation reputation = new Reputation();
             reputation.setUser(user);
-            reputation.setCount(1);
+            reputation.setCount(i);
             reputationService.persist(reputation);
 
-            Question question = new Question();
-            question.setTitle("Question Title" + i);
-            question.setViewCount(0);
-            question.setDescription("Question Description" + i);
-            question.setUser(user);
-            question.setTags(tagList);
-            question.setIsDeleted(false);
-            questionService.persist(question);
 
-            UserFavoriteQuestion userFavoriteQuestion = new UserFavoriteQuestion();
-            userFavoriteQuestion.setUser(user);
-            userFavoriteQuestion.setQuestion(question);
-            userFavoriteQuestionService.persist(userFavoriteQuestion);
+            for (int j = 0; j < i; j++) {
+                Question question = new Question();
+                question.setTitle("Question Title" + i);
+                question.setViewCount(0);
+                question.setDescription("Question Description" + i);
+                question.setUser(user);
 
-            VoteQuestion voteQuestion = new VoteQuestion();
-            voteQuestion.setUser(user);
-            voteQuestion.setQuestion(question);
-            voteQuestion.setVote(1);
-            voteQuestionService.persist(voteQuestion);
+                List tagsQuestion = new ArrayList();
+                for (int k = 0; k < numberTagsOfQuestion; k++) {
+                    Tag tag = tagList.get((int) (Math.random() * (numberOfUsers)));
+                    if (!tagsQuestion.contains(tag)) {
+                        tagsQuestion.add(tag);
+                    }
+                }
 
-            Answer answer = new Answer();
-            answer.setUser(user);
-            answer.setQuestion(question);
-            answer.setHtmlBody("<HtmlBody>" + i);
-            answer.setIsHelpful(true);
-            answer.setIsDeleted(false);
-            answerService.persist(answer);
+                question.setTags(tagsQuestion);
+                question.setIsDeleted(false);
+                questionService.persist(question);
 
-            CommentQuestion commentQuestion = new CommentQuestion();
-            commentQuestion.setQuestion(question);
-            commentQuestion.setComment(Comment.builder().text("Comment Text" + i)
-                    .user(user).commentType(CommentType.QUESTION).build());
-            commentQuestionService.persist(commentQuestion);
+                UserFavoriteQuestion userFavoriteQuestion = new UserFavoriteQuestion();
+                userFavoriteQuestion.setUser(user);
+                userFavoriteQuestion.setQuestion(question);
+                userFavoriteQuestionService.persist(userFavoriteQuestion);
 
-            CommentAnswer commentAnswer = new CommentAnswer();
-            commentAnswer.setAnswer(answer);
-            commentAnswer.setComment(Comment.builder().text("Comment Text" + i)
-                    .user(user).commentType(CommentType.ANSWER).build());
-            commentAnswerService.persist(commentAnswer);
+                for (int k = 0; k < j; k++) {
+                    Answer answer = new Answer();
+                    answer.setUser(user);
+                    answer.setQuestion(question);
+                    answer.setHtmlBody("<HtmlBody>" + i);
+                    answer.setIsHelpful(true);
+                    answer.setIsDeleted(false);
+                    answerService.persist(answer);
+
+                        CommentQuestion commentQuestion = new CommentQuestion();
+                        commentQuestion.setQuestion(question);
+                        commentQuestion.setComment(Comment.builder().text("Comment Text" + i)
+                                .user(user).commentType(CommentType.QUESTION).build());
+                        commentQuestionService.persist(commentQuestion);
+
+                        CommentAnswer commentAnswer = new CommentAnswer();
+                        commentAnswer.setAnswer(answer);
+                        commentAnswer.setComment(Comment.builder().text("Comment Text" + i)
+                                .user(user).commentType(CommentType.ANSWER).build());
+                        commentAnswerService.persist(commentAnswer);
+
+                            AnswerVote answerVote = new AnswerVote();
+                            answerVote.setUser(user);
+                            answerVote.setAnswer(answer);
+                            answerVote.setVote(1);
+                            answerVoteService.persist(answerVote);
+
+                            VoteQuestion voteQuestion = new VoteQuestion();
+                            voteQuestion.setUser(user);
+                            voteQuestion.setQuestion(question);
+                            voteQuestion.setVote(1);
+                            voteQuestionService.persist(voteQuestion);
+                }
+            }
+
 
             Badge badge = new Badge();
             badge.setBadgeName("Super Badge" + i);
@@ -163,12 +194,6 @@ public class TestDataInitService {
             userBadges.setUser(user);
             userBadges.setBadge(badge);
             userBadgesService.persist(userBadges);
-
-            AnswerVote answerVote = new AnswerVote();
-            answerVote.setUser(user);
-            answerVote.setAnswer(answer);
-            answerVote.setVote(1);
-            answerVoteService.persist(answerVote);
         }
     }
 }

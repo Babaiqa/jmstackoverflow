@@ -26,17 +26,17 @@ public class UserDtoDaoImpl implements UserDtoDao {
                     "t.name as tag_name," +
 
                     "(select count(tA.id) from Answer ae join ae.question.tags tA where ae.user.id=u.id and " +
-                    " tA.id=t.id  and  current_date()-7<ae.persistDateTime) as tags_User_Answers," +
+                    " tA.id=t.id  and  current_date()-:quantityOfDay<date(ae.persistDateTime)) as tags_User_Answers," +
                     "(select count(tQ.id) from Question qe join qe.tags tQ where qe.user.id=u.id and tQ.id=t.id and " +
-                    " current_date()-7<qe.persistDateTime) as tags_User_Questions " +
+                    " current_date()-:quantityOfDay<date(qe.persistDateTime)) as tags_User_Questions " +
 
                     "from User u,Tag t left join Reputation r on u.id=r.user.id " +
                     "where " +
                     "(exists(select a from Answer a where a.user.id=u.id and t in elements(a.question.tags) " +
-                    "and  current_date()-7<a.persistDateTime ) " +
+                    "and  current_date()-:quantityOfDay<date(a.persistDateTime)) " +
                     "or " +
                     "exists(select q from Question q where q.user.id=u.id and t in elements(q.tags) and " +
-                    " current_date()-7<q.persistDateTime )) " +
+                    " current_date()-:quantityOfDay<date(q.persistDateTime) )) " +
                     "and u.id in(:ids)  " +
                     "group by u.id,t.id order by user_reputation  desc NULLS LAST,u.id";
 
@@ -59,10 +59,11 @@ public class UserDtoDaoImpl implements UserDtoDao {
     }
 
     @Override
-    public List<UserDtoList> getPageUserDtoListByReputationOverPeriod(int page, int size) {
+    public List<UserDtoList> getPageUserDtoListByReputationOverPeriod(int page, int size, int quantityOfDay) {
         List<Long> usersIdsPage = getUsersIdsPage(page, size);
         return entityManager.unwrap(Session.class)
                 .createQuery(QUERY_USERDTOLIST_BY_REPUTATION)
+                .setParameter("quantityOfDay",quantityOfDay)
                 .setParameterList("ids", usersIdsPage)
                 .unwrap(org.hibernate.query.Query.class)
                 .setResultTransformer(new userDtoListTranformer())
@@ -89,7 +90,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
     class userDtoListTranformer implements ResultTransformer {
         Long prevUserId = -1L;
-        boolean flag = false;
+        boolean flagFirstUser = true;
         private Map<Long, UserDtoList> questionDtoMap = new LinkedHashMap<>();
         Map<TagDto, Integer> mapTags = new HashMap<>();
 
@@ -112,7 +113,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
             );
 
 
-            if (!prevUserId.equals(userId) && flag) {
+            if (!prevUserId.equals(userId) && !flagFirstUser) {
                 mapTagsDtoToSortedListTagsDto(prevUserId);
             }
 
@@ -127,7 +128,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
             );
 
             prevUserId = userId;
-            flag = true;
+            flagFirstUser = false;
             return userDtoList;
         }
 
