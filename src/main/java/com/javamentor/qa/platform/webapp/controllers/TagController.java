@@ -104,5 +104,31 @@ public class TagController {
 
     }
 
+    @GetMapping(value = "name", params = {"page", "size", "name"})
+    @ApiOperation(value = "get page TagListDto with search by tag name. MAX SIZE ENTRIES ON PAGE=100", response = PageDto.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination PageDto<TagListDto> with search by tag name", response = PageDto.class),
+    })
+    public ResponseEntity<?> getTagName(
+            @ApiParam(name = "page", value = "Number Page. Type int",
+                    example = "10")
+            @RequestParam("page") int page,
+            @ApiParam(name = "name", value = "Incomplete tag name",
+                    example = "tag")
+            @RequestParam("name") String tagName,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Maximum number of records per page -"+ MAX_ITEMS_ON_PAGE ,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("The page number and size must be positive. " +
+                    "Maximum number of records per page " + MAX_ITEMS_ON_PAGE);
+        }
+
+        return ResponseEntity.ok(tagDtoService.getTagDtoPaginationWithSearch(page, size, tagName));
+    }
+
+
 
 }

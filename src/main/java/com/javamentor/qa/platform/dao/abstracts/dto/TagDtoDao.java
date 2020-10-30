@@ -13,4 +13,8 @@ public interface TagDtoDao {
     List<TagListDto> getTagListDtoByPopularPagination(int page, int size);
 
     public int getTotalResultCountTagDto();
+
+    List<TagListDto> getTagListDtoPagination(int page, int size, String tagName);
+
+    int getTotalCountTag(String tagName);
 }
