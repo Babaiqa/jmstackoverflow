@@ -1,13 +1,15 @@
 package com.javamentor.qa.platform.service.impl.model;
 
+import com.javamentor.qa.platform.dao.abstracts.model.QuestionDao;
 import com.javamentor.qa.platform.dao.abstracts.model.TagDao;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,13 +18,13 @@ import java.util.Optional;
 public class TagServiceImpl extends ReadWriteServiceImpl<Tag, Long> implements TagService {
 
     @Autowired
-    TagDao tagDao;
+    private TagDao tagDao;
 
-    @Autowired
-    QuestionService questionService;
+    final private QuestionDao questionDao;
 
-    public TagServiceImpl(TagDao tagDao) {
+    public TagServiceImpl(TagDao tagDao, QuestionDao questionDao) {
         super(tagDao);
+        this.questionDao = questionDao;
     }
 
     @Override
@@ -34,27 +36,31 @@ public class TagServiceImpl extends ReadWriteServiceImpl<Tag, Long> implements T
     @Override
     public void addTagToQuestion(List<Tag> listOfTags, Question question) {
         for(Tag tag : listOfTags){
-            if(!(tag.getId()==null)) {
-                String name = tag.getName();
-                tag= Tag.builder().name(name).description(tag.getDescription()).build();
+            if(tag.getId()!=null) {
+                tag= Tag.builder().name(tag.getName()).description(tag.getDescription()).build();
 
             }
             if(tag.getName()==null) {
-                tag.setName("Unknown tag "+ tag.getDescription());
-
+                throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE ,
+                        "поле тэга name не может быть  null", new Exception("name can't be null"));
             }
-            if(!getTagByName(tag.getName()).isPresent()) {
+
+            Optional<Tag> tagOptional = getTagByName(tag.getName());
+
+            if(!tagOptional.isPresent()) {
                 tag.setDescription(tag.getName());
                 tagDao.persist(tag);
             }
             else {
-                tag = getTagByName(tag.getName()).get();
+                tag = tagOptional.get();
             }
-            List<Tag> listTagQuestion= questionService.getAllTagOfQuestion(question);
+
+            List<Tag> listTagQuestion= questionDao.getAllTagOfQuestion(question);
             if(!listTagQuestion.contains(tag)) {
                 listTagQuestion.add(tag);
             }
             question.setTags(listTagQuestion);
         }
+
     }
 }
