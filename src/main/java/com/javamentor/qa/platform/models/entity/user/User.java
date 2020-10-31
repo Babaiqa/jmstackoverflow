@@ -39,11 +39,11 @@ public class User implements UserDetails {
     private Long id;
 
     @Column
-    @NonNull
+//    @NonNull
     private String email;
 
     @Column
-    @NonNull
+//    @NonNull
     private String password;
 
     @Column
@@ -85,7 +85,7 @@ public class User implements UserDetails {
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Role.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "role_id", nullable = false)
-    @NonNull
+//    @NonNull
     private Role role;
 
     @Override
