@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserDtoList;
+import netscape.security.UserTarget;
 import org.hibernate.Session;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
@@ -12,33 +13,30 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.security.PrivateKey;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
 public class UserDtoDaoImpl implements UserDtoDao {
 
+    private final int sizeListTagDto = 3;
 
-    private final String QUERY_USERDTOLIST_BY_REPUTATION =
-            " select u.id as user_id," +
-                    "sum(r.count) as user_reputation," +
-                    "t.id as tag_id," +
-                    "t.name as tag_name," +
 
-                    "(select count(tA.id) from Answer ae join ae.question.tags tA where ae.user.id=u.id and " +
-                    " tA.id=t.id  and  current_date()-:quantityOfDay<date(ae.persistDateTime)) as tags_User_Answers," +
-                    "(select count(tQ.id) from Question qe join qe.tags tQ where qe.user.id=u.id and tQ.id=t.id and " +
-                    " current_date()-:quantityOfDay<date(qe.persistDateTime)) as tags_User_Questions " +
+    final String QUERY_USER_TAGS_ANSWERS = "select u.id as user_id, tA.id as tag_id,tA.name as tag_name, count(tA.id) as count_Tag" +
+            " from User u  left join Answer a  on a.user.id=u.id join a.question.tags tA  where u.id in (:ids) " +
+            "group by u.id,tA.id order by count_Tag,u.id";
 
-                    "from User u,Tag t left join Reputation r on u.id=r.user.id " +
-                    "where " +
-                    "(exists(select a from Answer a where a.user.id=u.id and t in elements(a.question.tags) " +
-                    "and  current_date()-:quantityOfDay<date(a.persistDateTime)) " +
-                    "or " +
-                    "exists(select q from Question q where q.user.id=u.id and t in elements(q.tags) and " +
-                    " current_date()-:quantityOfDay<date(q.persistDateTime) )) " +
-                    "and u.id in(:ids)  " +
-                    "group by u.id,t.id order by user_reputation  desc NULLS LAST,u.id";
+
+    final String QUERY_USERDTOLIST_WITHOUT_TAG = "select new com.javamentor.qa.platform.models.dto.UserDtoList" +
+            "(u.id,u.fullName, u.imageLink, sum(r.count)) from User u left join Reputation r on r.user.id=u.id" +
+            " group by u.id order by sum(r.count) desc NULLS LAST,u.id";
+
+
+    final String QUERY_USER_TAGS_QUESTIONS =
+            "select u.id as user_id, tQ.id as tag_id,tQ.name as tag_name, count(tQ.id) as count_Tag" +
+                    " from User u    left join Question q on q.user.id=u.id join q.tags tQ  where u.id in (:ids) " +
+                    "group by u.id,tQ.id order by count_Tag,u.id desc";
 
 
     @PersistenceContext
@@ -60,14 +58,22 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
     @Override
     public List<UserDtoList> getPageUserDtoListByReputationOverPeriod(int page, int size, int quantityOfDay) {
-        List<Long> usersIdsPage = getUsersIdsPage(page, size);
-        return entityManager.unwrap(Session.class)
-                .createQuery(QUERY_USERDTOLIST_BY_REPUTATION)
-                .setParameter("quantityOfDay",quantityOfDay)
-                .setParameterList("ids", usersIdsPage)
+
+        List<UserDtoList> userDtoLists = entityManager.unwrap(Session.class)
+                .createQuery(QUERY_USERDTOLIST_WITHOUT_TAG)
                 .unwrap(org.hibernate.query.Query.class)
-                .setResultTransformer(new userDtoListTranformer())
+                .setMaxResults(size)
                 .getResultList();
+
+        List<Long> usersIdsPage = userDtoLists.stream().map(i -> i.getId()).collect(Collectors.toList());
+
+        List<TagDtoWithCount> ss = getTagDtoWithCount(usersIdsPage, QUERY_USER_TAGS_ANSWERS);
+
+
+
+
+
+        return userDtoLists;
     }
 
     @Override
@@ -76,80 +82,89 @@ public class UserDtoDaoImpl implements UserDtoDao {
         return (int) totalResultCount;
     }
 
-    private List<Long> getUsersIdsPage(int page, int size) {
+
+
+private List<UserDtoList> collectUserDtoList(List<UserDtoList> lists,List<TagDtoWithCount> listTagDto1,
+                                             List<TagDtoWithCount> listTagDto2){
+
+    Map<Long, TagDtoWithCount> r2 = listTagDtoQuestion.stream()
+            .collect(Collectors.toMap(TagDtoWithCount::getUserId, tagDtoHelper -> tagDtoHelper));
+
+    Map<Long, TagDtoWithCount> r3 = getTagDtoWithCount(usersIdsPage, QUERY_USER_TAGS_QUESTIONS).stream()
+            .collect(Collectors.toMap(TagDtoWithCount::getUserId, tagDtoHelper -> tagDtoHelper));
+
+    r2.forEach((userId, tagDtoHelper) -> {
+        r3.get(userId).tagDtoMap.forEach((tagDto, count) -> {
+            tagDtoHelper.tagDtoMap.merge(tagDto, count, (v1, v2) -> v1 + v2);
+        });
+    });
+
+
+    userDtoLists.stream().forEach(i -> {
+
+                if (r3.containsKey(i.getId())) {
+                    i.setTags(
+                            r3.get(i.getId()).tagDtoMap.entrySet().stream()
+                                    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                                    .map(Map.Entry::getKey)
+                                    .limit(3)
+                                    .collect(Collectors.toList()));
+                }
+            }
+    );
+
+
+}
+
+
+
+    private List<TagDtoWithCount> getTagDtoWithCount(List<Long> usersIds, String query) {
         return entityManager.unwrap(Session.class)
-                .createQuery(
-                        "select u.id  from User u left join Reputation r on r.user.id=u.id" +
-                                " group by u.id order by sum(r.count) desc NULLS LAST,u.id"
-                )
+                .createQuery(query)
+                .setParameterList("ids", usersIds)
                 .unwrap(org.hibernate.query.Query.class)
-                .setMaxResults(12)
+                .setResultTransformer(new tagDtoWithCountTranformer())
                 .getResultList();
     }
 
 
-    class userDtoListTranformer implements ResultTransformer {
-        Long prevUserId = -1L;
-        boolean flagFirstUser = true;
-        private Map<Long, UserDtoList> questionDtoMap = new LinkedHashMap<>();
-        Map<TagDto, Integer> mapTags = new HashMap<>();
+    class tagDtoWithCountTranformer implements ResultTransformer {
+
+        private Map<Long, TagDtoWithCount> tagDtoHelperDtoMap = new LinkedHashMap<>();
 
         @Override
         public Object transformTuple(Object[] tuple, String[] aliases) {
 
-
             Map<String, Integer> aliasToIndexMap = aliasToIndexMap(aliases);
             Long userId = ((Number) tuple[0]).longValue();
 
-            UserDtoList userDtoList = questionDtoMap.computeIfAbsent(
+            TagDtoWithCount tagDtoHelper = tagDtoHelperDtoMap.computeIfAbsent(
                     userId,
                     id1 -> {
-                        UserDtoList userDtoListTemp = new UserDtoList();
-                        userDtoListTemp.setId(((Number) tuple[aliasToIndexMap.get("user_id")]).longValue());
-                        userDtoListTemp.setReputation(((Number) tuple[aliasToIndexMap.get("user_reputation")]).longValue());
-                        userDtoListTemp.setTags(new LinkedList<>());
-                        return userDtoListTemp;
+                        TagDtoWithCount tagDtoHelperTemp = new TagDtoWithCount();
+                        tagDtoHelperTemp.setUserId(((Number) tuple[aliasToIndexMap.get("user_id")]).longValue());
+                        tagDtoHelperTemp.setTagDto(new LinkedHashMap<>());
+                        return tagDtoHelperTemp;
                     }
             );
 
 
-            if (!prevUserId.equals(userId) && !flagFirstUser) {
-                mapTagsDtoToSortedListTagsDto(prevUserId);
+            if (tagDtoHelper.tagDtoMap.size() < sizeListTagDto) {
+                tagDtoHelper.tagDtoMap.put(
+                        new TagDto(
+                                ((Number) tuple[aliasToIndexMap.get("tag_id")]).longValue(),
+                                ((String) tuple[aliasToIndexMap.get("tag_name")])
+                        ),
+                        ((Number) tuple[aliasToIndexMap.get("count_Tag")]).intValue()
+                );
             }
-
-
-            mapTags.put(
-                    new TagDto(
-                            ((Number) tuple[aliasToIndexMap.get("tag_id")]).longValue(),
-                            ((String) tuple[aliasToIndexMap.get("tag_name")])
-                    ),
-                    ((Number) tuple[aliasToIndexMap.get("tags_User_Answers")]).intValue() +
-                            ((Number) tuple[aliasToIndexMap.get("tags_User_Questions")]).intValue()
-            );
-
-            prevUserId = userId;
-            flagFirstUser = false;
-            return userDtoList;
+            return tagDtoHelper;
         }
-
 
         @Override
-        public List<UserDtoList> transformList(List list) {
-            mapTagsDtoToSortedListTagsDto(prevUserId);
-            return new ArrayList<>(questionDtoMap.values());
+        public List transformList(List list) {
+            return new ArrayList<>(tagDtoHelperDtoMap.values());
         }
-
-
-        private void mapTagsDtoToSortedListTagsDto(Long prevUserId) {
-            questionDtoMap.get(prevUserId).setTags(
-                    mapTags.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                            .map(Map.Entry::getKey)
-                            .limit(3)
-                            .collect(Collectors.toList()));
-            mapTags.clear();
-
-        }
-
 
         public Map<String, Integer> aliasToIndexMap(
                 String[] aliases) {
@@ -164,6 +179,26 @@ public class UserDtoDaoImpl implements UserDtoDao {
     }
 
 
+    class TagDtoWithCount {
+        Long userId;
+        Map<TagDto, Integer> tagDtoMap;
+
+        public Long getUserId() {
+            return userId;
+        }
+
+        public void setUserId(Long userId) {
+            this.userId = userId;
+        }
+
+        public Map<TagDto, Integer> getTagDto() {
+            return tagDtoMap;
+        }
+
+        public void setTagDto(Map<TagDto, Integer> tagDto) {
+            this.tagDtoMap = tagDto;
+        }
+    }
 }
 
 

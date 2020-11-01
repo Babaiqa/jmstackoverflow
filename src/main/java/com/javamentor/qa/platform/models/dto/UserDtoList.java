@@ -17,4 +17,11 @@ public class UserDtoList {
     private String linkImage;
     private Long reputation;
     private List<TagDto> tags; // 3 должен вывести 3 основных тэга в которых участвовал пользователь
+
+    public UserDtoList(Long id, String fullname, String linkImage, Long reputation) {
+        this.id = id;
+        this.fullname = fullname;
+        this.linkImage = linkImage;
+        this.reputation = reputation;
+    }
 }
