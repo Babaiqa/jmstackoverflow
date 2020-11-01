@@ -34,7 +34,7 @@ public class QuestionDtoServiceImpl implements QuestionDtoService {
         pageDto.setItems(questionDtoList);
         pageDto.setTotalResultCount(totalResultCount);
         pageDto.setCurrentPageNumber(page);
-        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount/(double)size));
+        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount / (double) size));
         pageDto.setItemsOnPage(size);
 
         return pageDto;
@@ -48,7 +48,7 @@ public class QuestionDtoServiceImpl implements QuestionDtoService {
         pageDto.setItems(questionDtoList);
         pageDto.setTotalResultCount(totalResultCount);
         pageDto.setCurrentPageNumber(page);
-        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount/(double)size));
+        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount / (double) size));
         pageDto.setItemsOnPage(size);
 
         return pageDto;
