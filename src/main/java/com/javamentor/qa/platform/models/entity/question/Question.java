@@ -45,6 +45,7 @@ public class Question implements Serializable {
 
     @NotNull
     @Column
+    @Type(type = "org.hibernate.type.TextType")
     private String description;
 
     @CreationTimestamp

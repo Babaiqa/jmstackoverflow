@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
+import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
@@ -10,6 +11,11 @@ import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.javamentor.qa.platform.webapp.converters.abstracts.TagMapper;
 import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -28,7 +34,10 @@ public class QuestionController {
     private final QuestionService questionService;
     private final TagMapper tagMapper;
     private final TagService tagService;
+
     private final QuestionDtoService questionDtoService;
+
+    private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
 
@@ -62,7 +71,6 @@ public class QuestionController {
             @ApiResponse(code = 400, message = "Question not found",response = String.class)
     })
     public ResponseEntity<?> setTagForQuestion(
-            //@RequestBody List<TagDto> tagDto, @PathVariable Long QuestionId )
             @ApiParam(name = "QuestionId", value = "type Long", required = true, example = "0")
             @PathVariable Long QuestionId,
             @ApiParam(name = "tagDto", value = "type List<TagDto>", required = true)
@@ -78,19 +86,8 @@ public class QuestionController {
         if (!question.isPresent()){
             return ResponseEntity.badRequest().body("Question not found");
         }
-        List<Tag> listTagQuestion = Collections.emptyList();
-        for (Tag tag : listTag) {
-            Optional <Tag> tagFromDB = tagService.getTagByName(tag.getName());
-            if (!tagFromDB.isPresent()) {
-                tag.setDescription("new "+ tag.getName());
-                tagService.persist(tag);
-            }
-            else {tag = tagFromDB.get();}
+        tagService.addTagToQuestion(listTag,question.get());
 
-            listTagQuestion = question.get().getTags();
-            if (!listTagQuestion.contains(tag)) listTagQuestion.add(tag);
-            question.get().setTags(listTagQuestion);
-        }
         return  ResponseEntity.ok().body("Tags were added");
     }
 
@@ -112,6 +109,55 @@ public class QuestionController {
         return questionDto.isPresent() ? ResponseEntity.ok(questionDto.get()) :
                 ResponseEntity.badRequest().body("Question not found");
     }
+
+    @GetMapping(
+            params = {"page", "size"}
+    )
+    @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDto>"),
+    })
+    public ResponseEntity<?> findPagination(
+
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPagination(page, size);
+
+        return ResponseEntity.ok(resultPage);
+    }
+
+    @GetMapping(value = "popular", params = {"page", "size"})
+    @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination popular List<QuestionDto>"),
+    })
+    public ResponseEntity<?> findPaginationPopular(
+
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopular(page, size);
+
+        return ResponseEntity.ok(resultPage);
+    }
+
 }
 
 
