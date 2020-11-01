@@ -16,7 +16,7 @@ public class UserDtoList {
     private String fullname;
     private String linkImage;
     private Long reputation;
-    private List<TagDto> tags; // 3 должен вывести 3 основных тэга в которых участвовал пользователь
+    private List<TagDto> tags;
 
     public UserDtoList(Long id, String fullname, String linkImage, Long reputation) {
         this.id = id;
