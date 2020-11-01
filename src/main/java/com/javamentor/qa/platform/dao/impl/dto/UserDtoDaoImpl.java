@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -51,8 +52,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
     @Override
     public int getTotalResultCountUsers() {
-        long totalResultCount = (long) entityManager.createQuery("select count(user) from User user").getSingleResult();
-        return (int) totalResultCount;
+        return ((Number) entityManager.createQuery("select count(user) from User user").getSingleResult()).intValue();
     }
 
 
@@ -70,28 +70,28 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
         List<Long> usersIdsPage = userDtoLists.stream().map(UserDtoList::getId).collect(Collectors.toList());
 
-        List<TagDtoWithCount> listTagDtoAnswer = entityManager.unwrap(Session.class)
-                .createQuery(QUERY_USER_TAGS_ANSWERS + " and current_date-(:quantityOfDays)<date(a.persistDateTime) " +
-                        " group by u.id,t.id order by count_Tag desc,t.id")
-                .setParameterList("ids", usersIdsPage)
-                .setParameter("quantityOfDays", quantityOfDay)
-                .unwrap(org.hibernate.query.Query.class)
-                .setResultTransformer(new tagDtoWithCountTranformer())
-                .getResultList();
+        List<TagDtoWithCount> listTagDtoAnswer =getListTagDtoWithCountOverPeriod(usersIdsPage,QUERY_USER_TAGS_ANSWERS, quantityOfDay);
 
-        List<TagDtoWithCount> listTagDtoQuestion = entityManager.unwrap(Session.class)
-                .createQuery(QUERY_USER_TAGS_QUESTIONS + " and current_date-(:quantityOfDays)<date(q.persistDateTime)" +
-                        " group by u.id,t.id order by count_Tag desc,t.id")
-                .setParameterList("ids", usersIdsPage)
-                .setParameter("quantityOfDays", quantityOfDay)
-                .unwrap(org.hibernate.query.Query.class)
-                .setResultTransformer(new tagDtoWithCountTranformer())
-                .getResultList();
+        List<TagDtoWithCount> listTagDtoQuestion = getListTagDtoWithCountOverPeriod(usersIdsPage,QUERY_USER_TAGS_QUESTIONS, quantityOfDay);
 
         return collectUserDtoListWithTagDto(userDtoLists, listTagDtoAnswer, listTagDtoQuestion);
     }
 
 
+    
+    private List<TagDtoWithCount>  getListTagDtoWithCountOverPeriod(List<Long> usersIds, String query, int quantityOfDay ){
+        return entityManager.unwrap(Session.class)
+                .createQuery(query + " and current_date-(:quantityOfDays)<date(q.persistDateTime)" +
+                        " group by u.id,t.id order by count_Tag desc,t.id")
+                .setParameterList("ids", usersIds)
+                .setParameter("quantityOfDays", quantityOfDay)
+                .unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(new tagDtoWithCountTranformer())
+                .getResultList();
+    }
+
+
+    //Объединение тэгов вопросов и ответов и доавление к UserDtoList трех TagDto, которые наиболее часто встречаются у юзера
     private List<UserDtoList> collectUserDtoListWithTagDto(List<UserDtoList> userDtoLists, List<TagDtoWithCount> listTagDtoAnswer,
                                                            List<TagDtoWithCount> listTagDtoQuestion) {
 
