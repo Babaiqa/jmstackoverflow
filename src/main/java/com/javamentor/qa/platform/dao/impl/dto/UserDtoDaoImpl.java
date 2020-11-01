@@ -70,15 +70,13 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
         List<Long> usersIdsPage = userDtoLists.stream().map(UserDtoList::getId).collect(Collectors.toList());
 
-        List<TagDtoWithCount> listTagDtoAnswer =getListTagDtoWithCountOverPeriod(usersIdsPage,QUERY_USER_TAGS_ANSWERS, quantityOfDay);
-
-        List<TagDtoWithCount> listTagDtoQuestion = getListTagDtoWithCountOverPeriod(usersIdsPage,QUERY_USER_TAGS_QUESTIONS, quantityOfDay);
-
-        return collectUserDtoListWithTagDto(userDtoLists, listTagDtoAnswer, listTagDtoQuestion);
+        return collectUserDtoListWithTagDto(userDtoLists,
+                getListTagDtoWithCountOverPeriod(usersIdsPage,QUERY_USER_TAGS_ANSWERS, quantityOfDay),
+                getListTagDtoWithCountOverPeriod(usersIdsPage,QUERY_USER_TAGS_QUESTIONS, quantityOfDay)
+              );
     }
 
 
-    
     private List<TagDtoWithCount>  getListTagDtoWithCountOverPeriod(List<Long> usersIds, String query, int quantityOfDay ){
         return entityManager.unwrap(Session.class)
                 .createQuery(query + " and current_date-(:quantityOfDays)<date(q.persistDateTime)" +
