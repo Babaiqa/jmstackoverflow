@@ -42,7 +42,7 @@ public class Question implements Serializable {
     @Column(name = "view_count")
     private Integer viewCount = 0;
 
-    @Lob
+
     @NotNull
     @Column
     @Type(type = "org.hibernate.type.TextType")
