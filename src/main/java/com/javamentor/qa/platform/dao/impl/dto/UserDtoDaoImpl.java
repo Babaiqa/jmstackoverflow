@@ -64,6 +64,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
                         "group by u.id order by sum(r.count) desc NULLS LAST,u.id")
                 .setParameter("quantityOfDays", quantityOfDay)
                 .unwrap(org.hibernate.query.Query.class)
+                .setFirstResult(page * size - size)
                 .setMaxResults(size)
                 .getResultList();
 
