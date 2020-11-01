@@ -1,19 +1,19 @@
 package com.javamentor.qa.platform.service.impl.dto;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.UserDtoDao;
+import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.UserDto;
+import com.javamentor.qa.platform.models.dto.UserDtoList;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserDtoServiceImpl implements UserDtoService {
-    private UserDtoDao userDtoDao;
+
+    private final UserDtoDao userDtoDao;
 
     @Autowired
     public UserDtoServiceImpl(UserDtoDao userDtoDao) {
@@ -21,7 +21,28 @@ public class UserDtoServiceImpl implements UserDtoService {
     }
 
     @Override
-    public Optional<List<UserDto>> getUserDtoByName(String name) {
+    public Optional<UserDto> getUserDtoById(long id) {
+        return userDtoDao.getUserById(id);
+    }
+
+    @Override
+    public PageDto<UserDtoList,Object> getPageUserDtoListByReputationOverWeek(int page, int size) {
+
+        PageDto<UserDtoList, Object> pageDto = new PageDto<>();
+
+        int totalResultCount = userDtoDao.getTotalResultCountUsers();
+
+        pageDto.setItems(userDtoDao.getPageUserDtoListByReputationOverPeriod(page, size, 7));
+        pageDto.setTotalResultCount(totalResultCount);
+        pageDto.setCurrentPageNumber(page);
+        pageDto.setItemsOnPage(size);
+        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount / (double) size));
+
+        return pageDto;
+    }
+
+    @Override
+    public Optional<UserDtoList> getUserDtoByName(String name) {
         return userDtoDao.getUserDtoByName(name);
     }
 }

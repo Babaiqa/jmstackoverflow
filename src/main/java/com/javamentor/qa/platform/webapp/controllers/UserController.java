@@ -1,21 +1,20 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
-import com.javamentor.qa.platform.models.dto.PageDto;
-import com.javamentor.qa.platform.models.dto.QuestionDto;
-import com.javamentor.qa.platform.models.dto.UserDto;
+import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
+import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.webapp.converters.abstracts.UserDtoToUserConverter;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+
 
 @RestController
 @Validated
@@ -23,10 +22,15 @@ import java.util.Optional;
 @Api(value = "UserApi")
 public class UserController {
 
-    private UserDtoService userDtoService;
+    private final UserService userService;
+    private final UserDtoToUserConverter userConverter;
+    private final UserDtoService userDtoService;
+    private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
-    public UserController(UserDtoService userDtoService) {
+    public UserController(UserService userService, UserDtoToUserConverter userConverter,  UserDtoService userDtoService) {
+        this.userService = userService;
+        this.userConverter = userConverter;
         this.userDtoService = userDtoService;
     }
 
@@ -37,14 +41,63 @@ public class UserController {
             @ApiResponse(code = 200, message = "Returns the object.", response = String.class),
             @ApiResponse(code = 400, message = "Wrong ID",response = String.class)
     })
-    public  ResponseEntity<String> getUserById(
-          @ApiParam(name="id",value="type Long(or other described)", required = true, example="0")
-            @PathVariable Long id){
-
-        return id!=null ? ResponseEntity.ok("Swagger work"):
+    public  ResponseEntity<?> getUserById(
+        @ApiParam(name="id",value="type Long(or other descriped)", required = true, example="0")
+        @PathVariable Long id){
+        Optional<UserDto> userDto = userDtoService.getUserDtoById(id);
+        return userDto.isPresent() ? ResponseEntity.ok().body(userDto.get()):
                 ResponseEntity.badRequest()
                         .body("Wrong ID");
    }
+
+    @PostMapping("registration")
+    @Validated(OnCreate.class)
+    public ResponseEntity<?> createUser(@Valid @RequestBody UserRegistrationDto userRegistrationDto ) {
+        if (!userService.getUserByEmail(userRegistrationDto.getEmail()).isPresent()) {
+            User us = userConverter.userDtoToUser(userRegistrationDto);
+            userService.persist(us);
+            return ResponseEntity.ok(userConverter.userToDto(us));
+        } else {
+            return ResponseEntity.badRequest().body("User with email " + userRegistrationDto.getEmail() +
+                    " already exist");
+        }
+    }
+
+
+
+    @GetMapping("order/reputation/week")
+    @ApiOperation(value = "Get page List<UserDtoList> order by reputation over week." +
+            "UserDtoList contains List<TagDto> with size 3 " +
+            "and order by activity. Max size entries on page= "+ MAX_ITEMS_ON_PAGE, response = List.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination List<UserDtoList> order by reputation over week",
+                    response = List.class),
+            @ApiResponse(code = 400, message = "Wrong ID", response = String.class)
+    })
+    public ResponseEntity<?> getTagDtoPaginationByPopular(
+            @ApiParam(name = "page", value = "Number Page. Type int", required = true, example = "10")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице"+ MAX_ITEMS_ON_PAGE , required = true,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+        PageDto<UserDtoList,Object> resultPage = userDtoService.getPageUserDtoListByReputationOverWeek(page, size);
+
+        return  ResponseEntity.ok(resultPage);
+    }
+
+
+
+
+
+
+
+
 
 
    @GetMapping("find")
@@ -56,7 +109,7 @@ public class UserController {
     public ResponseEntity<?> getUserListByFirstLetters(@RequestParam("name") String name){
 
         System.out.println(name);
-        Optional<List<UserDto>> listOptional = userDtoService.getUserDtoByName(name);
+        Optional<UserDtoList> listOptional = userDtoService.getUserDtoByName(name);
         return listOptional.isPresent() ? ResponseEntity.ok(listOptional.get()):
                 ResponseEntity.badRequest().body("Users not found");
 

@@ -1,47 +1,204 @@
 package com.javamentor.qa.platform.dao.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.UserDtoDao;
+import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.dto.UserDto;
-import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.dto.UserDtoList;
+import org.hibernate.Session;
+import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
-import java.util.Optional;
+import javax.persistence.TypedQuery;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
 public class UserDtoDaoImpl implements UserDtoDao {
 
+
+    private static final String QUERY_USER_TAGS_ANSWERS = "select u.id as user_id, t.id as tag_id,t.name as tag_name, count(t.id) as count_Tag" +
+            " from User u  left join Answer entity  on entity.user.id=u.id join entity.question.tags t  where u.id in (:ids) ";
+
+
+    private static final String QUERY_USERDTOLIST_WITHOUT_TAG = "select new com.javamentor.qa.platform.models.dto.UserDtoList" +
+            "(u.id,u.fullName, u.imageLink, sum(r.count)) from User u left join Reputation r on r.user.id=u.id";
+
+
+    private static final String QUERY_USER_TAGS_QUESTIONS =
+            "select u.id as user_id, t.id as tag_id,t.name as tag_name, count(t.id) as count_Tag" +
+                    " from User u    left join Question entity on entity.user.id=u.id join entity.tags t  where u.id in (:ids)";
+
+
     @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
-    //Запрос возвращает List USERDTO
-    final String QUERY_USERDTO ="select user_entity.id as user_entity_id, " +
-            " user_entity.full_name as user_entity_full_name," +
-            " user_entity.email as user_entity_email," +
-            " user_entity.image_link as user_entity_image_link," +
-            " user_entity.reputation_count as user_entity_reputation_count";
-
-
-//            " user_entity.about as user_entity_about," +
-//            " user_entity.city as user_entity_city," +
-//            " user_entity.is_enabled as user_entity_is_enabled," +
-//            " user_entity.last_redaction_date as user_entity_last_redaction_date," +
-//            " user_entity.link_github as user_entity_link_github," +
-//            " user_entity.link_site as user_entity_link_site," +
-//            " user_entity.link_vk as user_entity_link_vk," +
-//            " user_entity.password as user_entity_password," +
-//            " user_entity.persist_date as user_entity_persist_date," +
-//            " user_entity.reputation_count as user_entity_reputation_count," +
-//            "(select count(a.user_entity.id) from Role a where a.user_entity.id=:id) as user_countRole,"
+    public UserDtoDaoImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
 
     @Override
-    public Optional<List<UserDto>> getUserDtoByName(String name) {
+    public Optional<UserDto> getUserById(long id) {
+        TypedQuery<UserDto> q = entityManager.createQuery(
+                "select new com.javamentor.qa.platform.models.dto.UserDto(u.id,  u.email, u.fullName, u.imageLink, u.reputationCount) from " +
+                        " User u where u.id = :userId", UserDto.class)
+                .setParameter("userId", id);
+        return SingleResultUtil.getSingleResultOrNull(q);
+    }
+
+    @Override
+    public int getTotalResultCountUsers() {
+        return ((Number) entityManager.createQuery("select count(user) from User user").getSingleResult()).intValue();
+    }
+
+
+    @Override
+    public List<UserDtoList> getPageUserDtoListByReputationOverPeriod(int page, int size, int quantityOfDay) {
+
+        List<UserDtoList> userDtoLists = entityManager.unwrap(Session.class)
+                .createQuery(QUERY_USERDTOLIST_WITHOUT_TAG + " and current_date-(:quantityOfDays)<date(r.persistDate) " +
+                        "group by u.id order by sum(r.count) desc NULLS LAST,u.id")
+                .setParameter("quantityOfDays", quantityOfDay)
+                .unwrap(org.hibernate.query.Query.class)
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
+
+        List<Long> usersIdsPage = userDtoLists.stream().map(UserDtoList::getId).collect(Collectors.toList());
+
+        List<TagDtoWithCount> listTagDtoWithCountAnswers=getListTagDtoWithCountOverPeriod(usersIdsPage, QUERY_USER_TAGS_ANSWERS, quantityOfDay);
+        List<TagDtoWithCount> listTagDtoWithCountQuestions=getListTagDtoWithCountOverPeriod(usersIdsPage, QUERY_USER_TAGS_QUESTIONS, quantityOfDay);
+
+        return collectUserDtoListWithTagDto(userDtoLists,listTagDtoWithCountAnswers,listTagDtoWithCountQuestions);
+    }
+
+
+    private List<TagDtoWithCount> getListTagDtoWithCountOverPeriod(List<Long> usersIds, String query, int quantityOfDay) {
+        return entityManager.unwrap(Session.class)
+                .createQuery(query + " and current_date-(:quantityOfDays)<date(entity.persistDateTime)" +
+                        " group by u.id,t.id order by count_Tag desc,t.id")
+                .setParameterList("ids", usersIds)
+                .setParameter("quantityOfDays", quantityOfDay)
+                .unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(new tagDtoWithCountTranformer())
+                .getResultList();
+    }
+
+
+    //Объединение тэгов вопросов и ответов и доавление к UserDtoList трех TagDto, которые наиболее часто встречаются у юзера
+    private List<UserDtoList> collectUserDtoListWithTagDto(List<UserDtoList> userDtoLists, List<TagDtoWithCount> listTagDtoAnswer,
+                                                           List<TagDtoWithCount> listTagDtoQuestion) {
+
+        Map<Long, TagDtoWithCount> mapTagDto = listTagDtoQuestion.stream()
+                .collect(Collectors.toMap(TagDtoWithCount::getUserId, tagDtoHelper -> tagDtoHelper));
+
+
+        listTagDtoAnswer.forEach(tagDtoWithCount -> {
+                    if (mapTagDto.containsKey(tagDtoWithCount.getUserId())) {
+                        tagDtoWithCount.tagDtoMap.forEach((tagDto, count) -> {
+                            mapTagDto.get(tagDtoWithCount.userId).tagDtoMap.merge(tagDto, count, Integer::sum);
+                        });
+                    } else {
+                        mapTagDto.put(tagDtoWithCount.userId, tagDtoWithCount);
+                    }
+                }
+        );
+
+
+        userDtoLists.forEach(i -> {
+                    if (mapTagDto.containsKey(i.getId())) {
+                        i.setTags(
+                                mapTagDto.get(i.getId()).tagDtoMap.entrySet().stream()
+                                        .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                                        .map(Map.Entry::getKey)
+                                        .limit(3)
+                                        .collect(Collectors.toList()));
+                    } else {
+                        i.setTags(new ArrayList<>());
+                    }
+                }
+        );
+
+        return userDtoLists;
+    }
+
+
+    class tagDtoWithCountTranformer implements ResultTransformer {
+
+        private Map<Long, TagDtoWithCount> tagDtoHelperDtoMap = new LinkedHashMap<>();
+
+        @Override
+        public Object transformTuple(Object[] tuple, String[] aliases) {
+
+            Map<String, Integer> aliasToIndexMap = aliasToIndexMap(aliases);
+            Long userId = ((Number) tuple[0]).longValue();
+
+            TagDtoWithCount tagDtoHelper = tagDtoHelperDtoMap.computeIfAbsent(
+                    userId,
+                    id1 -> {
+                        TagDtoWithCount tagDtoHelperTemp = new TagDtoWithCount();
+                        tagDtoHelperTemp.setUserId(((Number) tuple[aliasToIndexMap.get("user_id")]).longValue());
+                        tagDtoHelperTemp.setTagDto(new LinkedHashMap<>());
+                        return tagDtoHelperTemp;
+                    }
+            );
+
+            tagDtoHelper.tagDtoMap.put(
+                    new TagDto(
+                            ((Number) tuple[aliasToIndexMap.get("tag_id")]).longValue(),
+                            ((String) tuple[aliasToIndexMap.get("tag_name")])
+                    ),
+                    ((Number) tuple[aliasToIndexMap.get("count_Tag")]).intValue()
+            );
+            return tagDtoHelper;
+        }
+
+        @Override
+        public List transformList(List list) {
+            return new ArrayList<>(tagDtoHelperDtoMap.values());
+        }
+
+        public Map<String, Integer> aliasToIndexMap(
+                String[] aliases) {
+
+            Map<String, Integer> aliasToIndexMap = new LinkedHashMap<>();
+
+            for (int i = 0; i < aliases.length; i++) {
+                aliasToIndexMap.put(aliases[i], i);
+            }
+            return aliasToIndexMap;
+        }
+    }
+
+
+    class TagDtoWithCount {
+        Long userId;
+        Map<TagDto, Integer> tagDtoMap;
+
+        public Long getUserId() {
+            return userId;
+        }
+
+        public void setUserId(Long userId) {
+            this.userId = userId;
+        }
+
+        public Map<TagDto, Integer> getTagDto() {
+            return tagDtoMap;
+        }
+
+        public void setTagDto(Map<TagDto, Integer> tagDto) {
+            this.tagDtoMap = tagDto;
+        }
+    }
+
+
+    @Override
+    public Optional<UserDtoList> getUserDtoByName(String name) {
        // entityManager.createQuery("FROM User AS i WHERE i.fullName LIKE '%" + name + "%'", User.class).getResultList(); select i.fullName as fullName
       //  System.out.println(entityManager.createQuery("select user.fullName as fullname FROM User user WHERE user.fullName LIKE '%" + name + "%'"));  " from Question question " +
         List<UserDto> userDtoList = entityManager.createQuery("select user.fullName as fullName, user.id as id, user.email as email," +
@@ -54,7 +211,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
                 .setResultTransformer(Transformers.aliasToBean(UserDto.class))
                 .getResultList();
 
-        return Optional.ofNullable(userDtoList);
+        return null;//Optional.ofNullable(userDtoList);
     }
 
 }
