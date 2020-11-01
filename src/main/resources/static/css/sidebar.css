@@ -3,10 +3,44 @@
     background: lightgray;
     border-width: 4px;
     border-right-color: coral;
+    width: 100%;
 }
 
 #sidebar button {
     color: gray;
     background: white;
     text-align: left;
+    width: 100%;
+
+
+}
+
+#sidebar {
+    width: 20%;
+    float: left;
+}
+
+ #sidebar {
+     margin-top: 60px;
+    position: fixed;
+}
+#header {
+
+}
+#askQuest{
+    float: right;
+}
+
+.list-group {
+    width: 80%;
+    float: right;
+    margin-top: 60px;
+}
+.row, #askQuest{
+    margin-left: 100px;
+    float: right;
+}
+
+html {
+    /*background-color: yellow;*/
 }
