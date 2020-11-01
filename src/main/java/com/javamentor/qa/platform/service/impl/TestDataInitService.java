@@ -13,7 +13,6 @@ import lombok.Data;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +36,8 @@ public class TestDataInitService {
     final VoteQuestionService voteQuestionService;
     final RoleService roleService;
 
-    int numberOfUsers = 15;
-    int numberTagsOfQuestion =4;
+    int numberOfUsers = 55;
+    int numberTagsOfQuestion =40;
 
 
     List<Tag> tagList = new ArrayList<>();
@@ -130,7 +129,7 @@ public class TestDataInitService {
                 question.setDescription("Question Description" + i);
                 question.setUser(user);
 
-                List tagsQuestion = new ArrayList();
+                List<Tag> tagsQuestion = new ArrayList();
                 for (int k = 0; k < numberTagsOfQuestion; k++) {
                     Tag tag = tagList.get((int) (Math.random() * (numberOfUsers)));
                     if (!tagsQuestion.contains(tag)) {
@@ -147,7 +146,7 @@ public class TestDataInitService {
                 userFavoriteQuestion.setQuestion(question);
                 userFavoriteQuestionService.persist(userFavoriteQuestion);
 
-                for (int k = 0; k < j; k++) {
+                for (int k = 0; k < j; k--) {
                     Answer answer = new Answer();
                     answer.setUser(user);
                     answer.setQuestion(question);
