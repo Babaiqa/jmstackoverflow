@@ -5,7 +5,6 @@ import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserDtoList;
-import netscape.security.UserTarget;
 import org.hibernate.Session;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
@@ -13,30 +12,24 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import java.security.PrivateKey;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
 public class UserDtoDaoImpl implements UserDtoDao {
 
-    private final int sizeListTagDto = 3;
+
+   private static final  String QUERY_USER_TAGS_ANSWERS = "select u.id as user_id, t.id as tag_id,t.name as tag_name, count(t.id) as count_Tag" +
+            " from User u  left join Answer a  on a.user.id=u.id join a.question.tags t  where u.id in (:ids) ";
 
 
-    final String QUERY_USER_TAGS_ANSWERS = "select u.id as user_id, tA.id as tag_id,tA.name as tag_name, count(tA.id) as count_Tag" +
-            " from User u  left join Answer a  on a.user.id=u.id join a.question.tags tA  where u.id in (:ids) " +
-            "group by u.id,tA.id order by count_Tag,u.id";
+    private static final  String QUERY_USERDTOLIST_WITHOUT_TAG = "select new com.javamentor.qa.platform.models.dto.UserDtoList" +
+            "(u.id,u.fullName, u.imageLink, sum(r.count)) from User u left join Reputation r on r.user.id=u.id";
 
 
-    final String QUERY_USERDTOLIST_WITHOUT_TAG = "select new com.javamentor.qa.platform.models.dto.UserDtoList" +
-            "(u.id,u.fullName, u.imageLink, sum(r.count)) from User u left join Reputation r on r.user.id=u.id" +
-            " group by u.id order by sum(r.count) desc NULLS LAST,u.id";
-
-
-    final String QUERY_USER_TAGS_QUESTIONS =
-            "select u.id as user_id, tQ.id as tag_id,tQ.name as tag_name, count(tQ.id) as count_Tag" +
-                    " from User u    left join Question q on q.user.id=u.id join q.tags tQ  where u.id in (:ids) " +
-                    "group by u.id,tQ.id order by count_Tag,u.id desc";
+    private static final  String QUERY_USER_TAGS_QUESTIONS =
+            "select u.id as user_id, t.id as tag_id,t.name as tag_name, count(t.id) as count_Tag" +
+                    " from User u    left join Question q on q.user.id=u.id join q.tags t  where u.id in (:ids)";
 
 
     @PersistenceContext
@@ -57,74 +50,82 @@ public class UserDtoDaoImpl implements UserDtoDao {
     }
 
     @Override
-    public List<UserDtoList> getPageUserDtoListByReputationOverPeriod(int page, int size, int quantityOfDay) {
-
-        List<UserDtoList> userDtoLists = entityManager.unwrap(Session.class)
-                .createQuery(QUERY_USERDTOLIST_WITHOUT_TAG)
-                .unwrap(org.hibernate.query.Query.class)
-                .setMaxResults(size)
-                .getResultList();
-
-        List<Long> usersIdsPage = userDtoLists.stream().map(i -> i.getId()).collect(Collectors.toList());
-
-        List<TagDtoWithCount> ss = getTagDtoWithCount(usersIdsPage, QUERY_USER_TAGS_ANSWERS);
-
-
-
-
-
-        return userDtoLists;
-    }
-
-    @Override
     public int getTotalResultCountUsers() {
         long totalResultCount = (long) entityManager.createQuery("select count(user) from User user").getSingleResult();
         return (int) totalResultCount;
     }
 
 
+    @Override
+    public List<UserDtoList> getPageUserDtoListByReputationOverPeriod(int page, int size, int quantityOfDay) {
 
-private List<UserDtoList> collectUserDtoList(List<UserDtoList> lists,List<TagDtoWithCount> listTagDto1,
-                                             List<TagDtoWithCount> listTagDto2){
+        List<UserDtoList> userDtoLists = entityManager.unwrap(Session.class)
+                .createQuery(QUERY_USERDTOLIST_WITHOUT_TAG + " and current_date-(:quantityOfDays)<date(r.persistDate) " +
+                        "group by u.id order by sum(r.count) desc NULLS LAST,u.id")
+                .setParameter("quantityOfDays", quantityOfDay)
+                .unwrap(org.hibernate.query.Query.class)
+                .setMaxResults(size)
+                .getResultList();
 
-    Map<Long, TagDtoWithCount> r2 = listTagDtoQuestion.stream()
-            .collect(Collectors.toMap(TagDtoWithCount::getUserId, tagDtoHelper -> tagDtoHelper));
+        List<Long> usersIdsPage = userDtoLists.stream().map(UserDtoList::getId).collect(Collectors.toList());
 
-    Map<Long, TagDtoWithCount> r3 = getTagDtoWithCount(usersIdsPage, QUERY_USER_TAGS_QUESTIONS).stream()
-            .collect(Collectors.toMap(TagDtoWithCount::getUserId, tagDtoHelper -> tagDtoHelper));
-
-    r2.forEach((userId, tagDtoHelper) -> {
-        r3.get(userId).tagDtoMap.forEach((tagDto, count) -> {
-            tagDtoHelper.tagDtoMap.merge(tagDto, count, (v1, v2) -> v1 + v2);
-        });
-    });
-
-
-    userDtoLists.stream().forEach(i -> {
-
-                if (r3.containsKey(i.getId())) {
-                    i.setTags(
-                            r3.get(i.getId()).tagDtoMap.entrySet().stream()
-                                    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                                    .map(Map.Entry::getKey)
-                                    .limit(3)
-                                    .collect(Collectors.toList()));
-                }
-            }
-    );
-
-
-}
-
-
-
-    private List<TagDtoWithCount> getTagDtoWithCount(List<Long> usersIds, String query) {
-        return entityManager.unwrap(Session.class)
-                .createQuery(query)
-                .setParameterList("ids", usersIds)
+        List<TagDtoWithCount> listTagDtoAnswer = entityManager.unwrap(Session.class)
+                .createQuery(QUERY_USER_TAGS_ANSWERS + " and current_date-(:quantityOfDays)<date(a.persistDateTime) " +
+                        " group by u.id,t.id order by count_Tag desc,t.id")
+                .setParameterList("ids", usersIdsPage)
+                .setParameter("quantityOfDays", quantityOfDay)
                 .unwrap(org.hibernate.query.Query.class)
                 .setResultTransformer(new tagDtoWithCountTranformer())
                 .getResultList();
+
+        List<TagDtoWithCount> listTagDtoQuestion = entityManager.unwrap(Session.class)
+                .createQuery(QUERY_USER_TAGS_QUESTIONS + " and current_date-(:quantityOfDays)<date(q.persistDateTime)" +
+                        " group by u.id,t.id order by count_Tag desc,t.id")
+                .setParameterList("ids", usersIdsPage)
+                .setParameter("quantityOfDays", quantityOfDay)
+                .unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(new tagDtoWithCountTranformer())
+                .getResultList();
+
+        return collectUserDtoListWithTagDto(userDtoLists, listTagDtoAnswer, listTagDtoQuestion);
+    }
+
+
+    private List<UserDtoList> collectUserDtoListWithTagDto(List<UserDtoList> userDtoLists, List<TagDtoWithCount> listTagDtoAnswer,
+                                                           List<TagDtoWithCount> listTagDtoQuestion) {
+
+        Map<Long, TagDtoWithCount> mapTagDto = listTagDtoQuestion.stream()
+                .collect(Collectors.toMap(TagDtoWithCount::getUserId, tagDtoHelper -> tagDtoHelper));
+
+
+        listTagDtoAnswer.forEach(tagDtoWithCount -> {
+                    if (mapTagDto.containsKey(tagDtoWithCount.getUserId())) {
+                        tagDtoWithCount.tagDtoMap.forEach((tagDto, count) -> {
+                            mapTagDto.get(tagDtoWithCount.userId).tagDtoMap.merge(tagDto, count, Integer::sum);
+                        });
+                    } else {
+                        mapTagDto.put(tagDtoWithCount.userId, tagDtoWithCount);
+                    }
+                }
+        );
+
+
+
+        userDtoLists.forEach(i -> {
+                    if (mapTagDto.containsKey(i.getId())) {
+                        i.setTags(
+                                mapTagDto.get(i.getId()).tagDtoMap.entrySet().stream()
+                                        .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                                        .map(Map.Entry::getKey)
+                                        .limit(3)
+                                        .collect(Collectors.toList()));
+                    } else {
+                        i.setTags(new ArrayList<>());
+                    }
+                }
+        );
+
+        return userDtoLists;
     }
 
 
@@ -148,8 +149,6 @@ private List<UserDtoList> collectUserDtoList(List<UserDtoList> lists,List<TagDto
                     }
             );
 
-
-            if (tagDtoHelper.tagDtoMap.size() < sizeListTagDto) {
                 tagDtoHelper.tagDtoMap.put(
                         new TagDto(
                                 ((Number) tuple[aliasToIndexMap.get("tag_id")]).longValue(),
@@ -157,7 +156,6 @@ private List<UserDtoList> collectUserDtoList(List<UserDtoList> lists,List<TagDto
                         ),
                         ((Number) tuple[aliasToIndexMap.get("count_Tag")]).intValue()
                 );
-            }
             return tagDtoHelper;
         }
 
@@ -179,6 +177,7 @@ private List<UserDtoList> collectUserDtoList(List<UserDtoList> lists,List<TagDto
     }
 
 
+    
     class TagDtoWithCount {
         Long userId;
         Map<TagDto, Integer> tagDtoMap;
