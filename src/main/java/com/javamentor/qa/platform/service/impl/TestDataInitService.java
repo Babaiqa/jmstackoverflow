@@ -146,7 +146,7 @@ public class TestDataInitService {
                 userFavoriteQuestion.setQuestion(question);
                 userFavoriteQuestionService.persist(userFavoriteQuestion);
 
-                for (int k = 0; k < j; k--) {
+                for (int k = 0; k < j; k++) {
                     Answer answer = new Answer();
                     answer.setUser(user);
                     answer.setQuestion(question);
