@@ -20,17 +20,17 @@ import java.util.stream.Collectors;
 public class UserDtoDaoImpl implements UserDtoDao {
 
 
-   private static final  String QUERY_USER_TAGS_ANSWERS = "select u.id as user_id, t.id as tag_id,t.name as tag_name, count(t.id) as count_Tag" +
-            " from User u  left join Answer a  on a.user.id=u.id join a.question.tags t  where u.id in (:ids) ";
+    private static final String QUERY_USER_TAGS_ANSWERS = "select u.id as user_id, t.id as tag_id,t.name as tag_name, count(t.id) as count_Tag" +
+            " from User u  left join Answer entity  on entity.user.id=u.id join entity.question.tags t  where u.id in (:ids) ";
 
 
-    private static final  String QUERY_USERDTOLIST_WITHOUT_TAG = "select new com.javamentor.qa.platform.models.dto.UserDtoList" +
+    private static final String QUERY_USERDTOLIST_WITHOUT_TAG = "select new com.javamentor.qa.platform.models.dto.UserDtoList" +
             "(u.id,u.fullName, u.imageLink, sum(r.count)) from User u left join Reputation r on r.user.id=u.id";
 
 
-    private static final  String QUERY_USER_TAGS_QUESTIONS =
+    private static final String QUERY_USER_TAGS_QUESTIONS =
             "select u.id as user_id, t.id as tag_id,t.name as tag_name, count(t.id) as count_Tag" +
-                    " from User u    left join Question q on q.user.id=u.id join q.tags t  where u.id in (:ids)";
+                    " from User u    left join Question entity on entity.user.id=u.id join entity.tags t  where u.id in (:ids)";
 
 
     @PersistenceContext
@@ -70,16 +70,16 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
         List<Long> usersIdsPage = userDtoLists.stream().map(UserDtoList::getId).collect(Collectors.toList());
 
-        return collectUserDtoListWithTagDto(userDtoLists,
-                getListTagDtoWithCountOverPeriod(usersIdsPage,QUERY_USER_TAGS_ANSWERS, quantityOfDay),
-                getListTagDtoWithCountOverPeriod(usersIdsPage,QUERY_USER_TAGS_QUESTIONS, quantityOfDay)
-              );
+        List<TagDtoWithCount> listTagDtoWithCountAnswers=getListTagDtoWithCountOverPeriod(usersIdsPage, QUERY_USER_TAGS_ANSWERS, quantityOfDay);
+        List<TagDtoWithCount> listTagDtoWithCountQuestions=getListTagDtoWithCountOverPeriod(usersIdsPage, QUERY_USER_TAGS_QUESTIONS, quantityOfDay);
+
+        return collectUserDtoListWithTagDto(userDtoLists,listTagDtoWithCountAnswers,listTagDtoWithCountQuestions);
     }
 
 
-    private List<TagDtoWithCount>  getListTagDtoWithCountOverPeriod(List<Long> usersIds, String query, int quantityOfDay ){
+    private List<TagDtoWithCount> getListTagDtoWithCountOverPeriod(List<Long> usersIds, String query, int quantityOfDay) {
         return entityManager.unwrap(Session.class)
-                .createQuery(query + " and current_date-(:quantityOfDays)<date(q.persistDateTime)" +
+                .createQuery(query + " and current_date-(:quantityOfDays)<date(entity.persistDateTime)" +
                         " group by u.id,t.id order by count_Tag desc,t.id")
                 .setParameterList("ids", usersIds)
                 .setParameter("quantityOfDays", quantityOfDay)
@@ -107,7 +107,6 @@ public class UserDtoDaoImpl implements UserDtoDao {
                     }
                 }
         );
-
 
 
         userDtoLists.forEach(i -> {
@@ -148,13 +147,13 @@ public class UserDtoDaoImpl implements UserDtoDao {
                     }
             );
 
-                tagDtoHelper.tagDtoMap.put(
-                        new TagDto(
-                                ((Number) tuple[aliasToIndexMap.get("tag_id")]).longValue(),
-                                ((String) tuple[aliasToIndexMap.get("tag_name")])
-                        ),
-                        ((Number) tuple[aliasToIndexMap.get("count_Tag")]).intValue()
-                );
+            tagDtoHelper.tagDtoMap.put(
+                    new TagDto(
+                            ((Number) tuple[aliasToIndexMap.get("tag_id")]).longValue(),
+                            ((String) tuple[aliasToIndexMap.get("tag_name")])
+                    ),
+                    ((Number) tuple[aliasToIndexMap.get("count_Tag")]).intValue()
+            );
             return tagDtoHelper;
         }
 
@@ -176,7 +175,6 @@ public class UserDtoDaoImpl implements UserDtoDao {
     }
 
 
-    
     class TagDtoWithCount {
         Long userId;
         Map<TagDto, Integer> tagDtoMap;
