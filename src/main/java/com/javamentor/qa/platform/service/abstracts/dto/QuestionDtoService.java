@@ -8,4 +8,6 @@ public interface QuestionDtoService {
      Optional<QuestionDto> getQuestionDtoById(Long id);
 
      PageDto<QuestionDto, Object> getPagination(int page, int size);
+
+     PageDto<QuestionDto, Object> getPaginationPopular(int page, int size);
 }

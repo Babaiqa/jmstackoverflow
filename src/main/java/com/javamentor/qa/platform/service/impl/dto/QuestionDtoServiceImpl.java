@@ -34,7 +34,21 @@ public class QuestionDtoServiceImpl implements QuestionDtoService {
         pageDto.setItems(questionDtoList);
         pageDto.setTotalResultCount(totalResultCount);
         pageDto.setCurrentPageNumber(page);
-        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount/(double)size));
+        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount / (double) size));
+        pageDto.setItemsOnPage(size);
+
+        return pageDto;
+    }
+
+    public PageDto<QuestionDto, Object> getPaginationPopular(int page, int size) {
+        int totalResultCount = questionDtoDao.getTotalResultCountQuestionDto();
+
+        List<QuestionDto> questionDtoList = questionDtoDao.getPaginationPopular(page, size);
+        PageDto<QuestionDto, Object> pageDto = new PageDto<>();
+        pageDto.setItems(questionDtoList);
+        pageDto.setTotalResultCount(totalResultCount);
+        pageDto.setCurrentPageNumber(page);
+        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount / (double) size));
         pageDto.setItemsOnPage(size);
 
         return pageDto;
