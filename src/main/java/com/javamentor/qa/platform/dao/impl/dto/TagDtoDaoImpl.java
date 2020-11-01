@@ -107,4 +107,23 @@ public class TagDtoDaoImpl implements TagDtoDao {
         long totalResultCount = (long) entityManager.createQuery("select count(tag) from Tag tag").getSingleResult();
         return (int) totalResultCount;
     }
+
+    @Override
+    public List<TagListDto> getTagListDtoPagination(int page, int size, String tagName) {
+        return entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto.TagListDto(e.id, e.name) " +
+                "from Tag e where UPPER(e.name) LIKE CONCAT('%',UPPER(:tagName),'%')")
+                .setParameter("tagName", tagName)
+                .setFirstResult(page*size-size)
+                .setMaxResults(size)
+                .getResultList();
+    }
+
+    @Override
+    public int getTotalCountTag(String tagName) {
+        long getResult = (long) entityManager.createQuery("select count(e) from Tag e where UPPER(e.name) LIKE CONCAT('%',UPPER(:tagName),'%')")
+                .setParameter("tagName", tagName)
+                .getSingleResult();
+        return (int)getResult;
+    }
+
 }
