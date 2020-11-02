@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.dao.impl.dto;
 import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.dto.TagListDto;
+import com.javamentor.qa.platform.models.dto.TagRecentDto;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.springframework.stereotype.Repository;
@@ -82,10 +83,47 @@ public class TagDtoDaoImpl implements TagDtoDao {
                 .getResultList();
     }
 
+    @Override
+    public List<TagRecentDto> getTagRecentDtoPagination(int page, int size) {
+        return entityManager.createQuery("" +
+                "SELECT t.id AS id, t.name AS name, " +
+                "(SELECT COUNT(q.id) FROM t.questions AS q WHERE q.persistDateTime BETWEEN :start AND :end ) AS countTagToQuestion " +
+                "FROM Tag AS t " +
+                "LEFT JOIN t.questions AS questions " +
+                "GROUP BY id " +
+                "ORDER BY countTagToQuestion DESC")
+                .setParameter("start", LocalDateTime.now().minusMonths(1))
+                .setParameter("end", LocalDateTime.now())
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE)
+                .getResultList();
+    }
+
 
     @Override
     public int getTotalResultCountTagDto() {
         long totalResultCount = (long) entityManager.createQuery("select count(tag) from Tag tag").getSingleResult();
         return (int) totalResultCount;
     }
+
+    @Override
+    public List<TagListDto> getTagListDtoPagination(int page, int size, String tagName) {
+        return entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto.TagListDto(e.id, e.name) " +
+                "from Tag e where UPPER(e.name) LIKE CONCAT('%',UPPER(:tagName),'%')")
+                .setParameter("tagName", tagName)
+                .setFirstResult(page*size-size)
+                .setMaxResults(size)
+                .getResultList();
+    }
+
+    @Override
+    public int getTotalCountTag(String tagName) {
+        long getResult = (long) entityManager.createQuery("select count(e) from Tag e where UPPER(e.name) LIKE CONCAT('%',UPPER(:tagName),'%')")
+                .setParameter("tagName", tagName)
+                .getSingleResult();
+        return (int)getResult;
+    }
+
 }
