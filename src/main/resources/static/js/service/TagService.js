@@ -1,138 +1,45 @@
 class TagService {
 
     getTagDtoPaginationByPopular(page, size) {
-        let result = new Array();
-        fetch('/api/tag/popular?page=' + page + '&size=' + size)
-            .then(response => {
-                if (response.status !== 200) {
-                    let error = new Error('Не корректный запрос! Проверьте значения page и size!');
-                    error.response = response;
-                    throw error;
-                } else {
-                    return response.json()
-                }
-            })
-            .then(tagPopular => {
-                if (tagPopular.items.length === 0) {
-                    let error = new Error('Не корректный запрос! Page превышает допустимые значения! Страница не найдена!');
-                    error.response = tagPopular;
-                    throw error;
-                } else {
-                    result.push.apply(result, tagPopular.items);
-                }
-            })
-            .catch((e) => {
-                console.log('Error: ' + e.message);
-                console.log(e.response);
-            });
-        return result;
+        let query = '/api/tag/popular?page=' + page + '&size=' + size;
+        return this.getResponse(query);
+
     }
 
     getTagDtoPaginationOrderByAlphabet(page, size) {
-        let result = new Array();
-        fetch('/api/tag/alphabet/order?page=' + page + '&size=' + size)
-            .then(response => {
-                if (response.status !== 200) {
-                    let error = new Error('Не корректный запрос! Проверьте значения page и size!');
-                    error.response = response;
-                    throw error;
-                } else {
-                    return response.json()
-                }
-            })
-            .then(tagOrderByAlphabet => {
-                if (tagOrderByAlphabet.items.length === 0) {
-                    let error = new Error('Не корректный запрос! Page превышает допустимые значения! Страница не найдена!');
-                    error.response = tagOrderByAlphabet;
-                    throw error;
-                } else {
-                    result.push.apply(result, tagOrderByAlphabet.items);
-                }
-            })
-            .catch((e) => {
-                console.log('Error: ' + e.message);
-                console.log(e.response);
-            });
-        return result;
+        let query = '/api/tag/alphabet/order?page=' + page + '&size=' + size;
+        return this. getResponse(query);
     }
 
     getTagListDtoByPopularPagination(page, size) {
-        let result = new Array();
-        fetch('/api/tag/order/popular?page=' + page + '&size=' + size)
-            .then(response => {
-                if (response.status !== 200) {
-                    let error = new Error('Не корректный запрос! Проверьте значения page и size!');
-                    error.response = response;
-                    throw error;
-                } else {
-                    return response.json()
-                }
-            })
-            .then(tagOrderByPopular => {
-                if (tagOrderByPopular.items.length === 0) {
-                    let error = new Error('Не корректный запрос! Page превышает допустимые значения! Страница не найдена!');
-                    error.response = tagOrderByPopular;
-                    throw error;
-                } else {
-                    result.push.apply(result, tagOrderByPopular.items);
-                }
-            })
-            .catch((e) => {
-                console.log('Error: ' + e.message);
-                console.log(e.response);
-            });
-        return result;
+        let query = '/api/tag/order/popular?page=' + page + '&size=' + size;
+        return this.getResponse(query);
     }
 
     getTagRecentDtoPagination(page, size) {
-        let result = new Array();
-        fetch('/api/tag/recent?page=' + page + '&size=' + size)
-            .then(response => {
-                if (response.status !== 200) {
-                    let error = new Error('Не корректный запрос! Проверьте значения page и size!');
-                    error.response = response;
-                    throw error;
-                } else {
-                    return response.json()
-                }
-            })
-            .then(tagRecent => {
-                if (tagRecent.items.length === 0) {
-                    let error = new Error('Не корректный запрос! Page превышает допустимые значения! Страница не найдена!');
-                    error.response = tagRecent;
-                    throw error;
-                } else {
-                    result.push.apply(result, tagRecent.items);
-                }
-            })
-            .catch((e) => {
-                console.log('Error: ' + e.message);
-                console.log(e.response);
-            });
-        return result;
+        let query = '/api/tag/recent?page=' + page + '&size=' + size;
+        return this.getResponse(query);
     }
 
     getTagName(name, page, size) {
+        let query = '/api/tag/name?name=' + name + '&page=' + page + '&size=' + size;
+        return this.getResponse(query);
+
+    }
+
+    getResponse(query) {
         let result = new Array();
-        fetch('/api/tag/name?name=' + name + '&page=' + page + '&size=' + size)
+        fetch(query)
             .then(response => {
                 if (response.status !== 200) {
-                    let error = new Error('Не корректный запрос! Проверьте значения page и size!');
+                    let error = new Error('Не корректный запрос! Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100!');
                     error.response = response;
                     throw error;
                 } else {
                     return response.json()
                 }
             })
-            .then(tagName => {
-                if (tagName.items.length === 0) {
-                    let error = new Error('Не корректный запрос! Проверьте значения page и name! Страница не найдена!');
-                    error.response = tagName;
-                    throw error;
-                } else {
-                    result.push.apply(result, tagName.items);
-                }
-            })
+            .then(entity => result.push.apply(result, entity.items))
             .catch((e) => {
                 console.log('Error: ' + e.message);
                 console.log(e.response);
