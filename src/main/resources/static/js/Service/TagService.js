@@ -2,7 +2,7 @@ class TagService {
 
     getTagDtoPaginationByPopular(page, size) {
         let result = new Array();
-        fetch('http://localhost:5557/api/tag/popular?page=' + page + '&size=' + size)
+        fetch('/api/tag/popular?page=' + page + '&size=' + size)
             .then(response => {
                 if (response.status !== 200) {
                     let error = new Error('Не корректный запрос! Проверьте значения page и size!');
@@ -30,7 +30,7 @@ class TagService {
 
     getTagDtoPaginationOrderByAlphabet(page, size) {
         let result = new Array();
-        fetch('http://localhost:5557/api/tag/alphabet/order?page=' + page + '&size=' + size)
+        fetch('/api/tag/alphabet/order?page=' + page + '&size=' + size)
             .then(response => {
                 if (response.status !== 200) {
                     let error = new Error('Не корректный запрос! Проверьте значения page и size!');
@@ -58,7 +58,7 @@ class TagService {
 
     getTagListDtoByPopularPagination(page, size) {
         let result = new Array();
-        fetch('http://localhost:5557/api/tag/order/popular?page=' + page + '&size=' + size)
+        fetch('/api/tag/order/popular?page=' + page + '&size=' + size)
             .then(response => {
                 if (response.status !== 200) {
                     let error = new Error('Не корректный запрос! Проверьте значения page и size!');
@@ -86,7 +86,7 @@ class TagService {
 
     getTagRecentDtoPagination(page, size) {
         let result = new Array();
-        fetch('http://localhost:5557/api/tag/recent?page=' + page + '&size=' + size)
+        fetch('/api/tag/recent?page=' + page + '&size=' + size)
             .then(response => {
                 if (response.status !== 200) {
                     let error = new Error('Не корректный запрос! Проверьте значения page и size!');
