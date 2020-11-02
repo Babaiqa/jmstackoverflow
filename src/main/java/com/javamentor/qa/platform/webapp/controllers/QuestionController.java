@@ -7,7 +7,6 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import com.javamentor.qa.platform.webapp.converters.abstracts.TagMapper;
@@ -17,11 +16,9 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -162,8 +159,35 @@ public class QuestionController {
     }
 
 
+//    @PostMapping("add")
+//    @ResponseBody
+//    @ApiOperation(value = "add Question", response = String.class)
+//    @ApiResponses({
+//            @ApiResponse(code = 200, message = "Add Question", response = Question.class),
+//            @ApiResponse(code = 400, message = "Question not add", response = String.class)
+//    })
+//    public ResponseEntity<?> addQuestion(@RequestBody QuestionDto questionDto) {
+//
+//        if (questionDto == null) {
+//            return ResponseEntity.badRequest().body("QuestionDto is null");
+//        }
+//
+//        Optional<Question> question = Optional.ofNullable(questionConverter.questionDtoToQuestion(questionDto));
+//        if (question.isPresent())
+//        {
+//            questionService.persist(question.get());
+//        }else {
+//            return ResponseEntity.badRequest().body("QuestionDto convert error");
+//        }
+//
+//        Optional<QuestionDto> questionDtoNew = Optional.ofNullable(questionConverter.questionToQuestionDto(question.get()));
+//
+//        return  questionDtoNew.isPresent() ? ResponseEntity.ok(questionDtoNew.get()) :
+//                ResponseEntity.badRequest().body("Question convert error");
+//    }
+
+
     @PostMapping("add")
-    @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     @ApiOperation(value = "add Question", response = String.class)
     @ApiResponses({
@@ -172,11 +196,12 @@ public class QuestionController {
     })
     public ResponseEntity<?> addQuestion(@RequestBody QuestionDto questionDto) {
 
-        if (questionDto == null) {
-            return ResponseEntity.badRequest().body("QuestionDto is null");
+
+        if (questionDto.getId() != null) {
+            return ResponseEntity.badRequest().body("QuestionDto.id must be null");
         }
 
-        Optional<Question> question = Optional.of(questionConverter.questionDtoToQuestion(questionDto));
+        Optional<Question> question = Optional.ofNullable(questionConverter.questionDtoToQuestion(questionDto));
         if (question.isPresent())
         {
             questionService.persist(question.get());
@@ -184,11 +209,13 @@ public class QuestionController {
             return ResponseEntity.badRequest().body("QuestionDto convert error");
         }
 
-        Optional<QuestionDto> questionDtoNew = Optional.of(questionConverter.questionToQuestionDto(question.get()));
+        Optional<QuestionDto> questionDtoNew = Optional.ofNullable(questionConverter.questionToQuestionDto(question.get()));
 
         return  questionDtoNew.isPresent() ? ResponseEntity.ok(questionDtoNew.get()) :
                 ResponseEntity.badRequest().body("Question convert error");
     }
+
+
 
 }
 
