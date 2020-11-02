@@ -11,8 +11,6 @@ public interface UserDtoService {
 
     Optional<UserDto> getUserDtoById(long id);
 
-    PageDto<UserDtoList,Object> getPageUserDtoListByReputationOverWeek(int page, int size);
-
     List<UserDtoList> getUserDtoByName(String name);
 
     PageDto<UserDtoList,Object> getPageUserDtoListByName(int page, int size, String name);

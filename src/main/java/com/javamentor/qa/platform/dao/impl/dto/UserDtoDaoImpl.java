@@ -7,7 +7,6 @@ import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserDtoList;
 import org.hibernate.Session;
 import org.hibernate.transform.ResultTransformer;
-import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -55,39 +54,6 @@ public class UserDtoDaoImpl implements UserDtoDao {
         return ((Number) entityManager.createQuery("select count(user) from User user").getSingleResult()).intValue();
     }
 
-
-    @Override
-    public List<UserDtoList> getPageUserDtoListByReputationOverPeriod(int page, int size, int quantityOfDay) {
-
-        List<UserDtoList> userDtoLists = entityManager.unwrap(Session.class)
-                .createQuery(QUERY_USERDTOLIST_WITHOUT_TAG + " and current_date-(:quantityOfDays)<date(r.persistDate) " +
-                        "group by u.id order by sum(r.count) desc NULLS LAST,u.id")
-                .setParameter("quantityOfDays", quantityOfDay)
-                .unwrap(org.hibernate.query.Query.class)
-                .setFirstResult(page * size - size)
-                .setMaxResults(size)
-                .getResultList();
-
-        List<Long> usersIdsPage = userDtoLists.stream().map(UserDtoList::getId).collect(Collectors.toList());
-
-        List<TagDtoWithCount> listTagDtoWithCountAnswers=getListTagDtoWithCountOverPeriod(usersIdsPage, QUERY_USER_TAGS_ANSWERS, quantityOfDay);
-        List<TagDtoWithCount> listTagDtoWithCountQuestions=getListTagDtoWithCountOverPeriod(usersIdsPage, QUERY_USER_TAGS_QUESTIONS, quantityOfDay);
-
-        return collectUserDtoListWithTagDto(userDtoLists,listTagDtoWithCountAnswers,listTagDtoWithCountQuestions);
-    }
-
-
-    private List<TagDtoWithCount> getListTagDtoWithCountOverPeriod(List<Long> usersIds, String query, int quantityOfDay) {
-        return entityManager.unwrap(Session.class)
-                .createQuery(query + " and current_date-(:quantityOfDays)<date(entity.persistDateTime)" +
-                        " group by u.id,t.id order by count_Tag desc,t.id")
-                .setParameterList("ids", usersIds)
-                .setParameter("quantityOfDays", quantityOfDay)
-                .unwrap(org.hibernate.query.Query.class)
-                .setResultTransformer(new tagDtoWithCountTranformer())
-                .getResultList();
-    }
-
     private List<TagDtoWithCount> getListTagDtoWithCount(List<Long> usersIds, String query) {
         return entityManager.unwrap(Session.class)
                 .createQuery(query + " group by u.id,t.id order by count_Tag desc,t.id")
@@ -97,14 +63,12 @@ public class UserDtoDaoImpl implements UserDtoDao {
                 .getResultList();
     }
 
-
     //Объединение тэгов вопросов и ответов и доавление к UserDtoList трех TagDto, которые наиболее часто встречаются у юзера
     private List<UserDtoList> collectUserDtoListWithTagDto(List<UserDtoList> userDtoLists, List<TagDtoWithCount> listTagDtoAnswer,
                                                            List<TagDtoWithCount> listTagDtoQuestion) {
 
         Map<Long, TagDtoWithCount> mapTagDto = listTagDtoQuestion.stream()
                 .collect(Collectors.toMap(TagDtoWithCount::getUserId, tagDtoHelper -> tagDtoHelper));
-
 
         listTagDtoAnswer.forEach(tagDtoWithCount -> {
                     if (mapTagDto.containsKey(tagDtoWithCount.getUserId())) {
@@ -134,7 +98,6 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
         return userDtoLists;
     }
-
 
     class tagDtoWithCountTranformer implements ResultTransformer {
 
@@ -206,10 +169,10 @@ public class UserDtoDaoImpl implements UserDtoDao {
     }
 
     @Override
-    public  List<UserDtoList> getPageUserDtoListByName(int page, int size, String name){
+    public List<UserDtoList> getPageUserDtoListByName(int page, int size, String name) {
 
         List<UserDtoList> userDtoLists = entityManager.unwrap(Session.class)
-                .createQuery( QUERY_USERDTOLIST_WITHOUT_TAG +
+                .createQuery(QUERY_USERDTOLIST_WITHOUT_TAG +
                         " WHERE u.fullName LIKE '%" + name + "%'" + "group by u.id")
                 .unwrap(org.hibernate.query.Query.class)
                 .setFirstResult(page * size - size)
@@ -218,10 +181,10 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
         List<Long> usersIdsPage = userDtoLists.stream().map(UserDtoList::getId).collect(Collectors.toList());
 
-        List<TagDtoWithCount> listTagDtoWithCountAnswers=getListTagDtoWithCount(usersIdsPage, QUERY_USER_TAGS_ANSWERS);
-        List<TagDtoWithCount> listTagDtoWithCountQuestions=getListTagDtoWithCount(usersIdsPage, QUERY_USER_TAGS_QUESTIONS);
+        List<TagDtoWithCount> listTagDtoWithCountAnswers = getListTagDtoWithCount(usersIdsPage, QUERY_USER_TAGS_ANSWERS);
+        List<TagDtoWithCount> listTagDtoWithCountQuestions = getListTagDtoWithCount(usersIdsPage, QUERY_USER_TAGS_QUESTIONS);
 
-        return collectUserDtoListWithTagDto(userDtoLists,listTagDtoWithCountAnswers,listTagDtoWithCountQuestions);
+        return collectUserDtoListWithTagDto(userDtoLists, listTagDtoWithCountAnswers, listTagDtoWithCountQuestions);
 
     }
 
@@ -230,17 +193,16 @@ public class UserDtoDaoImpl implements UserDtoDao {
     public List<UserDtoList> getUserDtoByName(String name) {
 
         List<UserDtoList> userDtoLists = entityManager.unwrap(Session.class)
-                .createQuery( QUERY_USERDTOLIST_WITHOUT_TAG +
+                .createQuery(QUERY_USERDTOLIST_WITHOUT_TAG +
                         " WHERE u.fullName LIKE '%" + name + "%'" + "group by u.id")
                 .unwrap(org.hibernate.query.Query.class)
                 .getResultList();
 
         List<Long> usersIdsPage = userDtoLists.stream().map(UserDtoList::getId).collect(Collectors.toList());
 
-        List<TagDtoWithCount> listTagDtoWithCountAnswers=getListTagDtoWithCount(usersIdsPage, QUERY_USER_TAGS_ANSWERS);
-        List<TagDtoWithCount> listTagDtoWithCountQuestions=getListTagDtoWithCount(usersIdsPage, QUERY_USER_TAGS_QUESTIONS);
+        List<TagDtoWithCount> listTagDtoWithCountAnswers = getListTagDtoWithCount(usersIdsPage, QUERY_USER_TAGS_ANSWERS);
+        List<TagDtoWithCount> listTagDtoWithCountQuestions = getListTagDtoWithCount(usersIdsPage, QUERY_USER_TAGS_QUESTIONS);
 
-        return collectUserDtoListWithTagDto(userDtoLists,listTagDtoWithCountAnswers,listTagDtoWithCountQuestions);
+        return collectUserDtoListWithTagDto(userDtoLists, listTagDtoWithCountAnswers, listTagDtoWithCountQuestions);
     }
-
 }
