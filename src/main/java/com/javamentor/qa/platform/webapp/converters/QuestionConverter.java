@@ -49,31 +49,4 @@ public abstract class QuestionConverter {
 
     public abstract Question questionDtoToQuestion(QuestionDto questionDto);
 
-
-//    @Named("userEntity")
-//    public User userEntity(Long user) {
-//        Optional<User> use = userService.getById(user);
-//        if (! use.isPresent()) {
-//            throw new EntityNotFoundException("User not found");
-//        }
-//        return use.get();
-//    }
-
-
-
-
-//    @Mapping( target = "role", constant = "USER", qualifiedByName = "roleName")
-//    public abstract User userDtoToUser(UserRegistrationDto userRegistrationDto);
-//
-//    @Named("roleName")
-//    public Role roleName(String role) {
-//        Optional<Role> rol = roleService.getRoleByName(role);
-//        if (! rol.isPresent()) {
-//            throw new EntityNotFoundException("Role USER not found");
-//        }
-//        return rol.get();
-//    }
-
-
-
 }
