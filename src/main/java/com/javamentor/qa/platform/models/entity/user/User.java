@@ -85,7 +85,7 @@ public class User implements UserDetails {
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Role.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "role_id", nullable = false)
-//    @NonNull
+    @NonNull
     private Role role;
 
     @Override
@@ -138,6 +138,4 @@ public class User implements UserDetails {
     public int hashCode() {
         return Objects.hash(id, email, password, fullName);
     }
-
-
 }
