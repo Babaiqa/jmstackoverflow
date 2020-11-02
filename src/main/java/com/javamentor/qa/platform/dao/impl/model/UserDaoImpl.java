@@ -31,7 +31,7 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
     @Override
     public Optional<User> getUserByName(String name) {
         Optional<User> resultList = (Optional<User>) entityManager.unwrap(Session.class)
-                .createQuery("SELECT u FROM User as u WHERE u.fullName LIKE '%" + name + "%'")
+                .createQuery("SELECT u FROM User as u WHERE lower(u.fullName) LIKE lower('%" + name + "%') ")
                 .getResultList().stream().findFirst();
         return resultList;
     }

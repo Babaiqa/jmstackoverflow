@@ -173,7 +173,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
         List<UserDtoList> userDtoLists = entityManager.unwrap(Session.class)
                 .createQuery(QUERY_USERDTOLIST_WITHOUT_TAG +
-                        " WHERE u.fullName LIKE '%" + name + "%'" + "group by u.id")
+                        " WHERE lower(u.fullName) LIKE lower('%" + name + "%') " + "group by u.id")
                 .unwrap(org.hibernate.query.Query.class)
                 .setFirstResult(page * size - size)
                 .setMaxResults(size)
@@ -194,7 +194,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
         List<UserDtoList> userDtoLists = entityManager.unwrap(Session.class)
                 .createQuery(QUERY_USERDTOLIST_WITHOUT_TAG +
-                        " WHERE u.fullName LIKE '%" + name + "%'" + "group by u.id")
+                        " WHERE lower(u.fullName) LIKE lower('%" + name + "%') " + "group by u.id")
                 .unwrap(org.hibernate.query.Query.class)
                 .getResultList();
 
