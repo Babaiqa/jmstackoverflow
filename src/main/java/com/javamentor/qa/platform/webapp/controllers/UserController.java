@@ -98,12 +98,23 @@ public class UserController {
             @ApiResponse(code = 200, message = "Returns the object.", response = String.class),
             @ApiResponse(code = 400, message = "There are no users whose name begins with these letters", response = String.class)
     })
-    public ResponseEntity<?> getUserListByFirstLetters(@RequestParam("name") String name){
+    public ResponseEntity<?> getUserListByFirstLetters(
+            @ApiParam(name = "page", value = "Number Page. Type int", required = true, example = "10")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице"+ MAX_ITEMS_ON_PAGE , required = true,
+                    example = "10")
+            @RequestParam("size") int size,
+            @RequestParam("name") String name){
 
-        List<UserDtoList> list = userDtoService.getUserDtoByName(name);
-        return  ResponseEntity.ok(list);
-//        return listOptional.isPresent() ? ResponseEntity.ok(listOptional.get()):
-//                ResponseEntity.badRequest().body("Users not found");
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+
+        PageDto<UserDtoList,Object> resultPage = userDtoService.getPageUserDtoListByName(page, size, name);
+
+        return  ResponseEntity.ok(resultPage);
 
 
     }

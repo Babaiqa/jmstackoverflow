@@ -205,9 +205,30 @@ public class UserDtoDaoImpl implements UserDtoDao {
         }
     }
 
+    @Override
+    public  List<UserDtoList> getPageUserDtoListByName(int page, int size, String name){
+
+        List<UserDtoList> userDtoLists = entityManager.unwrap(Session.class)
+                .createQuery( QUERY_USERDTOLIST_WITHOUT_TAG +
+                        " WHERE u.fullName LIKE '%" + name + "%'" + "group by u.id")
+                .unwrap(org.hibernate.query.Query.class)
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
+
+        List<Long> usersIdsPage = userDtoLists.stream().map(UserDtoList::getId).collect(Collectors.toList());
+
+        List<TagDtoWithCount> listTagDtoWithCountAnswers=getListTagDtoWithCount(usersIdsPage, QUERY_USER_TAGS_ANSWERS);
+        List<TagDtoWithCount> listTagDtoWithCountQuestions=getListTagDtoWithCount(usersIdsPage, QUERY_USER_TAGS_QUESTIONS);
+
+        return collectUserDtoListWithTagDto(userDtoLists,listTagDtoWithCountAnswers,listTagDtoWithCountQuestions);
+
+    }
+
 
     @Override
     public List<UserDtoList> getUserDtoByName(String name) {
+
         List<UserDtoList> userDtoLists = entityManager.unwrap(Session.class)
                 .createQuery( QUERY_USERDTOLIST_WITHOUT_TAG +
                         " WHERE u.fullName LIKE '%" + name + "%'" + "group by u.id")

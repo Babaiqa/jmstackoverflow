@@ -48,7 +48,7 @@ public class UserDtoServiceImpl implements UserDtoService {
 
         int totalResultCount = userDtoDao.getTotalResultCountUsers();
 
-        //pageDto.setItems(userDtoDao.getPageUserDtoListByReputationOverPeriod(page, size, 7));
+        pageDto.setItems(userDtoDao.getPageUserDtoListByName(page, size, name));
         pageDto.setTotalResultCount(totalResultCount);
         pageDto.setCurrentPageNumber(page);
         pageDto.setItemsOnPage(size);

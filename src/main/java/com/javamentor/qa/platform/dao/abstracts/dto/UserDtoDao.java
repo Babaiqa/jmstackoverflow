@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.dao.abstracts.dto;
 
+import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserDtoList;
 
@@ -14,4 +15,6 @@ public interface UserDtoDao {
     public int getTotalResultCountUsers();
 
     List<UserDtoList> getUserDtoByName(String name);
+
+    List<UserDtoList> getPageUserDtoListByName(int page, int size, String name);
 }
