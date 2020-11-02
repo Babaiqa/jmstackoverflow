@@ -22,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -162,13 +161,41 @@ public class QuestionController {
         return ResponseEntity.ok(resultPage);
     }
 
+//    @PostMapping("add")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    @ResponseBody
+//    public QuestionDto addQuestion(@RequestBody QuestionDto questionDto) {
+//        Question question = questionConverter.questionDtoToQuestion(questionDto);
+//        questionService.persist(question);
+//        return  questionConverter.questionToQuestionDto(question);
+//    }
+
     @PostMapping("add")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public QuestionDto addQuestion(@RequestBody QuestionDto questionDto) {
-        Question question = questionConverter.questionDtoToQuestion(questionDto);
-        questionService.persist(question);
-        return  questionConverter.questionToQuestionDto(question);
+    @ApiOperation(value = "add Question", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Add Question", response = Question.class),
+            @ApiResponse(code = 400, message = "Question not add", response = String.class)
+    })
+    public ResponseEntity<?> addQuestion(@RequestBody QuestionDto questionDto) {
+
+        if (questionDto == null) {
+            return ResponseEntity.badRequest().body("QuestionDto is null");
+        }
+
+        Optional<Question> question = Optional.of(questionConverter.questionDtoToQuestion(questionDto));
+        if (question.isPresent())
+        {
+            questionService.persist(question.get());
+        }else {
+            return ResponseEntity.badRequest().body("QuestionDto convert error");
+        }
+
+        Optional<QuestionDto> questionDtoNew = Optional.of(questionConverter.questionToQuestionDto(question.get()));
+
+        return  questionDtoNew.isPresent() ? ResponseEntity.ok(questionDtoNew.get()) :
+                ResponseEntity.badRequest().body("Question convert error");
     }
 
 }
