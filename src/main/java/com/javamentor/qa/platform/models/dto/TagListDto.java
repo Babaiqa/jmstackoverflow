@@ -5,17 +5,25 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
+import java.io.Serializable;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TagListDto {
-    long id;
-    String name;
-    String description;
-    long countQuestion;
-    long countQuestionToWeek;
-    long countQuestionToDay;
+public class TagListDto implements Serializable {
+    private long id;
+    private String name;
+    private String description;
+    private long countQuestion;
+    private long countQuestionToWeek;
+    private long countQuestionToDay;
+
+    public TagListDto(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
 
     public TagListDto(Long id, String name) {
@@ -34,4 +42,5 @@ public class TagListDto {
                 ", countQuestionToDay=" + countQuestionToDay +
                 '}';
     }
+
 }
