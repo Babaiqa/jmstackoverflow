@@ -16,12 +16,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @DataSet(value = {"dataset/question/roleQuestionApi.yml",
-        "dataset/question/usersQuestionApi.yml",
-        "dataset/question/answerQuestionApi.yml",
         "dataset/question/questionQuestionApi.yml",
+        "dataset/question/usersQuestionApi.yml",
         "dataset/question/tagQuestionApi.yml",
-        "dataset/question/question_has_tagQuestionApi.yml",
-        "dataset/question/votes_on_question.yml"}, cleanBefore = true, cleanAfter = true)
+        "dataset/question/question_has_tagQuestionApi.yml"}
+        , cleanBefore = true, cleanAfter = true)
 public class TagControllerTest   extends AbstractIntegrationQuestionControllerTest {
 
     @Autowired
@@ -67,7 +66,7 @@ public class TagControllerTest   extends AbstractIntegrationQuestionControllerTe
     @Transactional
     void theNumberOfQuestionsForWeekIsCorrect() throws Exception {
         PageDto<TagListDto, Object> page = (PageDto<TagListDto, Object>) tagController.getTagDtoPaginationOrderByAlphabet(1,5).getBody();
-        assertThat(page.getItems().get(0).getCountQuestionToWeek()).isEqualTo(4);
+        assertThat(page.getItems().get(0).getCountQuestionToWeek()).isEqualTo(3);
         assertThat(page.getItems().get(1).getCountQuestionToWeek()).isEqualTo(0);
         assertThat(page.getItems().get(2).getCountQuestionToWeek()).isEqualTo(1);
         assertThat(page.getItems().get(3).getCountQuestionToWeek()).isEqualTo(0);
@@ -78,9 +77,9 @@ public class TagControllerTest   extends AbstractIntegrationQuestionControllerTe
     @Transactional
     void theNumberOfQuestionsForDayIsCorrect() throws Exception {
         PageDto<TagListDto, Object> page = (PageDto<TagListDto, Object>) tagController.getTagDtoPaginationOrderByAlphabet(1,5).getBody();
-        assertThat(page.getItems().get(0).getCountQuestionToDay()).isEqualTo(2);
+        assertThat(page.getItems().get(0).getCountQuestionToDay()).isEqualTo(0);
         assertThat(page.getItems().get(1).getCountQuestionToDay()).isEqualTo(0);
-        assertThat(page.getItems().get(2).getCountQuestionToDay()).isEqualTo(1);
+        assertThat(page.getItems().get(2).getCountQuestionToDay()).isEqualTo(0);
         assertThat(page.getItems().get(3).getCountQuestionToDay()).isEqualTo(0);
         assertThat(page.getItems().get(4).getCountQuestionToDay()).isEqualTo(0);
     }

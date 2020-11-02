@@ -51,8 +51,6 @@ public class TagDtoDaoImpl implements TagDtoDao {
                 .setParameter("edDate1", timeNow)
                 .setParameter("stDate2", timeNow.minusDays(1))
                 .setParameter("edDate2", timeNow)
-                .unwrap(org.hibernate.query.Query.class)
-                .setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE)
                 .setFirstResult(page * size - size)
                 .setMaxResults(size)
                 .getResultList();
