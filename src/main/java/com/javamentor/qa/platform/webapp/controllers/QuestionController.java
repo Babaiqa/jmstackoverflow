@@ -54,7 +54,7 @@ public class QuestionController {
             @ApiResponse(code = 400, message = "Wrong ID", response = String.class)
     })
     public ResponseEntity<String> deleteQuestionById(@ApiParam(name = "id") @PathVariable Long id) {
-        if (Boolean.TRUE.equals(questionService.existsById(id))) {
+        if (questionService.existsById(id)) {
             questionService.delete(questionService.getById(id).get());
             return ResponseEntity.ok("Question was deleted");
         } else {
