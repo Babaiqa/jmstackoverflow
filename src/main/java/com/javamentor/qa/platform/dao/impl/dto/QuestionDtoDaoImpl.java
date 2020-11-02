@@ -56,7 +56,18 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
     @Transactional
     public List<QuestionDto> getPagination(int page, int size) {
         List<Question> qList = entityManager.createQuery("from Question ")
-                .setFirstResult(page*size-size)
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
+
+        return updateQuestionDtoWithTags(qList.stream().map(Question::getId).collect(Collectors.toList()));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Transactional
+    public List<QuestionDto> getPaginationPopular(int page, int size) {
+        List<Question> qList = entityManager.createQuery("select q from Question q order by q.viewCount desc")
+                .setFirstResult(page * size - size)
                 .setMaxResults(size)
                 .getResultList();
 
@@ -65,7 +76,8 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
 
     private List<QuestionDto> updateQuestionDtoWithTags(List<Long> ids) {
         List<QuestionDto> resultList = (List<QuestionDto>) entityManager.unwrap(Session.class)
-                .createQuery(QUERY_QUESTIONDTO.replace("=:id", "=question_id") + " where question_id IN :ids")
+                .createQuery(QUERY_QUESTIONDTO.replace("=:id", "=question_id") +
+                        " where question_id IN :ids order by question.viewCount desc")
                 .setParameter("ids", ids)
                 .unwrap(Query.class)
                 .setResultTransformer(new QuestionResultTransformer())
