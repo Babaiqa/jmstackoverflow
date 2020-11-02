@@ -37,7 +37,7 @@ public abstract class QuestionConverter {
 
 
     @Mapping(target = "id", source = "questionDto.id")
-    @Mapping(target = "user", constant = "authorId", qualifiedByName = "userEntity")
+    @Mapping(target = "user.id", source = "authorId")
     @Mapping(target = "title", source = "questionDto.title")
     @Mapping(target = "description",source = "questionDto.description")
     @Mapping(target = "user.fullName", source = "questionDto.authorName")

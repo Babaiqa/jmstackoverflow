@@ -9,19 +9,19 @@ import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
+import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import com.javamentor.qa.platform.webapp.converters.abstracts.TagMapper;
-import io.swagger.annotations.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +40,9 @@ public class QuestionController {
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
+    public QuestionConverter questionConverter;
 
+    @Autowired
     public QuestionController(QuestionService questionService, TagMapper tagMapper, TagService tagService,
                               QuestionDtoService questionDtoService) {
         this.questionService = questionService;
@@ -48,6 +50,7 @@ public class QuestionController {
         this.tagService = tagService;
         this.questionDtoService = questionDtoService;
     }
+
 
     @DeleteMapping("/{id}/delete")
     @ApiOperation(value = "Delete question", response = String.class)
@@ -156,6 +159,15 @@ public class QuestionController {
         PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopular(page, size);
 
         return ResponseEntity.ok(resultPage);
+    }
+
+    @PostMapping("add")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    public QuestionDto addQuestion(@RequestBody QuestionDto questionDto) {
+        Question question = questionConverter.questionDtoToQuestion(questionDto);
+        questionService.persist(question);
+        return  questionConverter.questionToQuestionDto(question);
     }
 
 }

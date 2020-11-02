@@ -39,11 +39,11 @@ public class User implements UserDetails {
     private Long id;
 
     @Column
-//    @NonNull
+    @NonNull
     private String email;
 
     @Column
-//    @NonNull
+    @NonNull
     private String password;
 
     @Column
