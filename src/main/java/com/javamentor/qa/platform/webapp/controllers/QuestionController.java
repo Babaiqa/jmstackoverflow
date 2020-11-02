@@ -161,14 +161,6 @@ public class QuestionController {
         return ResponseEntity.ok(resultPage);
     }
 
-//    @PostMapping("add")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    @ResponseBody
-//    public QuestionDto addQuestion(@RequestBody QuestionDto questionDto) {
-//        Question question = questionConverter.questionDtoToQuestion(questionDto);
-//        questionService.persist(question);
-//        return  questionConverter.questionToQuestionDto(question);
-//    }
 
     @PostMapping("add")
     @ResponseStatus(HttpStatus.CREATED)
