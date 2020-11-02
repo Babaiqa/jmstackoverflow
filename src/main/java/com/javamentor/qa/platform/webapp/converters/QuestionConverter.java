@@ -50,14 +50,14 @@ public abstract class QuestionConverter {
     public abstract Question questionDtoToQuestion(QuestionDto questionDto);
 
 
-    @Named("userEntity")
-    public User userEntity(Long user) {
-        Optional<User> use = userService.getById(user);
-        if (! use.isPresent()) {
-            throw new EntityNotFoundException("User not found");
-        }
-        return use.get();
-    }
+//    @Named("userEntity")
+//    public User userEntity(Long user) {
+//        Optional<User> use = userService.getById(user);
+//        if (! use.isPresent()) {
+//            throw new EntityNotFoundException("User not found");
+//        }
+//        return use.get();
+//    }
 
 
 
