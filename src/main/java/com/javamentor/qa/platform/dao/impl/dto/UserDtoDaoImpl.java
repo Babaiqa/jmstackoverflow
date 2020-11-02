@@ -93,7 +93,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
                                                            List<TagDtoWithCount> listTagDtoQuestion) {
 
         Map<Long, TagDtoWithCount> mapTagDto = listTagDtoQuestion.stream()
-                .collect(Collectors.toMap(TagDtoWithCount::getUserId, tagDtoHelper -> tagDtoHelper));
+                .collect(Collectors.toMap(TagDtoWithCount::getUserId, tagDtoWithCount -> tagDtoWithCount));
 
 
         listTagDtoAnswer.forEach(tagDtoWithCount -> {
@@ -128,7 +128,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
     class tagDtoWithCountTranformer implements ResultTransformer {
 
-        private Map<Long, TagDtoWithCount> tagDtoHelperDtoMap = new LinkedHashMap<>();
+        private Map<Long, TagDtoWithCount> tagDtoWithCountDtoMap = new LinkedHashMap<>();
 
         @Override
         public Object transformTuple(Object[] tuple, String[] aliases) {
@@ -136,29 +136,29 @@ public class UserDtoDaoImpl implements UserDtoDao {
             Map<String, Integer> aliasToIndexMap = aliasToIndexMap(aliases);
             Long userId = ((Number) tuple[0]).longValue();
 
-            TagDtoWithCount tagDtoHelper = tagDtoHelperDtoMap.computeIfAbsent(
+            TagDtoWithCount tagDtoWithCount = tagDtoWithCountDtoMap.computeIfAbsent(
                     userId,
                     id1 -> {
-                        TagDtoWithCount tagDtoHelperTemp = new TagDtoWithCount();
-                        tagDtoHelperTemp.setUserId(((Number) tuple[aliasToIndexMap.get("user_id")]).longValue());
-                        tagDtoHelperTemp.setTagDto(new LinkedHashMap<>());
-                        return tagDtoHelperTemp;
+                        TagDtoWithCount tagDtoWithCountTemp = new TagDtoWithCount();
+                        tagDtoWithCountTemp.setUserId(((Number) tuple[aliasToIndexMap.get("user_id")]).longValue());
+                        tagDtoWithCountTemp.setTagDto(new LinkedHashMap<>());
+                        return tagDtoWithCountTemp;
                     }
             );
 
-            tagDtoHelper.tagDtoMap.put(
+            tagDtoWithCount.tagDtoMap.put(
                     new TagDto(
                             ((Number) tuple[aliasToIndexMap.get("tag_id")]).longValue(),
                             ((String) tuple[aliasToIndexMap.get("tag_name")])
                     ),
                     ((Number) tuple[aliasToIndexMap.get("count_Tag")]).intValue()
             );
-            return tagDtoHelper;
+            return tagDtoWithCount;
         }
 
         @Override
         public List transformList(List list) {
-            return new ArrayList<>(tagDtoHelperDtoMap.values());
+            return new ArrayList<>(tagDtoWithCountDtoMap.values());
         }
 
         public Map<String, Integer> aliasToIndexMap(
