@@ -42,7 +42,23 @@ public class UserDtoServiceImpl implements UserDtoService {
     }
 
     @Override
-    public Optional<UserDtoList> getUserDtoByName(String name) {
+    public PageDto<UserDtoList,Object> getPageUserDtoListByName(int page, int size, String name){
+
+        PageDto<UserDtoList, Object> pageDto = new PageDto<>();
+
+        int totalResultCount = userDtoDao.getTotalResultCountUsers();
+
+        //pageDto.setItems(userDtoDao.getPageUserDtoListByReputationOverPeriod(page, size, 7));
+        pageDto.setTotalResultCount(totalResultCount);
+        pageDto.setCurrentPageNumber(page);
+        pageDto.setItemsOnPage(size);
+        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount / (double) size));
+
+        return pageDto;
+    }
+
+    @Override
+    public List<UserDtoList> getUserDtoByName(String name) {
         return userDtoDao.getUserDtoByName(name);
     }
 }

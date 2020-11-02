@@ -92,15 +92,7 @@ public class UserController {
     }
 
 
-
-
-
-
-
-
-
-
-   @GetMapping("find")
+    @GetMapping("find")
     @ApiOperation(value = "Return message(Object)", response = String.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the object.", response = String.class),
@@ -108,22 +100,11 @@ public class UserController {
     })
     public ResponseEntity<?> getUserListByFirstLetters(@RequestParam("name") String name){
 
-        System.out.println(name);
-        Optional<UserDtoList> listOptional = userDtoService.getUserDtoByName(name);
-        return listOptional.isPresent() ? ResponseEntity.ok(listOptional.get()):
-                ResponseEntity.badRequest().body("Users not found");
+        List<UserDtoList> list = userDtoService.getUserDtoByName(name);
+        return  ResponseEntity.ok(list);
+//        return listOptional.isPresent() ? ResponseEntity.ok(listOptional.get()):
+//                ResponseEntity.badRequest().body("Users not found");
 
-//        ResponseEntity<List<UserDto>> listResponseEntity = new ResponseEntity<List<UserDto>>(userDtoService.getUserDtoByName(name).isPresent(), HttpStatus.OK);
-//        return listResponseEntity;
-
-
-//        HttpEntity<PagedResources<Person>> persons(Pageable pageable,
-//                PagedResourcesAssembler assembler) {
-//
-//            Page<Person> persons = repository.findAll(pageable);
-//            return new ResponseEntity<>(assembler.toResources(persons), HttpStatus.OK);
-
-        //Optional<UserDto> userDto = userDtoService.getQuestionDtoById(id);
 
     }
 

@@ -21,7 +21,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
 
     private static final String QUERY_USER_TAGS_ANSWERS = "select u.id as user_id, t.id as tag_id,t.name as tag_name, count(t.id) as count_Tag" +
-            " from User u  left join Answer entity  on entity.user.id=u.id join entity.question.tags t  where u.id in (:ids) ";
+            " from User u left join Answer entity  on entity.user.id=u.id join entity.question.tags t  where u.id in (:ids) ";
 
 
     private static final String QUERY_USERDTOLIST_WITHOUT_TAG = "select new com.javamentor.qa.platform.models.dto.UserDtoList" +
@@ -30,7 +30,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
     private static final String QUERY_USER_TAGS_QUESTIONS =
             "select u.id as user_id, t.id as tag_id,t.name as tag_name, count(t.id) as count_Tag" +
-                    " from User u    left join Question entity on entity.user.id=u.id join entity.tags t  where u.id in (:ids)";
+                    " from User u left join Question entity on entity.user.id=u.id join entity.tags t  where u.id in (:ids)";
 
 
     @PersistenceContext
@@ -83,6 +83,15 @@ public class UserDtoDaoImpl implements UserDtoDao {
                         " group by u.id,t.id order by count_Tag desc,t.id")
                 .setParameterList("ids", usersIds)
                 .setParameter("quantityOfDays", quantityOfDay)
+                .unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(new tagDtoWithCountTranformer())
+                .getResultList();
+    }
+
+    private List<TagDtoWithCount> getListTagDtoWithCount(List<Long> usersIds, String query) {
+        return entityManager.unwrap(Session.class)
+                .createQuery(query + " group by u.id,t.id order by count_Tag desc,t.id")
+                .setParameterList("ids", usersIds)
                 .unwrap(org.hibernate.query.Query.class)
                 .setResultTransformer(new tagDtoWithCountTranformer())
                 .getResultList();
@@ -198,20 +207,19 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
 
     @Override
-    public Optional<UserDtoList> getUserDtoByName(String name) {
-       // entityManager.createQuery("FROM User AS i WHERE i.fullName LIKE '%" + name + "%'", User.class).getResultList(); select i.fullName as fullName
-      //  System.out.println(entityManager.createQuery("select user.fullName as fullname FROM User user WHERE user.fullName LIKE '%" + name + "%'"));  " from Question question " +
-        List<UserDto> userDtoList = entityManager.createQuery("select user.fullName as fullName, user.id as id, user.email as email," +
-                " user.imageLink as imageLink, user.reputationCount as reputationCount," +
-                " tag.id as tag_id, tag.name as tag_name " +
-                        " FROM User user, Question question " + " INNER JOIN  question.user" +
-                                " join question.tags tag"  + " WHERE user.fullName LIKE '%" + name + "%' "
-                        )
+    public List<UserDtoList> getUserDtoByName(String name) {
+        List<UserDtoList> userDtoLists = entityManager.unwrap(Session.class)
+                .createQuery( QUERY_USERDTOLIST_WITHOUT_TAG +
+                        " WHERE u.fullName LIKE '%" + name + "%'" + "group by u.id")
                 .unwrap(org.hibernate.query.Query.class)
-                .setResultTransformer(Transformers.aliasToBean(UserDto.class))
                 .getResultList();
 
-        return null;//Optional.ofNullable(userDtoList);
+        List<Long> usersIdsPage = userDtoLists.stream().map(UserDtoList::getId).collect(Collectors.toList());
+
+        List<TagDtoWithCount> listTagDtoWithCountAnswers=getListTagDtoWithCount(usersIdsPage, QUERY_USER_TAGS_ANSWERS);
+        List<TagDtoWithCount> listTagDtoWithCountQuestions=getListTagDtoWithCount(usersIdsPage, QUERY_USER_TAGS_QUESTIONS);
+
+        return collectUserDtoListWithTagDto(userDtoLists,listTagDtoWithCountAnswers,listTagDtoWithCountQuestions);
     }
 
 }

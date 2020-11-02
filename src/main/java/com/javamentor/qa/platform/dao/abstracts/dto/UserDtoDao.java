@@ -12,5 +12,6 @@ public interface UserDtoDao {
     List<UserDtoList> getPageUserDtoListByReputationOverPeriod(int page, int size, int quantityOfDay);
 
     public int getTotalResultCountUsers();
-    Optional<UserDtoList> getUserDtoByName(String name);
+
+    List<UserDtoList> getUserDtoByName(String name);
 }
