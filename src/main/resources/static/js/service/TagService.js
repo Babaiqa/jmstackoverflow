@@ -111,4 +111,32 @@ class TagService {
             });
         return result;
     }
+
+    getTagName(name, page, size) {
+        let result = new Array();
+        fetch('/api/tag/name?name=' + name + '&page=' + page + '&size=' + size)
+            .then(response => {
+                if (response.status !== 200) {
+                    let error = new Error('Не корректный запрос! Проверьте значения page и size!');
+                    error.response = response;
+                    throw error;
+                } else {
+                    return response.json()
+                }
+            })
+            .then(tagName => {
+                if (tagName.items.length === 0) {
+                    let error = new Error('Не корректный запрос! Проверьте значения page и name! Страница не найдена!');
+                    error.response = tagName;
+                    throw error;
+                } else {
+                    result.push.apply(result, tagName.items);
+                }
+            })
+            .catch((e) => {
+                console.log('Error: ' + e.message);
+                console.log(e.response);
+            });
+        return result;
+    }
 }
