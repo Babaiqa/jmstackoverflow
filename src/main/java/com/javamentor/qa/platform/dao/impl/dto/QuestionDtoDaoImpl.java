@@ -50,7 +50,7 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
 
     @SuppressWarnings("unchecked")
     @Transactional
-    public List<Question> getPagination(int page, int size) {
+    public List<QuestionDto> getPagination(int page, int size) {
 
         return entityManager.createQuery("from Question ")
                 .setFirstResult(page * size - size)
@@ -60,7 +60,7 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
 
     @SuppressWarnings("unchecked")
     @Transactional
-    public List<Question> getPaginationPopular(int page, int size) {
+    public List<QuestionDto> getPaginationPopular(int page, int size) {
 
         return entityManager.createQuery("select q from Question q order by q.viewCount desc")
                 .setFirstResult(page * size - size)

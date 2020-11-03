@@ -11,9 +11,9 @@ public interface QuestionDtoDao {
 
      int getTotalResultCountQuestionDto();
 
-     List<Question> getPagination(int page, int size);
+     List<QuestionDto> getPagination(int page, int size);
 
-     List<Question> getPaginationPopular(int page, int size);
+     List<QuestionDto> getPaginationPopular(int page, int size);
 
      List<QuestionDto> getQuestionDtoByTagIds(List<Long> ids);
 }
