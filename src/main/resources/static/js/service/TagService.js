@@ -8,7 +8,7 @@ class TagService {
 
     getTagDtoPaginationOrderByAlphabet(page, size) {
         let query = '/api/tag/alphabet/order?page=' + page + '&size=' + size;
-        return this. getResponse(query);
+        return this.getResponse(query);
     }
 
     getTagListDtoByPopularPagination(page, size) {
@@ -30,20 +30,8 @@ class TagService {
     getResponse(query) {
         let result = new Array();
         fetch(query)
-            .then(response => {
-                if (response.status !== 200) {
-                    let error = new Error('Не корректный запрос! Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100!');
-                    error.response = response;
-                    throw error;
-                } else {
-                    return response.json()
-                }
-            })
-            .then(entity => result.push.apply(result, entity.items))
-            .catch((e) => {
-                console.log('Error: ' + e.message);
-                console.log(e.response);
-            });
+            .then(response => response.json())
+            .then(entity => result.push.apply(result, entity.items));
         return result;
     }
 }
