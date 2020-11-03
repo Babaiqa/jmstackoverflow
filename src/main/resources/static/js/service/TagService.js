@@ -30,8 +30,17 @@ class TagService {
     getResponse(query) {
         let result = new Array();
         fetch(query)
-            .then(response => response.json())
-            .then(entity => result.push.apply(result, entity.items));
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    let error = new Error();
+                    error.response = response.text().then(error => console.log(error));
+                    throw error;
+                }
+            })
+            .then(entity => result.push.apply(result, entity.items))
+            .catch(error => error.response);
         return result;
     }
 }
