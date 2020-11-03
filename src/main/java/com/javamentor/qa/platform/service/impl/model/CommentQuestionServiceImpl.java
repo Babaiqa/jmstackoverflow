@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.CommentDtoDao;
-import com.javamentor.qa.platform.dao.abstracts.model.CommentDao;
+import com.javamentor.qa.platform.dao.abstracts.model.CommentQuestionDao;
 import com.javamentor.qa.platform.dao.abstracts.model.ReadWriteDao;
 import com.javamentor.qa.platform.models.dto.CommentDto;
 import com.javamentor.qa.platform.models.entity.Comment;
@@ -19,13 +19,14 @@ import java.util.Optional;
 public class CommentQuestionServiceImpl extends ReadWriteServiceImpl<CommentQuestion, Long> implements CommentQuestionService {
 
 
-    private final CommentDao commentDao;
     private final CommentDtoDao commentDtoDao;
+    CommentQuestionDao commentQuestionDao;
 
-    public CommentQuestionServiceImpl(ReadWriteDao<CommentQuestion, Long> readWriteDao, CommentDao commentDao, CommentDtoDao commentDtoDao) {
+    public CommentQuestionServiceImpl(ReadWriteDao<CommentQuestion, Long> readWriteDao, CommentDtoDao commentDtoDao,
+                                      CommentQuestionDao commentQuestionDao) {
         super(readWriteDao);
-        this.commentDao = commentDao;
         this.commentDtoDao = commentDtoDao;
+        this.commentQuestionDao = commentQuestionDao;
     }
 
     @Transactional
@@ -38,7 +39,7 @@ public class CommentQuestionServiceImpl extends ReadWriteServiceImpl<CommentQues
                 .commentType(CommentType.QUESTION)
                 .build());
 
-        commentDao.persist(commentQuestion.getComment());
+        commentQuestionDao.persist(commentQuestion);
 
         return commentDtoDao.getCommentDtoById(commentQuestion.getComment().getId());
     }
