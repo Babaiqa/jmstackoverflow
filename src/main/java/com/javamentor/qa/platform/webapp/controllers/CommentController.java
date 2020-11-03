@@ -2,8 +2,10 @@ package com.javamentor.qa.platform.webapp.controllers;
 
 
 import com.javamentor.qa.platform.models.dto.CommentDto;
+import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.model.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
@@ -24,13 +26,18 @@ public class CommentController {
     private final UserService userService;
     private final QuestionService questionService;
     private final CommentQuestionService commentQuestionService;
+    private final CommentDtoService commentDtoService;
 
     @Autowired
-    public CommentController(UserService userService, QuestionService questionService, CommentQuestionService commentQuestionService) {
+    public CommentController(UserService userService, QuestionService questionService,
+                             CommentQuestionService commentQuestionService, CommentDtoService commentDtoService) {
         this.userService = userService;
         this.questionService = questionService;
         this.commentQuestionService = commentQuestionService;
+        this.commentDtoService = commentDtoService;
     }
+
+
 
 
     @PostMapping("question/{questionId}")
@@ -39,8 +46,7 @@ public class CommentController {
             @ApiResponse(code = 200, message = "Comment was added", response = CommentDto.class),
             @ApiResponse(code = 400, message = "Question or user not found", response = String.class)
     })
-    @ApiModelProperty(value = "Text", name = "commentText",
-            example = "This is my comment.")
+
     public ResponseEntity<?> addCommentToQuestion(
             @ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
             @PathVariable Long questionId,
@@ -59,8 +65,8 @@ public class CommentController {
             return ResponseEntity.badRequest().body("Question not found");
         }
 
-        Optional<CommentDto> commentDto = commentQuestionService.addCommentToQuestion(commentText, question.get(), user.get());
-
+        CommentQuestion commentQuestion= commentQuestionService.addCommentToQuestion(commentText, question.get(), user.get());
+        Optional<CommentDto> commentDto = commentDtoService.getCommentDtoById(commentQuestion.getComment().getId());
 
         return commentDto.isPresent() ? ResponseEntity.ok(commentDto.get()) :
                 ResponseEntity.badRequest().body("Failed to save");
