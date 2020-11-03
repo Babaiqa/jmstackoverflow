@@ -35,12 +35,12 @@ class TagService {
                     return response.json()
                 } else {
                     let error = new Error();
-                    error.response = response.text().then(error => console.log(error));
+                    error.response = response.text();
                     throw error;
                 }
             })
             .then(entity => result.push.apply(result, entity.items))
-            .catch(error => error.response);
+            .catch(error => error.response.then(message => console.log(message)));
         return result;
     }
 }
