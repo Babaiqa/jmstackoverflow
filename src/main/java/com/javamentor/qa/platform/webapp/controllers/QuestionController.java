@@ -7,9 +7,9 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
-import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
-import com.javamentor.qa.platform.webapp.converters.abstracts.TagMapper;
+import com.javamentor.qa.platform.webapp.converters.TagMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -37,9 +38,7 @@ public class QuestionController {
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
-    public QuestionConverter questionConverter;
 
-    @Autowired
     public QuestionController(QuestionService questionService, TagMapper tagMapper, TagService tagService,
                               QuestionDtoService questionDtoService) {
         this.questionService = questionService;
@@ -47,7 +46,6 @@ public class QuestionController {
         this.tagService = tagService;
         this.questionDtoService = questionDtoService;
     }
-
 
     @DeleteMapping("/{id}/delete")
     @ApiOperation(value = "Delete question", response = String.class)
@@ -157,77 +155,6 @@ public class QuestionController {
 
         return ResponseEntity.ok(resultPage);
     }
-
-
-//    @PostMapping("add")
-//    @ResponseBody
-//    @ApiOperation(value = "add Question", response = String.class)
-//    @ApiResponses({
-//            @ApiResponse(code = 200, message = "Add Question", response = Question.class),
-//            @ApiResponse(code = 400, message = "Question not add", response = String.class)
-//    })
-//    public ResponseEntity<?> addQuestion(@RequestBody QuestionDto questionDto) {
-//
-//        if (questionDto == null) {
-//            return ResponseEntity.badRequest().body("QuestionDto is null");
-//        }
-//
-//        Optional<Question> question = Optional.ofNullable(questionConverter.questionDtoToQuestion(questionDto));
-//        if (question.isPresent())
-//        {
-//            questionService.persist(question.get());
-//        }else {
-//            return ResponseEntity.badRequest().body("QuestionDto convert error");
-//        }
-//
-//        Optional<QuestionDto> questionDtoNew = Optional.ofNullable(questionConverter.questionToQuestionDto(question.get()));
-//
-//        return  questionDtoNew.isPresent() ? ResponseEntity.ok(questionDtoNew.get()) :
-//                ResponseEntity.badRequest().body("Question convert error");
-//    }
-
-
-    @PostMapping("add")
-    @ResponseBody
-    @ApiOperation(value = "add Question", response = String.class)
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Add Question", response = Question.class),
-            @ApiResponse(code = 400, message = "Question not add", response = String.class)
-    })
-    public ResponseEntity<?> addQuestion(@RequestBody QuestionDto questionDto) {
-
-
-        if (questionDto.getId() != null) {
-            return ResponseEntity.badRequest().body("QuestionDto.id must be null");
-        }
-
-        if (questionDto.getViewCount() != 0) {
-            return ResponseEntity.badRequest().body("questionDto.getViewCount() must be zero");
-        }
-
-        if (questionDto.getCountAnswer() != 0) {
-            return ResponseEntity.badRequest().body("questionDto.getCountAnswer() must be zero");
-        }
-
-        if (questionDto.getCountValuable() != 0) {
-            return ResponseEntity.badRequest().body("questionDto.getCountValuable() must be zero");
-        }
-
-        Optional<Question> question = Optional.ofNullable(questionConverter.questionDtoToQuestion(questionDto));
-        if (question.isPresent())
-        {
-            questionService.persist(question.get());
-        }else {
-            return ResponseEntity.badRequest().body("QuestionDto convert error");
-        }
-
-        Optional<QuestionDto> questionDtoNew = Optional.ofNullable(questionConverter.questionToQuestionDto(question.get()));
-
-        return  questionDtoNew.isPresent() ? ResponseEntity.ok(questionDtoNew.get()) :
-                ResponseEntity.badRequest().body("Question convert error");
-    }
-
-
 
 }
 

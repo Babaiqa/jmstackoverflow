@@ -6,7 +6,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import com.javamentor.qa.platform.webapp.converters.abstracts.UserDtoToUserConverter;
+import com.javamentor.qa.platform.webapp.converters.UserConverter;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +22,11 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
-    private final UserDtoToUserConverter userConverter;
+    private final UserConverter userConverter;
     private final UserDtoService userDtoService;
 
     @Autowired
-    public UserController(UserService userService, UserDtoToUserConverter userConverter,  UserDtoService userDtoService) {
+    public UserController(UserService userService, UserConverter userConverter, UserDtoService userDtoService) {
         this.userService = userService;
         this.userConverter = userConverter;
         this.userDtoService = userDtoService;
