@@ -10,8 +10,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,7 +34,8 @@ public class Question implements Serializable {
     @NotNull
     private String title;
 
-    @NotNull
+
+    @Min(0)
     @Column(name = "view_count")
     private Integer viewCount = 0;
 

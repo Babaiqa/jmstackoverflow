@@ -201,6 +201,18 @@ public class QuestionController {
             return ResponseEntity.badRequest().body("QuestionDto.id must be null");
         }
 
+        if (questionDto.getViewCount() != 0) {
+            return ResponseEntity.badRequest().body("questionDto.getViewCount() must be zero");
+        }
+
+        if (questionDto.getCountAnswer() != 0) {
+            return ResponseEntity.badRequest().body("questionDto.getCountAnswer() must be zero");
+        }
+
+        if (questionDto.getCountValuable() != 0) {
+            return ResponseEntity.badRequest().body("questionDto.getCountValuable() must be zero");
+        }
+
         Optional<Question> question = Optional.ofNullable(questionConverter.questionDtoToQuestion(questionDto));
         if (question.isPresent())
         {
