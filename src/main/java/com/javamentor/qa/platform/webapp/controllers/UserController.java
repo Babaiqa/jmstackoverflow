@@ -74,7 +74,7 @@ public class UserController {
                     response = List.class),
             @ApiResponse(code = 400, message = "Wrong ID", response = String.class)
     })
-    public ResponseEntity<?> getTagDtoPaginationByPopular(
+    public ResponseEntity<?> getUserDtoPaginationByReputationOverWeek(
             @ApiParam(name = "page", value = "Number Page. Type int", required = true, example = "10")
             @RequestParam("page") int page,
             @ApiParam(name = "size", value = "Number of entries per page.Type int." +
