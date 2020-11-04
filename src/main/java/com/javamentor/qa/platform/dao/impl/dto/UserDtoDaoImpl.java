@@ -24,7 +24,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
 
     private static final String QUERY_USERDTOLIST_WITHOUT_TAG = "select new com.javamentor.qa.platform.models.dto.UserDtoList" +
-            "(u.id,u.fullName, u.imageLink, sum(r.count)) from User u left join Reputation r on r.user.id=u.id";
+            "(u.id,u.fullName, u.imageLink, sum(r.count) as reput) from User u left join Reputation r on r.user.id=u.id";
 
 
     private static final String QUERY_USER_TAGS_QUESTIONS =
@@ -60,7 +60,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
         List<UserDtoList> userDtoLists = entityManager.unwrap(Session.class)
                 .createQuery(QUERY_USERDTOLIST_WITHOUT_TAG + " and current_date-(:quantityOfDays)<date(r.persistDate) " +
-                        "group by u.id order by sum(r.count) desc NULLS LAST,u.id")
+                        "group by u.id order by reput desc NULLS LAST,u.id")
                 .setParameter("quantityOfDays", quantityOfDay)
                 .unwrap(org.hibernate.query.Query.class)
                 .setFirstResult(page * size - size)
