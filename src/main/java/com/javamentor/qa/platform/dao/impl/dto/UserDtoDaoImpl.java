@@ -80,6 +80,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
     class userDtoListTranformer implements ResultTransformer {
 
         private Map<Long, UserDtoList> tagDtoWithCountDtoMap = new LinkedHashMap<>();
+        private int countTag=0;
 
         @Override
         public Object transformTuple(Object[] tuple, String[] aliases) {
@@ -97,12 +98,14 @@ public class UserDtoDaoImpl implements UserDtoDao {
                     }
             );
 
-            userDtoList.getTags().add(
-                    new TagDto(
-                            ((Number) tuple[aliasToIndexMap.get("tag_id")]).longValue(),
-                            ((String) tuple[aliasToIndexMap.get("tag_name")])
-                    )
-            );
+            if(countTag<3) {
+                userDtoList.getTags().add(
+                        new TagDto(
+                                ((Number) tuple[aliasToIndexMap.get("tag_id")]).longValue(),
+                                ((String) tuple[aliasToIndexMap.get("tag_name")])
+                        )
+                );
+            }
             return userDtoList;
         }
 
