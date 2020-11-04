@@ -1,79 +1,45 @@
 package com.javamentor.qa.platform.controllers.tag;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.javamentor.qa.platform.AbstractIntegrationQuestionControllerTest;
-import com.javamentor.qa.platform.models.dto.PageDto;
-import com.javamentor.qa.platform.models.dto.TagListDto;
-import com.javamentor.qa.platform.webapp.controllers.TagController;
+import com.javamentor.qa.platform.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Comparator;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @DataSet(value = {
         "dataset/question/tagQuestionApi.yml"}
         , cleanBefore = true, cleanAfter = true)
-public class TagControllerTest   extends AbstractIntegrationQuestionControllerTest {
+public class TagControllerTest extends AbstractIntegrationTest {
 
     @Autowired
-    private TagController tagController;
+    private MockMvc mockMvc;
+
 
     @Test
-    public void contextLoads() throws Exception {
-        assertThat(tagController).isNotNull();
+    public void correctRequestGetTagDtoPaginationByPopular() throws Exception {
+        mockMvc.perform(get("/api/tag/popular")
+                .param("page", "1")
+                .param("size", "10"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.items[0].id").value(1))
+                .andExpect(jsonPath("$.items[0].name").value("java"));
     }
 
     @Test
-    @Transactional
-    void statusIsSuccessful() throws Exception {
-        assertThat(tagController.getTagDtoPaginationOrderByAlphabet(1,1).getStatusCode().is2xxSuccessful());
+    public void uncorrectRequestGetTagDtoPaginationByPopular() throws Exception {
+        mockMvc.perform(get("/api/tag/popular")
+                .param("page", "0")
+                .param("size", "10"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
-    @Test
-    @Transactional
-    void fullTagListSizeIsCorrect() throws Exception {
-        PageDto<TagListDto, Object> page = (PageDto<TagListDto, Object>) tagController.getTagDtoPaginationOrderByAlphabet(1,100).getBody();
-        assertThat(page.getItems().size()).isEqualTo(5);
-    }
-
-    @Test
-    @Transactional
-    void paginationIsCorrectWhenTheNumberOfElementsIsNotAMultipleOfTheNumberOfPages() throws Exception {
-        PageDto<TagListDto, Object> page = (PageDto<TagListDto, Object>) tagController.getTagDtoPaginationOrderByAlphabet(1,2).getBody();
-        assertThat(page.getTotalPageCount()).isEqualTo(3);
-    }
-
-    @Test
-    @Transactional
-    void theNumberOfQuestionsIsNotNull() throws Exception {
-        PageDto<TagListDto, Object> page = (PageDto<TagListDto, Object>) tagController.getTagDtoPaginationOrderByAlphabet(1,5).getBody();
-        page.getItems().stream().forEach(q->assertThat(q.getCountQuestion()).isNotNull());
-    }
-
-    @Test
-    @Transactional
-    void theNumberOfQuestionsForWeekIsNotNull() throws Exception {
-        PageDto<TagListDto, Object> page = (PageDto<TagListDto, Object>) tagController.getTagDtoPaginationOrderByAlphabet(1,5).getBody();
-        page.getItems().stream().forEach(q->assertThat(q.getCountQuestionToWeek()).isNotNull());
-    }
-
-    @Test
-    @Transactional
-    void theNumberOfQuestionsForDayIsNotNull() throws Exception {
-        PageDto<TagListDto, Object> page = (PageDto<TagListDto, Object>) tagController.getTagDtoPaginationOrderByAlphabet(1,5).getBody();
-        page.getItems().stream().forEach(q->assertThat(q.getCountQuestionToDay()).isNotNull());
-    }
-
-    @Test
-    @Transactional
-    void IsListOfItemsInAlphabetOrder() throws Exception {
-        PageDto<TagListDto, Object> page = (PageDto<TagListDto, Object>) tagController.getTagDtoPaginationOrderByAlphabet(1,5).getBody();
-        Comparator<TagListDto> comparator = Comparator.comparing(obj -> obj.getName());
-        assertThat(page.getItems()).isSortedAccordingTo(comparator);
-    }
 }
