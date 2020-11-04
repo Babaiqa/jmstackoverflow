@@ -28,40 +28,40 @@ public class UserDtoServiceImpl implements UserDtoService {
 
     @Override
     public PageDto<UserDtoList,Object> getPageUserDtoListByReputationOverWeek(int page, int size){
-
         PageDto<UserDtoList,Object> pageDto = new PageDto<>();
 
+        List<UserDtoList> listUserDtoWithoutTagsDto=userDtoDao.getPageUserDtoListByReputationOverPeriodWithoutTags(page, size,7);
+        List<Long> usersIdsPage = listUserDtoWithoutTagsDto.stream().map(UserDtoList::getId).collect(Collectors.toList());
+
+        List<UserDtoList> listUserDtoOnlyTagsDto=userDtoDao.getListTagDtoWithTagsPeriodWithoutReputation(usersIdsPage,7);
+
+        pageDto.setItems(addTagsDtoToUserDtoList(listUserDtoWithoutTagsDto,listUserDtoOnlyTagsDto));
+
         int totalResultCount=userDtoDao.getTotalResultCountUsers();
-        List<UserDtoList> listUserDtoList=userDtoDao.getPageUserDtoListByReputationOverPeriodWithoutTags(page, size,7);
-        List<Long> usersIdsPage = listUserDtoList.stream().map(UserDtoList::getId).collect(Collectors.toList());
-
-        List<UserDtoList> userDtoListWithoutReputation=userDtoDao.getListTagDtoWithTagsPeriodWithoutReputation(usersIdsPage,7);
-        Map<Long,UserDtoList> map=new HashMap<>();
-        for (UserDtoList u:userDtoListWithoutReputation) {
-          map.put(u.getId(),u);
-        }
-
-        for(UserDtoList u:listUserDtoList){
-            if(map.containsKey(u.getId())) {
-                u.setTags(map.get(u.getId()).getTags());
-            } else {
-                u.setTags(new ArrayList<>());
-            }
-        }
-
-
-
-
-
-
-
-
-        pageDto.setItems(listUserDtoList);
         pageDto.setTotalResultCount(totalResultCount);
         pageDto.setCurrentPageNumber(page);
         pageDto.setItemsOnPage(size);
         pageDto.setTotalPageCount((int) Math.ceil(totalResultCount/(double)size));
 
         return pageDto;
+    }
+
+
+
+    private List<UserDtoList> addTagsDtoToUserDtoList(List<UserDtoList> listUserDto,
+                                                      List<UserDtoList> listUserDtoOnlyTagsDto){
+        Map<Long,UserDtoList> map=new HashMap<>();
+        for (UserDtoList u:listUserDtoOnlyTagsDto) {
+            map.put(u.getId(),u);
+        }
+
+        for(UserDtoList u:listUserDto){
+            if(map.containsKey(u.getId())) {
+                u.setTags(map.get(u.getId()).getTags().stream().limit(3).collect(Collectors.toList()));
+            } else {
+                u.setTags(new ArrayList<>());
+            }
+        }
+        return listUserDto;
     }
 }
