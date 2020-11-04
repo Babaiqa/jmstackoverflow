@@ -105,7 +105,6 @@ public class UserDtoDaoImpl implements UserDtoDao {
                         )
                 );
 
-
             return userDtoList;
         }
 
