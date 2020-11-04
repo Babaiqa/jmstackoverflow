@@ -3,10 +3,96 @@
     background: lightgray;
     border-width: 4px;
     border-right-color: coral;
+    width: 100%;
 }
 
 #sidebar button {
     color: gray;
     background: white;
     text-align: left;
+    width: 100%;
+
+
 }
+
+#sidebar {
+    width: 20%;
+    float: left;
+}
+
+ #sidebar {
+     margin-top: 60px;
+    position: fixed;
+}
+#header {
+
+}
+#askQuest{
+    float: right;
+}
+
+.list-group {
+    width: 80%;
+    float: right;
+    margin-top: 60px;
+}
+.row, #askQuest{
+    margin-left: 100px;
+    float: right;
+}
+
+html {
+    /*background-color: yellow;*/
+}
+
+/*footer styles*/
+
+footer {
+    display: block;
+    max-width: 1264px;
+    padding: 70px 0;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+
+footer ul, ol, li {
+    margin: 5px 0 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 13px;
+}
+
+footer a {
+    text-decoration: none;
+    color: #848d95;
+}
+
+a:hover {
+    color: #bbc0c4;
+    text-decoration: none;
+}
+
+.footer-title  {
+    font-size: 13px;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.social li {
+    float: left;
+    font-size: 10px;
+    padding: 15px 15px 0 0;
+}
+
+.footer-social{
+    display: flex;
+    flex-direction: column;
+}
+
+.copyright {
+    margin-top: auto;
+    font-size: 10px;
+    color: #848d95;
+}
+
+/*footer styles end*/
