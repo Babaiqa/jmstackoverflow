@@ -7,7 +7,6 @@ import com.javamentor.qa.platform.models.dto.UserDtoList;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,19 +29,15 @@ public class UserDtoServiceImpl implements UserDtoService {
 
         PageDto<UserDtoList, Object> pageDto = new PageDto<>();
 
-        int totalResultCount = userDtoDao.getTotalResultCountUsers();
+        int countUsersByName = userDtoDao.getCountUsersByName(name);
 
         pageDto.setItems(userDtoDao.getPageUserDtoListByName(page, size, name));
-        pageDto.setTotalResultCount(totalResultCount);
+        pageDto.setTotalResultCount(countUsersByName);
         pageDto.setCurrentPageNumber(page);
         pageDto.setItemsOnPage(size);
-        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount / (double) size));
+        pageDto.setTotalPageCount((int) Math.ceil(countUsersByName / (double) size));
 
         return pageDto;
     }
 
-    @Override
-    public List<UserDtoList> getUserDtoByName(String name) {
-        return userDtoDao.getUserDtoByName(name);
-    }
 }
