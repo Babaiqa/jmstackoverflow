@@ -69,7 +69,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
                 .setParameterList("ids", usersIds)
                 .setParameter("quantityOfDays", quantityOfDay)
                 .unwrap(org.hibernate.query.Query.class)
-                .setResultTransformer(new userDtoListTranformer())
+                .setResultTransformer(new UserDtoListTranformer())
                 .getResultList();
     }
 
@@ -77,7 +77,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
 
 
-    class userDtoListTranformer implements ResultTransformer {
+    class UserDtoListTranformer implements ResultTransformer {
 
         private Map<Long, UserDtoList> tagDtoWithCountDtoMap = new LinkedHashMap<>();
 
