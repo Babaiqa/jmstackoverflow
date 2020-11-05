@@ -61,7 +61,7 @@ public class TagDtoDaoImpl implements TagDtoDao {
     public List<TagListDto> getTagListDtoPaginationOrderByNewTag(int page, int size) {
         return entityManager.createQuery("select new " +
                 "com.javamentor.qa.platform.models.dto.TagListDto(tag.id,tag.name) " +
-                "from Tag tag order by tag.persistDateTime")
+                "from Tag tag order by tag.persistDateTime desc")
                 .setFirstResult(page*size-size)
                 .setMaxResults(size)
                 .getResultList();
