@@ -20,8 +20,6 @@ public class CommentDtoServiceImpl implements CommentDtoService {
 
     @Override
     public Optional<CommentDto> getCommentDtoById(Long commentId) {
-        commentDtoDao.getCommentDtoById(commentId);
-
-        return Optional.empty();
+        return  commentDtoDao.getCommentDtoById(commentId);
     }
 }
