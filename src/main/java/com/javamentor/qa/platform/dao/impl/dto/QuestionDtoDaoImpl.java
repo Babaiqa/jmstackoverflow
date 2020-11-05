@@ -22,30 +22,26 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-    //Запрос возвращает List QUESTIONDTO
-    final String QUERY_QUESTIONDTO = "select question.id as question_id, " +
-            " question.title as question_title," +
-            "u.fullName as question_authorName," +
-            " u.id as question_authorId, " +
-            "u.imageLink as question_authorImage," +
-            "question.description as question_description," +
-            " question.viewCount as question_viewCount," +
-            "(select count(a.question.id) from Answer a where a.question.id=:id) as question_countAnswer," +
-            "(select count(v.question.id) from VoteQuestion v where v.question.id=:id) as question_countValuable," +
-            "question.persistDateTime as question_persistDateTime," +
-            "question.lastUpdateDateTime as question_lastUpdateDateTime, " +
-
-            " tag.id as tag_id,tag.name as tag_name " +
-            "from Question question  " +
-            "INNER JOIN  question.user u" +
-            "  join question.tags tag";
-
-
     @Override
     public Optional<QuestionDto> getQuestionDtoById(Long id) {
 
         return (Optional<QuestionDto>) entityManager.unwrap(Session.class)
-                .createQuery(QUERY_QUESTIONDTO + " where question.id=:id")
+                .createQuery("select question.id as question_id, " +
+                        " question.title as question_title," +
+                        "u.fullName as question_authorName," +
+                        " u.id as question_authorId, " +
+                        "u.imageLink as question_authorImage," +
+                        "question.description as question_description," +
+                        " question.viewCount as question_viewCount," +
+                        "(select count(a.question.id) from Answer a where a.question.id=:id) as question_countAnswer," +
+                        "(select count(v.question.id) from VoteQuestion v where v.question.id=:id) as question_countValuable," +
+                        "question.persistDateTime as question_persistDateTime," +
+                        "question.lastUpdateDateTime as question_lastUpdateDateTime, " +
+                        " tag.id as tag_id,tag.name as tag_name " +
+                        "from Question question  " +
+                        "INNER JOIN  question.user u" +
+                        "  join question.tags tag"
+                        + " where question.id=:id")
                 .setParameter("id", id)
                 .unwrap(org.hibernate.query.Query.class)
                 .setResultTransformer(new QuestionResultTransformer())
@@ -55,23 +51,46 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
     @SuppressWarnings("unchecked")
     @Transactional
     public List<QuestionDto> getPagination(int page, int size) {
-        List<Question> qList = entityManager.createQuery("from Question ")
-                .setFirstResult(page*size-size)
+
+        return entityManager.createQuery("from Question ")
+                .setFirstResult(page * size - size)
                 .setMaxResults(size)
                 .getResultList();
-
-        return updateQuestionDtoWithTags(qList.stream().map(Question::getId).collect(Collectors.toList()));
     }
 
-    private List<QuestionDto> updateQuestionDtoWithTags(List<Long> ids) {
-        List<QuestionDto> resultList = (List<QuestionDto>) entityManager.unwrap(Session.class)
-                .createQuery(QUERY_QUESTIONDTO.replace("=:id", "=question_id") + " where question_id IN :ids")
+    @SuppressWarnings("unchecked")
+    @Transactional
+    public List<QuestionDto> getPaginationPopular(int page, int size) {
+
+        return entityManager.createQuery("select q from Question q order by q.viewCount desc")
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
+    }
+
+    public List<QuestionDto> getQuestionDtoByTagIds(List<Long> ids) {
+
+        return (List<QuestionDto>) entityManager.unwrap(Session.class)
+                .createQuery("select question.id as question_id, " +
+                        " question.title as question_title," +
+                        "u.fullName as question_authorName," +
+                        " u.id as question_authorId, " +
+                        "u.imageLink as question_authorImage," +
+                        "question.description as question_description," +
+                        " question.viewCount as question_viewCount," +
+                        "(select count(a.question.id) from Answer a where a.question.id=question_id) as question_countAnswer," +
+                        "(select count(v.question.id) from VoteQuestion v where v.question.id=question_id) as question_countValuable," +
+                        "question.persistDateTime as question_persistDateTime," +
+                        "question.lastUpdateDateTime as question_lastUpdateDateTime, " +
+                        " tag.id as tag_id,tag.name as tag_name " +
+                        "from Question question  " +
+                        "INNER JOIN  question.user u" +
+                        "  join question.tags tag" +
+                        " where question_id IN :ids order by question.viewCount desc")
                 .setParameter("ids", ids)
                 .unwrap(Query.class)
                 .setResultTransformer(new QuestionResultTransformer())
                 .getResultList();
-
-        return resultList;
     }
 
     @Override
