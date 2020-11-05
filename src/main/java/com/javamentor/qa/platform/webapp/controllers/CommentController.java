@@ -52,7 +52,7 @@ public class CommentController {
             @PathVariable Long questionId,
             @ApiParam(name = "userId", value = "userId. Type long", required = true, example = "1")
             @RequestParam Long userId,
-            @ApiParam(name = "text", value = "userId. Type long", required = true, example = "Some comment")
+            @ApiParam(name = "text", value = "userId. Type string", required = true, example = "Some comment")
             @RequestBody String commentText) {
 
         Optional<User> user = userService.getById(userId);
