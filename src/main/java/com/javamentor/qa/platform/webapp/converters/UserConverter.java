@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.webapp.converters.abstracts;
+package com.javamentor.qa.platform.webapp.converters;
 
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserRegistrationDto;
@@ -14,7 +14,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 @Mapper(componentModel = "spring")
-public abstract  class UserDtoToUserConverter {
+public abstract  class UserConverter {
     @Autowired
     private  RoleService roleService;
 
