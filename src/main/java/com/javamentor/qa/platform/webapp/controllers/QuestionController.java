@@ -64,8 +64,10 @@ public class QuestionController {
             @ApiResponse(code = 400, message = "Wrong ID", response = String.class)
     })
     public ResponseEntity<String> deleteQuestionById(@ApiParam(name = "id") @PathVariable Long id) {
-        if (Boolean.TRUE.equals(questionService.existsById(id))) {
-            questionService.delete(questionService.getById(id).get());
+
+        Optional<Question> question = questionService.getById(id);
+        if (question.isPresent()) {
+            questionService.delete(question.get());
             return ResponseEntity.ok("Question was deleted");
         } else {
             return ResponseEntity.badRequest().body("Wrong ID");
@@ -76,14 +78,13 @@ public class QuestionController {
     @ResponseBody
     @ApiResponses({
             @ApiResponse(code = 200, message = "Tags were added", response = String.class),
-            @ApiResponse(code = 400, message = "Question not found",response = String.class)
+            @ApiResponse(code = 400, message = "Question not found", response = String.class)
     })
     public ResponseEntity<?> setTagForQuestion(
             @ApiParam(name = "QuestionId", value = "type Long", required = true, example = "0")
             @PathVariable Long QuestionId,
             @ApiParam(name = "tagDto", value = "type List<TagDto>", required = true)
-            @RequestBody List<TagDto> tagDto)
-            {
+            @RequestBody List<TagDto> tagDto) {
 
         if (QuestionId == null) {
             return ResponseEntity.badRequest().body("Question id is null");
@@ -91,14 +92,13 @@ public class QuestionController {
         List<Tag> listTag = tagMapper.dtoToTag(tagDto); // Список тегов полученных в контроллере (от фронта)
 
         Optional<Question> question = questionService.getById(QuestionId);
-        if (!question.isPresent()){
+        if (!question.isPresent()) {
             return ResponseEntity.badRequest().body("Question not found");
         }
-        tagService.addTagToQuestion(listTag,question.get());
+        tagService.addTagToQuestion(listTag, question.get());
 
-        return  ResponseEntity.ok().body("Tags were added");
+        return ResponseEntity.ok().body("Tags were added");
     }
-
 
 
     @GetMapping("{id}")
