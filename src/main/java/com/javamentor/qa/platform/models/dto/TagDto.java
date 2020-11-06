@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -18,5 +19,12 @@ public class TagDto implements Serializable {
     private Long id;
     private String name;
 
+    @Override
+    public String toString() {
+        return "{" +
+                "id=" + id +
+                ", name=" + name +
+                '}';
+    }
 
 }
