@@ -12,6 +12,7 @@ import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,8 +39,6 @@ public class CommentController {
     }
 
 
-
-
     @PostMapping("question/{questionId}")
     @ApiOperation(value = "Add comment", notes = "This method Add comment to question and return CommentDto")
     @ApiResponses({
@@ -50,22 +49,20 @@ public class CommentController {
     public ResponseEntity<?> addCommentToQuestion(
             @ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
             @PathVariable Long questionId,
-            @ApiParam(name = "userId", value = "userId. Type long", required = true, example = "1")
-            @RequestParam Long userId,
-            @ApiParam(name = "text", value = "userId. Type string", required = true, example = "Some comment")
+            @AuthenticationPrincipal User user,
+//            @RequestParam Long userId, //для теста
+            @ApiParam(name = "text", value = "Text of comment. Type string", required = true, example = "Some comment")
             @RequestBody String commentText) {
 
-        Optional<User> user = userService.getById(userId);
-        if (!user.isPresent()) {
-            return ResponseEntity.badRequest().body("User not found");
-        }
+//        Optional<User> user = userService.getById(userId);
+
 
         Optional<Question> question = questionService.getById(questionId);
         if (!question.isPresent()) {
             return ResponseEntity.badRequest().body("Question not found");
         }
 
-        CommentQuestion commentQuestion= commentQuestionService.addCommentToQuestion(commentText, question.get(), user.get());
+        CommentQuestion commentQuestion = commentQuestionService.addCommentToQuestion(commentText, question.get(), user);
         Optional<CommentDto> commentDto = commentDtoService.getCommentDtoById(commentQuestion.getComment().getId());
 
         return commentDto.isPresent() ? ResponseEntity.ok(commentDto.get()) :
