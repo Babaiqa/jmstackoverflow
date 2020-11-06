@@ -4,12 +4,14 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
+import com.javamentor.qa.platform.models.entity.question.Tag;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +33,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
 
 
     @Test
-    public void RequestGetTagDtoPaginationByPopular() throws Exception {
+    public void requestGetTagDtoPaginationByPopular() throws Exception {
         PageDto<TagDto, Object> expected = new PageDto<>();
         expected.setCurrentPageNumber(1);
         expected.setTotalPageCount(1);
@@ -64,9 +66,9 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void RequestNullPageGetTagDtoPaginationByPopular1() throws Exception {
+    public void requestNegativePageGetTagDtoPaginationByPopular() throws Exception {
         mockMvc.perform(get(POPULAR)
-                .param("page", "0")
+                .param("page", "-1")
                 .param("size", "10"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -75,7 +77,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void RequestNullSizeGetTagDtoPaginationByPopular2() throws Exception {
+    public void requestNegativeSizeGetTagDtoPaginationByPopular() throws Exception {
         mockMvc.perform(get(POPULAR)
                 .param("page", "1")
                 .param("size", "0"))
@@ -86,7 +88,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void RequestIncorrectSizeGetTagDtoPaginationByPopular3() throws Exception {
+    public void requestIncorrectSizeGetTagDtoPaginationByPopular() throws Exception {
         mockMvc.perform(get(POPULAR)
                 .param("page", "1")
                 .param("size", "101"))
@@ -97,7 +99,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void RequestPageDontExistsGetTagDtoPaginationByPopular4() throws Exception {
+    public void requestPageDontExistsGetTagDtoPaginationByPopular() throws Exception {
         mockMvc.perform(get(POPULAR)
                 .param("page", "13")
                 .param("size", "10"))
