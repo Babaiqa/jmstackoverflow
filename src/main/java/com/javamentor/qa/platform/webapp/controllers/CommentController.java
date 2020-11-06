@@ -8,9 +8,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -24,20 +22,17 @@ import java.util.Optional;
 @Api(value = "CommentApi")
 public class CommentController {
 
-    private final UserService userService;
     private final QuestionService questionService;
     private final CommentQuestionService commentQuestionService;
     private final CommentDtoService commentDtoService;
 
-    @Autowired
-    public CommentController(UserService userService, QuestionService questionService,
-                             CommentQuestionService commentQuestionService, CommentDtoService commentDtoService) {
-        this.userService = userService;
+
+    public CommentController(QuestionService questionService, CommentQuestionService commentQuestionService,
+                             CommentDtoService commentDtoService) {
         this.questionService = questionService;
         this.commentQuestionService = commentQuestionService;
         this.commentDtoService = commentDtoService;
     }
-
 
     @PostMapping("question/{questionId}")
     @ApiOperation(value = "Add comment", notes = "This method Add comment to question and return CommentDto")
@@ -50,11 +45,9 @@ public class CommentController {
             @ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
             @PathVariable Long questionId,
             @AuthenticationPrincipal User user,
-//            @RequestParam Long userId, //для теста
+
             @ApiParam(name = "text", value = "Text of comment. Type string", required = true, example = "Some comment")
             @RequestBody String commentText) {
-
-//        Optional<User> user = userService.getById(userId);
 
 
         Optional<Question> question = questionService.getById(questionId);
