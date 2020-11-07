@@ -72,9 +72,9 @@ public class UserController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the pagination List<UserDtoList> order by reputation over week",
                     response = List.class),
-            @ApiResponse(code = 400, message = "Wrong ID", response = String.class)
+            @ApiResponse(code = 400, message = "Wrong size or page", response = String.class)
     })
-    public ResponseEntity<?> getUserDtoPaginationByReputationOverWeek(
+    public ResponseEntity<?> getUserDtoListPaginationByReputationOverWeek(
             @ApiParam(name = "page", value = "Number Page. Type int", required = true, example = "10")
             @RequestParam("page") int page,
             @ApiParam(name = "size", value = "Number of entries per page.Type int." +
