@@ -13,5 +13,5 @@ public interface UserDtoDao {
 
      int getTotalResultCountUsers();
 
-    List<UserDtoList> getListTagDtoWithTagsPeriodWithoutReputation(List<Long> usersIds,int quantityOfDay);
+    List<UserDtoList> getListTagDtoWithTagsPeriodWithOnlyTags(List<Long> usersIds,int quantityOfDay);
 }

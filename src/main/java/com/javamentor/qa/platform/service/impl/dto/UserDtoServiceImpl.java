@@ -31,11 +31,11 @@ public class UserDtoServiceImpl implements UserDtoService {
         PageDto<UserDtoList,Object> pageDto = new PageDto<>();
 
         List<UserDtoList> listUserDtoWithoutTagsDto=userDtoDao.getPageUserDtoListByReputationOverPeriodWithoutTags(page, size,7);
-        List<Long> usersIdsPage = listUserDtoWithoutTagsDto.stream().map(UserDtoList::getId).collect(Collectors.toList());
+        List<Long> usersIds = listUserDtoWithoutTagsDto.stream().map(UserDtoList::getId).collect(Collectors.toList());
 
-        List<UserDtoList> listUserDtoOnlyTagsDto=userDtoDao.getListTagDtoWithTagsPeriodWithoutReputation(usersIdsPage,7);
+        List<UserDtoList> listUserDtoListOnlyTagsDto=userDtoDao.getListTagDtoWithTagsPeriodWithOnlyTags(usersIds,7);
 
-        pageDto.setItems(addTagsDtoToUserDtoList(listUserDtoWithoutTagsDto,listUserDtoOnlyTagsDto));
+        pageDto.setItems(addTagsDtoToUserDtoList(listUserDtoWithoutTagsDto,listUserDtoListOnlyTagsDto));
 
         int totalResultCount=userDtoDao.getTotalResultCountUsers();
         pageDto.setTotalResultCount(totalResultCount);
@@ -49,9 +49,9 @@ public class UserDtoServiceImpl implements UserDtoService {
 
 
     private List<UserDtoList> addTagsDtoToUserDtoList(List<UserDtoList> listUserDto,
-                                                      List<UserDtoList> listUserDtoOnlyTagsDto){
+                                                      List<UserDtoList> listUserDtoListOnlyTagsDto){
         Map<Long,UserDtoList> map=new HashMap<>();
-        for (UserDtoList u:listUserDtoOnlyTagsDto) {
+        for (UserDtoList u:listUserDtoListOnlyTagsDto) {
             map.put(u.getId(),u);
         }
 

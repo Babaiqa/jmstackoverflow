@@ -45,10 +45,12 @@ public class UserDtoDaoImpl implements UserDtoDao {
     @Override
     public List<UserDtoList> getPageUserDtoListByReputationOverPeriodWithoutTags(int page, int size, int quantityOfDay) {
 
-        return entityManager.unwrap(Session.class)
+        return     entityManager.unwrap(Session.class)
                 .createQuery("select new com.javamentor.qa.platform.models.dto.UserDtoList" +
-                        "(u.id,u.fullName, u.imageLink, sum(r.count)) from User u" +
-                        " left join Reputation r on r.user.id=u.id where current_date-(:quantityOfDays)<date(r.persistDate) " +
+                        "(u.id,u.fullName, u.imageLink, " +
+                        "(select coalesce( sum(ra.count),0) from Reputation ra where current_date-" +
+                        "(:quantityOfDays)<date(ra.persistDate) and ra.user.id=u.id)) from User u" +
+                        " left outer join Reputation r on u.id=r.user.id " +
                         "group by u.id order by sum(r.count) desc NULLS LAST,u.id")
                 .setParameter("quantityOfDays", quantityOfDay)
                 .unwrap(org.hibernate.query.Query.class)
@@ -58,7 +60,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
     }
 
     @Override
-    public List<UserDtoList> getListTagDtoWithTagsPeriodWithoutReputation(List<Long> usersIds,int quantityOfDay) {
+    public List<UserDtoList> getListTagDtoWithTagsPeriodWithOnlyTags(List<Long> usersIds,int quantityOfDay) {
         return entityManager.unwrap(Session.class)
                 .createQuery("   select u.id as user_id,t.name as tag_name,t.id as tag_id  " +
                         "from User u left join Question q on u.id=q.user.id " +
