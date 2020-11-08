@@ -8,7 +8,6 @@ import com.javamentor.qa.platform.models.dto.UserDtoList;
 import org.hibernate.Session;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -30,8 +29,8 @@ public class UserDtoDaoImpl implements UserDtoDao {
     public Optional<UserDto> getUserById(long id) {
         TypedQuery<UserDto> q = entityManager.createQuery(
                 "select new com.javamentor.qa.platform.models.dto.UserDto(u.id,  u.email, u.fullName," +
-                        " u.imageLink,u.reputationCount) " +
-                        "from User u where u.id = :userId", UserDto.class)
+                        "u.imageLink, u.reputationCount)  " +
+                "from User u where u.id = :userId", UserDto.class)
                 .setParameter("userId", id);
         return SingleResultUtil.getSingleResultOrNull(q);
     }
