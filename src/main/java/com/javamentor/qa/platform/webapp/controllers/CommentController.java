@@ -45,10 +45,10 @@ public class CommentController {
     })
 
     public ResponseEntity<?> addCommentToQuestion(
-            @ApiParam(name = "questionId", value = "QuestionId. Type long", required = true, example = "1")
+            @ApiParam(name = "QuestionId", value = "QuestionId. Type long", required = true, example = "1")
             @PathVariable Long questionId,
 
-            @ApiParam(name = "userId", value = "UserId. Type long", required = true, example = "1")
+            @ApiParam(name = "UserId", value = "UserId. Type long", required = true, example = "1")
             @RequestParam Long userId,
 
             @ApiParam(name = "text", value = "Text of comment. Type string", required = true, example = "Some comment")
