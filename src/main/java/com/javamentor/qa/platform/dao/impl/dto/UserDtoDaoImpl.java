@@ -8,6 +8,7 @@ import com.javamentor.qa.platform.models.dto.UserDtoList;
 import org.hibernate.Session;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -16,7 +17,6 @@ import java.util.*;
 @Repository
 public class UserDtoDaoImpl implements UserDtoDao {
 
-
     @PersistenceContext
     private final EntityManager entityManager;
 
@@ -24,13 +24,12 @@ public class UserDtoDaoImpl implements UserDtoDao {
         this.entityManager = entityManager;
     }
 
-
     @Override
     public Optional<UserDto> getUserById(long id) {
         TypedQuery<UserDto> q = entityManager.createQuery(
-                "select new com.javamentor.qa.platform.models.dto.UserDto(u.id,  u.email, u.fullName," +
+                "select new com.javamentor.qa.platform.models.dto.UserDto(u.id, u.email, u.fullName," +
                         "u.imageLink, u.reputationCount)  " +
-                "from User u where u.id = :userId", UserDto.class)
+                        "from User u where u.id = :userId", UserDto.class)
                 .setParameter("userId", id);
         return SingleResultUtil.getSingleResultOrNull(q);
     }
@@ -40,17 +39,21 @@ public class UserDtoDaoImpl implements UserDtoDao {
         return ((Number) entityManager.createQuery("select count(user) from User user").getSingleResult()).intValue();
     }
 
+    @Override
+    public int getCountUsersByName(String name) {
+        return ((Number) entityManager.createQuery("select count(u) from User u WHERE lower(u.fullName) LIKE lower('%" + name + "%') ").getSingleResult()).intValue();
+    }
 
     @Override
     public List<UserDtoList> getPageUserDtoListByReputationOverPeriodWithoutTags(int page, int size, int quantityOfDay) {
 
-        return     entityManager.unwrap(Session.class)
+        return entityManager.unwrap(Session.class)
                 .createQuery("select new com.javamentor.qa.platform.models.dto.UserDtoList" +
-                        "(u.id,u.fullName, u.imageLink, " +
+                        "(u.id, u.fullName, u.imageLink, " +
                         "(select coalesce( sum(ra.count),0) from Reputation ra where current_date-" +
                         "(:quantityOfDays)<date(ra.persistDate) and ra.user.id=u.id)) from User u" +
                         " left outer join Reputation r on u.id=r.user.id " +
-                        "group by u.id order by sum(r.count) desc NULLS LAST,u.id")
+                        "group by u.id order by sum(r.count) desc NULLS LAST, u.id")
                 .setParameter("quantityOfDays", quantityOfDay)
                 .unwrap(org.hibernate.query.Query.class)
                 .setFirstResult(page * size - size)
@@ -59,11 +62,11 @@ public class UserDtoDaoImpl implements UserDtoDao {
     }
 
     @Override
-    public List<UserDtoList> getListTagDtoWithTagsPeriodWithOnlyTags(List<Long> usersIds,int quantityOfDay) {
+    public List<UserDtoList> getListTagDtoWithTagsPeriodWithOnlyTags(List<Long> usersIds, int quantityOfDay) {
         return entityManager.unwrap(Session.class)
                 .createQuery("   select u.id as user_id,t.name as tag_name,t.id as tag_id  " +
                         "from User u left join Question q on u.id=q.user.id " +
-                        " join q.tags t left join Answer a on a.question.id=q.id"+
+                        " join q.tags t left join Answer a on a.question.id=q.id" +
                         " where q.user.id in (:ids) and  current_date-(:quantityOfDays)<date(q.persistDateTime) or" +
                         " a.user.id  in (:ids) and  current_date-(:quantityOfDays)<date(a.persistDateTime) " +
                         " group by t,u.id order by count(t.id) desc,t.id")
@@ -74,9 +77,35 @@ public class UserDtoDaoImpl implements UserDtoDao {
                 .getResultList();
     }
 
+    @Override
+    public List<UserDtoList> getPageUserDtoListByNameWithoutTags(int page, int size, String name) {
 
+        return entityManager.unwrap(Session.class)
+                .createQuery("select new com.javamentor.qa.platform.models.dto.UserDtoList" +
+                        "(u.id, u.fullName, u.imageLink, u.reputationCount) from User u " +
+                        " WHERE lower(u.fullName) LIKE lower('%" + name + "%') " + "group by u.id")
+                .unwrap(org.hibernate.query.Query.class)
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
 
+    }
 
+    @Override
+    public List<UserDtoList> getListTagDtoByUserNameWithOnlyTags(List<Long> usersIds, String name) {
+
+        return entityManager.unwrap(Session.class)
+                .createQuery("select u.id as user_id, t.name as tag_name, t.id as tag_id " +
+                        " from User u left join Question q on u.id=q.user.id " +
+                        " join q.tags t left join Answer a on a.question.id=q.id" +
+                        " where q.user.id in (:ids) or a.user.id  in (:ids) " +
+                        " group by t, u.id order by count(t.id) desc, t.id")
+                .setParameterList("ids", usersIds)
+                .unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(new UserDtoListTranformer())
+                .getResultList();
+
+    }
 
     class UserDtoListTranformer implements ResultTransformer {
 
@@ -99,12 +128,12 @@ public class UserDtoDaoImpl implements UserDtoDao {
                     }
             );
 
-                userDtoList.getTags().add(
-                        new TagDto(
-                                ((Number) tuple[aliasToIndexMap.get("tag_id")]).longValue(),
-                                ((String) tuple[aliasToIndexMap.get("tag_name")])
-                        )
-                );
+            userDtoList.getTags().add(
+                    new TagDto(
+                            ((Number) tuple[aliasToIndexMap.get("tag_id")]).longValue(),
+                            ((String) tuple[aliasToIndexMap.get("tag_name")])
+                    )
+            );
 
             return userDtoList;
         }
@@ -125,8 +154,4 @@ public class UserDtoDaoImpl implements UserDtoDao {
             return aliasToIndexMap;
         }
     }
-
-
 }
-
-
