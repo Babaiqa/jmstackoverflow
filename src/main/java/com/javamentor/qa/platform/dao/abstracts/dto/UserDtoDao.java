@@ -9,11 +9,15 @@ import java.util.Optional;
 public interface UserDtoDao {
     Optional<UserDto> getUserById(long id);
 
-    int getCountUsersByName(String name);
     List<UserDtoList> getPageUserDtoListByReputationOverPeriodWithoutTags(int page, int size, int quantityOfDay);
 
-     int getTotalResultCountUsers();
+    int getTotalResultCountUsers();
 
     List<UserDtoList> getListTagDtoWithTagsPeriodWithOnlyTags(List<Long> usersIds,int quantityOfDay);
-    List<UserDtoList> getPageUserDtoListByName(int page, int size, String name);
+
+    int getCountUsersByName(String name);
+
+    List<UserDtoList> getPageUserDtoListByNameWithoutTags(int page, int size, String name);
+
+    List<UserDtoList> getListTagDtoByUserNameWithOnlyTags(List<Long> usersIds, String name);
 }
