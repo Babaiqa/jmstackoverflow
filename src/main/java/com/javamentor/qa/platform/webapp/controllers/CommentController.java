@@ -68,6 +68,6 @@ public class CommentController {
         CommentQuestion commentQuestion =
                 commentQuestionService.addCommentToQuestion(commentText, question.get(), user.get());
 
-        return ResponseEntity.ok(commentConverter.commentToCommentDTO(commentQuestion.getComment()));
+        return ResponseEntity.ok(commentConverter.commentToCommentDTO(commentQuestion));
     }
 }
