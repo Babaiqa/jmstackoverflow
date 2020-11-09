@@ -2,8 +2,6 @@ package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.CommentQuestionDao;
 import com.javamentor.qa.platform.dao.abstracts.model.ReadWriteDao;
-import com.javamentor.qa.platform.models.entity.Comment;
-import com.javamentor.qa.platform.models.entity.CommentType;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -16,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentQuestionServiceImpl extends ReadWriteServiceImpl<CommentQuestion, Long> implements CommentQuestionService {
 
 
-    CommentQuestionDao commentQuestionDao;
+    private final CommentQuestionDao commentQuestionDao;
 
     public CommentQuestionServiceImpl(ReadWriteDao<CommentQuestion, Long> readWriteDao,
                                       CommentQuestionDao commentQuestionDao) {

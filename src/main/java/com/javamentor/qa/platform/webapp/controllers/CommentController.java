@@ -5,7 +5,6 @@ import com.javamentor.qa.platform.models.dto.CommentDto;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.model.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
@@ -25,19 +24,18 @@ public class CommentController {
 
     private final QuestionService questionService;
     private final CommentQuestionService commentQuestionService;
-    private final CommentDtoService commentDtoService;
     private final UserService userService;
     private final CommentConverter commentConverter;
 
 
     public CommentController(QuestionService questionService, CommentQuestionService commentQuestionService,
-                             CommentDtoService commentDtoService, UserService userService, CommentConverter commentConverter) {
+                             UserService userService, CommentConverter commentConverter) {
         this.questionService = questionService;
         this.commentQuestionService = commentQuestionService;
-        this.commentDtoService = commentDtoService;
         this.userService = userService;
         this.commentConverter = commentConverter;
     }
+
 
     @PostMapping("question/{questionId}")
     @ApiOperation(value = "Add comment", notes = "This method Add comment to question and return CommentDto")
@@ -47,10 +45,10 @@ public class CommentController {
     })
 
     public ResponseEntity<?> addCommentToQuestion(
-            @ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
+            @ApiParam(name = "questionId", value = "QuestionId. Type long", required = true, example = "1")
             @PathVariable Long questionId,
 
-            @ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
+            @ApiParam(name = "userId", value = "UserId. Type long", required = true, example = "1")
             @RequestParam Long userId,
 
             @ApiParam(name = "text", value = "Text of comment. Type string", required = true, example = "Some comment")
@@ -67,12 +65,9 @@ public class CommentController {
             return ResponseEntity.badRequest().body("Question not found");
         }
 
-        CommentQuestion commentQuestion = commentQuestionService.addCommentToQuestion(commentText, question.get(), user.get());
-        CommentDto commentDto=commentConverter.commentToCommentDTO(commentQuestion.getComment());
+        CommentQuestion commentQuestion =
+                commentQuestionService.addCommentToQuestion(commentText, question.get(), user.get());
 
-      //  Optional<CommentDto> commentDto = commentDtoService.getCommentDtoById(commentQuestion.getComment().getId());
-
-        return ResponseEntity.ok(commentDto);
-
+        return ResponseEntity.ok(commentConverter.commentToCommentDTO(commentQuestion.getComment()));
     }
 }
