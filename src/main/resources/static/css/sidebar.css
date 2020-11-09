@@ -15,7 +15,7 @@
 }
 /*headerSidebarFooter*/
 
-#areaQuestion, #example{
+#areaQuestion, #example, #areaUsers{
     margin-top: 60px;
     display: none;
 }
