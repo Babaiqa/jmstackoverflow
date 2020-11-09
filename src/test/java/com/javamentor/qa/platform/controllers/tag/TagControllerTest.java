@@ -373,7 +373,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
         PageDto<TagListDto, Object> expected = new PageDto<>();
         expected.setCurrentPageNumber(1);
         expected.setTotalPageCount(1);
-        expected.setTotalResultCount(5);
+        expected.setTotalResultCount(2);
         expected.setItemsOnPage(10);
 
         List<TagListDto> expectedItems = new ArrayList<>();
@@ -384,7 +384,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
         String resultContext = mockMvc.perform(get(NAME)
                 .param("name", "java")
                 .param("page", "1")
-                .param("size", "5"))
+                .param("size", "10"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -402,6 +402,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     @Test
     public void requestNegativePageGetTagName() throws Exception {
         mockMvc.perform(get(NAME)
+                .param("name", "java")
                 .param("page", "-1")
                 .param("size", "10"))
                 .andDo(print())
@@ -413,6 +414,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     @Test
     public void requestNegativeSizeGetTagName() throws Exception {
         mockMvc.perform(get(NAME)
+                .param("name", "java")
                 .param("page", "1")
                 .param("size", "0"))
                 .andDo(print())
@@ -424,6 +426,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     @Test
     public void requestIncorrectSizeGetTagName() throws Exception {
         mockMvc.perform(get(NAME)
+                .param("name", "java")
                 .param("page", "1")
                 .param("size", "101"))
                 .andDo(print())
@@ -435,6 +438,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     @Test
     public void requestPageDontExistsGetTagName() throws Exception {
         mockMvc.perform(get(NAME)
+                .param("name", "java")
                 .param("page", "13")
                 .param("size", "10"))
                 .andDo(print())
@@ -445,6 +449,5 @@ public class TagControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
                 .andExpect(jsonPath("$.items").isEmpty());
     }
-
 
 }
