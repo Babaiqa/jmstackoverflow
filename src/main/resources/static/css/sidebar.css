@@ -19,6 +19,10 @@
     margin-top: 60px;
     display: none;
 }
+#mainPage{
+    margin-top: 60px;
+}
+
 #sidebarArea{
     /*position: fixed;*/
     margin-top: 60px;
