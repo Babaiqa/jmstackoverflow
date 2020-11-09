@@ -35,15 +35,7 @@ public class UserDtoServiceImpl implements UserDtoService {
 
         List<UserDtoList> listUserDtoListOnlyTagsDto=userDtoDao.getListTagDtoWithTagsPeriodWithOnlyTags(usersIds,7);
 
-        pageDto.setItems(addTagsDtoToUserDtoList(listUserDtoWithoutTagsDto,listUserDtoListOnlyTagsDto));
-
-        int totalResultCount=userDtoDao.getTotalResultCountUsers();
-        pageDto.setTotalResultCount(totalResultCount);
-        pageDto.setCurrentPageNumber(page);
-        pageDto.setItemsOnPage(size);
-        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount/(double)size));
-
-        return pageDto;
+        return getUserDtoListObjectPageDto(page, size, pageDto, listUserDtoWithoutTagsDto, listUserDtoListOnlyTagsDto);
     }
 
 
@@ -64,4 +56,30 @@ public class UserDtoServiceImpl implements UserDtoService {
         }
         return listUserDto;
     }
+
+    @Override
+    public PageDto<UserDtoList, Object> getPageUserDtoListByReputationOverMonth(int page, int size) {
+        PageDto<UserDtoList, Object> pageDto = new PageDto<>();
+
+        List<UserDtoList> listUserDtoWithoutTagsDto = userDtoDao.getPageUserDtoListByReputationOverPeriodWithoutTags(page,size, 30);
+        List<Long> usersIdsPage = listUserDtoWithoutTagsDto.stream().map(UserDtoList::getId).collect(Collectors.toList());
+
+        List<UserDtoList> listUserDtoOnlyTagsDto = userDtoDao.getListTagDtoWithTagsPeriodWithOnlyTags(usersIdsPage, 30);
+
+        return getUserDtoListObjectPageDto(page, size, pageDto, listUserDtoWithoutTagsDto, listUserDtoOnlyTagsDto);
+    }
+
+    private PageDto<UserDtoList, Object> getUserDtoListObjectPageDto(int page, int size, PageDto<UserDtoList, Object> pageDto, List<UserDtoList> listUserDtoWithoutTagsDto, List<UserDtoList> listUserDtoOnlyTagsDto) {
+        pageDto.setItems(addTagsDtoToUserDtoList(listUserDtoWithoutTagsDto, listUserDtoOnlyTagsDto));
+
+        int totalResultCount = userDtoDao.getTotalResultCountUsers();
+        pageDto.setTotalResultCount(totalResultCount);
+        pageDto.setCurrentPageNumber(page);
+        pageDto.setItemsOnPage(size);
+        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount/(double) size));
+
+        return pageDto;
+    }
+
+
 }
