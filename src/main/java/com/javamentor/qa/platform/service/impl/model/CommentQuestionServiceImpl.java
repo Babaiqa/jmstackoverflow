@@ -22,6 +22,7 @@ public class CommentQuestionServiceImpl extends ReadWriteServiceImpl<CommentQues
         this.commentQuestionDao = commentQuestionDao;
     }
 
+
     @Transactional
     @Override
     public CommentQuestion addCommentToQuestion(String commentText, Question question, User user) {
