@@ -1,15 +1,19 @@
 package com.javamentor.qa.platform.webapp.converters;
 
 import com.javamentor.qa.platform.models.dto.CommentDto;
-import com.javamentor.qa.platform.models.entity.Comment;
+import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public abstract class CommentConverter {
 
-    public CommentDto commentToCommentDTO(Comment comment) {
-        return new CommentDto(comment.getId(), comment.getText(), comment.getPersistDateTime(),
-                comment.getLastUpdateDateTime(), comment.getCommentType(), comment.getUser().getId(),
-                comment.getUser().getFullName(), comment.getUser().getReputationCount().longValue());
-    }
+    @Mapping(source = "comment.text", target = "text")
+    @Mapping(source = "comment.commentType", target = "commentType")
+    @Mapping(source = "comment.persistDateTime", target = "persistDate")
+    @Mapping(source = "comment.lastUpdateDateTime", target = "lastRedactionDate")
+    @Mapping(source = "comment.user.id", target = "userId")
+    @Mapping(source = "comment.user.fullName", target = "username")
+    @Mapping(source = "comment.user.reputationCount", target = "reputation")
+    public abstract CommentDto commentToCommentDTO(CommentQuestion commentQuestion);
 }
