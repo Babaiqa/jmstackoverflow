@@ -8,9 +8,10 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.webapp.converters.CommentConverter;
 import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,13 +26,17 @@ public class CommentController {
     private final QuestionService questionService;
     private final CommentQuestionService commentQuestionService;
     private final CommentDtoService commentDtoService;
+    private final UserService userService;
+    private final CommentConverter commentConverter;
 
 
     public CommentController(QuestionService questionService, CommentQuestionService commentQuestionService,
-                             CommentDtoService commentDtoService) {
+                             CommentDtoService commentDtoService, UserService userService, CommentConverter commentConverter) {
         this.questionService = questionService;
         this.commentQuestionService = commentQuestionService;
         this.commentDtoService = commentDtoService;
+        this.userService = userService;
+        this.commentConverter = commentConverter;
     }
 
     @PostMapping("question/{questionId}")
@@ -44,21 +49,30 @@ public class CommentController {
     public ResponseEntity<?> addCommentToQuestion(
             @ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
             @PathVariable Long questionId,
-            @AuthenticationPrincipal User user,
+
+            @ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
+            @RequestParam Long userId,
 
             @ApiParam(name = "text", value = "Text of comment. Type string", required = true, example = "Some comment")
             @RequestBody String commentText) {
 
+
+        Optional<User> user = userService.getById(userId);
+        if (!user.isPresent()) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
 
         Optional<Question> question = questionService.getById(questionId);
         if (!question.isPresent()) {
             return ResponseEntity.badRequest().body("Question not found");
         }
 
-        CommentQuestion commentQuestion = commentQuestionService.addCommentToQuestion(commentText, question.get(), user);
-        Optional<CommentDto> commentDto = commentDtoService.getCommentDtoById(commentQuestion.getComment().getId());
+        CommentQuestion commentQuestion = commentQuestionService.addCommentToQuestion(commentText, question.get(), user.get());
+        CommentDto commentDto=commentConverter.commentToCommentDTO(commentQuestion.getComment());
 
-        return commentDto.isPresent() ? ResponseEntity.ok(commentDto.get()) :
-                ResponseEntity.badRequest().body("Failed to save");
+      //  Optional<CommentDto> commentDto = commentDtoService.getCommentDtoById(commentQuestion.getComment().getId());
+
+        return ResponseEntity.ok(commentDto);
+
     }
 }

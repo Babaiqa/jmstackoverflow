@@ -27,12 +27,8 @@ public class CommentQuestionServiceImpl extends ReadWriteServiceImpl<CommentQues
     @Transactional
     @Override
     public CommentQuestion addCommentToQuestion(String commentText, Question question, User user) {
-        CommentQuestion commentQuestion = new CommentQuestion();
+        CommentQuestion commentQuestion = new CommentQuestion(commentText,user);
         commentQuestion.setQuestion(question);
-        commentQuestion.setComment(Comment.builder().text(commentText)
-                .user(user)
-                .commentType(CommentType.QUESTION)
-                .build());
 
         commentQuestionDao.persist(commentQuestion);
 

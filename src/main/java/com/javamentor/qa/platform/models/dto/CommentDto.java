@@ -20,4 +20,14 @@ public class CommentDto implements Serializable {
     private String username;
     private Long reputation;
 
+
+    public CommentDto(Long id, String text, LocalDateTime persistDate, LocalDateTime lastRedactionDate, CommentType commentType, Long userId, String username) {
+        this.id = id;
+        this.text = text;
+        this.persistDate = persistDate;
+        this.lastRedactionDate = lastRedactionDate;
+        this.commentType = commentType;
+        this.userId = userId;
+        this.username = username;
+    }
 }
