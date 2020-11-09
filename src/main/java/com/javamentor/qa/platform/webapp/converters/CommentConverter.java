@@ -8,8 +8,8 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public abstract class CommentConverter {
 
-    @Mapping(source = "comment.text", target = "text")
-    @Mapping(source = "comment.commentType", target = "commentType")
+
+    @Mapping(source = "comment", target = ".")
     @Mapping(source = "comment.persistDateTime", target = "persistDate")
     @Mapping(source = "comment.lastUpdateDateTime", target = "lastRedactionDate")
     @Mapping(source = "comment.user.id", target = "userId")
