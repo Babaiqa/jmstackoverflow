@@ -15,7 +15,7 @@
 }
 /*headerSidebarFooter*/
 
-#areaQuestion, #example{
+#areaQuestion, #example, #areaTag{
     margin-top: 60px;
     display: none;
 }
@@ -81,5 +81,23 @@ a:hover {
     font-size: 10px;
     color: #848d95;
 }
+
+.child
+{
+    height: 200px;
+    display: inline-block;
+    width: 30%;
+    border: 1px solid black;
+    float: left;
+
+}
+
+.child2 {
+    height: 200px;
+    display: inline-block;
+    width: 40%;
+    float: left;
+}
+
 
 /*footer styles end*/
