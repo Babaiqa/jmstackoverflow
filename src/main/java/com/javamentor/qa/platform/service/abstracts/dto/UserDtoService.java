@@ -13,4 +13,6 @@ public interface UserDtoService {
     PageDto<UserDtoList, Object> getPageUserDtoListByReputationOverMonth(int page, int size);
 
     PageDto<UserDtoList, Object> getPageUserDtoListByReputationOverWeek(int page, int size);
+    PageDto<UserDtoList,Object> getPageUserDtoListByName(int page, int size, String name);
+
 }
