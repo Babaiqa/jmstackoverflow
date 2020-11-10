@@ -26,7 +26,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @AutoConfigureMockMvc
 @DBRider
 @DBUnit(caseSensitiveTableNames = true, allowEmptyFields = true, schema = "public")
-public abstract class AbstractIntegrationQuestionControllerTest {
+public abstract class AbstractIntegrationTest {
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
