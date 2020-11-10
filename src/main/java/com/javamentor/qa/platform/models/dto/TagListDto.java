@@ -27,10 +27,10 @@ public class TagListDto implements Serializable {
 
     @Override
     public String toString() {
-        return "TagListDto{" +
+        return "{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
+                ", name=" + name +
+                ", description=" + description +
                 ", countQuestion=" + countQuestion +
                 ", countQuestionToWeek=" + countQuestionToWeek +
                 ", countQuestionToDay=" + countQuestionToDay +
