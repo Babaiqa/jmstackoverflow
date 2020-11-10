@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.controllers.user;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.javamentor.qa.platform.AbstractIntegrationQuestionControllerTest;
+import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserRegistrationDto;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class UserControllerTest extends AbstractIntegrationQuestionControllerTest {
+public class UserControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
