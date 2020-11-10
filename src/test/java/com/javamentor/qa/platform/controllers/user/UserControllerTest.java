@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.controllers.user;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.javamentor.qa.platform.AbstractIntegrationQuestionControllerTest;
+import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.dto.UserDtoList;
@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class UserControllerTest extends AbstractIntegrationQuestionControllerTest {
+public class UserControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -58,64 +58,73 @@ public class UserControllerTest extends AbstractIntegrationQuestionControllerTes
 
         PageDto<UserDtoList, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
         Assert.assertEquals(expected.toString(), actual.toString());
-
-
-    }
-
-
-    @Test
-    @DataSet(value = "dataset/user/userApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
-    public void shouldGetUserById() throws Exception {
-        this.mockMvc.perform(get("/api/user/1"))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
-    @Test
-    @DataSet(value = "dataset/question/usersQuestionApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
-    public void shouldGetUserByIsNot() throws Exception {
-        this.mockMvc.perform(get("/api/user/4"))
-                .andDo(print())
-                .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DataSet(value = "dataset/user/roleUserApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
-    public void shouldCreateUser() throws Exception {
-        UserRegistrationDto user = new UserRegistrationDto();
-        user.setEmail("11@22.ru");
-        user.setPassword("100");
-        user.setFullName("Ivan Ivanich");
-
-        String jsonRequest = objectMapper.writeValueAsString(user);
-
-        this.mockMvc.perform(post("/api/user/registration").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+    @DataSet(value = "dataset/user/userUserApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
+    public void inabilityGetUserByNameWithWrongName() throws Exception {
+        this.mockMvc.perform(get("/api/user/find")
+                .param("name", "c")
+                .param("page", "1")
+                .param("size", "10"))
                 .andDo(print())
-                .andExpect(status().isOk());
-
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("User with this name does not exist"));
     }
 
     @Test
-    @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, disableConstraints = true, cleanBefore = true, cleanAfter = true)
-    public void shouldCreateUserIsNot() throws Exception {
-        UserRegistrationDto user = new UserRegistrationDto();
-        user.setEmail("ivanov@mail.ru");
-        user.setPassword("100");
-        user.setFullName("Ivan Ivanich");
-        String jsonRequest = objectMapper.writeValueAsString(user);
-        this.mockMvc.perform(post("/api/user/registration").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+    @DataSet(value = "dataset/user/userUserApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
+    public void inabilityGetUserByNameWithNegativePage() throws Exception {
+        this.mockMvc.perform(get("/api/user/find")
+                .param("name", "t")
+                .param("page", "-1")
+                .param("size", "10"))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("The page number and size must be positive. Maximum number of records per page 100"));
     }
 
     @Test
-    public void shouldCreateUserValidateEmail() throws Exception {
-        UserRegistrationDto user = new UserRegistrationDto();
-        user.setEmail("ivanovmail.ru");
-        user.setPassword("100");
-        user.setFullName("Ivan Ivanich");
-        String jsonRequest = objectMapper.writeValueAsString(user);
-        this.mockMvc.perform(post("/api/user/registration").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+    @DataSet(value = "dataset/user/userUserApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
+    public void inabilityGetUserByNameWithZeroSize() throws Exception {
+        this.mockMvc.perform(get("/api/user/find")
+                .param("name", "t")
+                .param("page", "1")
+                .param("size", "0"))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("The page number and size must be positive. Maximum number of records per page 100"));
+    }
+
+    @Test
+    @DataSet(value = "dataset/user/userUserApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
+    public void inabilityGetUserByNameWithNegativeSize() throws Exception {
+        this.mockMvc.perform(get("/api/user/find")
+                .param("name", "t")
+                .param("page", "1")
+                .param("size", "-1"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("The page number and size must be positive. Maximum number of records per page 100"));
+    }
+
+    @Test
+    @DataSet(value = "dataset/user/userUserApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
+    public void inabilityGetUserByNameOnPageNotExists() throws Exception {
+        this.mockMvc.perform(get("/api/user/find")
+                .param("name", "t")
+                .param("page", "13")
+                .param("size", "10"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
+                .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
+                .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
+                .andExpect(jsonPath("$.items").isEmpty());
     }
 }
