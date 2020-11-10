@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.controllers.tag;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.javamentor.qa.platform.AbstractIntegrationQuestionControllerTest;
+import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.TagListDto;
 import com.javamentor.qa.platform.webapp.controllers.TagController;
@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataSet(value = {
         "dataset/question/tagQuestionApi.yml"}
         , cleanBefore = true, cleanAfter = true)
-public class TagControllerTest   extends AbstractIntegrationQuestionControllerTest {
+public class TagControllerTest   extends AbstractIntegrationTest {
 
     @Autowired
     private TagController tagController;

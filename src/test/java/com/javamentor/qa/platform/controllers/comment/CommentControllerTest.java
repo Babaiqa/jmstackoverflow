@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.controllers.comment;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.javamentor.qa.platform.AbstractIntegrationQuestionControllerTest;
+import com.javamentor.qa.platform.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/comment/tagCommentApi.yml",
         "dataset/comment/question_has_tagCommentApi.yml",
         "dataset/comment/votes_on_questionCommentApi.yml"}, cleanBefore = true, cleanAfter = true)
-public class CommentControllerTest extends AbstractIntegrationQuestionControllerTest {
+public class CommentControllerTest extends AbstractIntegrationTest {
 
 
     @Autowired
