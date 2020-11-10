@@ -12,38 +12,25 @@
     text-align: left;
     width: 100%;
 
-
 }
+/*headerSidebarFooter*/
 
-#sidebar {
-    width: 20%;
-    float: left;
+#areaQuestion, #example, #areaUsers{
+    margin-top: 60px;
+    display: none;
 }
-
- #sidebar {
-     margin-top: 60px;
-    position: fixed;
-}
-#header {
-
-}
-#askQuest{
-    float: right;
-}
-
-.list-group {
-    width: 80%;
-    float: right;
+#sidebarArea{
+    /*position: fixed;*/
     margin-top: 60px;
 }
-.row, #askQuest{
-    margin-left: 100px;
-    float: right;
+.row h2{                   /*"заголовок "Все вопросы"*/
+    margin-left: 180px;
+}
+#askQuest{                 /*кнопка "Задать вопрос"*/
+    margin-left: 300px;
 }
 
-html {
-    /*background-color: yellow;*/
-}
+/*headerSidebarFooter*/
 
 /*footer styles*/
 
