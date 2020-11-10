@@ -83,7 +83,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
         return entityManager.unwrap(Session.class)
                 .createQuery("select new com.javamentor.qa.platform.models.dto.UserDtoList" +
                         "(u.id, u.fullName, u.imageLink, u.reputationCount) from User u " +
-                        " WHERE lower(u.fullName) LIKE lower('%" + name + "%') " + "group by u.id")
+                        " WHERE lower(u.fullName) LIKE lower('%" + name + "%') " + "order by u.id")
                 .unwrap(org.hibernate.query.Query.class)
                 .setFirstResult(page * size - size)
                 .setMaxResults(size)

@@ -16,4 +16,17 @@ public class PageDto<T, V>  implements Serializable {
         private List<T> items;
         private List<V> meta;
         private int itemsOnPage = 12;
+
+        @Override
+        public String toString() {
+                return "PageDto{" +
+                        "currentPageNumber=" + currentPageNumber +
+                        ", totalPageCount=" + totalPageCount +
+                        ", totalResultCount=" + totalResultCount +
+                        ", items=" + items +
+                        ", meta=" + meta +
+                        ", itemsOnPage=" + itemsOnPage +
+                        '}';
+        }
+
 }
