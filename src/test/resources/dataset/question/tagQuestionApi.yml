@@ -2,25 +2,25 @@ tag:
 
   - id: 1
     name: "java"
-    description: "Java the best language"
-    persist_date: "2020-10-28 13:58:56"
+    description: "Java is a popular high-level programming language."
+    persist_date: "JS: new Date(new Date().valueOf() - ((24*60*60*1000) * 21)).toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
 
   - id: 2
-    name: "java1"
-    description: "Java1 the best language"
-    persist_date: "2020-10-29 13:58:56"
+    name: "javaScript"
+    description: "For questions regarding programming in ECMAScript (JavaScript/JS) and its various dialects/implementations (excluding ActionScript)."
+    persist_date: "JS: new Date(new Date().valueOf() - ((24*60*60*1000) * 14)).toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
 
   - id: 3
-    name: "java2"
-    description: "Java2 the best language"
-    persist_date: "2020-10-30 13:58:56"
+    name: "html"
+    description: "HTML (HyperText Markup Language) is the markup language for creating web pages and other information to be displayed in a web browser."
+    persist_date: "JS: new Date(new Date().valueOf() - ((24*60*60*1000) * 7)).toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
 
   - id: 4
-    name: "java3"
-    description: "Java3 the best language"
-    persist_date: "2019-12-28 13:58:56"
+    name: "bootstrap-4"
+    description: "Bootstrap 4 is the fourth major version of the popular front-end component library. The Bootstrap framework aids in the creation of responsive, mobile-first websites and web apps."
+    persist_date: "JS: new Date(new Date().valueOf() - ((24*60*60*1000) * 1)).toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
 
   - id: 5
-    name: "java4"
-    description: "Java4 the best language"
-    persist_date: "2019-12-28 13:58:56"
+    name: "sql"
+    description: "Structured Query Language (SQL) is a language for querying databases."
+    persist_date: "JS: new Date().toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
