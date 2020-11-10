@@ -81,21 +81,23 @@ a:hover {
     font-size: 10px;
     color: #848d95;
 }
-.child
-{
-    height: 200px;
-    display: inline-block;
-    width: 30%;
-    border: 1px solid black;
-    float: left;
-
-}
-
-.child2 {
-    height: 200px;
-    display: inline-block;
-    width: 40%;
-    float: left;
-}
 
 /*footer styles end*/
+
+.child {
+    height: 220px;
+    display: inline-block;
+    width: 20%;
+    border: 1px solid #b1b1b1;
+    float: left;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 8px;
+}
+.child2 {
+    height: 10px;
+    display: inline-block;
+    width: 50%;
+    float: left;
+    padding: 10px;
+}
