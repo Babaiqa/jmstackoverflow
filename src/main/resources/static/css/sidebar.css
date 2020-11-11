@@ -15,7 +15,7 @@
 }
 /*headerSidebarFooter*/
 
-#areaQuestion, #example, #areaUsers{
+#areaQuestion, #example, #areaTag, #areaUsers{
     margin-top: 60px;
     display: none;
 }
@@ -83,3 +83,46 @@ a:hover {
 }
 
 /*footer styles end*/
+
+/*tagsAria styles*/
+
+.child {
+    height: 220px;
+    display: inline-block;
+    width: 20%;
+    border: 1px solid #b1b1b1;
+    float: left;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 8px;
+}
+.child2 {
+    height: 10px;
+    display: inline-block;
+    width: 50%;
+    float: left;
+    padding: 10px;
+}
+.mb-1 {
+    display: inline-block;
+    padding: .4em .5em;
+    margin: 2px 2px 2px 0;
+    font-size: 11px;
+    line-height: 1;
+    white-space: nowrap;
+    text-decoration: none;
+    text-align: center;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 3px;
+    color: #39739d  ;
+    background-color: #e1ecf4;
+    border-color: #e1ecf4;
+}
+.mb-1:hover {
+    color: #2c5777  ;
+    background-color: #d1e5f1;
+    border-color: #d1e5f1;
+}
+
+/*tagsAria styles end*/
