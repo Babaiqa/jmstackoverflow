@@ -14,7 +14,8 @@ import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 @Mapper(componentModel = "spring")
-public abstract  class UserConverter {
+public abstract class UserConverter {
+
     @Autowired
     private  RoleService roleService;
 
