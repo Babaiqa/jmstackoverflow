@@ -6,9 +6,29 @@
 
 </head>
 <body>
-    <div th:insert="~{fragment/header :: header}"  ></div>
+    <div th:insert="~{fragment/header :: header}" class="fixed-top" ></div>
     <div class="container-fluid">
-        <div th:insert="~{fragment/sidebar :: sidebar}" ></div>
+        <div class="row ">
+            <div class="col-md-3 col-xl-2  col-lg-2 col-sm-3">
+                <div th:insert="~{fragment/sidebar :: sidebar}" id="sidebarArea" ></div>
+            </div>
+            <div class="list-group col-md-9 col-xl-10  col-lg-10 col-sm-9">
+                <div class="tabcontent" id="example">
+                    <h1>Главная</h1>
+                    Что такое Lorem Ipsum?
+                    Lorem Ipsum - это текст-"рыба", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной "рыбой"
+                    для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и
+                    форм шрифтов, используя Lorem Ipsum для распечатки образцов. Lorem Ipsum не только успешно пережил без заметных
+                    изменений пять веков, но и перешагнул в электронный дизайн. Его популяризации в новое время послужили публикация
+                    листов Letraset с образцами Lorem Ipsum в 60-х годах и, в более недавнее время, программы электронной вёрстки типа
+                    Aldus PageMaker, в шаблонах которых используется Lorem Ipsum.
+                </div>
+                <div th:insert="~{fragment/questionAria :: questionAria}" class="tabcontent"  id="areaQuestion"></div>
+                <div th:insert="~{fragment/users :: users}" class="tabcontent"  id="areaUsers"></div>
+                <div th:insert="~{fragment/tagsAria :: tagsAria}" class="tabcontent"  id="areaTag"></div>
+            </div>
+
+        </div>
     </div>
     <div th:insert="~{fragment/footer :: footer}" ></div>
     <div th:insert="fragment/generalFragments :: styleheader"></div>

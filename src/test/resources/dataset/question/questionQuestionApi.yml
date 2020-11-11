@@ -1,58 +1,58 @@
 question:
   - id: 1
 #    count_valuable: 1
-    description: "some description for first question"
+    description: "Stream filter on list keeping some of the filtered values"
     title: "Question number one"
     view_count: 3
     user_id: 1
-    persist_date: "2020-10-25 13:58:56"
+    persist_date: "JS: new Date(new Date().valueOf() - ((24*60*60*1000) * 20)).toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
     is_deleted: 0
     last_redaction_date: "2020-01-02 13:58:56"
 
   - id: 2
 #    count_valuable: 3
-    description: "some description for second question"
+    description: "while using java timer, error that The constructor Timer(int, ActionListener) is undefined"
     title: "Question number two"
     view_count: 5
     user_id: 1
-    persist_date: "2020-01-10 13:58:56"
+    persist_date: "JS: new Date(new Date().valueOf() - ((24*60*60*1000) * 14)).toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
     is_deleted: 0
     last_redaction_date: "2020-01-20 13:58:56"
 
   - id: 3
 #    count_valuable: 2
-    description: "some description for next question number three"
+    description: "Swagger - add “path variable” in request url"
     title: "Question number three"
     view_count: 2
     user_id: 2
-    persist_date: "2020-10-29 13:58:56"
+    persist_date: "JS: new Date(new Date().valueOf() - ((24*60*60*1000) * 8)).toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
     is_deleted: 0
     last_redaction_date: "2020-02-01 13:58:56"
 
   - id: 4
 #    count_valuable: 5
-    description: "some description for next question number four"
+    description: "Chart js drill down chart"
     title: "Question number four"
     view_count: 2
     user_id: 2
-    persist_date: "2020-10-30 13:58:56"
+    persist_date: "JS: new Date(new Date().valueOf() - ((24*60*60*1000) * 10)).toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
     is_deleted: 1
     last_redaction_date: "2020-02-02 13:58:56"
 
   - id: 5
 #    count_valuable: 2
-    description: "some description for next question number five"
+    description: "Save web page who as exit"
     title: "Question number five"
     view_count: 2
     user_id: 1
-    persist_date: "2020-01-22 13:58:56"
+    persist_date: "JS: new Date(new Date().valueOf() - ((24*60*60*1000) * 5)).toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
     is_deleted: 0
     last_redaction_date: "2020-02-01 13:58:56"
 
   - id: 6
 #    count_valuable: 1
-    description: "some description for next question number six"
-    persist_date: "2020-10-30"
+    description: "Glightbox problem in mobile horizontal scroll"
+    persist_date: "JS: new Date(new Date().valueOf() - ((24*60*60*1000) * 1)).toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
     title: "Question number six"
     view_count: 1
     user_id: 2
@@ -61,8 +61,8 @@ question:
 
   - id: 7
 #    count_valuable: 4
-    description: "some description for next question number seven"
-    persist_date: "2020-10-30"
+    description: "Changes made in sql query in excel reflects changes only on single sheet"
+    persist_date: "JS: new Date().toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
     title: "Question number seven"
     view_count: 1
     user_id: 3
@@ -71,8 +71,8 @@ question:
 
   - id: 8
 #    count_valuable: 5
-    description: "some description for next question number eight"
-    persist_date: "2020-04-04"
+    description: "can someone Explain why the following query will return an error message?"
+    persist_date: "JS: new Date().toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
     title: "Question number eight"
     view_count: 1
     user_id: 3
@@ -81,8 +81,8 @@ question:
 
   - id: 9
 #    count_valuable: 1
-    description: "some description for next question number nine"
-    persist_date: "2020-04-04"
+    description: "Conceptual explanation: why COUNT() syntax doesn't work on SQLZoo JOIN Lesson Challenge 13?"
+    persist_date: "JS: new Date().toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
     title: "Question number nine"
     view_count: 1
     user_id: 2

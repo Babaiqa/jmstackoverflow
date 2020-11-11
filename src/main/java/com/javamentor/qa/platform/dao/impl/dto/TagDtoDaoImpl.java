@@ -4,8 +4,6 @@ import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.dto.TagListDto;
 import com.javamentor.qa.platform.models.dto.TagRecentDto;
-import org.hibernate.Session;
-import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -70,39 +68,35 @@ public class TagDtoDaoImpl implements TagDtoDao {
     @Override
     public List<TagListDto> getTagListDtoByPopularPagination(int page, int size) {
         return entityManager.createQuery("" +
-                "SELECT t.id AS id, t.name AS name, COUNT(questions.id) AS countQuestion, " +
-                "(SELECT COUNT(q.id) FROM t.questions AS q WHERE q.persistDateTime BETWEEN :startDate1 AND :endDate1) AS countQuestionToWeek, " +
-                "(SELECT COUNT(q.id) FROM t.questions AS q WHERE q.persistDateTime BETWEEN :startDate2 AND :endDate2) AS countQuestionToDay " +
+                "SELECT new com.javamentor.qa.platform.models.dto.TagListDto(t.id, t.name, t.description, COUNT(q.id), " +
+                "(SELECT COUNT(q.id) FROM t.questions AS q WHERE q.persistDateTime BETWEEN :startDate1 AND :endDate1), " +
+                "(SELECT COUNT(q.id) FROM t.questions AS q WHERE q.persistDateTime BETWEEN :startDate2 AND :endDate2)) " +
                 "FROM Tag AS t " +
-                "LEFT JOIN t.questions AS questions " +
-                "GROUP BY id " +
-                "ORDER BY countQuestion DESC")
+                "LEFT JOIN t.questions AS q " +
+                "GROUP BY t.id " +
+                "ORDER BY COUNT(q.id) DESC")
                 .setParameter("startDate1", LocalDateTime.now().minusDays(7))
                 .setParameter("endDate1", LocalDateTime.now())
                 .setParameter("startDate2", LocalDateTime.now().minusDays(1))
                 .setParameter("endDate2", LocalDateTime.now())
                 .setFirstResult(page * size - size)
                 .setMaxResults(size)
-                .unwrap(org.hibernate.query.Query.class)
-                .setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE)
                 .getResultList();
     }
 
     @Override
     public List<TagRecentDto> getTagRecentDtoPagination(int page, int size) {
         return entityManager.createQuery("" +
-                "SELECT t.id AS id, t.name AS name, " +
-                "(SELECT COUNT(q.id) FROM t.questions AS q WHERE q.persistDateTime BETWEEN :start AND :end ) AS countTagToQuestion " +
+                "SELECT new com.javamentor.qa.platform.models.dto.TagRecentDto(t.id, t.name, " +
+                "(SELECT COUNT(q.id) FROM t.questions AS q WHERE q.persistDateTime BETWEEN :start AND :end)) " +
                 "FROM Tag AS t " +
-                "LEFT JOIN t.questions AS questions " +
-                "GROUP BY id " +
-                "ORDER BY countTagToQuestion DESC")
+                "LEFT JOIN t.questions AS q " +
+                "GROUP BY t.id " +
+                "ORDER BY COUNT(q.id) DESC")
                 .setParameter("start", LocalDateTime.now().minusMonths(1))
                 .setParameter("end", LocalDateTime.now())
                 .setFirstResult(page * size - size)
                 .setMaxResults(size)
-                .unwrap(org.hibernate.query.Query.class)
-                .setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE)
                 .getResultList();
     }
 
