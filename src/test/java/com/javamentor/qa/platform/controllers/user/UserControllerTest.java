@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.dto.UserDtoList;
+import com.javamentor.qa.platform.models.entity.question.Tag;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,11 +147,11 @@ public void shouldGetUserByName() throws Exception {
         expected.setItemsOnPage(10);
 
         List<UserDtoList> expectedItems = new ArrayList<>();
-        expectedItems.add(new UserDtoList(1L, "Teat", "null", 15));
-        expectedItems.add(new UserDtoList(2L, "Tot", null, 0));
-        expectedItems.add(new UserDtoList(3L, "Tot", "tra ta ta", 2));
-        expectedItems.add(new UserDtoList(4L, "Tot", null, 0));
-        expectedItems.add(new UserDtoList(5L, "Tot", null, 0));
+        expectedItems.add(new UserDtoList(1L, "Teat", null, 0, Arrays.asList(new TagDto[]{new TagDto(1L,"java"), new TagDto(3L,"html")})));
+        expectedItems.add(new UserDtoList(2L, "Tot", null, 0, Arrays.asList(new TagDto[]{new TagDto(2L,"javaScript"), new TagDto(1L,"java"), new TagDto(5L,"sql")})));
+        expectedItems.add(new UserDtoList(3L, "Tot", null, 0, Arrays.asList(new TagDto[]{new TagDto(5L,"sql")})));
+        expectedItems.add(new UserDtoList(4L, "Tot", null, 0, Arrays.asList(new TagDto[]{})));
+        expectedItems.add(new UserDtoList(5L, "Tot", null, 0, Arrays.asList(new TagDto[]{})));
         expected.setItems(expectedItems);
 
         String resultContext =
@@ -174,6 +175,7 @@ public void shouldGetUserByName() throws Exception {
         Assert.assertEquals(expected.getTotalResultCount(), actual.getTotalResultCount());
         Assert.assertEquals(expected.getItemsOnPage(), actual.getItemsOnPage());
         Assert.assertEquals(expected.getItems().size(), actual.getItems().size());
+        Assert.assertEquals(expected.toString(), actual.toString());
     }
 
     @DataSet(value = {"dataset/question/roleQuestionApi.yml",
