@@ -20,17 +20,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 
-@DataSet(value = {"dataset/question/roleQuestionApi.yml",
-        "dataset/user/usersQuestionApi.yml",
-        "dataset/question/questionQuestionApi.yml",
-        "dataset/question/tagQuestionApi.yml",
-        "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
 public class UserControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
     public void requestUserTagReputationOverMonth() throws Exception {
 
@@ -41,16 +40,15 @@ public class UserControllerTest extends AbstractIntegrationTest {
         expected.setItemsOnPage(10);
 
         List<UserDtoList> expectedItems = new ArrayList<>();
-        expectedItems.add(new UserDtoList(1L, "Teat", "null", 15L));
-        expectedItems.add(new UserDtoList(2L, "Tot", null, 0L));
-        expectedItems.add(new UserDtoList(3L, "Tot", "tra ta ta", 2L));
-        expectedItems.add(new UserDtoList(4L, "Tot", null, 0L));
-        expectedItems.add(new UserDtoList(5L, "Tot", null, 0L));
+        expectedItems.add(new UserDtoList(1L, "Teat", "null", 15));
+        expectedItems.add(new UserDtoList(2L, "Tot", null, 0));
+        expectedItems.add(new UserDtoList(3L, "Tot", "tra ta ta", 2));
+        expectedItems.add(new UserDtoList(4L, "Tot", null, 0));
+        expectedItems.add(new UserDtoList(5L, "Tot", null, 0));
         expected.setItems(expectedItems);
 
         String resultContext =
-                mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/user/order/reputation/month")
+                mockMvc.perform(get("/api/user/order/reputation/month")
                 .param("page", "1")
                 .param("size", "10"))
                 .andDo(print())
@@ -72,10 +70,14 @@ public class UserControllerTest extends AbstractIntegrationTest {
         Assert.assertEquals(expected.getItems().size(), actual.getItems().size());
     }
 
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
     public void requestNegativePageUserTagReputationOverMonth() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/user/order/reputation/month")
+        mockMvc.perform(get("/api/user/order/reputation/month")
                 .param("page", "-1")
                 .param("size", "10"))
                 .andDo(print())
@@ -84,10 +86,14 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
     }
 
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
     public  void requestNegativeSizeUserTagReputationOverMonth() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/user/order/reputation/month")
+        mockMvc.perform(get("/api/user/order/reputation/month")
                 .param("page", "1")
                 .param("size", "0"))
                 .andDo(print())
@@ -96,10 +102,14 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
     }
 
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
     public void requestIncorrectSizeUserTagReputationOverMonth() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/user/order/reputation/month")
+        mockMvc.perform(get("/api/user/order/reputation/month")
                 .param("page", "1")
                 .param("size", "101"))
                 .andDo(print())
@@ -108,10 +118,14 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
     }
 
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
     public void requestPageDontExistsUserTagReputationOverMonth() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/user/order/reputation/month")
+        mockMvc.perform(get("/api/user/order/reputation/month")
                 .param("page", "99")
                 .param("size", "99"))
                 .andDo(print())

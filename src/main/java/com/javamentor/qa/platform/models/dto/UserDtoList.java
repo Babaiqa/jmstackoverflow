@@ -15,7 +15,7 @@ public class UserDtoList {
     private Long id;
     private String fullName;
     private String linkImage;
-    private Long reputation;
+    private int reputation;
     private List<TagDto> tags;
 
     @Override
@@ -29,10 +29,16 @@ public class UserDtoList {
                 '}';
     }
 
-    public UserDtoList(Long id, String fullName, String linkImage, Long reputation) {
+    public UserDtoList(Long id, String fullName, String linkImage, int reputation) {
         this.id = id;
         this.fullName = fullName;
         this.linkImage = linkImage;
         this.reputation = reputation;
+    }
+    public UserDtoList(Long id, String fullName, String linkImage, Long reputation) {
+        this.id = id;
+        this.fullName = fullName;
+        this.linkImage = linkImage;
+        this.reputation = Math.toIntExact(reputation);
     }
 }
