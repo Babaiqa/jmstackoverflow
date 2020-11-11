@@ -24,4 +24,15 @@ public class UserDtoList {
         this.linkImage = linkImage;
         this.reputation = reputation;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "id=" + id +
+                ", fullName=" + fullName +
+                ", linkImage=" + linkImage +
+                ", reputation=" + reputation +
+                ", tags=" + tags +
+                "}";
+    }
 }
