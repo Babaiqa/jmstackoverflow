@@ -89,6 +89,32 @@ public class UserController {
         return  ResponseEntity.ok(resultPage);
     }
 
+    @GetMapping("order/reputation")
+    @ApiOperation(value = "Get page List<UserDtoList> order by reputation. " +
+            "UserDtoList contains List<TagDto> with size 3 " +
+            "and order by activity. Max size entries on page = "+ MAX_ITEMS_ON_PAGE, response = List.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination List<UserDtoList> order by reputation",
+                    response = List.class),
+            @ApiResponse(code = 400, message = "Wrong value of size or page", response = String.class)
+    })
+    public ResponseEntity<?> getUserDtoListPaginationByReputation(
+            @ApiParam(name = "page", value = "Number Page. Type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of records per page. Type int. " +
+                    "Maximum number of records per page "+ MAX_ITEMS_ON_PAGE , required = true,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+        PageDto<UserDtoList,Object> resultPage = userDtoService.getPageUserDtoListByReputation(page, size);
+
+        return  ResponseEntity.ok(resultPage);
+    }
+
     // вывод юзеров с репутацией за месяц
     @GetMapping("order/reputation/month")
     @ApiOperation(value = "Get page List<UserDtoList> order by reputation over month." +

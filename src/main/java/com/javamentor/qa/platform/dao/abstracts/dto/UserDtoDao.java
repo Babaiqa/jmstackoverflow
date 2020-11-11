@@ -15,6 +15,9 @@ public interface UserDtoDao {
 
     List<UserDtoList> getListTagDtoWithTagsPeriodWithOnlyTags(List<Long> usersIds,int quantityOfDay);
 
+    List<UserDtoList> getPageUserDtoListByReputationWithoutTags(int page, int size);
+    List<UserDtoList> getListTagDtoWithTagsWithOnlyTags(List<Long> usersIds);
+
     int getCountUsersByName(String name);
 
     List<UserDtoList> getPageUserDtoListByNameWithoutTags(int page, int size, String name);

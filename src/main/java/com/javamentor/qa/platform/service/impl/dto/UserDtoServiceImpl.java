@@ -38,6 +38,18 @@ public class UserDtoServiceImpl implements UserDtoService {
         return getUserDtoListObjectPageDto(page, size, pageDto, listUserDtoWithoutTagsDto, listUserDtoListOnlyTagsDto);
     }
 
+    @Override
+    public PageDto<UserDtoList, Object> getPageUserDtoListByReputation(int page, int size) {
+        PageDto<UserDtoList, Object> pageDto = new PageDto<>();
+
+        List<UserDtoList> listUserDtoWithoutTagsDto = userDtoDao.getPageUserDtoListByReputationWithoutTags(page, size);
+        List<Long> usersIds = listUserDtoWithoutTagsDto.stream().map(UserDtoList::getId).collect(Collectors.toList());
+
+        List<UserDtoList> listUserDtoListOnlyTagsDto = userDtoDao.getListTagDtoWithTagsWithOnlyTags(usersIds);
+
+        return getUserDtoListObjectPageDto(page, size, pageDto, listUserDtoWithoutTagsDto, listUserDtoListOnlyTagsDto);
+    }
+
     private List<UserDtoList> addTagsDtoToUserDtoList(List<UserDtoList> listUserDto,
                                                       List<UserDtoList> listUserDtoListOnlyTagsDto) {
         Map<Long, UserDtoList> map = new HashMap<>();

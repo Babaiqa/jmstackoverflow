@@ -15,10 +15,10 @@ public class UserDtoList {
     private Long id;
     private String fullName;
     private String linkImage;
-    private Integer reputation;
+    private long reputation;
     private List<TagDto> tags;
 
-    public UserDtoList(Long id, String fullName, String linkImage, Integer reputation) {
+    public UserDtoList(Long id, String fullName, String linkImage, long reputation) {
         this.id = id;
         this.fullName = fullName;
         this.linkImage = linkImage;
