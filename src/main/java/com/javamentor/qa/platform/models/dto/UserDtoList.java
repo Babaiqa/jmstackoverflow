@@ -15,10 +15,21 @@ public class UserDtoList {
     private Long id;
     private String fullName;
     private String linkImage;
-    private Integer reputation;
+    private Long reputation;
     private List<TagDto> tags;
 
-    public UserDtoList(Long id, String fullName, String linkImage, Integer reputation) {
+    @Override
+    public String toString() {
+        return "{" +
+                "id=" + id +
+                ", fullName=" + fullName +
+                ", linkImage=" + linkImage +
+                ", reputation=" + reputation +
+                ", tags=" + tags +
+                '}';
+    }
+
+    public UserDtoList(Long id, String fullName, String linkImage, Long reputation) {
         this.id = id;
         this.fullName = fullName;
         this.linkImage = linkImage;

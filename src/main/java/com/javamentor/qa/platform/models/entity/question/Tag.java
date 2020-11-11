@@ -76,4 +76,5 @@ public class Tag implements Serializable {
     public int hashCode() {
         return Objects.hash(id, name, description, persistDateTime);
     }
+
 }
