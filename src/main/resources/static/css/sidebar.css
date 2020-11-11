@@ -84,6 +84,8 @@ a:hover {
 
 /*footer styles end*/
 
+/*tagsAria styles*/
+
 .child {
     height: 220px;
     display: inline-block;
@@ -93,6 +95,13 @@ a:hover {
     padding: 10px;
     margin: 10px;
     border-radius: 8px;
+}
+.child2 {
+    height: 10px;
+    display: inline-block;
+    width: 50%;
+    float: left;
+    padding: 10px;
 }
 .mb-1 {
     display: inline-block;
@@ -115,10 +124,5 @@ a:hover {
     background-color: #d1e5f1;
     border-color: #d1e5f1;
 }
-.child2 {
-    height: 10px;
-    display: inline-block;
-    width: 50%;
-    float: left;
-    padding: 10px;
-}
+
+/*tagsAria styles end*/
