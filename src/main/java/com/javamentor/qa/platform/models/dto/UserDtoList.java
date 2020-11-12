@@ -15,7 +15,7 @@ public class UserDtoList {
     private Long id;
     private String fullName;
     private String linkImage;
-    private int reputation;
+    private Integer reputation;
     private List<TagDto> tags;
 
     @Override
