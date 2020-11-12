@@ -15,7 +15,7 @@
             <button type="button" class="btn  btn-sm  tablinks active"  onclick="openContent(event, 'example')" >Главная</button>
             <button type="button" class="btn btn-sm tablinks" onclick="openContent(event, 'areaQuestion')">Вопросы</button>
             <button type="button" class="btn btn-sm tablinks"onclick="openContent(event, 'areaTag')">Метки</button>
-            <button type="button" class="btn  btn-sm tablinks" onclick="openContent(event, 'areaUsers'), writeUsers(1, 20, 'week')">Участники</button>
+            <button type="button" class="btn  btn-sm tablinks" onclick="openContent(event, 'areaUsers'), new PaginationUser(1, 20, 'week').writeUsers()">Участники</button>
             <button type="button" class="btn  btn-sm overflow-hidden">Неотвеченные</button>
         </div>
     </div>

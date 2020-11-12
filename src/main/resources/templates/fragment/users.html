@@ -28,10 +28,10 @@
 
         <ul class="nav justify-content-end m-3">
             <li class="nav-item">
-                <a class="nav-link active" href="#" onclick="writeUsers(1, 20, 'week')">За неделю</a>
+                <a class="nav-link active" href="#" onclick="new PaginationUser(1, 20, 'week').writeUsers()">За неделю</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#" onclick="writeUsers(1, 20, 'month')">За месяц</a>
+                <a class="nav-link" href="#" onclick="new PaginationUser(1, 20, 'month').writeUsers()">За месяц</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">Квартал</a>
@@ -44,7 +44,7 @@
             </li>
         </ul>
 
-        <div class="row m-3" id="usersTable" style="min-height:300px"></div>
+        <div class="row m-3" id="usersTable" style="min-height:350px"></div>
 
         <a href="#" class="m-3">Зал славы за неделю/месяц/квартал</a>
 
