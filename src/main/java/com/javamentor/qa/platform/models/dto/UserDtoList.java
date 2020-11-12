@@ -15,15 +15,8 @@ public class UserDtoList {
     private Long id;
     private String fullName;
     private String linkImage;
-    private long reputation;
+    private Integer reputation;
     private List<TagDto> tags;
-
-    public UserDtoList(Long id, String fullName, String linkImage, long reputation) {
-        this.id = id;
-        this.fullName = fullName;
-        this.linkImage = linkImage;
-        this.reputation = reputation;
-    }
 
     @Override
     public String toString() {
@@ -33,6 +26,19 @@ public class UserDtoList {
                 ", linkImage=" + linkImage +
                 ", reputation=" + reputation +
                 ", tags=" + tags +
-                "}";
+                '}';
+    }
+
+    public UserDtoList(Long id, String fullName, String linkImage, int reputation) {
+        this.id = id;
+        this.fullName = fullName;
+        this.linkImage = linkImage;
+        this.reputation = reputation;
+    }
+    public UserDtoList(Long id, String fullName, String linkImage, Long reputation) {
+        this.id = id;
+        this.fullName = fullName;
+        this.linkImage = linkImage;
+        this.reputation = Math.toIntExact(reputation);
     }
 }
