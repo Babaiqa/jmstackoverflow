@@ -78,6 +78,34 @@ public class UserDtoDaoImpl implements UserDtoDao {
     }
 
     @Override
+    public List<UserDtoList> getPageUserDtoListByReputationWithoutTags(int page, int size) {
+        return entityManager.unwrap(Session.class)
+                .createQuery("select new com.javamentor.qa.platform.models.dto.UserDtoList" +
+                        "(u.id, u.fullName, u.imageLink, " +
+                        "(select coalesce(sum(ra.count), 0) from Reputation ra where ra.user.id = u.id)) " +
+                        "from User u left outer join Reputation r on u.id = r.user.id " +
+                        "group by u.id order by sum(r.count) desc NULLS LAST, u.id")
+                .unwrap(org.hibernate.query.Query.class)
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
+    }
+
+    @Override
+    public List<UserDtoList> getListTagDtoWithTagsWithOnlyTags(List<Long> usersIds) {
+        return entityManager.unwrap(Session.class)
+                .createQuery("select u.id as user_id, t.name as tag_name, t.id as tag_id " +
+                        "from User u left join Question q on u.id = q.user.id " +
+                        "join q.tags t left join Answer a on a.question.id = q.id " +
+                        "where q.user.id in (:ids) or a.user.id  in (:ids) " +
+                        "group by t,u.id order by count(t.id) desc,t.id")
+                .setParameterList("ids", usersIds)
+                .unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(new UserDtoListTranformer())
+                .getResultList();
+    }
+
+    @Override
     public List<UserDtoList> getPageUserDtoListByNameWithoutTags(int page, int size, String name) {
 
         return entityManager.unwrap(Session.class)
