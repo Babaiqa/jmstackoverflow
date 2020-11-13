@@ -1,19 +1,12 @@
 package com.javamentor.qa.platform.webapp.converters;
 
+import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
-import com.javamentor.qa.platform.models.dto.UserDto;
-import com.javamentor.qa.platform.models.dto.UserRegistrationDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.model.RoleService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-
-import javax.persistence.EntityNotFoundException;
-import java.util.Optional;
 
 @Mapper(componentModel = "spring")
 public abstract class QuestionConverter {
@@ -37,17 +30,14 @@ public abstract class QuestionConverter {
 
 
 
-    @Mapping(target = "id", source = "questionDto.id")
-    @Mapping(target = "user.id", source = "authorId")
-    @Mapping(target = "title", source = "questionDto.title")
-    @Mapping(target = "description",source = "questionDto.description")
-    @Mapping(target = "user.fullName", source = "questionDto.authorName")
-    @Mapping(target = "user.imageLink", source = "questionDto.authorImage")
-    @Mapping(target = "viewCount", source = "questionDto.viewCount")
-    @Mapping(target = "tags", source = "questionDto.listTagDto")
-    @Mapping(target = "persistDateTime", source = "questionDto.persistDateTime")
-    @Mapping(target = "lastUpdateDateTime", source = "questionDto.lastUpdateDateTime")
+    @Mapping(target = "user", source = "userId",qualifiedByName = "mapUser")
+    public abstract Question questionCreateDtoToQuestion(QuestionCreateDto questionCreateDto);
 
-    public abstract Question questionDtoToQuestion(QuestionDto questionDto);
+    @Named("mapUser")
+    public User mapUser(Long id) {
+        return userService.getById(id).get();
+    }
+
+
 
 }

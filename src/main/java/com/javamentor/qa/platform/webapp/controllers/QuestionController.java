@@ -1,19 +1,17 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
-import com.javamentor.qa.platform.models.dto.PageDto;
-import com.javamentor.qa.platform.models.dto.QuestionDto;
-import com.javamentor.qa.platform.models.dto.TagDto;
-import com.javamentor.qa.platform.models.dto.UserDto;
+import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
-import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import com.javamentor.qa.platform.webapp.converters.TagMapper;
+import com.javamentor.qa.platform.webapp.converters.UserConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -24,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +35,7 @@ public class QuestionController {
     private final QuestionService questionService;
     private final TagMapper tagMapper;
     private final TagService tagService;
-    private final UserService userService;
+    private final UserDtoService userDtoService;
 
     private final QuestionDtoService questionDtoService;
 
@@ -45,16 +44,19 @@ public class QuestionController {
     @Autowired
 
     public QuestionController(QuestionService questionService, TagMapper tagMapper, TagService tagService,
-                              QuestionDtoService questionDtoService, UserService userService) {
+                              QuestionDtoService questionDtoService, UserDtoService userDtoService) {
         this.questionService = questionService;
         this.tagMapper = tagMapper;
         this.tagService = tagService;
         this.questionDtoService = questionDtoService;
-        this.userService = userService;
+        this.userDtoService = userDtoService;
     }
 
     @Autowired
     public QuestionConverter questionConverter;
+
+    @Autowired
+    public UserConverter userConverter;
 
 
     @DeleteMapping("/{id}/delete")
@@ -169,37 +171,22 @@ public class QuestionController {
 
 
     @PostMapping("add")
+    @Validated(OnCreate.class)
     @ResponseBody
     @ApiOperation(value = "add Question", response = String.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "Add Question", response = Question.class),
             @ApiResponse(code = 400, message = "Question not add", response = String.class)
     })
-    public ResponseEntity<?> addQuestion(@RequestBody QuestionDto questionDto) {
+    public ResponseEntity<?> addQuestion(@Valid @RequestBody QuestionCreateDto questionCreateDto) {
 
-        if (questionDto.getId() != null) {
-            return ResponseEntity.badRequest().body("QuestionDto.id must be null");
+        Optional<UserDto> userDto = userDtoService.getUserDtoById(questionCreateDto.getUserId());
+
+        if (!userDto.isPresent()) {
+            return ResponseEntity.badRequest().body("QuestionDto.userId dont`t exist");
         }
 
-        Optional<User> user = userService.getById(questionDto.getAuthorId());
-
-        if (!user.isPresent()) {
-            return ResponseEntity.badRequest().body("QuestionDto.authorId dont`t exist");
-        }
-
-        if (questionDto.getViewCount() != 0) {
-            return ResponseEntity.badRequest().body("questionDto.viewCount() must be zero");
-        }
-
-        if (questionDto.getCountAnswer() != 0) {
-            return ResponseEntity.badRequest().body("questionDto.countAnswer() must be zero");
-        }
-
-        if (questionDto.getCountValuable() != 0) {
-            return ResponseEntity.badRequest().body("questionDto.countValuable() must be zero");
-        }
-
-        Question question = questionConverter.questionDtoToQuestion(questionDto);
+        Question question = questionConverter.questionCreateDtoToQuestion(questionCreateDto);
         questionService.persist(question);
 
         Optional<QuestionDto> questionDtoNew = Optional.ofNullable(questionConverter.questionToQuestionDto(question));
