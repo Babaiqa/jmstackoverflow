@@ -29,9 +29,9 @@ class PaginationTag {
                     + "<a href=\"#\" class=\"mb-1\">" + response.items[i].name + "</a>"
                     + "<div><small>" + response.items[i].description + "</small></div>"
                     + "<p>"
-                    + "<div class=\"child2\"><small class=\"text-muted\">" + response.items[i].countQuestion + "</small></div>"
+                    + "<div class=\"child2\"><small class=\"text-muted\">" + response.items[i].countQuestion + " вопросов" + "</small></div>"
                     + "<div class=\"child2\">"
-                    + "<small><a href=\"#\" class=\"text-muted\">" + response.items[i].countQuestionToDay + " задано сегодня," + "</a></small>"
+                    + "<small><a href=\"#\" class=\"text-muted\">" + response.items[i].countQuestionToDay + " задано сегодня, " + "</a></small>"
                     + "<small><a href=\"#\" class=\"text-muted\">" + response.items[i].countQuestionToWeek + " за неделю" + "</a></small>"
                     + "</div> </p> </div>");
             }
