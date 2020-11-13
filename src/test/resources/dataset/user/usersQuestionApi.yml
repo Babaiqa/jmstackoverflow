@@ -1,5 +1,16 @@
 user_entity:
-  - email: "ivanov@mail.ru"
+  - email: "2020-04-04"
+    reputation_count: 4
+    password: "2020-04-04"
+    about: "description 2"
+    full_name: "Tot"
+    is_enabled: 1
+    last_redaction_date: "2020-05-28 13:58:56"
+    persist_date: "2020-05-28 13:58:56"
+    role_id: 1
+    id: 5
+
+  - email: "2020-04-04"
     reputation_count: 2
     password: "2020-04-04"
     about: "description 1"
@@ -7,7 +18,6 @@ user_entity:
     is_enabled: 1
     last_redaction_date: "2020-05-28 13:58:56"
     persist_date: "2020-05-28 13:58:56"
-    image_link: "https://www.google.com/search?q=D0"
     role_id: 1
     id: 1
 
@@ -32,3 +42,15 @@ user_entity:
     persist_date: "2020-05-28 13:58:56"
     role_id: 1
     id: 3
+
+
+  - email: "2020-04-04"
+    reputation_count: 3
+    password: "2020-04-04"
+    about: "description 2"
+    full_name: "Tot"
+    is_enabled: 1
+    last_redaction_date: "2020-05-28 13:58:56"
+    persist_date: "2020-05-28 13:58:56"
+    role_id: 1
+    id: 4
