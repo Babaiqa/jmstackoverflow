@@ -19,152 +19,29 @@
 
         <div class="form-group row justify-content-between m-2">
             <div class="col-2">
-                <input class="form-control" id="inputPassword2" placeholder="Фильтрация по имени">
+                <input class="form-control" id="inputFilter" placeholder="Фильтрация по имени">
             </div>
 
             <div class="col-5  btn-group justify-content-end" id="differentTagsBar">
-                <button type="button" class="btn  btn-sm   active " href="#">Популярные</button>
-                <button type="button" class="btn btn-sm" href="#">Имя</button>
-                <button type="button" class="btn btn-sm" href="#">Новые</button>
+                <button type="button" class="btn  btn-sm   active " href="#"
+                        onclick="new PaginationTag(1, 20, 'popular').writeTags()">Популярные
+                </button>
+                <button type="button" class="btn btn-sm" href="#"
+                        onclick="new PaginationTag(1, 20, 'name').writeTags()">Имя
+                </button>
+                <button type="button" class="btn btn-sm" href="#"
+                        onclick="new PaginationTag(1, 20, 'new').writeTags()"> Новые
+                </button>
             </div>
         </div>
 
-        <!--Дальше теги-->
+        <div class="row m-3" id="tagsTable" style="min-height:350px"></div>
 
-        <div class="child">
-            <a href="#" class="mb-1">javascript</a>
-            <div>
-                <small>JavaScript (не путать с Java) — динамический, интерпретируемый язык со слабой
-                    типизацией, обычно используемый для написания скриптов на стороне клиента.</small>
-            </div>
-            <p>
-            <div class="child2">
-                <small class="text-muted">50567 вопросов</small>
-            </div>
-            <div class="child2">
-                <small><a href="#" class="text-muted">23 задано сегодня,</a></small>
-                <small><a href="#" class="text-muted">16 за неделю</a></small>
-            </div>
-            </p>
-        </div>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-end m-3" id="tagsPagesNavigation">
+            </ul>
+        </nav>
 
-        <div class="child">
-            <a href="#" class="mb-1">java</a>
-            <div>
-                <small>Java (не путать с JavaScript) — строго типизированный объектно-ориентированный
-                    язык программирования. Приложения Java обычно транслируются в специальный байт...</small>
-            </div>
-            <p>
-            <div class="child2">
-                <small class="text-muted">50567 вопросов</small>
-            </div>
-            <div class="child2">
-                <small><a href="#" class="text-muted">23 задано сегодня,</a></small>
-                <small><a href="#" class="text-muted">16 за неделю</a></small>
-            </div>
-            </p>
-        </div>
-
-        <div class="child">
-            <a href="#" class="mb-1">html</a>
-            <div>
-                <small>Язык гипертекстовой разметки - это стандартный язык разметки для документов,
-                    предназначенных для отображения в веб-браузере.</small>
-            </div>
-            <p>
-            <div class="child2">
-                <small class="text-muted">50567 вопросов</small>
-            </div>
-            <div class="child2">
-                <small><a href="#" class="text-muted">23 задано сегодня,</a></small>
-                <small><a href="#" class="text-muted">16 за неделю</a></small>
-            </div>
-            </p>
-        </div>
-
-        <div class="child">
-            <a href="#" class="mb-1">css</a>
-            <div>
-                <small>CSS, или каскадные таблицы стилей, — формальный язык описания внешнего вида
-                    документа, язык стилей, определяющий отображение HTML-документов.</small>
-            </div>
-            <p>
-            <div class="child2">
-                <small class="text-muted">50567 вопросов</small>
-            </div>
-            <div class="child2">
-                <small><a href="#" class="text-muted">23 задано сегодня,</a></small>
-                <small><a href="#" class="text-muted">16 за неделю</a></small>
-            </div>
-            </p>
-        </div>
-        <div class="child">
-            <a href="#" class="mb-1">jquery</a>
-            <div>
-                <small>Популярная JavaScript-библиотека. Метка применяетcя к вопросам использования
-                    JQuery и ее дополнений. Должна быть дополнена меткой [javascript].</small>
-            </div>
-            <p>
-            <div class="child2">
-                <small class="text-muted">50567 вопросов</small>
-            </div>
-            <div class="child2">
-                <small><a href="#" class="text-muted">23 задано сегодня,</a></small>
-                <small><a href="#" class="text-muted">16 за неделю</a></small>
-            </div>
-            </p>
-        </div>
-
-        <div class="child">
-            <a href="#" class="mb-1">mysql</a>
-            <div>
-                <small>Популярная реляционная СУБД, полностью поддерживающая стандартный SQL.
-                    Используйте метку только для вопросов, специфических для MySQL...</small>
-            </div>
-            <p>
-            <div class="child2">
-                <small class="text-muted">50567 вопросов</small>
-            </div>
-            <div class="child2">
-                <small><a href="#" class="text-muted">23 задано сегодня,</a></small>
-                <small><a href="#" class="text-muted">16 за неделю</a></small>
-            </div>
-            </p>
-        </div>
-        <div class="child">
-            <a href="#" class="mb-1">ajax</a>
-            <div>
-                <small>AJAX (Асинхронный JavaScript и XML) - технология построения интерактивных
-                    веб-приложений, заключающаяся в фоновом обмене данными с веб-сервером...</small>
-            </div>
-            <p>
-            <div class="child2">
-                <small class="text-muted">50567 вопросов</small>
-            </div>
-            <div class="child2">
-                <small><a href="#" class="text-muted">23 задано сегодня,</a></small>
-                <small><a href="#" class="text-muted">16 за неделю</a></small>
-            </div>
-            </p>
-        </div>
-
-        <div class="child">
-            <a href="#" class="mb-1">json</a>
-            <div>
-                <small>JSON (JavaScript Object Notation) — независимый от конкретного языка
-                    формат для обмена текстовыми данными. Используйте эту метку, когда передаёте данные...</small>
-            </div>
-            <p>
-            <div class="child2">
-                <small class="text-muted">50567 вопросов</small>
-            </div>
-            <div class="child2">
-                <small><a href="#" class="text-muted">23 задано сегодня,</a></small>
-                <small><a href="#" class="text-muted">16 за неделю</a></small>
-            </div>
-            </p>
-        </div>
-        <!--Теги кончились-->
     </div>
 </div>
 

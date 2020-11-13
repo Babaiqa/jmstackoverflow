@@ -2,23 +2,58 @@ class TagService {
 
     getTagDtoPaginationByPopular(page, size) {
         let query = '/api/tag/popular?page=' + page + '&size=' + size;
-        return this.getResponse(query);
-
+        return fetch(query)
+            .then(response =>  {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    let error = new Error();
+                    error.response = response.text();
+                    throw error;
+                }
+            }).catch( error => error.response.then(message => console.log(message)));
     }
 
     getTagDtoPaginationOrderByAlphabet(page, size) {
         let query = '/api/tag/alphabet/order?page=' + page + '&size=' + size;
-        return this.getResponse(query);
+        return fetch(query)
+            .then(response =>  {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    let error = new Error();
+                    error.response = response.text();
+                    throw error;
+                }
+            }).catch( error => error.response.then(message => console.log(message)));
     }
 
     getTagListDtoByPopularPagination(page, size) {
         let query = '/api/tag/order/popular?page=' + page + '&size=' + size;
-        return this.getResponse(query);
+        return fetch(query)
+            .then(response =>  {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    let error = new Error();
+                    error.response = response.text();
+                    throw error;
+                }
+            }).catch( error => error.response.then(message => console.log(message)));
     }
 
     getTagRecentDtoPagination(page, size) {
         let query = '/api/tag/recent?page=' + page + '&size=' + size;
-        return this.getResponse(query);
+        return fetch(query)
+            .then(response =>  {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    let error = new Error();
+                    error.response = response.text();
+                    throw error;
+                }
+            }).catch( error => error.response.then(message => console.log(message)));
     }
 
     getTagName(name, page, size) {
