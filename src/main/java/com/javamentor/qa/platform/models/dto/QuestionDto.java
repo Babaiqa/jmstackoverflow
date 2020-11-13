@@ -2,7 +2,6 @@ package com.javamentor.qa.platform.models.dto;
 
 import lombok.*;
 
-import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
