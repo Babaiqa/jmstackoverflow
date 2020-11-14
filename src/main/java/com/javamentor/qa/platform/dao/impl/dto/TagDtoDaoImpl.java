@@ -1,12 +1,9 @@
 package com.javamentor.qa.platform.dao.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
-import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.dto.TagListDto;
 import com.javamentor.qa.platform.models.dto.TagRecentDto;
-import com.javamentor.qa.platform.models.entity.question.Tag;
-import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -129,25 +126,4 @@ public class TagDtoDaoImpl implements TagDtoDao {
                 .getResultList();
     }
 
-    @Override
-    public Optional<Tag> getTagById(Long tagId) {
-        return (Optional<Tag>) entityManager.unwrap(Session.class)
-                .createQuery("SELECT Tag FROM Tag where id =: id")
-                .setParameter("id", tagId)
-                .unwrap(org.hibernate.query.Query.class)
-                .setResultTransformer(new TagResultTransformer())
-                .uniqueResultOptional();
-    }
-
-    private class TagResultTransformer implements org.hibernate.transform.ResultTransformer {
-        @Override
-        public Object transformTuple(Object[] objects, String[] strings) {
-            return null;
-        }
-
-        @Override
-        public List transformList(List list) {
-            return null;
-        }
-    }
 }

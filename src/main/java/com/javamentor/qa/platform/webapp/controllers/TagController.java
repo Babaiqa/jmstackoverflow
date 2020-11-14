@@ -178,9 +178,9 @@ public class TagController {
 
         PageDto<TagRecentDto, Object> resultPage = tagDtoService.getTagRecentDtoChildTagById(page, size, tagId);
 
-//        if (resultPage.getTotalResultCount() == 0) {
-//            return ResponseEntity.badRequest().body("No child tags found.");
-//        }
+        if (resultPage.getTotalResultCount() == 0) {
+            return ResponseEntity.badRequest().body("No child tags found.");
+        }
 
         return ResponseEntity.ok(resultPage);
     }

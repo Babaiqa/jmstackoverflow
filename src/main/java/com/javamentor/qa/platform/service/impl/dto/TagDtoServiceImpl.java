@@ -94,8 +94,6 @@ public class TagDtoServiceImpl implements TagDtoService {
     @Override
     public PageDto<TagRecentDto, Object> getTagRecentDtoChildTagById(int page, int size, Long tagId) {
         PageDto<TagRecentDto, Object> pageDto = new PageDto<>();
-        // проверяем наличие тега и получаем его имя
-        String tagName = Optional.ofNullable(tagService.getById(tagId).get().getName()).orElse("No tag name");
 
         // получаем список дочерних тегов типа TagRecentDto от тега с запрошенным id
         List<TagRecentDto> res = tagDtoDao.getTagRecentDtoChildTagById(page, size, tagId);
