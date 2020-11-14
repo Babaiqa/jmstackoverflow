@@ -27,6 +27,18 @@ public class UserDtoServiceImpl implements UserDtoService {
     }
 
     @Override
+    public PageDto<UserDtoList, Object> getPageUserDtoListByReputationOverYear(int page, int size) {
+        PageDto<UserDtoList, Object> pageDto = new PageDto<>();
+
+        List<UserDtoList> listUserDtoWithoutTagsDto = userDtoDao.getPageUserDtoListByReputationOverPeriodWithoutTags(page, size, 365);
+        List<Long> usersIds = listUserDtoWithoutTagsDto.stream().map(UserDtoList::getId).collect(Collectors.toList());
+
+        List<UserDtoList> listUserDtoListOnlyTagsDto = userDtoDao.getListTagDtoWithTagsPeriodWithOnlyTags(usersIds, 365);
+
+        return getUserDtoListObjectPageDto(page, size, pageDto, listUserDtoWithoutTagsDto, listUserDtoListOnlyTagsDto);
+    }
+
+    @Override
     public PageDto<UserDtoList, Object> getPageUserDtoListByReputationOverWeek(int page, int size) {
         PageDto<UserDtoList, Object> pageDto = new PageDto<>();
 
