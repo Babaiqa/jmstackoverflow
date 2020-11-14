@@ -19,7 +19,6 @@ public class TagDtoDaoImpl implements TagDtoDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-
     @Override
     public List<TagDto> getTagDtoPagination(int page, int size) {
 
@@ -116,10 +115,10 @@ public class TagDtoDaoImpl implements TagDtoDao {
     public List<TagRecentDto> getTagRecentDtoChildTagById(int page, int size, Long id) {
         return entityManager
                 .createQuery("SELECT new com.javamentor.qa.platform.models.dto.TagRecentDto(t.childTag.id, t.childTag.name, COUNT(t.childTag)) " +
-                        "FROM RelatedTag t " +
-                        "GROUP BY t.mainTag, t.childTag, t.childTag.name " +
-                        "HAVING t.mainTag.id =:id " +
-                        "ORDER BY COUNT(t.childTag) DESC ")
+                "FROM RelatedTag t " +
+                "GROUP BY t.mainTag, t.childTag, t.childTag.name " +
+                "HAVING t.mainTag.id =:id " +
+                "ORDER BY COUNT(t.childTag) DESC ")
                 .setParameter("id", id)
                 .setFirstResult(page * size - size)
                 .setMaxResults(size)
