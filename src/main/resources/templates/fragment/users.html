@@ -28,10 +28,10 @@
 
         <ul class="nav justify-content-end m-3">
             <li class="nav-item">
-                <a class="nav-link active" href="#">За неделю</a>
+                <a class="nav-link active" href="#" onclick="new PaginationUser(1, 20, 'week').writeUsers()">За неделю</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">За месяц</a>
+                <a class="nav-link" href="#" onclick="new PaginationUser(1, 20, 'month').writeUsers()">За месяц</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">Квартал</a>
@@ -44,77 +44,12 @@
             </li>
         </ul>
 
-        <div class="row m-3">
-            <div class="col-3 mb-3">
-                <div class="media">
-                    <img src="..." class="mr-3" alt="...">
-                    <div class="media-body">
-                        <a class="mt-0" href="#">User1</a>
-                        <div>Moscow, Россия</div>
-                        <div>1000</div>
-                        <a href="#">java</a>,
-                        <a href="#">c++</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-3 mb-3">
-                <div class="media">
-                    <img src="..." class="mr-3" alt="...">
-                    <div class="media-body">
-                        <a class="mt-0" href="#">User2</a>
-                        <div>Башкирия, Россия</div>
-                        <div>1000</div>
-                        <a href="#">java</a>,
-                        <a href="#">c++</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-3 mb-3">
-                <div class="media">
-                    <img src="..." class="mr-3" alt="...">
-                    <div class="media-body">
-                        <a class="mt-0" href="#">User3</a>
-                        <div>Munich, Germany</div>
-                        <div>1000</div>
-                        <a href="#">java</a>,
-                        <a href="#">c++</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-3 mb-3">
-                <div class="media">
-                    <img src="..." class="mr-3" alt="...">
-                    <div class="media-body">
-                        <a class="mt-0" href="#">User4</a>
-                        <div>Киев</div>
-                        <div>1000</div>
-                        <a href="#">java</a>,
-                        <a href="#">c++</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-3 mb-3">
-                <div class="media">
-                    <img src="..." class="mr-3" alt="...">
-                    <div class="media-body">
-                        <a class="mt-0" href="#">User5</a>
-                        <div>Россия Екатеринбург</div>
-                        <div>1000</div>
-                        <a href="#">java</a>,
-                        <a href="#">c++</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div class="row m-3" id="usersTable" style="min-height:350px"></div>
 
         <a href="#" class="m-3">Зал славы за неделю/месяц/квартал</a>
 
         <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-end m-3">
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">Далее</a></li>
+            <ul class="pagination justify-content-end m-3" id="usersPageNavigation">
             </ul>
         </nav>
     </div>

@@ -22,6 +22,35 @@ class UserService {
         }).catch(error => error.response.then(message => console.log(message)));
     }
 
+    getUserDtoPaginationByReputationOverMonth(page, size) {
+        let query = '/api/user/order/reputation/month?page=' + page + '&size=' + size;
+        return fetch(query)
+            .then(response =>  {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    let error = new Error();
+                    error.response = response.text();
+                    throw error;
+                }
+            }).catch( error => error.response.then(message => console.log(message)));
+    }
+
+    getUserDtoPaginationByReputationOverWeek(page, size) {
+        let query = '/api/user/order/reputation/week?page=' + page + '&size=' + size;
+        return fetch(query)
+            .then(response =>  {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    let error = new Error();
+                    error.response = response.text();
+                    throw error;
+                }
+            }).catch( error => error.response.then(message => console.log(message)));
+    }
+
+
     getResponse(query) {
         let result = new Array();
         fetch(query)
