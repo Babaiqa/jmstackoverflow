@@ -10,6 +10,8 @@ public interface UserDtoService {
 
     Optional <UserDto> getUserDtoById(long id);
 
+    PageDto<UserDtoList, Object> getPageUserDtoListByReputationOverYear(int page, int size);
+
     PageDto<UserDtoList, Object> getPageUserDtoListByReputationOverMonth(int page, int size);
 
     PageDto<UserDtoList, Object> getPageUserDtoListByReputationOverWeek(int page, int size);
