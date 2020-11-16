@@ -12,9 +12,10 @@
 <!--    <div  class="col-md-3 col-xl-2  col-lg-2 col-sm-3" id="sidebar">   закоментил, вместо этой поставил след стр-->
     <div id="sidebar">
         <div class="nav-col btn-group-vertical  btn-block mr-0   ">
-            <button type="button" class="btn  btn-sm  tablinks active"  onclick="openContent(event, 'mainPage')" >Главная</button>
+            <button type="button" class="btn  btn-sm  tablinks active"  onclick="openContent(event, 'example')" >Главная</button>
             <button type="button" class="btn btn-sm tablinks" onclick="openContent(event, 'areaQuestion')">Вопросы</button>
-            <button type="button" class="btn btn-sm tablinks"onclick="openContent(event, 'areaTag')">Метки</button>
+            <button type="button" class="btn  btn-sm tablinks" onclick="openContent(event, 'areaTag'),
+            new PaginationTag(1, 12, 'popular').writeTags()">Метки</button>
             <button type="button" class="btn  btn-sm tablinks" onclick="openContent(event, 'areaUsers'), new PaginationUser(1, 20, 'week').writeUsers()">Участники</button>
             <button type="button" class="btn  btn-sm overflow-hidden">Неотвеченные</button>
         </div>
