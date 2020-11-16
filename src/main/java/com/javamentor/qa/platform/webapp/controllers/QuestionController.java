@@ -9,6 +9,7 @@ import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import com.javamentor.qa.platform.webapp.converters.TagMapper;
 import com.javamentor.qa.platform.webapp.converters.UserConverter;
@@ -57,6 +58,9 @@ public class QuestionController {
 
     @Autowired
     public UserConverter userConverter;
+
+    @Autowired
+    public UserService userService;
 
 
     @DeleteMapping("/{id}/delete")
@@ -180,19 +184,16 @@ public class QuestionController {
     })
     public ResponseEntity<?> addQuestion(@Valid @RequestBody QuestionCreateDto questionCreateDto) {
 
-        Optional<UserDto> userDto = userDtoService.getUserDtoById(questionCreateDto.getUserId());
-
-        if (!userDto.isPresent()) {
-            return ResponseEntity.badRequest().body("QuestionDto.userId dont`t exist");
+        if (!userService.existsById(questionCreateDto.getUserId())) {
+            return ResponseEntity.badRequest().body("questionCreateDto.userId dont`t exist");
         }
 
         Question question = questionConverter.questionCreateDtoToQuestion(questionCreateDto);
         questionService.persist(question);
 
-        Optional<QuestionDto> questionDtoNew = Optional.ofNullable(questionConverter.questionToQuestionDto(question));
+        QuestionDto questionDtoNew = questionConverter.questionToQuestionDto(question);
 
-        return  questionDtoNew.isPresent() ? ResponseEntity.ok(questionDtoNew.get()) :
-                ResponseEntity.badRequest().body("Question convert error");
+        return  ResponseEntity.ok(questionDtoNew);
     }
 
 
