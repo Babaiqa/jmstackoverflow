@@ -319,4 +319,56 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
                 .andExpect(jsonPath("$.items").isEmpty());
     }
+
+    //------------------- UserOrderReputationYear --------------------//
+    @Test
+    public void requestPageUserReputationOverYearWithStatusOk() throws Exception {
+        mockMvc.perform(get("/api/user/order/reputation/year")
+                .param("page", "1")
+                .param("size", "100"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void requestNegativePageUserReputationOverYear() throws  Exception {
+        mockMvc.perform(get("/api/user/order/reputation/year")
+                .param("page", "-1")
+                .param("size", "100"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
+    }
+
+    @Test
+    public void requestNegativeSizeUserReputationOverYear() throws  Exception {
+        mockMvc.perform(get("/api/user/order/reputation/year")
+                .param("page", "1")
+                .param("size", "-100"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
+    }
+
+    @Test
+    public void requestIncorrectSizeUserReputationOverYear() throws  Exception {
+        mockMvc.perform(get("/api/user/order/reputation/year")
+                .param("page", "1")
+                .param("size", "101"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
+    }
+
+    @Test
+    public void requestUserReputationOverYear() throws  Exception {
+        mockMvc.perform(get("/api/user/order/reputation/year")
+                .param("page", "1")
+                .param("size", "100"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
+                .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
+                .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
+                .andExpect(jsonPath("$.items").isArray());
+    }
 }
