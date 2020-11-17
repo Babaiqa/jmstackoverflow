@@ -1,15 +1,33 @@
-function openContent(evt, contentName){
-    var i, tabcontent, tablinks;
+$( document ).ready(function() {
 
-    tabcontent = document.getElementsByClassName("tabcontent");
-    for(i=0; i<tabcontent.length; i++){
-        tabcontent[i].style.display = "none";
+    new PaginationTag(1, 12, 'popular').writeTags()
+    new PaginationUser(1,20,'week').writeUsers()
+
+    switch (location.pathname) {
+        case "/users": openContent("areaUsersLink", "areaUsers")
+            break;
+        case "/site": openContent("mainPageLink", "mainPage")
+            break;
+        case "/tagsAria": openContent("areaTagLink", "areaTag")
+            break;
+        case "/questionAria": openContent("areaQuestionLink", "areaQuestion")
+            break;
     }
 
-    tablinks = document.getElementsByClassName("tablinks");
-    for(i=0; i<tablinks.length; i++){
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    function openContent(evt, contentName){
+        var i, tabcontent, tablinks;
+
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for(i=0; i<tabcontent.length; i++){
+            tabcontent[i].style.display = "none";
+        }
+
+        tablinks = document.getElementsByClassName("tablinks");
+        for(i=0; i<tablinks.length; i++){
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        document.getElementById(contentName).style.display = "block";
+        document.getElementById(evt).className += " active";
     }
-    document.getElementById(contentName).style.display = "block";
-    evt.currentTarget.className += " active";
-}
+})
