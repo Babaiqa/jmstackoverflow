@@ -112,6 +112,13 @@ public class TagDtoDaoImpl implements TagDtoDao {
                 .getSingleResult();
     }
 
+    @Override
+    public int getTotalResultChildTag(Long id) {
+        return (int)(long) entityManager.createQuery("select count(tag.childTag) from RelatedTag tag where tag.mainTag.id=:id")
+                .setParameter("id", id)
+                .getSingleResult();
+    }
+
     public List<TagRecentDto> getTagRecentDtoChildTagById(int page, int size, Long id) {
         return entityManager
                 .createQuery("SELECT new com.javamentor.qa.platform.models.dto.TagRecentDto(t.childTag.id, t.childTag.name, COUNT(t.childTag)) " +

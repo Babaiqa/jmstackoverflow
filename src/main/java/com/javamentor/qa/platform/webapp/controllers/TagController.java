@@ -150,7 +150,7 @@ public class TagController {
     }
 
     @GetMapping(value = "{tagId}/child", params = {"page", "size"})
-    @ApiOperation(value = "get page TagRecentDto with child tags by tag id. MAX SIZE ENTRIES ON PAGE=100", response = PageDto.class)
+    @ApiOperation(value = "get page TagRecentDto with child tags by tag id. The results are sorted by popularity. MAX SIZE ENTRIES ON PAGE=100", response = PageDto.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the pagination PageDto<TagRecentDto> with child tags by tag id", response = PageDto.class),
             @ApiResponse(code = 400, message = "Wrong ID or page number", response = String.class)
@@ -164,23 +164,12 @@ public class TagController {
                     " Maximum number of records per page -"+ MAX_ITEMS_ON_PAGE ,
                     example = "10")
             @RequestParam("size") int size){
-        // Проверяем корректность полученных данных - номера и размера страницы
         if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
             return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
-        // Проверяем наличие тега по id
-        Optional<Tag> tag = tagDtoService.getTagById(tagId);
-
-        if (!tag.isPresent()) {
-            return ResponseEntity.badRequest().body("Wrong ID. Tag not found");
-        }
 
         PageDto<TagRecentDto, Object> resultPage = tagDtoService.getTagRecentDtoChildTagById(page, size, tagId);
-
-        if (resultPage.getTotalResultCount() == 0) {
-            return ResponseEntity.badRequest().body("No child tags found.");
-        }
 
         return ResponseEntity.ok(resultPage);
     }

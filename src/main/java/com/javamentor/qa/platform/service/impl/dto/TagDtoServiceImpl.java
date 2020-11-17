@@ -5,25 +5,18 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.dto.TagListDto;
 import com.javamentor.qa.platform.models.dto.TagRecentDto;
-import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TagDtoServiceImpl implements TagDtoService {
 
     private final TagDtoDao tagDtoDao;
-    private final TagService tagService;
 
     @Autowired
-    public TagDtoServiceImpl(TagDtoDao tagDtoDao, TagService tagService) {
+    public TagDtoServiceImpl(TagDtoDao tagDtoDao) {
         this.tagDtoDao = tagDtoDao;
-        this.tagService = tagService;
     }
 
     @Override
@@ -95,27 +88,17 @@ public class TagDtoServiceImpl implements TagDtoService {
     public PageDto<TagRecentDto, Object> getTagRecentDtoChildTagById(int page, int size, Long tagId) {
         PageDto<TagRecentDto, Object> pageDto = new PageDto<>();
 
-        // получаем список дочерних тегов типа TagRecentDto от тега с запрошенным id
-        List<TagRecentDto> res = tagDtoDao.getTagRecentDtoChildTagById(page, size, tagId);
-        // считаем количество вхождений дочернего тега в таблицу related_tag и число страниц результатов
-        int totalResultCount = res.size();
-        int totalPageCount = (int) Math.ceil(totalResultCount / (double) size);
+        int totalResultCount = tagDtoDao.getTotalResultChildTag(tagId);
 
-        // присваиваем полю List<T> items объекта pageDto полученный список
-        pageDto.setItems(res);
+        pageDto.setItems(tagDtoDao.getTagRecentDtoChildTagById(page, size, tagId));
         pageDto.setTotalResultCount(totalResultCount);
-
         pageDto.setCurrentPageNumber(page);
         pageDto.setItemsOnPage(size);
-        pageDto.setTotalPageCount(totalPageCount);
+        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount / (double) size));
 
         return pageDto;
     }
 
-    @Override
-    public Optional<Tag> getTagById(Long tagId) {
-        return tagService.getById(tagId);
-    }
 
     @Override
     public PageDto<TagListDto, Object> getTagDtoPaginationWithSearch(int page, int size, String tagName) {

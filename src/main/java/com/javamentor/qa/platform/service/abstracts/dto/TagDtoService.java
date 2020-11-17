@@ -22,5 +22,4 @@ public interface TagDtoService {
 
     PageDto<TagRecentDto, Object> getTagRecentDtoChildTagById(int page, int size, Long tagId);
 
-    Optional<Tag> getTagById(Long tagId);
 }

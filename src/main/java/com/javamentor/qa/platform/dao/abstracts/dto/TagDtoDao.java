@@ -24,5 +24,5 @@ public interface TagDtoDao {
 
     List<TagRecentDto> getTagRecentDtoChildTagById(int page, int size, Long id);
 
-
+    int getTotalResultChildTag(Long id);
 }
