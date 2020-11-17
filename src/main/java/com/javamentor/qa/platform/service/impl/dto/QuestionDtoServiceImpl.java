@@ -31,8 +31,8 @@ public class QuestionDtoServiceImpl implements QuestionDtoService {
     public PageDto<QuestionDto, Object> getPagination(int page, int size) {
         int totalResultCount = questionDtoDao.getTotalResultCountQuestionDto();
 
-        List<QuestionDto> questionList = questionDtoDao.getPagination(page, size);
-        List<Long> ids = questionList.stream().map(QuestionDto::getId).collect(Collectors.toList());
+        List<Question> questionList = questionDtoDao.getPagination(page, size);
+        List<Long> ids = questionList.stream().map(Question::getId).collect(Collectors.toList());
         List<QuestionDto> questionDtoList = questionDtoDao.getQuestionDtoByTagIds(ids);
         PageDto<QuestionDto, Object> pageDto = new PageDto<>();
         pageDto.setItems(questionDtoList);
@@ -47,8 +47,8 @@ public class QuestionDtoServiceImpl implements QuestionDtoService {
     public PageDto<QuestionDto, Object> getPaginationPopular(int page, int size) {
         int totalResultCount = questionDtoDao.getTotalResultCountQuestionDto();
 
-        List<QuestionDto> questionList = questionDtoDao.getPaginationPopular(page, size);
-        List<Long> ids = questionList.stream().map(QuestionDto::getId).collect(Collectors.toList());
+        List<Question> questionList = questionDtoDao.getPaginationPopular(page, size);
+        List<Long> ids = questionList.stream().map(Question::getId).collect(Collectors.toList());
         List<QuestionDto> questionDtoList = questionDtoDao.getQuestionDtoByTagIds(ids);
         PageDto<QuestionDto, Object> pageDto = new PageDto<>();
         pageDto.setItems(questionDtoList);

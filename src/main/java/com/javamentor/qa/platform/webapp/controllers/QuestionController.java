@@ -25,7 +25,7 @@ import java.util.Optional;
 
 @RestController
 @Validated
-@RequestMapping("/api/question/")
+@RequestMapping("/api/question")
 @Api(value = "QuestionApi")
 public class QuestionController {
 
@@ -108,7 +108,7 @@ public class QuestionController {
                 ResponseEntity.badRequest().body("Question not found");
     }
 
-    @GetMapping(
+    @GetMapping(path = "/",
             params = {"page", "size"}
     )
     @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")

@@ -38,13 +38,36 @@ class QuestionService {
     }
 
     findPagination(page, size) {
-        let query = '/api/question?page=' + page + '&size=' + size;
-        return this.getResponseQuestion(query);
+        let query = '/api/question/?page=' + page + '&size=' + size;
+        return fetch(query)
+            .then(response =>  {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    let error = new Error();
+                    error.response = response.text();
+                    throw error;
+                }
+            }).catch( error => error.response.then(message => console.log(message)));
+
+
+
+        // return this.getResponseQuestion(query);
     }
 
     findPaginationPopular(page, size) {
         let query = '/api/question/popular?page=' + page + '&size=' + size;
-        return this.getResponseQuestion(query);
+        return fetch(query)
+            .then(response =>  {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    let error = new Error();
+                    error.response = response.text();
+                    throw error;
+                }
+            }).catch( error => error.response.then(message => console.log(message)));
+        // return this.getResponseQuestion(query);
 
     }
 
