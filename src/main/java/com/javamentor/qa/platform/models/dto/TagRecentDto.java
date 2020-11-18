@@ -9,7 +9,16 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TagRecentDto implements Serializable {
-    private Long id;
+    private long id;
     private String name;
-    private int countTagToQuestion;
+    private long countTagToQuestion;
+
+    @Override
+    public String toString() {
+        return "{" +
+                "id=" + id +
+                ", name=" + name +
+                ", countTagToQuestion=" + countTagToQuestion +
+                '}';
+    }
 }

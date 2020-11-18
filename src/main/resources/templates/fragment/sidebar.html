@@ -9,16 +9,21 @@
 
 
 <div th:fragment="sidebar">
-<!--    <div  class="col-md-3 col-xl-2  col-lg-2 col-sm-3" id="sidebar">   закоментил, вместо этой поставил след стр-->
+    <!--    <div  class="col-md-3 col-xl-2  col-lg-2 col-sm-3" id="sidebar">   закоментил, вместо этой поставил след стр-->
     <div id="sidebar">
         <div class="nav-col btn-group-vertical  btn-block mr-0   ">
-            <button type="button" class="btn  btn-sm  tablinks active"  onclick="openContent(event, 'example')" >Главная</button>
-            <button type="button" class="btn btn-sm tablinks" onclick="openContent(event, 'areaQuestion'), new PaginationQuestion(1, 10).setQuestions()">Вопросы</button>
-            <button type="button" class="btn btn-sm tablinks">Метки</button>
-            <button type="button" class="btn  btn-sm tablinks">Участники</button>
+            <a class="nav-link-menu" href="/site"><button type="button" class="btn  btn-sm  tablinks" id="mainPageLink"  onclick="openContent(id, 'mainPage')">
+                Главная</button></a>
+            <a class="nav-link-menu" href="/questionAria"><button type="button" class="btn btn-sm tablinks" id="areaQuestionLink" onclick="openContent(id, 'areaQuestion')">
+                Вопросы</button></a>
+            <a class="nav-link-menu" href="/tagsAria"><button type="button" class="btn  btn-sm tablinks" id="areaTagLink" onclick="openContent(id, 'areaTag'),
+            new PaginationTag(1, 12, 'popular').writeTags()">Метки</button></a>
+            <a class="nav-link-menu" href="/users"><button type="button" class="btn  btn-sm tablinks" id="areaUsersLink" onclick="openContent(id, 'areaUsers'), new PaginationUser(1,20,'week').writeUsers()">
+                Участники</button></a>
             <button type="button" class="btn  btn-sm overflow-hidden">Неотвеченные</button>
         </div>
     </div>
+</div>
 </div>
 
 </body>

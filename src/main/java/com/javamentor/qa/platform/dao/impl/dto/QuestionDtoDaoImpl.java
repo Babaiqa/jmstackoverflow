@@ -143,7 +143,6 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
             return questionDto;
         }
 
-
         @Override
         public List transformList(List list) {
             return new ArrayList<>(questionDtoMap.values());
