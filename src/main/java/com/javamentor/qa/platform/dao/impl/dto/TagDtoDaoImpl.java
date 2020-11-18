@@ -92,7 +92,7 @@ public class TagDtoDaoImpl implements TagDtoDao {
 
     @Override
     public int getTotalResultCountTagDto() {
-        return (int)(long) entityManager.createQuery("select count(tag) from Tag tag").getSingleResult();
+        return (int) (long) entityManager.createQuery("select count(tag) from Tag tag").getSingleResult();
     }
 
     @Override
@@ -107,7 +107,7 @@ public class TagDtoDaoImpl implements TagDtoDao {
 
     @Override
     public int getTotalCountTag(String tagName) {
-        return (int)(long)entityManager.createQuery("select count(e) from Tag e where UPPER(e.name) LIKE CONCAT('%',UPPER(:tagName),'%')")
+        return (int) (long) entityManager.createQuery("select count(e) from Tag e where UPPER(e.name) LIKE CONCAT('%',UPPER(:tagName),'%')")
                 .setParameter("tagName", tagName)
                 .getSingleResult();
     }

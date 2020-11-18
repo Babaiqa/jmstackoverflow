@@ -142,8 +142,8 @@ public class TagController {
             @RequestParam("size") int size) {
 
         if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
-            return ResponseEntity.badRequest().body("The page number and size must be positive. " +
-                    "Maximum number of records per page " + MAX_ITEMS_ON_PAGE);
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть положительными. " +
+                    "Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
 
         return ResponseEntity.ok(tagDtoService.getTagDtoPaginationWithSearch(page, size, tagName));
