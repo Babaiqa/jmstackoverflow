@@ -1,7 +1,6 @@
 package com.javamentor.qa.platform.dao.abstracts.dto;
 
 import com.javamentor.qa.platform.models.dto.TagDto;
-import com.javamentor.qa.platform.models.entity.question.Tag;
 
 import com.javamentor.qa.platform.models.dto.TagListDto;
 import com.javamentor.qa.platform.models.dto.TagRecentDto;
@@ -17,9 +16,13 @@ public interface TagDtoDao {
 
     List<TagRecentDto> getTagRecentDtoPagination(int page, int size);
 
-    public int getTotalResultCountTagDto();
+    int getTotalResultCountTagDto();
 
     List<TagListDto> getTagListDtoPagination(int page, int size, String tagName);
 
     int getTotalCountTag(String tagName);
+
+    List<TagRecentDto> getTagRecentDtoChildTagById(int page, int size, Long id);
+
+    int getTotalResultChildTag(Long id);
 }
