@@ -195,4 +195,19 @@ public class UserController {
             return ResponseEntity.badRequest().body("User with this name does not exist");
         }
     }
+
+
+    @GetMapping("principle")
+    @ApiOperation(value = "Return message(UserDto)", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the object.", response = UserDto.class),
+            @ApiResponse(code = 400, message = "Something goes wrong",response = String.class)
+    })
+    public  ResponseEntity<?> getPrincipal(){
+        Optional<UserDto> userDto = userDtoService.getPrincipal();
+        return userDto.isPresent() ? ResponseEntity.ok().body(userDto.get()):
+                ResponseEntity.badRequest()
+                        .body("User not found");
+
+    }
 }

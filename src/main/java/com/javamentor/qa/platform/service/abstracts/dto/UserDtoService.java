@@ -20,4 +20,5 @@ public interface UserDtoService {
 
     PageDto<UserDtoList,Object> getPageUserDtoListByName(int page, int size, String name);
 
+    Optional<UserDto> getPrincipal();
 }

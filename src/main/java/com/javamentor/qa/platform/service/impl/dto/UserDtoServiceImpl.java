@@ -127,4 +127,11 @@ public class UserDtoServiceImpl implements UserDtoService {
         return pageDto;
     }
 
+
+    @Override
+    public Optional<UserDto> getPrincipal() {
+        Optional<UserDto> userDto = userDtoDao.getUserById(153L);
+        return userDto;
+    }
+
 }
