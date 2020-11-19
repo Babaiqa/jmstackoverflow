@@ -130,8 +130,7 @@ public class UserDtoServiceImpl implements UserDtoService {
 
     @Override
     public Optional<UserDto> getPrincipal() {
-        Optional<UserDto> userDto = userDtoDao.getUserById(153L);
-        return userDto;
+        return userDtoDao.getUserById(153L);
     }
 
 }
