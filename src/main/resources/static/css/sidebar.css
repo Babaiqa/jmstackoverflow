@@ -15,12 +15,9 @@
 }
 /*headerSidebarFooter*/
 
-#areaQuestion, #example, #areaTag, #areaUsers{
+#areaQuestion, #example, #areaTag, #areaUsers, #mainPage{
     margin-top: 60px;
     display: none;
-}
-#mainPage{
-    margin-top: 60px;
 }
 
 #sidebarArea{
@@ -130,3 +127,7 @@ a:hover {
 }
 
 /*tagsAria styles end*/
+
+.nav-link-menu {
+    width: 100%;
+}
