@@ -1,9 +1,12 @@
 package com.javamentor.qa.platform.dao.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.QuestionDtoDao;
+import com.javamentor.qa.platform.dao.impl.dto.transformers.QuestionResultTransformer;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.dao.impl.dto.transformers.QuestionResultTransformerTagOnly;
+import com.javamentor.qa.platform.dao.impl.dto.transformers.QuestionResultTransformerWithoutTag;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.hibernate.transform.ResultTransformer;
@@ -14,7 +17,6 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Repository
 public class QuestionDtoDaoImpl implements QuestionDtoDao {
@@ -99,67 +101,50 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
         return (int) totalResultCount;
     }
 
-    private class QuestionResultTransformer implements ResultTransformer {
+    @Override
+    public List<QuestionDto> getPaginationOrderedNew(int page, int size) {
+        List<QuestionDto> questionDtoList = entityManager.unwrap(Session.class)
+                .createQuery(
+                        "select question.id as question_id, " +
+                                "question.title as question_title, " +
+                                "u.fullName as question_authorName, " +
+                                "u.id as question_authorId, " +
+                                "u.imageLink as question_authorImage, " +
+                                "question.description as question_description, " +
+                                "question.viewCount as question_viewCount, " +
+                                "(select count(a.question.id) from Answer a where question_id=a.question.id) as question_countAnswer, " +
+                                "(select count(v.question.id) from VoteQuestion v where question_id=v.question.id) as question_countValuable, " +
+                                "question.persistDateTime as question_persistDateTime, " +
+                                "question.lastUpdateDateTime as question_lastUpdateDateTime " +
+                                "from Question question " +
+                                "INNER JOIN question.user u " +
+                                "order by question_lastUpdateDateTime desc "
+                )
+                .setFirstResult((page - 1) * size)
+                .setMaxResults(size)
+                .unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(new QuestionResultTransformerWithoutTag())
+                .getResultList();
 
-        private Map<Long, QuestionDto> questionDtoMap = new LinkedHashMap<>();
+        return questionDtoList;
+    }
 
-        @Override
-        public Object transformTuple(Object[] tuple, String[] aliases) {
-
-            Map<String, Integer> aliasToIndexMap = aliasToIndexMap(aliases);
-            Long questionId = ((Number) tuple[0]).longValue();
-
-            QuestionDto questionDto = questionDtoMap.computeIfAbsent(
-                    questionId,
-                    id1 -> {
-                        QuestionDto questionDtoTemp = new QuestionDto();
-                        questionDtoTemp.setId(((Number) tuple[aliasToIndexMap.get("question_id")]).longValue());
-                        questionDtoTemp.setTitle(((String) tuple[aliasToIndexMap.get("question_title")]));
-
-                        questionDtoTemp.setAuthorName(((String) tuple[aliasToIndexMap.get("question_authorName")]));
-                        questionDtoTemp.setAuthorId(((Number) tuple[aliasToIndexMap.get("question_authorId")]).longValue());
-                        questionDtoTemp.setAuthorImage(((String) tuple[aliasToIndexMap.get("question_authorImage")]));
-
-                        questionDtoTemp.setDescription(((String) tuple[aliasToIndexMap.get("question_description")]));
-
-                        questionDtoTemp.setViewCount(((Number) tuple[aliasToIndexMap.get("question_viewCount")]).intValue());
-                        questionDtoTemp.setCountAnswer(((Number) tuple[aliasToIndexMap.get("question_countAnswer")]).intValue());
-                        questionDtoTemp.setCountValuable(((Number) tuple[aliasToIndexMap.get("question_countValuable")]).intValue());
-
-                        questionDtoTemp.setPersistDateTime((LocalDateTime) tuple[aliasToIndexMap.get("question_persistDateTime")]);
-                        questionDtoTemp.setLastUpdateDateTime((LocalDateTime) tuple[aliasToIndexMap.get("question_lastUpdateDateTime")]);
-                        questionDtoTemp.setListTagDto(new ArrayList<>());
-                        return questionDtoTemp;
-                    }
-            );
-
-            questionDto.getListTagDto().add(
-                    new TagDto(
-                            ((Number) tuple[aliasToIndexMap.get("tag_id")]).longValue(),
-                            ((String) tuple[aliasToIndexMap.get("tag_name")])
-                    )
-            );
-
-            return questionDto;
-        }
-
-        @Override
-        public List transformList(List list) {
-            return new ArrayList<>(questionDtoMap.values());
-        }
-
-
-        public Map<String, Integer> aliasToIndexMap(
-                String[] aliases) {
-
-            Map<String, Integer> aliasToIndexMap = new LinkedHashMap<>();
-
-            for (int i = 0; i < aliases.length; i++) {
-                aliasToIndexMap.put(aliases[i], i);
-            }
-
-            return aliasToIndexMap;
-        }
+    @Override
+    public List<QuestionDto> getQuestionTagsByQuestionIds(List<Long> ids) {
+        List<QuestionDto> tagsByIds = entityManager.unwrap(Session.class)
+                .createQuery(
+                        "select question.id as question_id," +
+                                "tag.id as tag_id," +
+                                "tag.name as tag_name " +
+                                "from Question question " +
+                                "inner join question.user u " +
+                                "join question.tags tag " +
+                                "where question_id IN :ids"
+                )
+                .setParameter("ids", ids)
+                .setResultTransformer(new QuestionResultTransformerTagOnly())
+                .getResultList();
+        return tagsByIds;
     }
 
 }
