@@ -38,7 +38,6 @@ public class TagControllerTest extends AbstractIntegrationTest {
     private static final String NAME = "/api/tag/name";
     private static final String BAD_REQUEST_MESSAGE = "Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100";
 
-
     // Тесты запросов популярных тэгов
     @Test
     public void requestGetTagDtoPaginationByPopular() throws Exception {
@@ -450,4 +449,91 @@ public class TagControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.items").isEmpty());
     }
 
+    // Тесты запроса дочерних тегов по id
+    @Test
+    @DataSet(value = {"dataset/tag/related_tag.yml"}
+            , cleanBefore = true, cleanAfter = true)
+    public void requestChildTagByMainTagId() throws Exception {
+        PageDto<TagRecentDto, Object> expected = new PageDto<>();
+        List<TagRecentDto> expectedChild = new ArrayList<>();
+        expectedChild.add(new TagRecentDto(5L, "Child", 1L));
+        expected.setItems(expectedChild);
+        expected.setCurrentPageNumber(1);
+        expected.setTotalPageCount(1);
+        expected.setTotalResultCount(1);
+        expected.setItemsOnPage(10);
+
+        long id = 4L;
+
+        String resultContext = mockMvc.perform(get("/api/tag/{id}/child", id)
+                .param("page", "1")
+                .param("size", "10"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
+                .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
+                .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
+//                .andExpect(jsonPath("$.items").isNotEmpty())
+                .andExpect(jsonPath("$.itemsOnPage").isNotEmpty())
+                .andReturn().getResponse().getContentAsString();
+
+        PageDto<TagRecentDto, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
+        Assert.assertEquals(expected.toString(), actual.toString());
+    }
+
+    @Test
+    public void requestNegativePageGetTagRecentDtoChildTagById() throws Exception {
+        long id = 4L;
+        mockMvc.perform(get("/api/tag/{id}/child", id)
+                .param("page", "-1")
+                .param("size", "10"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string(BAD_REQUEST_MESSAGE));
+    }
+
+    @Test
+    public void requestChildTagsWithWrongTagId() throws Exception{
+        long id = 500L;
+        mockMvc.perform(get("/api/tag/{id}/child", id)
+                .param("page", "1")
+                .param("size", "10"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
+                .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
+                .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
+                .andExpect(jsonPath("$.items").isEmpty())
+                .andExpect(jsonPath("$.itemsOnPage").isNotEmpty())
+                .andReturn().getResponse().getContentAsString();
+    }
+
+    @Test
+    public void requestTooBigSizeToChildEndpoint() throws Exception {
+        long id = 4L;
+        mockMvc.perform(get("/api/tag/{id}/child", id)
+                .param("page", "1")
+                .param("size", "105"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string(BAD_REQUEST_MESSAGE));
+    }
+    @Test
+    public void requestPageDontExistsGetPageWithEmptyTagRecentDto() throws Exception {
+        long id = 4L;
+        mockMvc.perform(get("/api/tag/{id}/child", id)
+                .param("page", "15")
+                .param("size", "10"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
+                .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
+                .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
+                .andExpect(jsonPath("$.items").isEmpty());
+    }
 }
