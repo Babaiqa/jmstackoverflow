@@ -2,21 +2,20 @@ package com.javamentor.qa.platform.dao.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.QuestionDtoDao;
 import com.javamentor.qa.platform.dao.impl.dto.transformers.QuestionResultTransformer;
-import com.javamentor.qa.platform.models.dto.QuestionDto;
-import com.javamentor.qa.platform.models.dto.TagDto;
-import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.dao.impl.dto.transformers.QuestionResultTransformerTagOnly;
 import com.javamentor.qa.platform.dao.impl.dto.transformers.QuestionResultTransformerWithoutTag;
+import com.javamentor.qa.platform.models.dto.QuestionDto;
+import com.javamentor.qa.platform.models.entity.question.Question;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class QuestionDtoDaoImpl implements QuestionDtoDao {
