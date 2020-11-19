@@ -121,6 +121,15 @@ public class TestDataInitService {
             question.setIsDeleted(false);
             questionService.persist(question);
 
+            Question questionNoAnswer = new Question();
+            questionNoAnswer.setTitle("Question NoAnswer " + i);
+            questionNoAnswer.setViewCount(0);
+            questionNoAnswer.setDescription("Question NoAnswer Description" + i);
+            questionNoAnswer.setUser(user);
+            questionNoAnswer.setTags(tagList);
+            questionNoAnswer.setIsDeleted(false);
+            questionService.persist(questionNoAnswer);
+
             UserFavoriteQuestion userFavoriteQuestion = new UserFavoriteQuestion();
             userFavoriteQuestion.setUser(user);
             userFavoriteQuestion.setQuestion(question);

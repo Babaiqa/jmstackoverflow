@@ -16,4 +16,8 @@ public interface QuestionDtoDao {
      List<Question> getPaginationPopular(int page, int size);
 
      List<QuestionDto> getQuestionDtoByTagIds(List<Long> ids);
+
+     List<Long> getNoAnsweredQuestionsIDs(int page, int size);
+
+     long getAllNoAnswerQuestionCount();
 }

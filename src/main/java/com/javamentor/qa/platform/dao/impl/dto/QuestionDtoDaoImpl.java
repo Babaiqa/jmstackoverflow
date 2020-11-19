@@ -93,6 +93,25 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 .getResultList();
     }
 
+    @SuppressWarnings("unchecked")
+    public List<Long> getNoAnsweredQuestionsIDs(int page, int size) {
+        List<Long> listAnswerIDs = (List<Long>) entityManager.createQuery("select a.question.id from Answer a")
+                .getResultList();
+        List<Long> listAllIDs = (List<Long>) entityManager.createQuery("select q.id from Question q")
+                .getResultList();
+
+        return listAllIDs.stream().filter(e -> !listAnswerIDs.contains(e)).skip(page * size - size).limit(size).collect(Collectors.toList());
+    }
+
+    @SuppressWarnings("unchecked")
+    public long getAllNoAnswerQuestionCount() {
+        List<Long> listAnswerIDs = (List<Long>) entityManager.createQuery("select a.question.id from Answer a")
+                .getResultList();
+        List<Long> listAllIDs = (List<Long>) entityManager.createQuery("select q.id from Question q")
+                .getResultList();
+        return listAllIDs.stream().filter(e -> !listAnswerIDs.contains(e)).count();
+    }
+
     @Override
     public int getTotalResultCountQuestionDto() {
         long totalResultCount = (long) entityManager.createQuery("select count(*) from Question").getSingleResult();
