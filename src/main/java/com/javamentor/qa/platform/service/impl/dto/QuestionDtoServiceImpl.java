@@ -60,6 +60,33 @@ public class QuestionDtoServiceImpl implements QuestionDtoService {
         return pageDto;
     }
 
+    public PageDto<QuestionDto, Object> getPaginationOrderedNew(int page, int size) {
+        int totalResultCount = questionDtoDao.getTotalResultCountQuestionDto();
+
+
+        List<QuestionDto> questionList = questionDtoDao.getPaginationOrderedNew(page, size);
+        List<Long> ids = questionList.stream().map(QuestionDto::getId).collect(Collectors.toList());
+
+        List<QuestionDto>  tegsByIds = questionDtoDao.getQuestionTagsByQuestionIds(ids);
+
+        for (QuestionDto q : questionList) {
+            for (QuestionDto q2 : tegsByIds) {
+                if (q.getId().equals(q2.getId())) {
+                    q.setListTagDto(q2.getListTagDto());
+                }
+            }
+        }
+
+        PageDto<QuestionDto, Object> pageDto = new PageDto<>();
+        pageDto.setItems(questionList);
+        pageDto.setTotalResultCount(totalResultCount);
+        pageDto.setCurrentPageNumber(page);
+        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount / (double) size));
+        pageDto.setItemsOnPage(size);
+
+        return pageDto;
+    }
+
     public PageDto<QuestionDto, Object> getPaginationWithoutAnswers(int page, int size) {
         int maxResult = (int) questionDtoDao.getAllNoAnswerQuestionCount();
         List<Long> noAnsweredQuestionsIDs = questionDtoDao.getNoAnsweredQuestionsIDs(page, size);
