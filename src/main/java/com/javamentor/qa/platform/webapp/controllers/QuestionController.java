@@ -29,7 +29,7 @@ import java.util.Optional;
 
 @RestController
 @Validated
-@RequestMapping("/api/question/")
+@RequestMapping("/api/question")
 @Api(value = "QuestionApi")
 public class QuestionController {
 
@@ -79,7 +79,7 @@ public class QuestionController {
         }
     }
 
-    @PatchMapping("{QuestionId}/tag/add")
+    @PatchMapping("/{QuestionId}/tag/add")
     @ResponseBody
     @ApiResponses({
             @ApiResponse(code = 200, message = "Tags were added", response = String.class),
@@ -106,7 +106,7 @@ public class QuestionController {
     }
 
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     @ApiOperation(value = "get QuestionDto", response = String.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the QuestionDto", response = QuestionDto.class),
@@ -123,7 +123,7 @@ public class QuestionController {
                 ResponseEntity.badRequest().body("Question not found");
     }
 
-    @GetMapping(
+    @GetMapping(path = "/",
             params = {"page", "size"}
     )
     @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
@@ -148,7 +148,7 @@ public class QuestionController {
         return ResponseEntity.ok(resultPage);
     }
 
-    @GetMapping(value = "popular", params = {"page", "size"})
+    @GetMapping(value = "/popular", params = {"page", "size"})
     @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the pagination popular List<QuestionDto>"),
@@ -173,7 +173,7 @@ public class QuestionController {
 
 
 
-    @PostMapping("add")
+    @PostMapping("/add")
     @Validated(OnCreate.class)
     @ResponseBody
     @ApiOperation(value = "add Question", response = String.class)
