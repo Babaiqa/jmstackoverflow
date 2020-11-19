@@ -2,7 +2,7 @@ $( document ).ready(function() {
 
     new PaginationTag(1, 12, 'popular').writeTags()
     new PaginationUser(1,20,'week').writeUsers()
-
+    new PaginationQuestion(1,10).setQuestions()
     switch (location.pathname) {
         case "/users": openContent("areaUsersLink", "areaUsers")
             break;
