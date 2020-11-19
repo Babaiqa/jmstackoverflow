@@ -474,7 +474,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
                 .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
                 .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
-//                .andExpect(jsonPath("$.items").isNotEmpty())
+                .andExpect(jsonPath("$.items").isNotEmpty())
                 .andExpect(jsonPath("$.itemsOnPage").isNotEmpty())
                 .andReturn().getResponse().getContentAsString();
 

@@ -1,19 +1,14 @@
 tag:
 
   - id: 4
-    name: "mainTag1"
-    description: "Java is a popular high-level programming language."
-    persist_date: "JS: new Date(new Date().valueOf() - ((24*60*60*1000) * 21)).toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
+    name: "mainTagId4"
 
   - id: 5
     name: "Child"
-    description: "Java is the best!"
-    persist_date: "JS: new Date(new Date().valueOf() - ((24*60*60*1000) * 14)).toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
 
 related_tag:
 
   - id: 3
     child_tag: 5
     main_tag: 4
-
 
