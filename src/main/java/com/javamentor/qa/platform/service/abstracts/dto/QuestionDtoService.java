@@ -10,4 +10,6 @@ public interface QuestionDtoService {
      PageDto<QuestionDto, Object> getPagination(int page, int size);
 
      PageDto<QuestionDto, Object> getPaginationPopular(int page, int size);
+
+    PageDto<QuestionDto, Object> getPaginationOrderedNew(int page, int size);
 }

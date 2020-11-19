@@ -19,7 +19,6 @@ public class TagDtoDaoImpl implements TagDtoDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-
     @Override
     public List<TagDto> getTagDtoPagination(int page, int size) {
 
@@ -103,7 +102,7 @@ public class TagDtoDaoImpl implements TagDtoDao {
 
     @Override
     public int getTotalResultCountTagDto() {
-        return (int)(long) entityManager.createQuery("select count(tag) from Tag tag").getSingleResult();
+        return (int) (long) entityManager.createQuery("select count(tag) from Tag tag").getSingleResult();
     }
 
     @Override
@@ -118,9 +117,29 @@ public class TagDtoDaoImpl implements TagDtoDao {
 
     @Override
     public int getTotalCountTag(String tagName) {
-        return (int)(long)entityManager.createQuery("select count(e) from Tag e where UPPER(e.name) LIKE CONCAT('%',UPPER(:tagName),'%')")
+        return (int) (long) entityManager.createQuery("select count(e) from Tag e where UPPER(e.name) LIKE CONCAT('%',UPPER(:tagName),'%')")
                 .setParameter("tagName", tagName)
                 .getSingleResult();
+    }
+
+    @Override
+    public int getTotalResultChildTag(Long id) {
+        return (int)(long) entityManager.createQuery("select count(tag.childTag) from RelatedTag tag where tag.mainTag.id=:id")
+                .setParameter("id", id)
+                .getSingleResult();
+    }
+
+    public List<TagRecentDto> getTagRecentDtoChildTagById(int page, int size, Long id) {
+        return entityManager
+                .createQuery("SELECT new com.javamentor.qa.platform.models.dto.TagRecentDto(t.childTag.id, t.childTag.name, COUNT(t.childTag)) " +
+                "FROM RelatedTag t " +
+                "GROUP BY t.mainTag, t.childTag, t.childTag.name " +
+                "HAVING t.mainTag.id =:id " +
+                "ORDER BY COUNT(t.childTag) DESC ")
+                .setParameter("id", id)
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
     }
 
 }

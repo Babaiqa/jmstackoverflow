@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.controllers.comment;
 
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +77,57 @@ public class CommentControllerTest extends AbstractIntegrationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.persistDate", org.hamcrest.Matchers.containsString(LocalDate.now().toString())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.lastRedactionDate", org.hamcrest.Matchers.containsString(LocalDate.now().toString())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.commentType").value("QUESTION"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("Teat"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.reputation").value(2));
+    }
+
+    @Test
+    public  void shouldAddCommentToAnswerStatusOk() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/comment/answer/{answerId}", 1L)
+                .param("userId", "3")
+                .content("This is a good answer")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public  void shouldAddCommentToAnswerResponseBadRequestUserNotFound() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/comment/answer/1")
+                .param("userId", "99999")
+                .content("This is very good answer!")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("User not found"));
+    }
+
+    @Test
+    public void shouldAddCommentToAnswerResponseBadRequestAnswerNotFound() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/comment/answer/9999")
+                .param("userId", "1")
+                .content("This is very good answer!")
+                .accept(MediaType.TEXT_PLAIN_VALUE))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Answer not found"));
+    }
+
+    @Test
+    public void shouldAddCommentToAnswerResponseCommentDto() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/comment/answer/1")
+                .param("userId", "1")
+                .content("This is very good answer!")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.text").value("This is very good answer!"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.persistDate", org.hamcrest.Matchers.containsString(LocalDate.now().toString())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.lastRedactionDate", org.hamcrest.Matchers.containsString(LocalDate.now().toString())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.commentType").value("ANSWER"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(1))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("Teat"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.reputation").value(2));

@@ -1,15 +1,18 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
-import com.javamentor.qa.platform.models.dto.PageDto;
-import com.javamentor.qa.platform.models.dto.QuestionDto;
-import com.javamentor.qa.platform.models.dto.TagDto;
+import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
+import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import com.javamentor.qa.platform.webapp.converters.TagMapper;
+import com.javamentor.qa.platform.webapp.converters.UserConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -20,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +36,7 @@ public class QuestionController {
     private final QuestionService questionService;
     private final TagMapper tagMapper;
     private final TagService tagService;
+    private final UserDtoService userDtoService;
 
     private final QuestionDtoService questionDtoService;
 
@@ -40,12 +45,23 @@ public class QuestionController {
     @Autowired
 
     public QuestionController(QuestionService questionService, TagMapper tagMapper, TagService tagService,
-                              QuestionDtoService questionDtoService) {
+                              QuestionDtoService questionDtoService, UserDtoService userDtoService) {
         this.questionService = questionService;
         this.tagMapper = tagMapper;
         this.tagService = tagService;
         this.questionDtoService = questionDtoService;
+        this.userDtoService = userDtoService;
     }
+
+    @Autowired
+    public QuestionConverter questionConverter;
+
+    @Autowired
+    public UserConverter userConverter;
+
+    @Autowired
+    public UserService userService;
+
 
     @DeleteMapping("/{id}/delete")
     @ApiOperation(value = "Delete question", response = String.class)
@@ -156,6 +172,55 @@ public class QuestionController {
         return ResponseEntity.ok(resultPage);
     }
 
+
+
+    @PostMapping("add")
+    @Validated(OnCreate.class)
+    @ResponseBody
+    @ApiOperation(value = "add Question", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Add Question", response = Question.class),
+            @ApiResponse(code = 400, message = "Question not add", response = String.class)
+    })
+    public ResponseEntity<?> addQuestion(@Valid @RequestBody QuestionCreateDto questionCreateDto) {
+
+        if (!userService.existsById(questionCreateDto.getUserId())) {
+            return ResponseEntity.badRequest().body("questionCreateDto.userId dont`t exist");
+        }
+
+        Question question = questionConverter.questionCreateDtoToQuestion(questionCreateDto);
+        questionService.persist(question);
+
+        QuestionDto questionDtoNew = questionConverter.questionToQuestionDto(question);
+
+        return  ResponseEntity.ok(questionDtoNew);
+    }
+
+
+    @GetMapping(value = "order/new", params = {"page", "size"})
+    @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination popular List<QuestionDto>"),
+    })
+    public ResponseEntity<?> findPaginationOrderedNew(
+
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationOrderedNew(page, size);
+
+
+        return ResponseEntity.ok(resultPage);
+    }
 }
 
 
