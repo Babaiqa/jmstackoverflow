@@ -49,14 +49,10 @@ class QuestionService {
                     throw error;
                 }
             }).catch( error => error.response.then(message => console.log(message)));
-
-
-
-        // return this.getResponseQuestion(query);
     }
 
     findPaginationPopular(page, size) {
-        let query = '/api/question/popular?page=' + page + '&size=' + size;
+        let query = '/api/question/popular/?page=' + page + '&size=' + size;
         return fetch(query)
             .then(response =>  {
                 if (response.ok) {
@@ -67,8 +63,6 @@ class QuestionService {
                     throw error;
                 }
             }).catch( error => error.response.then(message => console.log(message)));
-        // return this.getResponseQuestion(query);
-
     }
 
     getResponseQuestion(query) {
