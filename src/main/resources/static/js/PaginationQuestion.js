@@ -19,9 +19,11 @@ class PaginationQuestion {
     setQuestions() {
         $('#questionsTable').children().remove()
 
-        // $('#questionsQuantity').append(this.questions.totalResultCount);
+
 
         this.questions.then(function (response) {
+            $('#questionsQuantity').append(response.totalResultCount + " вопросов");
+
             for (var i = 0; i < response.items.length; i++) {
                 $('#questionsTable').append(
                     "<div class=\"d-flex w-100 justify-content-between\">\n" +
