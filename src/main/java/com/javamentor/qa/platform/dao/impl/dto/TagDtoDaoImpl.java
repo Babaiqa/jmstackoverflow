@@ -56,9 +56,14 @@ public class TagDtoDaoImpl implements TagDtoDao {
 
     @Override
     public List<TagListDto> getTagListDtoPaginationOrderByNewTag(int page, int size) {
+        LocalDateTime timeNow = LocalDateTime.now();
+
         return entityManager.createQuery("select new " +
-                "com.javamentor.qa.platform.models.dto.TagListDto(tag.id,tag.name) " +
-                "from Tag tag order by tag.persistDateTime desc")
+                "com.javamentor.qa.platform.models.dto.TagListDto(tag.id, tag.name, tag.description, count(q.id), " +
+                "(select count(q.id) from tag.questions q where q.persistDateTime between :stDate1 and :endDate1)) " +
+                "from Tag tag left join tag.questions q group by tag.id order by tag.persistDateTime desc")
+                .setParameter("stDate1", timeNow.minusDays(7))
+                .setParameter("endDate1", timeNow)
                 .setFirstResult(page*size-size)
                 .setMaxResults(size)
                 .getResultList();

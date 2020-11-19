@@ -101,6 +101,27 @@ public class TagController {
 
     }
 
+    @GetMapping("new/order")
+    @ApiOperation(value = "Get page TagListDto by new tags. MAX SIZE ENTRIES ON PAGE = 100", response = String.class)
+    public ResponseEntity<?> getTagListDtoPaginationOrderByNewTag(
+            @ApiParam(name = "page", value = "Number page. Type int.", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page. Type int." +
+                    "Recommended number of items per page "+ MAX_ITEMS_ON_PAGE, example = "10")
+            @RequestParam("size") int size)
+    {
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Page and Size have to be positive. " +
+                    "Max number of items per page " + MAX_ITEMS_ON_PAGE);
+        }
+
+        PageDto<TagListDto, Object> pageDto = tagDtoService.getTagListDtoPaginationOrderByNewTag(page, size);
+
+        return ResponseEntity.ok(pageDto);
+
+    }
+
+
     @GetMapping("recent")
     @ApiOperation(value = "get page TagRecentDto. MAX SIZE ENTRIES ON PAGE=100", response = String.class)
     @ApiResponses({
