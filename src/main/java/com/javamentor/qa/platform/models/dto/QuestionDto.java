@@ -26,6 +26,24 @@ public class QuestionDto implements Serializable {
     private LocalDateTime lastUpdateDateTime;
     private List<TagDto> listTagDto;
 
+    @Override
+    public String toString() {
+        return "{" +
+                "id=" + id +
+                ", title=" + title +
+                ", authorId=" + authorId +
+                ", authorName=" + authorName +
+                ", authorImage=" + authorImage +
+                ", description=" + description +
+                ", viewCount=" + viewCount +
+                ", countAnswer=" + countAnswer +
+                ", countValuable=" + countValuable +
+                ", persistDateTime=" + persistDateTime +
+                ", lastUpdateDateTime=" + lastUpdateDateTime +
+                ", listTagDto=" + listTagDto +
+                '}';
+    }
+
 }
 
 
