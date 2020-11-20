@@ -18,4 +18,6 @@ public interface ReadWriteDao<E, K> extends ReadOnlyDao<E, K> {
     void updateAll(Iterable<? extends E> entities);
 
     void deleteById(K id);
+
+    void resetPassword(K id, String password);
 }

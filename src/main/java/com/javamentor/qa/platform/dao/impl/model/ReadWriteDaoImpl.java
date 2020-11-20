@@ -112,4 +112,9 @@ public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
         }
     }
 
+    public void resetPassword(K id, String password) {
+        String hql = "UPDATE User u set u.password = :password where u.id = :id";
+        entityManager.createQuery(hql).setParameter("password", password).setParameter("id", id).executeUpdate();
+    }
+
 }

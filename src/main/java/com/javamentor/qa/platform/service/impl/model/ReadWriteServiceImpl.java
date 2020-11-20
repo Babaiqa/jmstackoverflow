@@ -70,4 +70,9 @@ public abstract class ReadWriteServiceImpl<E, K> extends ReadOnlyServiceImpl<E, 
         readWriteDao.updateAll(entities);
     }
 
+    @Transactional
+    public void resetPassword(K id, String password) {
+        readWriteDao.resetPassword(id, password);
+    }
+
 }
