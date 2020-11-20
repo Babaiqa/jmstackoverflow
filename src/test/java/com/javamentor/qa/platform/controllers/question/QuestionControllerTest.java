@@ -41,7 +41,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         expected.setTotalResultCount(9);
         expected.setItems(new ArrayList<>());
 
-        String resultContext = mockMvc.perform(get("/api/question/order/new")
+        mockMvc.perform(get("/api/question/order/new")
                 .param("page", "1")
                 .param("size", "10"))
                 .andDo(print())
@@ -51,8 +51,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
                 .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
                 .andExpect(jsonPath("$.items").isNotEmpty())
-                .andExpect(jsonPath("$.itemsOnPage").value( 10 ))
-                .andReturn().getResponse().getContentAsString();
+                .andExpect(jsonPath("$.itemsOnPage").value( 10 ));
     }
 
     @Test
