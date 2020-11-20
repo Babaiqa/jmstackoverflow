@@ -1,6 +1,5 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
-import com.javamentor.qa.platform.exception.ApiRequestException;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
@@ -224,26 +223,19 @@ public class UserController {
     })
     @Validated(OnUpdate.class)
     public ResponseEntity<?> resetPassword (@Valid @RequestBody UserResetPasswordDto userResetPasswordDto) {
+
         User user;
 
-        if (!userService.existsById(userResetPasswordDto.getId())) {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-
-        user = userService.getById(userResetPasswordDto.getId()).orElseThrow(() -> new ApiRequestException("User not found"));
+        Optional<UserDto> userDto = userDtoService.getPrincipal();
+        user = userService.getById(userDto.get().getId()).get();
 
         if (!passwordEncoder.matches(userResetPasswordDto.getOldPassword(), user.getPassword())) {
             return ResponseEntity.badRequest().body("Old password is incorrect");
         }
 
-        if (!userResetPasswordDto.getNewPassword().equals(userResetPasswordDto.getReNewPassword())) {
-            return ResponseEntity.badRequest().body("new password is not equals rePassword");
-        }
+        String password = passwordEncoder.encode(userResetPasswordDto.getNewPassword());
+        userService.resetPassword(user.getId(), password);
 
-        user.setPassword(passwordEncoder.encode(userResetPasswordDto.getNewPassword()));
-
-        userService.update(user);
-
-        return ResponseEntity.ok().body("Password reset successful");
+        return ResponseEntity.ok().body("Password reset successfully");
     }
 }

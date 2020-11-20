@@ -1,9 +1,8 @@
 package com.javamentor.qa.platform.models.dto;
 
-import com.javamentor.qa.platform.models.util.OnCreate;
+import com.javamentor.qa.platform.models.util.OnUpdate;
 import lombok.*;
-
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
@@ -12,14 +11,9 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class UserResetPasswordDto {
 
-    private Long id;
-
-    @NotNull(groups = OnCreate.class, message = "Значение отсутствует")
+    @NotBlank(groups = OnUpdate.class, message = "Поле не должно быть пустым")
     private String oldPassword;
 
-    @NotNull(groups = OnCreate.class, message = "Значение отсутствует")
+    @NotBlank(groups = OnUpdate.class, message = "Поле не должно быть пустым")
     private String newPassword;
-
-    @NotNull(groups = OnCreate.class, message = "Значение отсутствует")
-    private String reNewPassword;
 }
