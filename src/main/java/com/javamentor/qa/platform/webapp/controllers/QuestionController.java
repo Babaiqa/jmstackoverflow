@@ -18,12 +18,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,6 +82,7 @@ public class QuestionController {
         }
     }
 
+    @SneakyThrows
     @PatchMapping("/{QuestionId}/tag/add")
     @ResponseBody
     @ApiResponses({
@@ -89,21 +92,24 @@ public class QuestionController {
     public ResponseEntity<?> setTagForQuestion(
             @ApiParam(name = "QuestionId", value = "type Long", required = true, example = "0")
             @PathVariable Long QuestionId,
-            @ApiParam(name = "tagDto", value = "type List<TagDto>", required = true)
-            @RequestBody List<TagDto> tagDto) {
+            @ApiParam(name = "tagId", value = "type List<Long>", required = true)
+            @RequestBody List<Long> tagId) {
 
         if (QuestionId == null) {
             return ResponseEntity.badRequest().body("Question id is null");
         }
-        List<Tag> listTag = tagMapper.dtoToTag(tagDto); // Список тегов полученных в контроллере (от фронта)
 
         Optional<Question> question = questionService.getById(QuestionId);
         if (!question.isPresent()) {
             return ResponseEntity.badRequest().body("Question not found");
         }
-        tagService.addTagToQuestion(listTag, question.get());
 
-        return ResponseEntity.ok().body("Tags were added");
+        if (tagService.existsByAllIds(tagId)) {
+            tagService.addTagToQuestion(tagId, question.get());
+            return ResponseEntity.ok().body("Tags were added");}
+        else {
+            return ResponseEntity.badRequest().body("Tag not found");
+        }
     }
 
 

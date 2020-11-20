@@ -51,23 +51,25 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     @Test
     public void shouldSetTagForQuestionOneTag() throws Exception {
 
-        List<TagDto> tag = new ArrayList<>();
-        tag.add(new TagDto(1L, "java"));
-        String jsonRequest = objectMapper.writeValueAsString(tag);
+        List<Long> tagId = new ArrayList<>();
+        tagId.add(new Long(1L));
+        String jsonRequest = objectMapper.writeValueAsString(tagId);
         this.mockMvc.perform(MockMvcRequestBuilders
                 .patch("/api/question/1/tag/add")
                 .content(jsonRequest)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(content().string("Tags were added"))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void shouldSetTagForQuestionWrongId() throws Exception {
 
-        List<TagDto> tag = new ArrayList<>();
-        tag.add(new TagDto(1L, "java"));
-        String jsonRequest = objectMapper.writeValueAsString(tag);
+        List<Long> tagId = new ArrayList<>();
+        tagId.add(new Long(1L));
+        String jsonRequest = objectMapper.writeValueAsString(tagId);
         this.mockMvc.perform(MockMvcRequestBuilders
                 .patch("/api/question/10/tag/add")
                 .content(jsonRequest)
@@ -82,39 +84,36 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     @Test
     public void shouldSetTagForQuestionFewTag() throws Exception {
 
-        List<TagDto> tag = new ArrayList<>();
-        tag.add(new TagDto(1L, "java"));
-        tag.add(new TagDto(2L, "javaScript"));
-        tag.add(new TagDto(3L, "html"));
+        List<Long> tag = new ArrayList<>();
+        tag.add(new Long(1L));
+        tag.add(new Long(2L));
+        tag.add(new Long(3L));
         String jsonRequest = objectMapper.writeValueAsString(tag);
         this.mockMvc.perform(MockMvcRequestBuilders
                 .patch("/api/question/1/tag/add")
                 .content(jsonRequest)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(content().string("Tags were added"))
                 .andExpect(status().isOk());
 
     }
 
     @Test
-    public void shouldSetTagForQuestionNoTitle() throws Exception {
+    public void shouldSetTagForQuestionNoTag() throws Exception {
 
-        Question question = new Question();
-        question.setId(1L);
-        question.setTitle("");
-        question.setDescription("Stream filter on list keeping some of the filtered values");
-        question.setViewCount(3);
-
-
-        List<TagDto> tag = new ArrayList<>();
-        tag.add(new TagDto(1L, "java"));
+        List<Long> tag = new ArrayList<>();
+        tag.add(new Long(6L));
         String jsonRequest = objectMapper.writeValueAsString(tag);
         this.mockMvc.perform(MockMvcRequestBuilders
                 .patch("/api/question/1/tag/add")
                 .content(jsonRequest)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andDo(print())
+                .andExpect(content().string("Tag not found"))
+                .andExpect(status().isBadRequest());
 
     }
 
