@@ -31,9 +31,10 @@ public class QuestionDaoImpl extends ReadWriteDaoImpl<Question, Long> implements
                 return q2.getViewCount() - q1.getViewCount();
             }
         }
-        Collections.sort(list, Collections.reverseOrder(new CompareQuestionByViewCount()));
+
+        list.sort(Collections.reverseOrder(new CompareQuestionByViewCount()));
         if (list.size() < page * size) {
-           list.removeAll(list);
+           list.clear();
            return list;
         }else return list.subList(page * size - size, page * size);
     }
