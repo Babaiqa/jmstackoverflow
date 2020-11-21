@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.service.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.QuestionDtoDao;
+import com.javamentor.qa.platform.dao.impl.model.QuestionDaoImpl;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
@@ -17,10 +18,12 @@ import java.util.stream.Collectors;
 public class QuestionDtoServiceImpl implements QuestionDtoService {
 
     private final QuestionDtoDao questionDtoDao;
+    private QuestionDaoImpl questionDao;
 
     @Autowired
-    public QuestionDtoServiceImpl(QuestionDtoDao questionDtoDao) {
+    public QuestionDtoServiceImpl(QuestionDtoDao questionDtoDao, QuestionDaoImpl questionDao) {
         this.questionDtoDao = questionDtoDao;
+        this.questionDao = questionDao;
     }
 
     @Transactional
@@ -47,7 +50,8 @@ public class QuestionDtoServiceImpl implements QuestionDtoService {
     public PageDto<QuestionDto, Object> getPaginationPopular(int page, int size) {
         int totalResultCount = questionDtoDao.getTotalResultCountQuestionDto();
 
-        List<Question> questionList = questionDtoDao.getPaginationPopular(page, size);
+
+        List<Question> questionList = questionDao.getPaginationPopular(page, size);
         List<Long> ids = questionList.stream().map(Question::getId).collect(Collectors.toList());
         List<QuestionDto> questionDtoList = questionDtoDao.getQuestionDtoByTagIds(ids);
         PageDto<QuestionDto, Object> pageDto = new PageDto<>();

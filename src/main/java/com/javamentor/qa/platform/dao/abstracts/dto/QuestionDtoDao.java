@@ -13,11 +13,9 @@ public interface QuestionDtoDao {
 
      List<Question> getPagination(int page, int size);
 
-     List<Question> getPaginationPopular(int page, int size);
-
      List<QuestionDto> getQuestionDtoByTagIds(List<Long> ids);
 
-    List<QuestionDto> getPaginationOrderedNew(int page, int size);
+     List<QuestionDto> getPaginationOrderedNew(int page, int size);
 
      List<QuestionDto> getQuestionTagsByQuestionIds(List<Long> ids);
 }
