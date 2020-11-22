@@ -88,10 +88,11 @@ public class QuestionDtoServiceImpl implements QuestionDtoService {
     }
 
     public PageDto<QuestionDto, Object> getPaginationWithoutAnswers(int page, int size) {
-        int maxResult = (int) questionDtoDao.getAllNoAnswerQuestionCount();
-        List<Long> noAnsweredQuestionsIDs = questionDtoDao.getNoAnsweredQuestionsIDs(page, size);
+        int maxResult = (int) questionDtoDao.getTotalCountQuestionNotAnswer();
+        System.out.println("-------------" + maxResult);
+        List<Long> noAnsweredQuestionsIDs = questionDtoDao.getQuestionsNotAnsweredIDs(page, size);
 
-        List<QuestionDto> questionDtoList = questionDtoDao.getQuestionDtoByTagIds(noAnsweredQuestionsIDs);
+        List<QuestionDto> questionDtoList = questionDtoDao.getQuestionDtoByIds(noAnsweredQuestionsIDs);
         PageDto<QuestionDto, Object> pageDto = new PageDto<>();
         pageDto.setItems(questionDtoList);
         pageDto.setTotalResultCount(maxResult);
