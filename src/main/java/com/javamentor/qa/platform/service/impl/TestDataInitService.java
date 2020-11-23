@@ -35,6 +35,8 @@ public class TestDataInitService {
     final AnswerVoteService answerVoteService;
     final VoteQuestionService voteQuestionService;
     final RoleService roleService;
+    final IgnoredTagService ignoredTagService;
+    final TrackedTagService trackedTagService;
 
     int numberOfUsers = 50;
     List<Tag> tagList = new ArrayList<>();
@@ -47,7 +49,8 @@ public class TestDataInitService {
                                TagService tagService, UserFavoriteQuestionService userFavoriteQuestionService,
                                RelatedTagService relatedTagService, CommentQuestionService commentQuestionService,
                                CommentAnswerService commentAnswerService, AnswerService answerService,
-                               AnswerVoteService answerVoteService, VoteQuestionService voteQuestionService, RoleService roleService) {
+                               AnswerVoteService answerVoteService, VoteQuestionService voteQuestionService, RoleService roleService,
+                               IgnoredTagService ignoredTagService, TrackedTagService trackedTagService) {
         this.userService = userService;
         this.badgeService = badgeService;
         this.questionService = questionService;
@@ -63,6 +66,8 @@ public class TestDataInitService {
         this.answerVoteService = answerVoteService;
         this.voteQuestionService = voteQuestionService;
         this.roleService = roleService;
+        this.ignoredTagService = ignoredTagService;
+        this.trackedTagService = trackedTagService;
     }
 
 
@@ -121,6 +126,15 @@ public class TestDataInitService {
             question.setIsDeleted(false);
             questionService.persist(question);
 
+            Question questionNoAnswer = new Question();
+            questionNoAnswer.setTitle("Question NoAnswer " + i);
+            questionNoAnswer.setViewCount(0);
+            questionNoAnswer.setDescription("Question NoAnswer Description" + i);
+            questionNoAnswer.setUser(user);
+            questionNoAnswer.setTags(tagList);
+            questionNoAnswer.setIsDeleted(false);
+            questionService.persist(questionNoAnswer);
+
             UserFavoriteQuestion userFavoriteQuestion = new UserFavoriteQuestion();
             userFavoriteQuestion.setUser(user);
             userFavoriteQuestion.setQuestion(question);
@@ -169,6 +183,16 @@ public class TestDataInitService {
             answerVote.setAnswer(answer);
             answerVote.setVote(1);
             answerVoteService.persist(answerVote);
+
+            IgnoredTag ignoredTag = new IgnoredTag();
+            ignoredTag.setUser(user);
+            ignoredTag.setIgnoredTag(tagList.get(1));
+            ignoredTagService.persist(ignoredTag);
+
+            TrackedTag trackedTag = new TrackedTag();
+            trackedTag.setUser(user);
+            trackedTag.setTrackedTag(tagList.get(2));
+            trackedTagService.persist(trackedTag);
         }
     }
 }

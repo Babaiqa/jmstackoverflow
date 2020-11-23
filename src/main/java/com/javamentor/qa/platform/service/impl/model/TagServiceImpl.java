@@ -9,6 +9,7 @@ import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,31 +27,19 @@ public class TagServiceImpl extends ReadWriteServiceImpl<Tag, Long> implements T
     }
 
     @Override
-    public Optional<Tag> getTagByName(String name) {
-        return tagDao.getTagByName(name);
+    public Optional<Tag> getById(Long id) {
+        return tagDao.getById(id);
     }
 
 
     @Transactional
     @Override
-    public void addTagToQuestion(List<Tag> listOfTags, Question question) {
-        for(Tag tag : listOfTags){
-            if(tag.getId()!=null) {
-                tag= Tag.builder().name(tag.getName()).description(tag.getDescription()).build();
-            }
-            if(tag.getName()==null) {
-                throw new ConstrainException("поле тэга name не может быть  null");
-            }
+    public void addTagToQuestion(List<Long> tagId, Question question){
 
-            Optional<Tag> tagOptional = getTagByName(tag.getName());
 
-            if(!tagOptional.isPresent()) {
-                tag.setDescription(tag.getName());
-                tagDao.persist(tag);
-            }
-            else {
-                tag = tagOptional.get();
-            }
+        for(Long id : tagId){
+            Tag tag = getById(id).get();
+
 
             List<Tag> listTagQuestion= questionDao.getAllTagOfQuestion(question);
             if(!listTagQuestion.contains(tag)) {
