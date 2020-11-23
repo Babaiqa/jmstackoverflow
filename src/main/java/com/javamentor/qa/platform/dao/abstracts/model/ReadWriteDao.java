@@ -1,5 +1,7 @@
 package com.javamentor.qa.platform.dao.abstracts.model;
 
+import com.javamentor.qa.platform.models.entity.user.User;
+
 import java.util.Collection;
 
 public interface ReadWriteDao<E, K> extends ReadOnlyDao<E, K> {
@@ -19,5 +21,5 @@ public interface ReadWriteDao<E, K> extends ReadOnlyDao<E, K> {
 
     void deleteById(K id);
 
-    void resetPassword(K id, String password);
+    void resetPassword(User user);
 }

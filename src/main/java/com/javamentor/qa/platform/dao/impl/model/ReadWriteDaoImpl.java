@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.dao.impl.model;
 
+import com.javamentor.qa.platform.models.entity.user.User;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.EntityManager;
@@ -7,6 +8,7 @@ import javax.persistence.PersistenceContext;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
+import java.util.Optional;
 
 
 public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
@@ -112,9 +114,12 @@ public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
         }
     }
 
-    public void resetPassword(K id, String password) {
+    public void resetPassword(User user) {
         String hql = "UPDATE User u set u.password = :password where u.id = :id";
-        entityManager.createQuery(hql).setParameter("password", password).setParameter("id", id).executeUpdate();
+        entityManager.createQuery(hql)
+                .setParameter("password", user.getPassword())
+                .setParameter("id", user.getId())
+                .executeUpdate();
     }
 
 }

@@ -233,8 +233,8 @@ public class UserController {
             return ResponseEntity.badRequest().body("Old password is incorrect");
         }
 
-        String password = passwordEncoder.encode(userResetPasswordDto.getNewPassword());
-        userService.resetPassword(user.getId(), password);
+        user.setPassword(passwordEncoder.encode(userResetPasswordDto.getNewPassword()));
+        userService.resetPassword(user);
 
         return ResponseEntity.ok().body("Password reset successfully");
     }
