@@ -116,4 +116,18 @@ public class TagDtoServiceImpl implements TagDtoService {
         return pageDto;
     }
 
+    @Override
+    public PageDto<TagListDto, Object> getTagListDtoPaginationOrderByNewTag(int page, int size) {
+        PageDto<TagListDto, Object> pageDto = new PageDto<>();
+        int totalResultCount = tagDtoDao.getTotalResultCountTagDto();
+
+        pageDto.setItems(tagDtoDao.getTagListDtoPaginationOrderByNewTag(page, size));
+        pageDto.setTotalResultCount(totalResultCount);
+        pageDto.setCurrentPageNumber(page);
+        pageDto.setItemsOnPage(size);
+        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount/(double)size));
+
+        return pageDto;
+    }
+
 }
