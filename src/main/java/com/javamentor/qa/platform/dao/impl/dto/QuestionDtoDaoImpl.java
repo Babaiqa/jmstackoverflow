@@ -58,15 +58,6 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 .getResultList();
     }
 
-    @SuppressWarnings("unchecked")
-    @Transactional
-    public List<Question> getPaginationPopular(int page, int size) {
-
-        return entityManager.createQuery("select q from Question q order by q.viewCount desc")
-                .setFirstResult(page * size - size)
-                .setMaxResults(size)
-                .getResultList();
-    }
 
     public List<QuestionDto> getQuestionDtoByTagIds(List<Long> ids) {
 
