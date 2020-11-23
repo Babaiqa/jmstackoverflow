@@ -22,4 +22,6 @@ public interface TagDtoService {
 
     PageDto<TagRecentDto, Object> getTagRecentDtoChildTagById(int page, int size, Long tagId);
 
+    PageDto<TagListDto, Object> getTagListDtoPaginationOrderByNewTag(int page, int size);
+
 }

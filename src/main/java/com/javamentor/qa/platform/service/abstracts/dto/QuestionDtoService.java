@@ -11,5 +11,7 @@ public interface QuestionDtoService {
 
      PageDto<QuestionDto, Object> getPaginationPopular(int page, int size);
 
+     PageDto<QuestionDto, Object> getPaginationWithoutAnswers (int page, int size);
+
     PageDto<QuestionDto, Object> getPaginationOrderedNew(int page, int size);
 }
