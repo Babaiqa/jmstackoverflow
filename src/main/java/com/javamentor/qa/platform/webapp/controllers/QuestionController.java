@@ -83,33 +83,33 @@ public class QuestionController {
     }
 
     @SneakyThrows
-    @PatchMapping("/{QuestionId}/tag/add")
+    @PatchMapping("/{questionId}/tag/add")
     @ResponseBody
     @ApiResponses({
             @ApiResponse(code = 200, message = "Tags were added", response = String.class),
             @ApiResponse(code = 400, message = "Question not found", response = String.class)
     })
     public ResponseEntity<?> setTagForQuestion(
-            @ApiParam(name = "QuestionId", value = "type Long", required = true, example = "0")
-            @PathVariable Long QuestionId,
+            @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
+            @PathVariable Long questionId,
             @ApiParam(name = "tagId", value = "type List<Long>", required = true)
             @RequestBody List<Long> tagId) {
 
-        if (QuestionId == null) {
+        if (questionId == null) {
             return ResponseEntity.badRequest().body("Question id is null");
         }
 
-        Optional<Question> question = questionService.getById(QuestionId);
+        Optional<Question> question = questionService.getById(questionId);
         if (!question.isPresent()) {
             return ResponseEntity.badRequest().body("Question not found");
         }
 
         if (tagService.existsByAllIds(tagId)) {
             tagService.addTagToQuestion(tagId, question.get());
-            return ResponseEntity.ok().body("Tags were added");}
-        else {
-            return ResponseEntity.badRequest().body("Tag not found");
+            return ResponseEntity.ok().body("Tags were added");
         }
+
+            return ResponseEntity.badRequest().body("Tag not found");
     }
 
 
