@@ -13,6 +13,8 @@ $( document ).ready(function() {
             break;
         case "/questionAria": openContent("areaQuestionLink", "areaQuestion")
             break;
+        case "/unansweredAria": openContent("areaUnansweredLink", "areaUnanswered")
+            break;
     }
 
     function openContent(evt, contentName){
