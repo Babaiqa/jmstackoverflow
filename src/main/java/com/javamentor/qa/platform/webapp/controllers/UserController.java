@@ -3,12 +3,14 @@ package com.javamentor.qa.platform.webapp.controllers;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
+import com.javamentor.qa.platform.models.util.OnUpdate;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.converters.UserConverter;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
@@ -24,13 +26,15 @@ public class UserController {
     private final UserService userService;
     private final UserConverter userConverter;
     private final UserDtoService userDtoService;
+    private final PasswordEncoder passwordEncoder;
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
-    public UserController(UserService userService, UserConverter userConverter, UserDtoService userDtoService) {
+    public UserController(UserService userService, UserConverter userConverter, UserDtoService userDtoService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.userConverter = userConverter;
         this.userDtoService = userDtoService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // Examples for Swagger
@@ -209,5 +213,29 @@ public class UserController {
                 ResponseEntity.badRequest()
                         .body("User not found");
 
+    }
+
+    @PostMapping("password/reset")
+    @ApiOperation(value = "Reset user password", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "password reset successfully", response = String.class),
+            @ApiResponse(code = 400, message = "Something goes wrong",response = String.class)
+    })
+    @Validated(OnUpdate.class)
+    public ResponseEntity<?> resetPassword (@Valid @RequestBody UserResetPasswordDto userResetPasswordDto) {
+
+        User user;
+
+        Optional<UserDto> userDto = userDtoService.getPrincipal();
+        user = userService.getById(userDto.get().getId()).get();
+
+        if (!passwordEncoder.matches(userResetPasswordDto.getOldPassword(), user.getPassword())) {
+            return ResponseEntity.badRequest().body("Old password is incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(userResetPasswordDto.getNewPassword()));
+        userService.resetPassword(user);
+
+        return ResponseEntity.ok().body("Password reset successfully");
     }
 }
