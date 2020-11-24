@@ -83,6 +83,9 @@ public class User implements UserDetails {
     @UpdateTimestamp
     private LocalDateTime lastUpdateDateTime;
 
+    @Column
+    private String nickname;
+
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Role.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "role_id", nullable = false)
     @NonNull

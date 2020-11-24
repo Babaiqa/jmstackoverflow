@@ -215,6 +215,37 @@ public class UserController {
 
     }
 
+    @PostMapping("public/info")
+    @ApiOperation(value = "Update user public info", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "User public info updated successfully", response = String.class),
+            @ApiResponse(code = 400, message = "Something goes wrong", response = String.class)
+    })
+    @Validated(OnUpdate.class)
+    public ResponseEntity<?> updateUserDtoPublicInfo(@Valid @RequestBody UserPublicInfoDto userPublicInfoDto) {
+        Optional<UserDto> userDto = userDtoService.getPrincipal();
+
+        if (userDto.isPresent()) {
+            User user = userService.getUserByEmail(userDto.get().getEmail()).get();
+            user.setNickname(userPublicInfoDto.getNickname());
+            user.setAbout(userPublicInfoDto.getAbout());
+            user.setImageLink(userPublicInfoDto.getLinkImage());
+            user.setLinkSite(userPublicInfoDto.getLinkSite());
+            user.setLinkVk(userPublicInfoDto.getLinkVk());
+            user.setLinkGitHub(userPublicInfoDto.getLinkGitHub());
+            user.setFullName(userPublicInfoDto.getFullName());
+            user.setCity(userPublicInfoDto.getCity());
+
+            userService.update(user);
+
+            return ResponseEntity.ok().body("User public info updated successfully");
+        } else {
+            return ResponseEntity.badRequest()
+                    .body("User not found");
+        }
+    }
+
+
     @PostMapping("password/reset")
     @ApiOperation(value = "Reset user password", response = String.class)
     @ApiResponses({
