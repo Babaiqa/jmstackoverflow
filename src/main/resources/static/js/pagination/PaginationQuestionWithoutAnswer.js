@@ -55,7 +55,7 @@ class PaginationQuestionWithoutAnswer {
                     "           <span class=\"user-info-change-time\"> " +
                     response.items[i].lastUpdateDateTime.substr(5, response.items[i].lastUpdateDateTime.indexOf("T") - 5)
                     + " " +
-                    response.items[i].lastUpdateDateTime.substr(response.items[i].lastUpdateDateTime.indexOf("T") + 1, 6)
+                    response.items[i].lastUpdateDateTime.substr(response.items[i].lastUpdateDateTime.indexOf("T") + 1, 5)
                     + " </span>" +
                     "       </a>" +
                     "   </div>" +
