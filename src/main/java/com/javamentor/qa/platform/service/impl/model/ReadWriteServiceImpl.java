@@ -76,4 +76,6 @@ public abstract class ReadWriteServiceImpl<E, K> extends ReadOnlyServiceImpl<E, 
         readWriteDao.resetPassword(user);
     }
 
+    public void updateUserPublicInfo(User user) { readWriteDao.updateUserPublicInfo(user); }
+
 }

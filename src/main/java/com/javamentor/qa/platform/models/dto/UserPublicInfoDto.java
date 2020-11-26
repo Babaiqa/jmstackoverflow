@@ -1,7 +1,9 @@
 package com.javamentor.qa.platform.models.dto;
 
+import com.javamentor.qa.platform.models.util.OnUpdate;
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -12,7 +14,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class UserPublicInfoDto implements Serializable {
 
-    @NotNull
+    @NotNull (groups = OnUpdate.class, message = "Поле не должно быть null")
+    @NotBlank (groups = OnUpdate.class, message = "Поле не должно быть пустым")
     private String nickname;
 
     private String about;
@@ -21,7 +24,8 @@ public class UserPublicInfoDto implements Serializable {
     private String linkVk;
     private String linkGitHub;
 
-    @NotNull
+    @NotNull (groups = OnUpdate.class, message = "Поле не должно быть null")
+    @NotBlank (groups = OnUpdate.class, message = "Поле не должно быть пустым")
     private String fullName;
 
     private String city;

@@ -22,4 +22,6 @@ public interface ReadWriteService<E, K> extends ReadOnlyService<E, K> {
     void deleteById(K id);
 
     void resetPassword(User user);
+
+    void updateUserPublicInfo(User user);
 }

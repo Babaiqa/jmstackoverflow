@@ -223,26 +223,22 @@ public class UserController {
     })
     @Validated(OnUpdate.class)
     public ResponseEntity<?> updateUserDtoPublicInfo(@Valid @RequestBody UserPublicInfoDto userPublicInfoDto) {
-        Optional<UserDto> userDto = userDtoService.getPrincipal();
 
-        if (userDto.isPresent()) {
-            User user = userService.getUserByEmail(userDto.get().getEmail()).get();
-            user.setNickname(userPublicInfoDto.getNickname());
-            user.setAbout(userPublicInfoDto.getAbout());
-            user.setImageLink(userPublicInfoDto.getLinkImage());
-            user.setLinkSite(userPublicInfoDto.getLinkSite());
-            user.setLinkVk(userPublicInfoDto.getLinkVk());
-            user.setLinkGitHub(userPublicInfoDto.getLinkGitHub());
-            user.setFullName(userPublicInfoDto.getFullName());
-            user.setCity(userPublicInfoDto.getCity());
+        User user = userService.getById(userDtoService.getPrincipal().get().getId()).get();
+        User userFromPublicInfoDto = userConverter.userPublicInfoDtoToUser(userPublicInfoDto);
 
-            userService.update(user);
+        user.setNickname(userFromPublicInfoDto.getNickname());
+        user.setAbout(userFromPublicInfoDto.getAbout());
+        user.setImageLink(userFromPublicInfoDto.getImageLink());
+        user.setLinkSite(userFromPublicInfoDto.getLinkSite());
+        user.setLinkVk(userFromPublicInfoDto.getLinkVk());
+        user.setLinkGitHub(userFromPublicInfoDto.getLinkGitHub());
+        user.setFullName(userFromPublicInfoDto.getFullName());
+        user.setCity(userFromPublicInfoDto.getCity());
 
-            return ResponseEntity.ok().body("User public info updated successfully");
-        } else {
-            return ResponseEntity.badRequest()
-                    .body("User not found");
-        }
+        userService.updateUserPublicInfo(user);
+
+        return ResponseEntity.ok().body("User public info updated successfully");
     }
 
 

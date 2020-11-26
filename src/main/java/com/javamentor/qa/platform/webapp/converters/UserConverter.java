@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.webapp.converters;
 
 import com.javamentor.qa.platform.models.dto.UserDto;
+import com.javamentor.qa.platform.models.dto.UserPublicInfoDto;
 import com.javamentor.qa.platform.models.dto.UserRegistrationDto;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -23,6 +24,8 @@ public abstract class UserConverter {
 
     @Mapping( target = "role", constant = "USER", qualifiedByName = "roleName")
     public abstract User userDtoToUser(UserRegistrationDto userRegistrationDto);
+
+    public abstract User userPublicInfoDtoToUser(UserPublicInfoDto userPublicInfoDto);
 
     @Named("roleName")
     public Role roleName(String role) {
