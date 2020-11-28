@@ -17,12 +17,13 @@ class PaginationTag {
             this.tags = this.tagService.getTagListDtoByPopularPagination(this.page, this.size);
         }
     }
+
     writeTags() {
 
         $('#tagsTable').children().remove()
 
-        this.tags.then(function(response) {
-            for(var i=0; i<response.items.length; i++){
+        this.tags.then(function (response) {
+            for (var i = 0; i < response.items.length; i++) {
                 $('#tagsTable').append(
                     " <div class=\"child\">"
                     + "<p class=\"media\">"
@@ -43,18 +44,18 @@ class PaginationTag {
         var size = this.size;
         var sort = this.sort;
 
-        this.tags.then(function(response) {
+        this.tags.then(function (response) {
             var currentPageNumber = response.currentPageNumber;
             var nextPage = response.currentPageNumber + 1;
-            var secondNextPage =  response.currentPageNumber + 2;
+            var secondNextPage = response.currentPageNumber + 2;
             var totalPageCount = response.totalPageCount;
             var previousPage = response.currentPageNumber - 1;
 
 
             $('#tagsPagesNavigation').children().remove();
-            if(currentPageNumber != 1) {
+            if (currentPageNumber != 1) {
                 $('#tagsPagesNavigation').append(
-                    "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + previousPage + "," + size + "," + "\"" + sort + "\""  + ").writeTags()' >Назад</a></li>"
+                    "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + previousPage + "," + size + "," + "\"" + sort + "\"" + ").writeTags()' >Назад</a></li>"
                 );
             }
 
@@ -67,28 +68,28 @@ class PaginationTag {
             if (nextPage == totalPageCount) {
                 $('#tagsPagesNavigation').append(
                     "<li class=\"page-item active\"><a class=\"page-link\" href=\"#\" >" + currentPageNumber + "</a></li>"
-                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\""  + ").writeTags()'>" + nextPage + "</a></li>"
-                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\""  + ").writeTags()'>" + "Далее"+ "</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\"" + ").writeTags()'>" + nextPage + "</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\"" + ").writeTags()'>" + "Далее" + "</a></li>"
                 );
             }
 
             if (secondNextPage == totalPageCount) {
                 $('#tagsPagesNavigation').append(
                     "<li class=\"page-item active\"><a class=\"page-link\" href=\"#\" >" + currentPageNumber + "</a></li>"
-                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\""  + ").writeTags()'>" + nextPage + "</a></li>"
-                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + secondNextPage + "," + size + "," + "\"" + sort + "\""  + ").writeTags()'>" + secondNextPage + "</a></li>"
-                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\""  + ").writeTags()'>" + "Далее"+ "</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\"" + ").writeTags()'>" + nextPage + "</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + secondNextPage + "," + size + "," + "\"" + sort + "\"" + ").writeTags()'>" + secondNextPage + "</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\"" + ").writeTags()'>" + "Далее" + "</a></li>"
                 );
             }
 
             if (secondNextPage < totalPageCount) {
                 $('#tagsPagesNavigation').append(
                     "<li class=\"page-item active\"><a class=\"page-link\" href=\"#\" >" + currentPageNumber + "</a></li>"
-                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\""  +").writeTags()'>" + nextPage + "</a></li>"
-                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + secondNextPage + "," + size + "," + "\"" + sort + "\""  + ").writeTags()'>" + secondNextPage + "</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\"" + ").writeTags()'>" + nextPage + "</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + secondNextPage + "," + size + "," + "\"" + sort + "\"" + ").writeTags()'>" + secondNextPage + "</a></li>"
                     + "<li class=\"page-item\"><span class='mr-2 ml-2'>" + "..." + "</span></li>"
-                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + totalPageCount + "," + size + "," + "\"" + sort + "\""  + ").writeTags()'>" + totalPageCount + "</a></li>"
-                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\""  + ").writeTags()'>" + "Далее"+ "</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + totalPageCount + "," + size + "," + "\"" + sort + "\"" + ").writeTags()'>" + totalPageCount + "</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\"" + ").writeTags()'>" + "Далее" + "</a></li>"
                 );
             }
         })
