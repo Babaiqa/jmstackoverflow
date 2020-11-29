@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/comment/questionCommentApi.yml",
         "dataset/comment/tagCommentApi.yml",
         "dataset/comment/question_has_tagCommentApi.yml",
-        "dataset/comment/votes_on_questionCommentApi.yml"}, cleanBefore = true, cleanAfter = true)
+        "dataset/comment/votes_on_questionCommentApi.yml"}, cleanBefore = true, cleanAfter = false)
 public class CommentControllerTest extends AbstractIntegrationTest {
 
 
