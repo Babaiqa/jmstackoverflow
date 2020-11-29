@@ -224,17 +224,7 @@ public class UserController {
     @Validated(OnUpdate.class)
     public ResponseEntity<?> updateUserDtoPublicInfo(@Valid @RequestBody UserPublicInfoDto userPublicInfoDto) {
 
-        User user = userService.getById(userDtoService.getPrincipal().get().getId()).get();
-        User userFromPublicInfoDto = userConverter.userPublicInfoDtoToUser(userPublicInfoDto);
-
-        user.setNickname(userFromPublicInfoDto.getNickname());
-        user.setAbout(userFromPublicInfoDto.getAbout());
-        user.setImageLink(userFromPublicInfoDto.getImageLink());
-        user.setLinkSite(userFromPublicInfoDto.getLinkSite());
-        user.setLinkVk(userFromPublicInfoDto.getLinkVk());
-        user.setLinkGitHub(userFromPublicInfoDto.getLinkGitHub());
-        user.setFullName(userFromPublicInfoDto.getFullName());
-        user.setCity(userFromPublicInfoDto.getCity());
+        User user = userConverter.userPublicInfoDtoToUser(userPublicInfoDto);
 
         userService.updateUserPublicInfo(user);
 
