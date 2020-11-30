@@ -36,7 +36,6 @@ public abstract class UserConverter {
         return rol.get();
     }
 
-    @Mapping(source = "userPublicInfoDto.id", target = "id")
     @Mapping(source = "userPublicInfoDto.nickname", target = "nickname")
     @Mapping(source = "userPublicInfoDto.about", target = "about")
     @Mapping(source = "userPublicInfoDto.linkImage", target = "imageLink")

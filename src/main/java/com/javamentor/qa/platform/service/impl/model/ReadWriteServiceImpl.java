@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public abstract class ReadWriteServiceImpl<E, K> extends ReadOnlyServiceImpl<E, K> {
 
@@ -76,6 +77,7 @@ public abstract class ReadWriteServiceImpl<E, K> extends ReadOnlyServiceImpl<E, 
         readWriteDao.resetPassword(user);
     }
 
-    public void updateUserPublicInfo(User user) { readWriteDao.updateUserPublicInfo(user); }
+    @Transactional
+    public Optional<User> updateUserPublicInfo(User user) { return readWriteDao.updateUserPublicInfo(user); }
 
 }

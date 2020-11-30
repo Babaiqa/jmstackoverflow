@@ -225,10 +225,10 @@ public class UserController {
     public ResponseEntity<?> updateUserDtoPublicInfo(@Valid @RequestBody UserPublicInfoDto userPublicInfoDto) {
 
         User user = userConverter.userPublicInfoDtoToUser(userPublicInfoDto);
+        user.setId(userDtoService.getPrincipal().get().getId());
+        user = userService.updateUserPublicInfo(user).get();
 
-        userService.updateUserPublicInfo(user);
-
-        return ResponseEntity.ok().body("User public info updated successfully");
+        return ResponseEntity.ok(userConverter.userToDto(user));
     }
 
 

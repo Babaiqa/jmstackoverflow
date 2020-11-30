@@ -16,11 +16,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class UserPublicInfoDto implements Serializable {
 
-    @Autowired
-    private UserDtoService userDtoService;
-
-    private final Long id = userDtoService.getPrincipal().get().getId();
-
     @NotNull (groups = OnUpdate.class, message = "Поле не должно быть null")
     @NotBlank (groups = OnUpdate.class, message = "Поле не должно быть пустым")
     private String nickname;
