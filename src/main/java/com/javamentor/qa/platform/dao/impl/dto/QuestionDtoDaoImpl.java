@@ -176,6 +176,37 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
         return tagsByIds;
     }
 
+    @Override
+    public List<QuestionDto> getQuestionWithGivenTags(int page, int size, List<Long> tagIds) {
+        List<QuestionDto> questionDtoList = entityManager.unwrap(Session.class)
+                .createQuery(
+                        "select distinct question.id as question_id, " +
+                                "question.title as question_title, " +
+                                "u.fullName as question_authorName, " +
+                                "u.id as question_authorId, " +
+                                "u.imageLink as question_authorImage, " +
+                                "question.description as question_description, " +
+                                "question.viewCount as question_viewCount, " +
+                                "(select count(a.question.id) from Answer a where question_id=a.question.id) as question_countAnswer, " +
+                                "(select count(v.question.id) from VoteQuestion v where question_id=v.question.id) as question_countValuable, " +
+                                "question.persistDateTime as question_persistDateTime, " +
+                                "question.lastUpdateDateTime as question_lastUpdateDateTime " +
+                                "from Question question " +
+                                "INNER JOIN question.user u " +
+                                "join question.tags tag " +
+                                "where tag.id IN :tagIds " +
+                                "order by question_id"
+                )
+                .setParameter("tagIds", tagIds)
+                .setFirstResult((page - 1) * size)
+                .setMaxResults(size)
+                .unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(new QuestionResultTransformerWithoutTag())
+                .getResultList();
+
+        return questionDtoList;
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public List<QuestionDto> getQuestionBySearchValue(Map<String, String> data) {

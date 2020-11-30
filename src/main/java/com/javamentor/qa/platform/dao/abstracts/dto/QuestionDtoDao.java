@@ -26,5 +26,7 @@ public interface QuestionDtoDao {
 
      long getTotalCountQuestionNotAnswer();
 
+    List<QuestionDto> getQuestionWithGivenTags(int page, int size, List<Long> tagIds);
+
      List<QuestionDto> getQuestionBySearchValue(Map<String, String> data);
 }
