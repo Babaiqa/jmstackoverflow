@@ -24,4 +24,6 @@ public interface QuestionDtoDao {
      List<QuestionDto> getQuestionDtoByIds(List<Long> ids);
 
      long getTotalCountQuestionNotAnswer();
+
+    List<QuestionDto> getQuestionWithGivenTags(int page, int size, List<Long> tagIds);
 }

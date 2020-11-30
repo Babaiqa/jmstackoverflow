@@ -106,4 +106,29 @@ public class QuestionDtoServiceImpl implements QuestionDtoService {
         return pageDto;
     }
 
+    public PageDto<QuestionDto, Object> getPAginationWithGivenTags(int page, int size, List<Long> tagIds) {
+
+        List<QuestionDto> listOfQuestionsWithGivenTags = questionDtoDao.getQuestionWithGivenTags(page, size, tagIds);
+        List<Long> ids = listOfQuestionsWithGivenTags.stream().map(QuestionDto::getId).collect(Collectors.toList());
+        List<QuestionDto>  tegsByIds = questionDtoDao.getQuestionTagsByQuestionIds(ids);
+
+        for (QuestionDto questionDto : listOfQuestionsWithGivenTags) {
+            for (QuestionDto q2 : tegsByIds) {
+                if (questionDto.getId().equals(q2.getId())) questionDto.setListTagDto(q2.getListTagDto());
+            }
+        }
+
+        int maxResult = listOfQuestionsWithGivenTags.size();
+
+        PageDto<QuestionDto, Object> pageDto = new PageDto<>();
+
+        pageDto.setItems(listOfQuestionsWithGivenTags);
+        pageDto.setTotalResultCount(maxResult);
+        pageDto.setCurrentPageNumber(page);
+        pageDto.setTotalPageCount((int) Math.ceil(maxResult / (double) size));
+        pageDto.setItemsOnPage(size);
+
+        return pageDto;
+    }
+
 }
