@@ -13,7 +13,9 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -172,5 +174,53 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 .setResultTransformer(new QuestionResultTransformerTagOnly())
                 .getResultList();
         return tagsByIds;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<QuestionDto> getQuestionBySearchValue(Map<String, String> data) {
+        String query = "select question.id as question_id, " +
+                "question.title as question_title," +
+                "u.fullName as question_authorName," +
+                "u.id as question_authorId, " +
+                "u.imageLink as question_authorImage," +
+                "question.description as question_description," +
+                "question.viewCount as question_viewCount," +
+                "(select count(a.question.id) from Answer a where a.question.id=question_id) as question_countAnswer," +
+                "(select count(v.question.id) from VoteQuestion v where v.question.id=question_id) as question_countValuable," +
+                "question.persistDateTime as question_persistDateTime," +
+                "question.lastUpdateDateTime as question_lastUpdateDateTime, " +
+                "tag.id as tag_id,tag.name as tag_name " +
+                "from Question question  " +
+                "INNER JOIN  question.user u " +
+                "join question.tags tag " +
+                "where u.id >= :userId " +
+                "and question.viewCount >= :views " +
+                "and (select count(a.question.id) from Answer a where a.question.id=question_id) >= :answers " +
+                "and question.description like :exactly ";
+
+        String[] tags = data.get("tags").split(" ");
+        String tagsQuery = "and (";
+        for (String tag : tags) {
+            tagsQuery += "tag.name like '%" + tag + "%' or ";
+        }
+        query += tagsQuery.substring(0, tagsQuery.length() - 4) + ")";
+
+        String[] words = data.get("textSearch").split(" ");
+        String wordsQuery = " and (";
+        for (String word: words) {
+            wordsQuery += "question.description like '%" + word + "%' or ";
+        }
+        query += wordsQuery.substring(0, wordsQuery.length() - 4) + ")";
+
+        return (List<QuestionDto>) entityManager.unwrap(Session.class)
+                .createQuery(query)
+                .setParameter("userId", data.get("author").isEmpty()? 0 : Long.parseLong(data.get("author")))
+                .setParameter("views", data.get("views").isEmpty()? 0 : Integer.parseInt(data.get("views")))
+                .setParameter("answers", data.get("answers").isEmpty()? 0 : Long.parseLong(data.get("answers")))
+                .setParameter("exactly", data.get("exactSearch").isEmpty()? "%" : "%" + data.get("exactSearch") + "%")
+                .unwrap(Query.class)
+                .setResultTransformer(new QuestionResultTransformer())
+                .getResultList();
     }
 }

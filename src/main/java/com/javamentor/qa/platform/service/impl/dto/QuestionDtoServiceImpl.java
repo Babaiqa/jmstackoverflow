@@ -10,8 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -71,7 +70,7 @@ public class QuestionDtoServiceImpl implements QuestionDtoService {
         List<QuestionDto> questionList = questionDtoDao.getPaginationOrderedNew(page, size);
         List<Long> ids = questionList.stream().map(QuestionDto::getId).collect(Collectors.toList());
 
-        List<QuestionDto>  tegsByIds = questionDtoDao.getQuestionTagsByQuestionIds(ids);
+        List<QuestionDto> tegsByIds = questionDtoDao.getQuestionTagsByQuestionIds(ids);
 
         for (QuestionDto q : questionList) {
             for (QuestionDto q2 : tegsByIds) {
@@ -104,6 +103,70 @@ public class QuestionDtoServiceImpl implements QuestionDtoService {
         pageDto.setItemsOnPage(size);
 
         return pageDto;
+    }
+
+    @Override
+    public PageDto<QuestionDto, Object> getQuestionBySearchValue(String message, int page, int size) {
+        Map<String, String> searchParams = new HashMap<>();
+        searchParams.put("views", parseSearchParam(message, "views"));
+        searchParams.put("author", parseSearchParam(message, "author"));
+        searchParams.put("answers", parseSearchParam(message, "answers"));
+        searchParams.put("tags", parseSearchExactly(message, true));
+        searchParams.put("exactSearch", parseSearchExactly(message, false));
+        searchParams.put("textSearch", message
+                .replaceAll("(\"[^\"]+\")|(\\[[^\\]\\[]+\\])|([\\]\\[])|(answers:[\\s]?\\d+)|(author:[\\s]?\\d+)|(views:[\\s]?\\d+)", "")
+                .replaceAll("\\s{2,}", " ")
+                .trim());
+
+//        int size = 10;
+//        int page = 2;
+
+        List<QuestionDto> totalResult = questionDtoDao.getQuestionBySearchValue(searchParams);
+        List<QuestionDto> paginationResult =
+                totalResult.subList((page - 1) * size, (size * page) > totalResult.size()? totalResult.size(): size * page);
+
+        PageDto<QuestionDto, Object> pagination = new PageDto<>();
+        pagination.setItems(paginationResult);
+        pagination.setTotalResultCount(totalResult.size());
+        pagination.setCurrentPageNumber(page);
+        pagination.setTotalPageCount((int) Math.ceil(totalResult.size() / (double) size));
+        pagination.setItemsOnPage(size);
+        return pagination;
+    }
+
+    private String parseSearchExactly(String message, boolean isTag) {
+        StringBuilder exactly = new StringBuilder();
+        while (message.matches("(.*\".+\".*)|(.*\\[.+\\].*)")) {
+            int firstIndex = message.indexOf(isTag ? "[" : "\"");
+            int secondIndex = message.indexOf(isTag ? "]" : "\"", firstIndex + 1) + 1;
+            if (firstIndex < 0 || secondIndex < firstIndex) {
+                break;
+            }
+            String tmp = message.substring(firstIndex, secondIndex);
+            message = message.replace(tmp, "");
+            exactly.append(tmp.substring(1, tmp.length() - 1)).append(" ");
+        }
+        return exactly.toString().trim();
+    }
+
+    private String parseSearchParam(String message, String param) {
+        if (message.matches(".*" + param + ":\\d+.*")) {
+            int index = message.indexOf(param + ":");
+            String results = message.substring(index, index + param.length() + 1);
+
+            for (int i = index + param.length() + 1; i < message.length(); i++) {
+                char c = message.charAt(i);
+                if (Character.isDigit(c)) {
+                    results += c;
+                } else {
+                    break;
+                }
+            }
+            if (results.length() > param.length() + 1) {
+                return results.substring(param.length() + 1);
+            }
+        }
+        return "";
     }
 
 }

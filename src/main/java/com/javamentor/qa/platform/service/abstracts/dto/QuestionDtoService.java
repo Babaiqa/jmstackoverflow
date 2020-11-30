@@ -2,6 +2,10 @@ package com.javamentor.qa.platform.service.abstracts.dto;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface QuestionDtoService {
@@ -14,4 +18,7 @@ public interface QuestionDtoService {
      PageDto<QuestionDto, Object> getPaginationWithoutAnswers (int page, int size);
 
     PageDto<QuestionDto, Object> getPaginationOrderedNew(int page, int size);
+
+    PageDto<QuestionDto, Object> getQuestionBySearchValue(String message, int page, int size);
+
 }
