@@ -78,6 +78,6 @@ public abstract class ReadWriteServiceImpl<E, K> extends ReadOnlyServiceImpl<E, 
     }
 
     @Transactional
-    public Optional<User> updateUserPublicInfo(User user) { return readWriteDao.updateUserPublicInfo(user); }
+    public void updateUserPublicInfo(User user) { readWriteDao.updateUserPublicInfo(user); }
 
 }

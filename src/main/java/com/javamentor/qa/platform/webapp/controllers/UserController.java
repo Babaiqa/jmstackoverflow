@@ -226,9 +226,9 @@ public class UserController {
 
         User user = userConverter.userPublicInfoDtoToUser(userPublicInfoDto);
         user.setId(userDtoService.getPrincipal().get().getId());
-        user = userService.updateUserPublicInfo(user).get();
+        userService.updateUserPublicInfo(user);
 
-        return ResponseEntity.ok(userConverter.userToDto(user));
+        return ResponseEntity.ok(userConverter.userToUserPublicInfoDto(user));
     }
 
 

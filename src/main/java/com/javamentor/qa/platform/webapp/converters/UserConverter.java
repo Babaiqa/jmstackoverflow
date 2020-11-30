@@ -44,6 +44,16 @@ public abstract class UserConverter {
     @Mapping(source = "userPublicInfoDto.linkGitHub", target = "linkGitHub")
     @Mapping(source = "userPublicInfoDto.fullName", target = "fullName")
     @Mapping(source = "userPublicInfoDto.city", target = "city")
-
     public abstract User userPublicInfoDtoToUser(UserPublicInfoDto userPublicInfoDto);
+
+    @Mapping(source = "user.id", target = "id")
+    @Mapping(source = "user.nickname", target = "nickname")
+    @Mapping(source = "user.about", target = "about")
+    @Mapping(source = "user.imageLink", target = "linkImage")
+    @Mapping(source = "user.linkSite", target = "linkSite")
+    @Mapping(source = "user.linkVk", target = "linkVk")
+    @Mapping(source = "user.linkGitHub", target = "linkGitHub")
+    @Mapping(source = "user.fullName", target = "fullName")
+    @Mapping(source = "user.city", target = "city")
+    public abstract UserPublicInfoDto userToUserPublicInfoDto(User user);
 }

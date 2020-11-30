@@ -24,5 +24,5 @@ public interface ReadWriteDao<E, K> extends ReadOnlyDao<E, K> {
 
     void resetPassword(User user);
 
-    Optional<User> updateUserPublicInfo(User user);
+    void updateUserPublicInfo(User user);
 }

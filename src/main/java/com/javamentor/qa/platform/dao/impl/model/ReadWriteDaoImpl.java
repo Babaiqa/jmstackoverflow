@@ -122,7 +122,7 @@ public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
                 .executeUpdate();
     }
 
-    public Optional<User> updateUserPublicInfo(User user) {
+    public void updateUserPublicInfo(User user) {
         String hql = "UPDATE User u set " +
                 "u.nickname = :nickname, " +
                 "u.about = :about, " +
@@ -144,8 +144,5 @@ public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
                 .setParameter("city", user.getCity())
                 .setParameter("id", user.getId())
                 .executeUpdate();
-
-        return (Optional<User>) getById((K) user.getId());
     }
-
 }

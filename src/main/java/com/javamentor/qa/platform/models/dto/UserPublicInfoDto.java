@@ -16,6 +16,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class UserPublicInfoDto implements Serializable {
 
+    private Long id;
+
     @NotNull (groups = OnUpdate.class, message = "Поле не должно быть null")
     @NotBlank (groups = OnUpdate.class, message = "Поле не должно быть пустым")
     private String nickname;
