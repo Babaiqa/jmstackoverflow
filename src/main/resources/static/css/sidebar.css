@@ -15,7 +15,7 @@
 }
 /*headerSidebarFooter*/
 
-#areaQuestion, #example, #areaTag, #areaUsers, #mainPage{
+#areaQuestion, #example, #areaTag, #areaUsers, #mainPage, #areaUnanswered{
     margin-top: 60px;
     display: none;
 }
@@ -23,9 +23,6 @@
 #sidebarArea{
     /*position: fixed;*/
     margin-top: 60px;
-}
-.row h2{                   /*"заголовок "Все вопросы"*/
-    margin-left: 180px;
 }
 #askQuest{                 /*кнопка "Задать вопрос"*/
     margin-left: 300px;

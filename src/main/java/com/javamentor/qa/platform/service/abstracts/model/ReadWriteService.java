@@ -1,5 +1,7 @@
 package com.javamentor.qa.platform.service.abstracts.model;
 
+import com.javamentor.qa.platform.models.entity.user.User;
+
 import java.util.Collection;
 
 public interface ReadWriteService<E, K> extends ReadOnlyService<E, K> {
@@ -18,4 +20,6 @@ public interface ReadWriteService<E, K> extends ReadOnlyService<E, K> {
     void updateAll(Iterable<? extends E> entities);
 
     void deleteById(K id);
+
+    void resetPassword(User user);
 }

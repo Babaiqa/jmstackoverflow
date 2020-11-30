@@ -2,6 +2,8 @@ $( document ).ready(function() {
 
     new PaginationTag(1, 12, 'popular').writeTags()
     new PaginationUser(1,20,'week').writeUsers()
+    new PaginationQuestion(1,10,'normal').setQuestions()
+    new PaginationQuestionWithoutAnswer(1,10).writeQuestionWithoutAnswer()
 
     switch (location.pathname) {
         case "/users": openContent("areaUsersLink", "areaUsers")
@@ -11,6 +13,8 @@ $( document ).ready(function() {
         case "/tagsAria": openContent("areaTagLink", "areaTag")
             break;
         case "/questionAria": openContent("areaQuestionLink", "areaQuestion")
+            break;
+        case "/unansweredAria": openContent("areaUnansweredLink", "areaUnanswered")
             break;
     }
 

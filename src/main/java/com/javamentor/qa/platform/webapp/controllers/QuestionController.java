@@ -18,18 +18,20 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @Validated
-@RequestMapping("/api/question/")
+@RequestMapping("/api/question")
 @Api(value = "QuestionApi")
 public class QuestionController {
 
@@ -43,7 +45,6 @@ public class QuestionController {
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
-
     public QuestionController(QuestionService questionService, TagMapper tagMapper, TagService tagService,
                               QuestionDtoService questionDtoService, UserDtoService userDtoService) {
         this.questionService = questionService;
@@ -80,34 +81,38 @@ public class QuestionController {
         }
     }
 
-    @PatchMapping("{QuestionId}/tag/add")
+    @SneakyThrows
+    @PatchMapping("/{questionId}/tag/add")
     @ResponseBody
     @ApiResponses({
             @ApiResponse(code = 200, message = "Tags were added", response = String.class),
             @ApiResponse(code = 400, message = "Question not found", response = String.class)
     })
     public ResponseEntity<?> setTagForQuestion(
-            @ApiParam(name = "QuestionId", value = "type Long", required = true, example = "0")
-            @PathVariable Long QuestionId,
-            @ApiParam(name = "tagDto", value = "type List<TagDto>", required = true)
-            @RequestBody List<TagDto> tagDto) {
+            @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
+            @PathVariable Long questionId,
+            @ApiParam(name = "tagId", value = "type List<Long>", required = true)
+            @RequestBody List<Long> tagId) {
 
-        if (QuestionId == null) {
+        if (questionId == null) {
             return ResponseEntity.badRequest().body("Question id is null");
         }
-        List<Tag> listTag = tagMapper.dtoToTag(tagDto); // Список тегов полученных в контроллере (от фронта)
 
-        Optional<Question> question = questionService.getById(QuestionId);
+        Optional<Question> question = questionService.getById(questionId);
         if (!question.isPresent()) {
             return ResponseEntity.badRequest().body("Question not found");
         }
-        tagService.addTagToQuestion(listTag, question.get());
 
-        return ResponseEntity.ok().body("Tags were added");
+        if (tagService.existsByAllIds(tagId)) {
+            tagService.addTagToQuestion(tagId, question.get());
+            return ResponseEntity.ok().body("Tags were added");
+        }
+
+            return ResponseEntity.badRequest().body("Tag not found");
     }
 
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     @ApiOperation(value = "get QuestionDto", response = String.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the QuestionDto", response = QuestionDto.class),
@@ -124,7 +129,7 @@ public class QuestionController {
                 ResponseEntity.badRequest().body("Question not found");
     }
 
-    @GetMapping(
+    @GetMapping(path = "/",
             params = {"page", "size"}
     )
     @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
@@ -149,7 +154,7 @@ public class QuestionController {
         return ResponseEntity.ok(resultPage);
     }
 
-    @GetMapping(value = "popular", params = {"page", "size"})
+    @GetMapping(value = "/popular", params = {"page", "size"})
     @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the pagination popular List<QuestionDto>"),
@@ -174,7 +179,7 @@ public class QuestionController {
 
 
 
-    @PostMapping("add")
+    @PostMapping("/add")
     @Validated(OnCreate.class)
     @ResponseBody
     @ApiOperation(value = "add Question", response = String.class)
@@ -221,8 +226,57 @@ public class QuestionController {
 
         return ResponseEntity.ok(resultPage);
     }
+
+    @GetMapping(value = "/withoutAnswer", params = {"page", "size"})
+    @ApiOperation(value = "Return Questions without answers")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDto>"),
+    })
+    public ResponseEntity<?> getQuestionsWithoutAnswer(
+            @ApiParam(name= "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam ("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                required = true,
+                example = "10")
+            @RequestParam("size") int size
+    ) {
+        if (size <= 0|| page <= 0 || size > MAX_ITEMS_ON_PAGE){
+            ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationWithoutAnswers(page, size);
+        return ResponseEntity.ok(resultPage);
+    }
+
+    @PostMapping(value = "/withTags", params = {"page","size"})
+    @ApiOperation(value = "Return questions that include all given tags")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Return the pagination PageDto", response = PageDto.class),
+            @ApiResponse(code = 400, message = "QuestionList with given TagIds not found.")
+    })
+    public ResponseEntity<?> getQuestionsWithGivenTags(
+            @ApiParam(name= "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam ("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    required = true,
+                    example = "10")
+            @RequestParam("size") int size,
+            @ApiParam(name = "tagIds", required = true, type = "List<Long>")
+            @Valid
+            @RequestBody List<Long> tagIds
+    ){
+        if (size <= 0|| page <= 0 || size > MAX_ITEMS_ON_PAGE){
+            ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPAginationWithGivenTags(page, size, tagIds);
+
+        if (resultPage.getItems().size() == 0) {
+            ResponseEntity.notFound();
+        }
+        return ResponseEntity.ok(resultPage);
+    }
 }
-
-
-
-

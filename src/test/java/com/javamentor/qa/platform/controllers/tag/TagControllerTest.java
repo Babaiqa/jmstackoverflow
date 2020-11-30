@@ -36,7 +36,6 @@ public class TagControllerTest extends AbstractIntegrationTest {
     private static final String ALPHABET = "/api/tag/alphabet/order";
     private static final String ORDER_POPULAR = "/api/tag/order/popular";
     private static final String NAME = "/api/tag/name";
-    private static final String NEW_TAG = "/api/tag/new/order";
     private static final String BAD_REQUEST_MESSAGE = "Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100";
 
     // Тесты запросов популярных тэгов
@@ -120,6 +119,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.items").isEmpty());
     }
 
+
     // Тесты запросов недавних тэгов
     @Test
     public void requestGetTagRecentDtoPagination() throws Exception {
@@ -200,6 +200,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
                 .andExpect(jsonPath("$.items").isEmpty());
     }
+
 
     // Тесты запросов тэгов по алфавиту
     @Test
@@ -364,6 +365,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.items").isEmpty());
     }
 
+
     // Тест name
     @Test
     public void requestGetTagName() throws Exception {
@@ -447,24 +449,23 @@ public class TagControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.items").isEmpty());
     }
 
-    // Test order by new Tag
+    // Тесты запроса дочерних тегов по id
     @Test
-    public void requestGetTagDtoPaginationByNewTag() throws Exception {
-        PageDto<TagListDto, Object> expected = new PageDto<>();
+    @DataSet(value = {"dataset/tag/related_tag.yml"}
+            , cleanBefore = true, cleanAfter = true)
+    public void requestChildTagByMainTagId() throws Exception {
+        PageDto<TagRecentDto, Object> expected = new PageDto<>();
+        List<TagRecentDto> expectedChild = new ArrayList<>();
+        expectedChild.add(new TagRecentDto(5L, "Child", 1L));
+        expected.setItems(expectedChild);
         expected.setCurrentPageNumber(1);
         expected.setTotalPageCount(1);
-        expected.setTotalResultCount(5);
+        expected.setTotalResultCount(1);
         expected.setItemsOnPage(10);
 
-        List<TagListDto> expectedItems = new ArrayList<>();
-        expectedItems.add(new TagListDto(6L, "kotlin", "kotlin is", 3, 1, 0));
-        expectedItems.add(new TagListDto(8L, "nosql", "nosqk is", 8, 3, 1));
-//        expectedItems.add(new TagListDto(2L, "javaScript", "JS is", 4, 2, 1));
-//        expectedItems.add(new TagListDto(3L, "html", "html is", 3, 3, 2));
-//        expectedItems.add(new TagListDto(4L, "bootstrap-4", "bootstrap is", 5, 4, 0));
-        expected.setItems(expectedItems);
+        long id = 4L;
 
-        String resultContext = mockMvc.perform(get(NEW_TAG)
+        String resultContext = mockMvc.perform(get("/api/tag/{id}/child", id)
                 .param("page", "1")
                 .param("size", "10"))
                 .andDo(print())
@@ -477,47 +478,55 @@ public class TagControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.itemsOnPage").isNotEmpty())
                 .andReturn().getResponse().getContentAsString();
 
-        PageDto<TagListDto, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
+        PageDto<TagRecentDto, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
         Assert.assertEquals(expected.toString(), actual.toString());
     }
 
     @Test
-    public void requestNegativePageGetTagDtoPaginationByNewTag() throws Exception {
-        mockMvc.perform(get(NEW_TAG)
+    public void requestNegativePageGetTagRecentDtoChildTagById() throws Exception {
+        long id = 4L;
+        mockMvc.perform(get("/api/tag/{id}/child", id)
                 .param("page", "-1")
                 .param("size", "10"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
-                .andExpect(content().string("Page and Size have to be positive. Max number of items per page 100"));
+                .andExpect(content().string(BAD_REQUEST_MESSAGE));
     }
 
     @Test
-    public void requestNegativeSizeGetTagDtoPaginationByNewTag() throws Exception {
-        mockMvc.perform(get(NEW_TAG)
+    public void requestChildTagsWithWrongTagId() throws Exception{
+        long id = 500L;
+        mockMvc.perform(get("/api/tag/{id}/child", id)
                 .param("page", "1")
-                .param("size", "0"))
+                .param("size", "10"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
+                .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
+                .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
+                .andExpect(jsonPath("$.items").isEmpty())
+                .andExpect(jsonPath("$.itemsOnPage").isNotEmpty())
+                .andReturn().getResponse().getContentAsString();
+    }
+
+    @Test
+    public void requestTooBigSizeToChildEndpoint() throws Exception {
+        long id = 4L;
+        mockMvc.perform(get("/api/tag/{id}/child", id)
+                .param("page", "1")
+                .param("size", "105"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
-                .andExpect(content().string("Page and Size have to be positive. Max number of items per page 100"));
+                .andExpect(content().string(BAD_REQUEST_MESSAGE));
     }
-
     @Test
-    public void requestIncorrectSizeGetTagDtoPaginationByNewTag() throws Exception {
-        mockMvc.perform(get(NEW_TAG)
-                .param("page", "1")
-                .param("size", "101"))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
-                .andExpect(content().string("Page and Size have to be positive. Max number of items per page 100"));
-    }
-
-    @Test
-    public void requestPageDontExistsGetTagDtoPaginationByNewTag() throws Exception {
-        mockMvc.perform(get(NEW_TAG)
-                .param("page", "13")
+    public void requestPageDontExistsGetPageWithEmptyTagRecentDto() throws Exception {
+        long id = 4L;
+        mockMvc.perform(get("/api/tag/{id}/child", id)
+                .param("page", "15")
                 .param("size", "10"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -527,5 +536,4 @@ public class TagControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
                 .andExpect(jsonPath("$.items").isEmpty());
     }
-
 }

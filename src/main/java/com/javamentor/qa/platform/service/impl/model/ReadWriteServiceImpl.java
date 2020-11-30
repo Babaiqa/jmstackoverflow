@@ -1,8 +1,8 @@
 package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.ReadWriteDao;
-import com.javamentor.qa.platform.dao.impl.model.ReadWriteDaoImpl;
 import com.javamentor.qa.platform.exception.ConstrainException;
+import com.javamentor.qa.platform.models.entity.user.User;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
@@ -69,6 +69,11 @@ public abstract class ReadWriteServiceImpl<E, K> extends ReadOnlyServiceImpl<E, 
             throw new ConstrainException(ENTITIES_MUST_NOT_BE_NULL);
         }
         readWriteDao.updateAll(entities);
+    }
+
+    @Transactional
+    public void resetPassword(User user) {
+        readWriteDao.resetPassword(user);
     }
 
 }

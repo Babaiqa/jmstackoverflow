@@ -38,14 +38,31 @@ class QuestionService {
     }
 
     findPagination(page, size) {
-        let query = '/api/question?page=' + page + '&size=' + size;
-        return this.getResponseQuestion(query);
+        let query = '/api/question/?page=' + page + '&size=' + size;
+        return fetch(query)
+            .then(response =>  {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    let error = new Error();
+                    error.response = response.text();
+                    throw error;
+                }
+            }).catch( error => error.response.then(message => console.log(message)));
     }
 
     findPaginationPopular(page, size) {
-        let query = '/api/question/popular?page=' + page + '&size=' + size;
-        return this.getResponseQuestion(query);
-
+        let query = '/api/question/popular/?page=' + page + '&size=' + size;
+        return fetch(query)
+            .then(response =>  {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    let error = new Error();
+                    error.response = response.text();
+                    throw error;
+                }
+            }).catch( error => error.response.then(message => console.log(message)));
     }
 
     getResponseQuestion(query) {
@@ -63,5 +80,19 @@ class QuestionService {
             .then(entity => result.push.apply(result, entity.items))
             .catch(error => error.response.then(message => console.log(message)));
         return result;
+    }
+
+    getQuestionWithoutAnswers(page, size) {
+        let query = '/api/question/withoutAnswer?page=' + page + '&size=' + size;
+        return fetch(query)
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    let error = new Error();
+                    error.response = response.text();
+                    throw error;
+                }
+            }).catch(error => error.response.then(message => console.log(message)));
     }
 }
