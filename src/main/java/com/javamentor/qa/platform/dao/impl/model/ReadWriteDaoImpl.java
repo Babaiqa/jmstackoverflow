@@ -122,4 +122,27 @@ public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
                 .executeUpdate();
     }
 
+    public void updateUserPublicInfo(User user) {
+        String hql = "UPDATE User u set " +
+                "u.nickname = :nickname, " +
+                "u.about = :about, " +
+                "u.imageLink = :imageLink, " +
+                "u.linkSite = :linkSite, " +
+                "u.linkVk = :linkVk, " +
+                "u.linkGitHub = :linkGitHub, " +
+                "u.fullName = :fullName, " +
+                "u.city = :city " +
+                "where u.id = :id";
+        entityManager.createQuery(hql)
+                .setParameter("nickname", user.getNickname())
+                .setParameter("about", user.getAbout())
+                .setParameter("imageLink", user.getImageLink())
+                .setParameter("linkSite", user.getLinkSite())
+                .setParameter("linkVk", user.getLinkVk())
+                .setParameter("linkGitHub", user.getLinkGitHub())
+                .setParameter("fullName", user.getFullName())
+                .setParameter("city", user.getCity())
+                .setParameter("id", user.getId())
+                .executeUpdate();
+    }
 }

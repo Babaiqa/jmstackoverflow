@@ -25,5 +25,6 @@ public class UserProfileDto implements Serializable {
     private String linkVk;
     private int reputationCount;
     private Boolean isEnable;
-    private byte[] image;
+    private String imageLink;
+    private String nickname;
 }
