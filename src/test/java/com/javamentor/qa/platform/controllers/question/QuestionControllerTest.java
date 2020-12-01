@@ -2,22 +2,20 @@ package com.javamentor.qa.platform.controllers.question;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
-import com.javamentor.qa.platform.dao.abstracts.model.QuestionDao;
-import com.javamentor.qa.platform.models.dto.PageDto;
-import com.javamentor.qa.platform.models.dto.QuestionDto;
-import org.junit.Assert;
+import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
+import com.javamentor.qa.platform.models.dto.TagDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
 import java.util.ArrayList;
 import java.util.List;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 
 @DataSet(value = {"dataset/question/roleQuestionApi.yml",
@@ -26,119 +24,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
         "dataset/question/questionQuestionApi.yml",
         "dataset/question/tagQuestionApi.yml",
         "dataset/question/question_has_tagQuestionApi.yml",
-        "dataset/question/votes_on_question.yml"}, cleanBefore = true, cleanAfter = true)
+        "dataset/question/votes_on_question.yml"},
+        useSequenceFiltering = true, cleanBefore = true, cleanAfter = true)
+
+
+
 class QuestionControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void shouldGetLastTenQuestions() throws Exception {
-
-        PageDto<QuestionDto, Object> expected = new PageDto<>();
-        expected.setCurrentPageNumber(1);
-        expected.setItemsOnPage(10);
-        expected.setTotalPageCount(1);
-        expected.setItemsOnPage(10);
-        expected.setTotalResultCount(9);
-        expected.setItems(new ArrayList<>());
-
-        mockMvc.perform(get("/api/question/order/new")
-                .param("page", "1")
-                .param("size", "10"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.currentPageNumber").value(1))
-                .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
-                .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
-                .andExpect(jsonPath("$.items").isNotEmpty())
-                .andExpect(jsonPath("$.itemsOnPage").value( 10 ));
-    }
-
-    @Test
-    public void shouldReturnErrorMessageBadParameterNegativePage() throws Exception {
-        mockMvc.perform(get("/api/question/order/new")
-                .param("page", "-1")
-                .param("size", "10"))
-                .andDo(print())
-                .andExpect(status().is4xxClientError())
-                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
-                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
-    }
-
-    @Test
-    public void shouldReturnErrorMessageBadParameterNegativeSize() throws Exception {
-        mockMvc.perform(get("/api/question/order/new")
-                .param("page", "1")
-                .param("size", "-1"))
-                .andDo(print())
-                .andExpect(status().is4xxClientError())
-                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
-                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
-    }
-    @Test
-    public void shouldReturnErrorMessageBadParameterZeroPage() throws Exception {
-        mockMvc.perform(get("/api/question/order/new")
-                .param("page", "0")
-                .param("size", "10"))
-                .andDo(print())
-                .andExpect(status().is4xxClientError())
-                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
-                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
-    }
-
-    @Test
-    public void shouldReturnErrorMessageBadParameterZeroSize() throws Exception {
-        mockMvc.perform(get("/api/question/order/new")
-                .param("page", "1")
-                .param("size", "0"))
-                .andDo(print())
-                .andExpect(status().is4xxClientError())
-                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
-                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
-    }
-
-    @Test
-    public void shouldReturnErrorMessageBadParameterTooBigSize() throws Exception {
-        mockMvc.perform(get("/api/question/order/new")
-                .param("page", "1")
-                .param("size", "101"))
-                .andDo(print())
-                .andExpect(status().is4xxClientError())
-                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
-                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
-    }
-
-    @Test
-    public void shouldReturnEmptyPageCouseOfTooHighPage() throws Exception {
-
-        PageDto<QuestionDto, Object> expected = new PageDto<>();
-        expected.setCurrentPageNumber(100);
-        expected.setItemsOnPage(10);
-        expected.setTotalPageCount(1);
-        expected.setItemsOnPage(10);
-        expected.setTotalResultCount(9);
-
-        List<QuestionDto> expectedItems = new ArrayList<>();
-        expected.setItems(expectedItems);
-
-        String resultContext = mockMvc.perform(get("/api/question/order/new")
-                .param("page", "100")
-                .param("size", "10"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
-                .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
-                .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
-                .andExpect(jsonPath("$.items").isEmpty())
-                .andReturn().getResponse().getContentAsString();
-
-        PageDto<QuestionDao, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
-
-        Assert.assertEquals(expected.toString(), actual.toString());
-
+    void getAllDto() throws Exception {
+        System.out.println("test");
     }
 
     @Test
@@ -208,6 +106,96 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().string("Tag not found"))
                 .andExpect(status().isBadRequest());
 
+    }
+
+
+
+    @Test
+    void shouldAddQuestionStatusOk() throws Exception {
+
+        QuestionCreateDto questionCreateDto = new QuestionCreateDto();
+        questionCreateDto.setUserId(2L);
+        questionCreateDto.setTitle("Question number one1");
+        questionCreateDto.setDescription("Question Description493");
+        List<TagDto> listTagsAdd = new ArrayList<>();
+        listTagsAdd.add(new TagDto(5L, "Structured Query Language"));
+        questionCreateDto.setTags(listTagsAdd);
+
+        String jsonRequest = objectMapper.writeValueAsString(questionCreateDto);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/add")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequest))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    public  void shouldAddQuestionResponseStatusOk() throws Exception {
+        QuestionCreateDto questionCreateDto = new QuestionCreateDto();
+        questionCreateDto.setUserId(1L);
+        questionCreateDto.setTitle("Question number one1");
+        questionCreateDto.setDescription("Question Description493");
+        List<TagDto> listTagsAdd = new ArrayList<>();
+        listTagsAdd.add(new TagDto(5L, "Structured Query Language"));
+        questionCreateDto.setTags(listTagsAdd);
+
+        String jsonRequest = objectMapper.writeValueAsString(questionCreateDto);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/add")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequest))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Question number one1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("Question Description493"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.authorId").value(1));
+    }
+
+
+    @Test
+    public  void shouldAddQuestionResponseBadRequestUserNotFound() throws Exception {
+        QuestionCreateDto questionCreateDto = new QuestionCreateDto();
+        questionCreateDto.setUserId(2222L);
+        questionCreateDto.setTitle("Question number one1");
+        questionCreateDto.setDescription("Question Description493");
+        List<TagDto> listTagsAdd = new ArrayList<>();
+        listTagsAdd.add(new TagDto(5L, "Structured Query Language"));
+        questionCreateDto.setTags(listTagsAdd);
+
+        String jsonRequest = objectMapper.writeValueAsString(questionCreateDto);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/add")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequest))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("questionCreateDto.userId dont`t exist"));
+    }
+
+
+    @Test
+    public  void shouldAddQuestionResponseBadRequestTagsNotExist() throws Exception {
+        QuestionCreateDto questionCreateDto = new QuestionCreateDto();
+        questionCreateDto.setUserId(1L);
+        questionCreateDto.setTitle("Question number one1");
+        questionCreateDto.setDescription("Question Description493");
+        questionCreateDto.setTags(null);
+
+        String jsonRequest = objectMapper.writeValueAsString(questionCreateDto);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/add")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequest))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("addQuestion.questionCreateDto.tags: Значение tags должно быть заполнено"));
     }
 
 }
