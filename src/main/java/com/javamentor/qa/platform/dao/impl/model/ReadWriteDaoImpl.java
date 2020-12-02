@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.dao.impl.model;
 
+import com.javamentor.qa.platform.models.entity.user.User;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.EntityManager;
@@ -7,6 +8,7 @@ import javax.persistence.PersistenceContext;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
+import java.util.Optional;
 
 
 public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
@@ -112,4 +114,35 @@ public abstract class ReadWriteDaoImpl<E, K> extends ReadOnlyDaoImpl<E, K> {
         }
     }
 
+    public void resetPassword(User user) {
+        String hql = "UPDATE User u set u.password = :password where u.id = :id";
+        entityManager.createQuery(hql)
+                .setParameter("password", user.getPassword())
+                .setParameter("id", user.getId())
+                .executeUpdate();
+    }
+
+    public void updateUserPublicInfo(User user) {
+        String hql = "UPDATE User u set " +
+                "u.nickname = :nickname, " +
+                "u.about = :about, " +
+                "u.imageLink = :imageLink, " +
+                "u.linkSite = :linkSite, " +
+                "u.linkVk = :linkVk, " +
+                "u.linkGitHub = :linkGitHub, " +
+                "u.fullName = :fullName, " +
+                "u.city = :city " +
+                "where u.id = :id";
+        entityManager.createQuery(hql)
+                .setParameter("nickname", user.getNickname())
+                .setParameter("about", user.getAbout())
+                .setParameter("imageLink", user.getImageLink())
+                .setParameter("linkSite", user.getLinkSite())
+                .setParameter("linkVk", user.getLinkVk())
+                .setParameter("linkGitHub", user.getLinkGitHub())
+                .setParameter("fullName", user.getFullName())
+                .setParameter("city", user.getCity())
+                .setParameter("id", user.getId())
+                .executeUpdate();
+    }
 }

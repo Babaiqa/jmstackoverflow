@@ -248,4 +248,61 @@ public class QuestionController {
         PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationWithoutAnswers(page, size);
         return ResponseEntity.ok(resultPage);
     }
+
+    @PostMapping(value = "/withTags", params = {"page","size"})
+    @ApiOperation(value = "Return questions that include all given tags")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Return the pagination PageDto", response = PageDto.class),
+            @ApiResponse(code = 400, message = "QuestionList with given TagIds not found.")
+    })
+    public ResponseEntity<?> getQuestionsWithGivenTags(
+            @ApiParam(name= "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam ("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    required = true,
+                    example = "10")
+            @RequestParam("size") int size,
+            @ApiParam(name = "tagIds", required = true, type = "List<Long>")
+            @Valid
+            @RequestBody List<Long> tagIds
+    ){
+        if (size <= 0|| page <= 0 || size > MAX_ITEMS_ON_PAGE){
+            ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPAginationWithGivenTags(page, size, tagIds);
+
+        if (resultPage.getItems().size() == 0) {
+            ResponseEntity.notFound();
+        }
+        return ResponseEntity.ok(resultPage);
+    }
+
+
+    @GetMapping(value = "/search", params = {"page", "size"})
+    @ApiOperation(value = "Return Questions by search value")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDto>"),
+            @ApiResponse(code = 400, message = "Bad Request", response = String.class)
+    })
+    public ResponseEntity<?> qetQuestionBySearch (
+            @Valid @RequestBody QuestionSearchDto questionSearchDto,
+            @ApiParam(name= "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam ("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                required = true, example = "10")
+            @RequestParam("size") int size) {
+
+        if (size <= 0|| page <= 0 || size > MAX_ITEMS_ON_PAGE){
+            ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+
+        PageDto<QuestionDto, Object> resultPage =
+                questionDtoService.getQuestionBySearchValue(questionSearchDto.getMessage(), page, size);
+        return ResponseEntity.ok(resultPage);
+    }
 }

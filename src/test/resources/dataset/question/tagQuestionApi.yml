@@ -24,3 +24,8 @@ tag:
     name: "sql"
     description: "Structured Query Language (SQL) is a language for querying databases."
     persist_date: "JS: new Date().toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
+
+  - id: 6
+    name: "sql22"
+    description: "aaStructured Query Language (SQL) is a language for querying databases."
+    persist_date: "JS: new Date().toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"

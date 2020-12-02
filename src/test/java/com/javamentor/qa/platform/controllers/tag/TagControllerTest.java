@@ -36,6 +36,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     private static final String ALPHABET = "/api/tag/alphabet/order";
     private static final String ORDER_POPULAR = "/api/tag/order/popular";
     private static final String NAME = "/api/tag/name";
+    private static final String NEW_TAG = "/api/tag/new/order";
     private static final String BAD_REQUEST_MESSAGE = "Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100";
 
     // Тесты запросов популярных тэгов
@@ -527,6 +528,84 @@ public class TagControllerTest extends AbstractIntegrationTest {
         long id = 4L;
         mockMvc.perform(get("/api/tag/{id}/child", id)
                 .param("page", "15")
+                .param("size", "10"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
+                .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
+                .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
+                .andExpect(jsonPath("$.items").isEmpty());
+    }
+
+    // Test order by new Tag
+    @Test
+    public void requestGetTagDtoPaginationByNewTag() throws Exception {
+        PageDto<TagListDto, Object> expected = new PageDto<>();
+        expected.setCurrentPageNumber(1);
+        expected.setTotalPageCount(1);
+        expected.setTotalResultCount(5);
+        expected.setItemsOnPage(10);
+
+        List<TagListDto> expectedItems = new ArrayList<>();
+        expectedItems.add(new TagListDto(6L, "kotlin", "kotlin is", 3, 1, 0));
+        expectedItems.add(new TagListDto(8L, "nosql", "nosqk is", 8, 3, 1));
+        expected.setItems(expectedItems);
+
+        String resultContext = mockMvc.perform(get(NEW_TAG)
+                .param("page", "1")
+                .param("size", "10"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
+                .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
+                .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
+                .andExpect(jsonPath("$.items").isNotEmpty())
+                .andExpect(jsonPath("$.itemsOnPage").isNotEmpty())
+                .andReturn().getResponse().getContentAsString();
+
+        PageDto<TagListDto, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
+        Assert.assertEquals(expected.toString(), actual.toString());
+    }
+
+    @Test
+    public void requestNegativePageGetTagDtoPaginationByNewTag() throws Exception {
+        mockMvc.perform(get(NEW_TAG)
+                .param("page", "-1")
+                .param("size", "10"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Page and Size have to be positive. Max number of items per page 100"));
+    }
+
+    @Test
+    public void requestNegativeSizeGetTagDtoPaginationByNewTag() throws Exception {
+        mockMvc.perform(get(NEW_TAG)
+                .param("page", "1")
+                .param("size", "0"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Page and Size have to be positive. Max number of items per page 100"));
+    }
+
+    @Test
+    public void requestIncorrectSizeGetTagDtoPaginationByNewTag() throws Exception {
+        mockMvc.perform(get(NEW_TAG)
+                .param("page", "1")
+                .param("size", "101"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Page and Size have to be positive. Max number of items per page 100"));
+    }
+
+    @Test
+    public void requestPageDontExistsGetTagDtoPaginationByNewTag() throws Exception {
+        mockMvc.perform(get(NEW_TAG)
+                .param("page", "13")
                 .param("size", "10"))
                 .andDo(print())
                 .andExpect(status().isOk())
