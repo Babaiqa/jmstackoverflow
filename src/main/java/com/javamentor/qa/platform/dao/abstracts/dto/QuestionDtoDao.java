@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface QuestionDtoDao {
@@ -26,4 +27,6 @@ public interface QuestionDtoDao {
      long getTotalCountQuestionNotAnswer();
 
     List<QuestionDto> getQuestionWithGivenTags(int page, int size, List<Long> tagIds);
+
+     List<QuestionDto> getQuestionBySearchValue(Map<String, String> data);
 }

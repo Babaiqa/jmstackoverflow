@@ -279,4 +279,30 @@ public class QuestionController {
         }
         return ResponseEntity.ok(resultPage);
     }
+
+
+    @GetMapping(value = "/search", params = {"page", "size"})
+    @ApiOperation(value = "Return Questions by search value")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDto>"),
+            @ApiResponse(code = 400, message = "Bad Request", response = String.class)
+    })
+    public ResponseEntity<?> qetQuestionBySearch (
+            @Valid @RequestBody QuestionSearchDto questionSearchDto,
+            @ApiParam(name= "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam ("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                required = true, example = "10")
+            @RequestParam("size") int size) {
+
+        if (size <= 0|| page <= 0 || size > MAX_ITEMS_ON_PAGE){
+            ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+
+        PageDto<QuestionDto, Object> resultPage =
+                questionDtoService.getQuestionBySearchValue(questionSearchDto.getMessage(), page, size);
+        return ResponseEntity.ok(resultPage);
+    }
 }

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +44,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("reputation").value(user.getReputation()))
                 .andExpect(status().isOk());
     }
+
     @Test
     @DataSet(value = "dataset/question/usersQuestionApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
     public void shouldGetUserByIsNot() throws Exception {
@@ -112,30 +114,30 @@ public class UserControllerTest extends AbstractIntegrationTest {
 //---------------------------------------------------------------
 
 
-    List<UserDtoList> expectedItems = new ArrayList<>();
+        List<UserDtoList> expectedItems = new ArrayList<>();
 
-    expectedItems.add(new UserDtoList(1L, "Teat", "linkImage1", 2, Arrays.asList(new TagDto[]{})));
-    expectedItems.add(new UserDtoList(2L, "Teat", "linkImage2", 1, Arrays.asList(new TagDto[]{})));
-    expectedItems.add(new UserDtoList(4L, "Tob", "linkImage4", 4, Arrays.asList(new TagDto[]{})));
-    expected.setItems(expectedItems);
+        expectedItems.add(new UserDtoList(1L, "Teat", "linkImage1", 2, Arrays.asList(new TagDto[]{})));
+        expectedItems.add(new UserDtoList(2L, "Teat", "linkImage2", 1, Arrays.asList(new TagDto[]{})));
+        expectedItems.add(new UserDtoList(4L, "Tob", "linkImage4", 4, Arrays.asList(new TagDto[]{})));
+        expected.setItems(expectedItems);
 
-    String resultContext = mockMvc.perform(get("/api/user/find")
-            .param("name", "t")
-            .param("page", "1")
-            .param("size", "10"))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
-            .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
-            .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
-            .andExpect(jsonPath("$.items").isNotEmpty())
-            .andExpect(jsonPath("$.itemsOnPage").isNotEmpty())
-            .andReturn().getResponse().getContentAsString();
+        String resultContext = mockMvc.perform(get("/api/user/find")
+                .param("name", "t")
+                .param("page", "1")
+                .param("size", "10"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
+                .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
+                .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
+                .andExpect(jsonPath("$.items").isNotEmpty())
+                .andExpect(jsonPath("$.itemsOnPage").isNotEmpty())
+                .andReturn().getResponse().getContentAsString();
 
-    PageDto<UserDtoList, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
-    Assert.assertEquals(expected.toString(), actual.toString());
-}
+        PageDto<UserDtoList, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
+        Assert.assertEquals(expected.toString(), actual.toString());
+    }
 
     @Test
     @DataSet(value = "dataset/user/userUserApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
@@ -206,7 +208,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
     }
 
 
-//---------------------------------------------------------------
+    //---------------------------------------------------------------
     @DataSet(value = {"dataset/question/roleQuestionApi.yml",
             "dataset/user/usersQuestionApi.yml",
             "dataset/question/questionQuestionApi.yml",
@@ -222,26 +224,26 @@ public class UserControllerTest extends AbstractIntegrationTest {
         expected.setItemsOnPage(10);
 
         List<UserDtoList> expectedItems = new ArrayList<>();
-        expectedItems.add(new UserDtoList(1L, "Teat", null, 0, Arrays.asList(new TagDto[]{new TagDto(1L,"java"), new TagDto(3L,"html")})));
-        expectedItems.add(new UserDtoList(2L, "Tot", null, 0, Arrays.asList(new TagDto[]{new TagDto(2L,"javaScript"), new TagDto(1L,"java"), new TagDto(5L,"sql")})));
-        expectedItems.add(new UserDtoList(3L, "Tot", null, 0, Arrays.asList(new TagDto[]{new TagDto(5L,"sql")})));
+        expectedItems.add(new UserDtoList(1L, "Teat", null, 0, Arrays.asList(new TagDto[]{new TagDto(1L, "java"), new TagDto(3L, "html")})));
+        expectedItems.add(new UserDtoList(2L, "Tot", null, 0, Arrays.asList(new TagDto[]{new TagDto(2L, "javaScript"), new TagDto(1L, "java"), new TagDto(5L, "sql")})));
+        expectedItems.add(new UserDtoList(3L, "Tot", null, 0, Arrays.asList(new TagDto[]{new TagDto(5L, "sql")})));
         expectedItems.add(new UserDtoList(4L, "Tot", null, 0, Arrays.asList(new TagDto[]{})));
         expectedItems.add(new UserDtoList(5L, "Tot", null, 0, Arrays.asList(new TagDto[]{})));
         expected.setItems(expectedItems);
 
         String resultContext =
                 mockMvc.perform(get("/api/user/order/reputation/month")
-                .param("page", "1")
-                .param("size", "10"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
-                .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
-                .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
-                .andExpect(jsonPath("$.items").isNotEmpty())
-                .andExpect(jsonPath("$.itemsOnPage").isNotEmpty())
-                .andReturn().getResponse().getContentAsString();
+                        .param("page", "1")
+                        .param("size", "10"))
+                        .andDo(print())
+                        .andExpect(status().isOk())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
+                        .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
+                        .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
+                        .andExpect(jsonPath("$.items").isNotEmpty())
+                        .andExpect(jsonPath("$.itemsOnPage").isNotEmpty())
+                        .andReturn().getResponse().getContentAsString();
 
         PageDto<UserDtoList, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
         Assert.assertEquals(expected.getClass(), actual.getClass());
@@ -275,7 +277,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
             "dataset/question/tagQuestionApi.yml",
             "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    public  void requestNegativeSizeUserTagReputationOverMonth() throws Exception {
+    public void requestNegativeSizeUserTagReputationOverMonth() throws Exception {
         mockMvc.perform(get("/api/user/order/reputation/month")
                 .param("page", "1")
                 .param("size", "0"))
@@ -330,7 +332,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestNegativePageUserReputationOverYear() throws  Exception {
+    public void requestNegativePageUserReputationOverYear() throws Exception {
         mockMvc.perform(get("/api/user/order/reputation/year")
                 .param("page", "-1")
                 .param("size", "100"))
@@ -340,7 +342,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestNegativeSizeUserReputationOverYear() throws  Exception {
+    public void requestNegativeSizeUserReputationOverYear() throws Exception {
         mockMvc.perform(get("/api/user/order/reputation/year")
                 .param("page", "1")
                 .param("size", "-100"))
@@ -350,7 +352,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestIncorrectSizeUserReputationOverYear() throws  Exception {
+    public void requestIncorrectSizeUserReputationOverYear() throws Exception {
         mockMvc.perform(get("/api/user/order/reputation/year")
                 .param("page", "1")
                 .param("size", "101"))
@@ -360,7 +362,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestUserReputationOverYear() throws  Exception {
+    public void requestUserReputationOverYear() throws Exception {
         mockMvc.perform(get("/api/user/order/reputation/year")
                 .param("page", "1")
                 .param("size", "100"))
@@ -370,5 +372,65 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
                 .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
                 .andExpect(jsonPath("$.items").isArray());
+    }
+
+    @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    public void requestUserPasswordResetStatusOk() throws Exception {
+        UserResetPasswordDto ps = new UserResetPasswordDto();
+        ps.setOldPassword("password0");
+        ps.setNewPassword("user");
+        String jsonRequest = objectMapper.writeValueAsString(ps);
+
+        this.mockMvc.perform(post("/api/user/password/reset")
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string("Password reset successfully"))
+                .andExpect(status().isOk());
+    }
+
+    @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    public void requestUserPasswordResetOldPasswordError() throws Exception {
+        UserResetPasswordDto ps = new UserResetPasswordDto();
+        ps.setOldPassword("errorPass");
+        ps.setNewPassword("user");
+        String jsonRequest = objectMapper.writeValueAsString(ps);
+
+        this.mockMvc.perform(post("/api/user/password/reset")
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string("Old password is incorrect"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    public void requestUserPasswordResetOldPasswordNull() throws Exception {
+        UserResetPasswordDto ps = new UserResetPasswordDto();
+        ps.setOldPassword("");
+        ps.setNewPassword("user");
+        String jsonRequest = objectMapper.writeValueAsString(ps);
+
+        this.mockMvc.perform(post("/api/user/password/reset")
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string("resetPassword.userResetPasswordDto.oldPassword: Поле не должно быть пустым"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    public void requestUserPasswordResetNewPasswordNull() throws Exception {
+        UserResetPasswordDto ps = new UserResetPasswordDto();
+        ps.setOldPassword("password0");
+        ps.setNewPassword("");
+        String jsonRequest = objectMapper.writeValueAsString(ps);
+
+        this.mockMvc.perform(post("/api/user/password/reset")
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string("resetPassword.userResetPasswordDto.newPassword: Поле не должно быть пустым"))
+                .andExpect(status().isBadRequest());
     }
 }
