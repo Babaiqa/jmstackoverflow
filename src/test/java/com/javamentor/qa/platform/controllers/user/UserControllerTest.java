@@ -3,8 +3,11 @@ package com.javamentor.qa.platform.controllers.user;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.entity.user.User;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -431,6 +434,56 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string("resetPassword.userResetPasswordDto.newPassword: Поле не должно быть пустым"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @DataSet(value = {"dataset/user/userPublicInfoApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    public void updatesUserPublicInfo() throws Exception {
+        UserPublicInfoDto userPublicInfoDto = new UserPublicInfoDto();
+        userPublicInfoDto.setNickname("BestJavaProgrammer");
+        userPublicInfoDto.setAbout("Best Java Programmer ever");
+        userPublicInfoDto.setLinkImage("https://www.google.com/search?q=D0");
+        userPublicInfoDto.setLinkSite("https://www.yandex.ru");
+        userPublicInfoDto.setLinkVk("https://www.vk.com");
+        userPublicInfoDto.setLinkGitHub("https://www.github.com");
+        userPublicInfoDto.setFullName("Teat");
+        userPublicInfoDto.setCity("Moscow");
+        String jsonRequest = objectMapper.writeValueAsString(userPublicInfoDto);
+
+        this.mockMvc.perform(post("/api/user/public/info")
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("id").value(153L))
+                .andExpect(jsonPath("nickname").value(userPublicInfoDto.getNickname()))
+                .andExpect(jsonPath("about").value(userPublicInfoDto.getAbout()))
+                .andExpect(jsonPath("linkImage").value(userPublicInfoDto.getLinkImage()))
+                .andExpect(jsonPath("linkSite").value(userPublicInfoDto.getLinkSite()))
+                .andExpect(jsonPath("linkVk").value(userPublicInfoDto.getLinkVk()))
+                .andExpect(jsonPath("linkGitHub").value(userPublicInfoDto.getLinkGitHub()))
+                .andExpect(jsonPath("fullName").value(userPublicInfoDto.getFullName()))
+                .andExpect(jsonPath("city").value(userPublicInfoDto.getCity()))
+                .andExpect(status().isOk());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            " , someFullName",
+            "'   ', someFullName",
+            "someNickname, ",
+            "someNickname, '    '",
+    })
+    public void ifRequiredFieldsNullOrBlankThenBadRequest(String nickname, String fullName) throws Exception {
+        UserPublicInfoDto userPublicInfoDto = new UserPublicInfoDto();
+        userPublicInfoDto.setNickname(nickname);
+        userPublicInfoDto.setFullName(fullName);
+        String jsonRequest = objectMapper.writeValueAsString(userPublicInfoDto);
+
+        this.mockMvc.perform(post("/api/user/public/info")
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 }
