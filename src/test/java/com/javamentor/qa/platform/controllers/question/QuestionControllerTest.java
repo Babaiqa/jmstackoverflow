@@ -1,16 +1,23 @@
 package com.javamentor.qa.platform.controllers.question;
 
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.dao.abstracts.model.QuestionDao;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
+import com.javamentor.qa.platform.models.entity.question.Question;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -77,6 +84,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
                 .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
     }
+
     @Test
     public void shouldReturnErrorMessageBadParameterZeroPage() throws Exception {
         mockMvc.perform(get("/api/question/order/new")
@@ -111,7 +119,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldReturnEmptyPageCouseOfTooHighPage() throws Exception {
+    public void shouldReturnEmptyPageCauseOfTooHighPage() throws Exception {
 
         PageDto<QuestionDto, Object> expected = new PageDto<>();
         expected.setCurrentPageNumber(100);
@@ -173,12 +181,11 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(status().isBadRequest());
     }
 
-
     @Test
     public void shouldSetTagForQuestionFewTag() throws Exception {
 
         List<Long> tag = new ArrayList<>();
-        tag.add(new Long(1L));
+        tag.add(new Long(1));
         tag.add(new Long(2L));
         tag.add(new Long(3L));
         String jsonRequest = objectMapper.writeValueAsString(tag);
@@ -190,7 +197,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andDo(print())
                 .andExpect(content().string("Tags were added"))
                 .andExpect(status().isOk());
-
     }
 
     @Test
@@ -207,7 +213,61 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andDo(print())
                 .andExpect(content().string("Tag not found"))
                 .andExpect(status().isBadRequest());
-
     }
 
+    @Test
+    public void shouldReturnErrorMessageBadParameterWrongSizeQuestionWithoutAnswer() throws Exception {
+        mockMvc.perform(get("/api/question/order/new")
+                        .param("page", "1")
+                        .param("size", "0"))
+                        .andDo(print())
+                        .andExpect(status().is4xxClientError())
+                        .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                        .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
+    }
+
+    @Test
+    public void shouldReturnErrorMessageBadParameterWrongPageQuestionWithoutAnswer () throws Exception {
+        mockMvc.perform(get("/api/question/order/new")
+                .param("page", "0")
+                .param("size", "2"))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
+    }
+
+    @Test
+    public void shouldReturnErrorMessageBadParameterMaxPageQuestionWithoutAnswer () throws Exception {
+        mockMvc.perform(get("/api/question/order/new")
+                .param("page", "2")
+                .param("size", "200"))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
+    }
+
+    @Test
+    @DataSet (value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/question/usersQuestionApi.yml",
+            "dataset/question/answerQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml",
+            "dataset/question/votes_on_question.yml"},
+            useSequenceFiltering = true, cleanBefore = true, cleanAfter = true)
+    public void shouldReturnOnePageQuestionsWithoutAnswer() throws Exception {
+
+        this.mockMvc.perform(get("/api/question/withoutAnswer")
+                .param("page", "1")
+                .param("size", "1")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.currentPageNumber").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPageCount").value(7))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalResultCount").value(7))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.items").isArray())
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }
