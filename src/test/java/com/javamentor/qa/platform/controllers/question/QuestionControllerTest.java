@@ -2,17 +2,23 @@ package com.javamentor.qa.platform.controllers.question;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
+import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
+import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -196,6 +202,36 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("addQuestion.questionCreateDto.tags: Значение tags должно быть заполнено"));
+    }
+
+    @Test
+    public void shouldReturnQuestionsWithGivenTags() throws Exception {
+        Long a[] = {1L,3L,5L};
+        List<Long> tagIds = Arrays.stream(a).collect(Collectors.toList());
+        String jsonRequest = objectMapper.writeValueAsString(tagIds);
+
+        PageDto<QuestionDto, Object> expected = new PageDto<>();
+        expected.setCurrentPageNumber(1);
+        expected.setItemsOnPage(10);
+        expected.setTotalPageCount(1);
+        expected.setTotalResultCount(7);
+
+        List<QuestionDto> expectedItems = new ArrayList<>();
+        expected.setItems(expectedItems);
+
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/question/withTags")
+                .content(jsonRequest)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                .param("page", "1")
+                .param("size", "10"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.currentPageNumber").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPageCount").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalResultCount").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.items").isNotEmpty());
     }
 
 }
