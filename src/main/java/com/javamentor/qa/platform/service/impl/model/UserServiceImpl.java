@@ -42,7 +42,7 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
 
     @Transactional
     @Override
-    public void setUserIsDeleted(User user) {
+    public void deleteUserByFlag(User user) {
         user.setIsDeleted(true);
         userDao.update(user);
     }

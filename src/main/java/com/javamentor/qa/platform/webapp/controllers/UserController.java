@@ -272,10 +272,12 @@ public class UserController {
                 User user = userObj.get();
                 if (Boolean.TRUE.equals(user.getIsDeleted()))
                     return ResponseEntity.badRequest().body("The user has already been deleted!");
-                userService.setUserIsDeleted(user);
-                if (Boolean.TRUE.equals(user.getIsDeleted()))
+                else {
+                    userService.deleteUserByFlag(user);
                     return ResponseEntity.ok().body("User deleted successfully");
-            }}
+                }
+            }
+        }
         return ResponseEntity.badRequest().body("Something goes wrong");
     }
 }
