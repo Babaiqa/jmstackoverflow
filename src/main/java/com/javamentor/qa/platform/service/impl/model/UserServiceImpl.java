@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -37,5 +38,12 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
     public void persist(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         super.persist(user);
+    }
+
+    @Transactional
+    @Override
+    public void setUserIsDeleted(User user) {
+        user.setIsDeleted(true);
+        userDao.update(user);
     }
 }

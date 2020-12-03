@@ -255,4 +255,27 @@ public class UserController {
 
         return ResponseEntity.ok().body("Password reset successfully");
     }
+
+    @DeleteMapping("delete")
+    @ApiOperation(value = "Set up user's field isDeleted to true", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "User deleted successfully", response = String.class),
+            @ApiResponse(code = 400, message = "Something goes wrong",response = String.class),
+            @ApiResponse(code = 400, message = "The user has already been deleted!",response = String.class)
+    })
+    public ResponseEntity<?> deleteUser() {
+
+        Optional<UserDto> userDto = userDtoService.getPrincipal();
+        if (userDto.isPresent()) {
+            Optional<User> userObj = userService.getById(userDto.get().getId());
+            if (userObj.isPresent()) {
+                User user = userObj.get();
+                if (Boolean.TRUE.equals(user.getIsDeleted()))
+                    return ResponseEntity.badRequest().body("The user has already been deleted!");
+                userService.setUserIsDeleted(user);
+                if (Boolean.TRUE.equals(user.getIsDeleted()))
+                    return ResponseEntity.ok().body("User deleted successfully");
+            }}
+        return ResponseEntity.badRequest().body("Something goes wrong");
+    }
 }
