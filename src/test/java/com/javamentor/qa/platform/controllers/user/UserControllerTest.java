@@ -428,7 +428,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    public void requestUserPasswordResetNewPasswordNull() throws Exception {
+    void requestUserPasswordResetNewPasswordNull() throws Exception {
         UserResetPasswordDto ps = new UserResetPasswordDto();
         ps.setOldPassword("password0");
         ps.setNewPassword("");
@@ -445,7 +445,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @DataSet(value = {"dataset/user/user153.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    public void requestUserDelete() throws Exception{
+    void requestUserDelete() throws Exception{
         mockMvc.perform(delete(DELETE))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -457,7 +457,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
     }
     @DataSet(value = {"dataset/user/userNotExist.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    public void requestDeleteNonExistentUser() throws Exception{
+    void requestDeleteNonExistentUser() throws Exception{
         mockMvc.perform(delete(DELETE))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -466,7 +466,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @DataSet(value = {"dataset/user/userDeleted.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    public void requestDeleteAlreadyDeletedUser() throws Exception{
+    void requestDeleteAlreadyDeletedUser() throws Exception{
         mockMvc.perform(delete(DELETE))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
