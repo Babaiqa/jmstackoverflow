@@ -24,6 +24,9 @@ public class UserControllerTest extends AbstractIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    UserService userService;
+
     private static final String DELETE = "/api/user/delete";
     private static final String BAD_REQUEST_MESSAGE_WRONG = "Something goes wrong";
     private static final String BAD_REQUEST_MESSAGE_ALREADY_DELETED = "The user has already been deleted!";
@@ -439,8 +442,6 @@ public class UserControllerTest extends AbstractIntegrationTest {
     }
 
     //Тесты удаления пользователя (id=153)
-    @Autowired
-    UserService userService;
 
     @DataSet(value = {"dataset/user/user153.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
@@ -454,9 +455,9 @@ public class UserControllerTest extends AbstractIntegrationTest {
         Assert.assertEquals(true, actualIsDeleted);
 
     }
-    @DataSet(value = {"dataset/user/userUnsuffisent.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @DataSet(value = {"dataset/user/userNotExist.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    public void requestDeleteUnsuffisentUser() throws Exception{
+    public void requestDeleteNonExistentUser() throws Exception{
         mockMvc.perform(delete(DELETE))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
