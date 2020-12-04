@@ -249,7 +249,7 @@ public class QuestionController {
         return ResponseEntity.ok(resultPage);
     }
 
-    @PostMapping(value = "/withTags", params = {"page","size"})
+    @GetMapping(value = "/withTags", params = {"page","size"})
     @ApiOperation(value = "Return questions that include all given tags")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Return the pagination PageDto", response = PageDto.class),
@@ -274,7 +274,7 @@ public class QuestionController {
 
         PageDto<QuestionDto, Object> resultPage = questionDtoService.getPAginationWithGivenTags(page, size, tagIds);
 
-        if (resultPage.getItems().size() == 0) {
+        if (resultPage.getItems().isEmpty()) {
             ResponseEntity.notFound();
         }
         return ResponseEntity.ok(resultPage);
