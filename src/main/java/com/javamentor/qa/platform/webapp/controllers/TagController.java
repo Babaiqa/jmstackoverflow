@@ -1,8 +1,9 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.*;
-import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.IgnoredTagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -12,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @Validated
@@ -23,12 +22,16 @@ import java.util.Optional;
 public class TagController {
 
     private final TagDtoService tagDtoService;
+    private final UserDtoService userDtoService;
+    private final IgnoredTagService ignoredTagService;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
-    public TagController(TagDtoService tagDtoService) {
+    public TagController(TagDtoService tagDtoService, UserDtoService userDtoService, IgnoredTagService ignoredTagService) {
         this.tagDtoService = tagDtoService;
+        this.userDtoService = userDtoService;
+        this.ignoredTagService = ignoredTagService;
     }
 
     @GetMapping("popular")
@@ -195,7 +198,15 @@ public class TagController {
         return ResponseEntity.ok(resultPage);
     }
 
-
+    @GetMapping(value = "ignored")
+    @ApiOperation(value = "get list to ignored tags", response = TagDto.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the List<TagDto> list", response = TagDto.class)
+    })
+    public ResponseEntity<?> getUserIgnoredTags() {
+        List<TagDto> tags = ignoredTagService.getIgnoredTagsByPrincipal(userDtoService.getPrincipal());
+        return ResponseEntity.ok(tags);
+    }
 }
 
 
