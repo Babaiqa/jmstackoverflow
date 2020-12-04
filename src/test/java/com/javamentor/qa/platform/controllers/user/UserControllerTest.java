@@ -3,19 +3,19 @@ package com.javamentor.qa.platform.controllers.user;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -23,6 +23,10 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    private static final String DELETE = "/api/user/delete";
+    private static final String BAD_REQUEST_MESSAGE_WRONG = "Something goes wrong";
+    private static final String BAD_REQUEST_MESSAGE_ALREADY_DELETED = "The user has already been deleted!";
 
     @Test
     @DataSet(value = "dataset/user/userApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
@@ -433,4 +437,40 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().string("resetPassword.userResetPasswordDto.newPassword: Поле не должно быть пустым"))
                 .andExpect(status().isBadRequest());
     }
+
+    //Тесты удаления пользователя (id=153)
+    @Autowired
+    UserService userService;
+
+    @DataSet(value = {"dataset/user/user153.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    public void requestUserDelete() throws Exception{
+        mockMvc.perform(delete(DELETE))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("User deleted successfully"));
+        Boolean actualIsDeleted = userService.getById(153L).get().getIsDeleted();
+
+        Assert.assertEquals(true, actualIsDeleted);
+
+    }
+    @DataSet(value = {"dataset/user/userUnsuffisent.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    public void requestDeleteUnsuffisentUser() throws Exception{
+        mockMvc.perform(delete(DELETE))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(BAD_REQUEST_MESSAGE_WRONG));
+    }
+
+    @DataSet(value = {"dataset/user/userDeleted.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    public void requestDeleteAlreadyDeletedUser() throws Exception{
+        mockMvc.perform(delete(DELETE))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(BAD_REQUEST_MESSAGE_ALREADY_DELETED));
+    }
+
+
 }
