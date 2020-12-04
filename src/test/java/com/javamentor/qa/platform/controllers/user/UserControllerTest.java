@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -447,7 +446,6 @@ public class UserControllerTest extends AbstractIntegrationTest {
     @Test
     void requestUserDelete() throws Exception{
         mockMvc.perform(delete(DELETE))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("User deleted successfully"));
         Boolean actualIsDeleted = userService.getById(153L).get().getIsDeleted();
@@ -459,7 +457,6 @@ public class UserControllerTest extends AbstractIntegrationTest {
     @Test
     void requestDeleteNonExistentUser() throws Exception{
         mockMvc.perform(delete(DELETE))
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(BAD_REQUEST_MESSAGE_WRONG));
     }
@@ -468,7 +465,6 @@ public class UserControllerTest extends AbstractIntegrationTest {
     @Test
     void requestDeleteAlreadyDeletedUser() throws Exception{
         mockMvc.perform(delete(DELETE))
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(BAD_REQUEST_MESSAGE_ALREADY_DELETED));
     }
