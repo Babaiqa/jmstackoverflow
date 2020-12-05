@@ -367,7 +367,6 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
 
-    // Тест name
     @Test
     public void requestGetTagName() throws Exception {
         PageDto<TagListDto, Object> expected = new PageDto<>();
@@ -377,8 +376,8 @@ public class TagControllerTest extends AbstractIntegrationTest {
         expected.setItemsOnPage(10);
 
         List<TagListDto> expectedItems = new ArrayList<>();
-        expectedItems.add(new TagListDto(1L, "java", "Java is a popular high-level programming language.", 3, 0, 0));
-        expectedItems.add(new TagListDto(2L, "javaScript", "For questions regarding programming in ECMAScript (JavaScript/JS) and its various dialects/implementations (excluding ActionScript).", 2, 1, 0));
+        expectedItems.add(new TagListDto(1L, "java"));
+        expectedItems.add(new TagListDto(2L, "javaScript"));
         expected.setItems(expectedItems);
 
         String resultContext = mockMvc.perform(get(NAME)
