@@ -7,12 +7,28 @@ user_entity:
     last_redaction_date: "2020-05-28 13:58:56"
     persist_date: "2020-05-28 13:58:56"
     role_id: 1
+    nickname: "before_update"
+    about: "Something about"
+    image_link:
+    link_site:
+    link_vk:
+    link_github:
+    full_name:
+    city:
 
-    nickname: "BestJavaProgrammer"
-    about: "Best Java programmer ever"
-    image_link: "https://www.google.com/search?q=D0"
-    link_site: "https://www.yandex.ru"
-    Link_vk: "https://www.vk.com"
-    link_github: "https://www.github.com"
-    full_name: "Teat"
-    city: "Moscow"
+  - id: 42
+    email: "notprincipal@mail.ru"
+    reputation_count: 2
+    password: "$2a$10$G.l/LUSaCNeNK3d5Bhm2KOJLF8aFynLFxiKirvrcJHwveXmcAXQcx"
+    is_enabled: 1
+    last_redaction_date: "2020-05-28 13:58:00"
+    persist_date: "2020-05-28 13:58:00"
+    role_id: 1
+    nickname: "wrong_user"
+    about: "Something about wrong user"
+    image_link: "wrong image"
+    link_site: "wrong site"
+    link_vk: "wrong vk"
+    link_github: "wrong git"
+    full_name: "wrong fullname"
+    city: "wrong city"
