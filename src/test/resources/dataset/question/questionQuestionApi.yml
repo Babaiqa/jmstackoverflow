@@ -5,7 +5,7 @@ question:
     title: "Question number one"
     view_count: 3
     user_id: 1
-    persist_date: "JS: new Date(new Date().valueOf() - ((24*60*60*1000) * 20)).toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
+    persist_date: "2020-01-02"
     is_deleted: 0
     last_redaction_date: "2020-01-02 13:58:56"
 
@@ -15,7 +15,7 @@ question:
     title: "Question number two"
     view_count: 5
     user_id: 1
-    persist_date: "JS: new Date(new Date().valueOf() - ((24*60*60*1000) * 14)).toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
+    persist_date: "2020-01-02"
     is_deleted: 0
     last_redaction_date: "2020-01-20 13:58:56"
 
@@ -25,7 +25,7 @@ question:
     title: "Question number three"
     view_count: 2
     user_id: 2
-    persist_date: "2020-02-01 13:58:56"
+    persist_date: "2020-01-02"
     is_deleted: 0
     last_redaction_date: "2020-02-01 13:58:56"
 
@@ -35,7 +35,7 @@ question:
     title: "Question number four"
     view_count: 2
     user_id: 2
-    persist_date: "JS: new Date(new Date().valueOf() - ((24*60*60*1000) * 10)).toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
+    persist_date: "2020-01-02"
     is_deleted: 1
     last_redaction_date: "2020-02-02 13:58:56"
 
@@ -45,14 +45,14 @@ question:
     title: "Question number five"
     view_count: 2
     user_id: 1
-    persist_date: "JS: new Date(new Date().valueOf() - ((24*60*60*1000) * 5)).toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
+    persist_date: "2020-01-02"
     is_deleted: 0
     last_redaction_date: "2020-02-01 13:58:56"
 
   - id: 6
 #    count_valuable: 1
     description: "Glightbox problem in mobile horizontal scroll"
-    persist_date: "JS: new Date(new Date().valueOf() - ((24*60*60*1000) * 1)).toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
+    persist_date: "2020-01-02"
     title: "Question number six"
     view_count: 1
     user_id: 2
@@ -62,7 +62,7 @@ question:
   - id: 7
 #    count_valuable: 4
     description: "Changes made in sql query in excel reflects changes only on single sheet"
-    persist_date: "JS: new Date().toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
+    persist_date: "2020-01-02"
     title: "Question number seven"
     view_count: 1
     user_id: 3
@@ -72,7 +72,7 @@ question:
   - id: 8
 #    count_valuable: 5
     description: "can someone Explain why the following query will return an error message?"
-    persist_date: "JS: new Date().toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
+    persist_date: "2020-01-02"
     title: "Question number eight"
     view_count: 1
     user_id: 3
@@ -82,7 +82,7 @@ question:
   - id: 9
 #    count_valuable: 1
     description: "Conceptual explanation: why COUNT() syntax doesn't work on SQLZoo JOIN Lesson Challenge 13?"
-    persist_date: "JS: new Date().toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
+    persist_date: "2020-01-02"
     title: "Question number nine"
     view_count: 1
     user_id: 2

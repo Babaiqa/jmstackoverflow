@@ -130,6 +130,24 @@ public class QuestionDtoServiceImpl implements QuestionDtoService {
         return pageDto;
     }
 
+    public PageDto<QuestionDto, Object> getPaginationWithoutTags(int page, int size, List<Long> tagIds) {
+
+        int totalResultCount = (int) questionDao.getTotalCountQuestionsWithoutTags(tagIds);
+        List<Question> questionList = questionDao.getPaginationQuestionsWithoutTags(page, size, tagIds);
+
+        List<Long> questionIds = questionList.stream().map(Question::getId).collect(Collectors.toList());
+        List<QuestionDto> questionDtoList = questionDtoDao.getQuestionDtoByIds(questionIds);
+
+        PageDto<QuestionDto, Object> pageDto = new PageDto<>();
+        pageDto.setItems(questionDtoList);
+        pageDto.setTotalResultCount((totalResultCount));
+        pageDto.setCurrentPageNumber(page);
+        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount / (double) size));
+        pageDto.setItemsOnPage(size);
+
+        return pageDto;
+    }
+
     @Override
     public PageDto<QuestionDto, Object> getQuestionBySearchValue(String message, int page, int size) {
         Map<String, String> searchParams = new HashMap<>();
