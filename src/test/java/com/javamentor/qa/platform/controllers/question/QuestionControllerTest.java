@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -314,9 +315,17 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
 
     @Test
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/question/usersQuestionApi.yml",
+            "dataset/question/answerQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml",
+            "dataset/question/votes_on_question.yml"},
+            useSequenceFiltering = true, cleanBefore = true, cleanAfter = true)
     public void testIsQuestionWithoutAnswers () throws Exception {
 
-        LocalDateTime persistDateTime = LocalDateTime.of(LocalDate.of(2020, 2, 1), LocalTime.of(13, 58, 56));
+        LocalDateTime persistDateTime = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(0, 0, 0));
         LocalDateTime lastUpdateDateTime = LocalDateTime.of(LocalDate.of(2020, 2, 1), LocalTime.of(13, 58, 56));
 
         PageDto<QuestionDto, Object> expectPage = new PageDto<>();
