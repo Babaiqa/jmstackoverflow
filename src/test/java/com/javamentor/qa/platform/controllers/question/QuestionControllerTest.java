@@ -2,13 +2,11 @@ package com.javamentor.qa.platform.controllers.question;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
-import com.javamentor.qa.platform.dao.abstracts.model.QuestionDao;
 import com.javamentor.qa.platform.models.dto.PageDto;
-import com.javamentor.qa.platform.models.dto.QuestionDto;
-import com.javamentor.qa.platform.models.entity.question.Question;
-import org.junit.Assert;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
+import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -16,13 +14,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 
 @DataSet(value = {"dataset/question/roleQuestionApi.yml",
@@ -137,7 +138,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
 
-
     @Test
     void shouldAddQuestionStatusOk() throws Exception {
 
@@ -238,15 +238,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DataSet (value = {"dataset/question/roleQuestionApi.yml",
-            "dataset/question/usersQuestionApi.yml",
-            "dataset/question/answerQuestionApi.yml",
-            "dataset/question/questionQuestionApi.yml",
-            "dataset/question/tagQuestionApi.yml",
-            "dataset/question/question_has_tagQuestionApi.yml",
-            "dataset/question/votes_on_question.yml"},
-            useSequenceFiltering = true, cleanBefore = true, cleanAfter = true)
-    public void shouldReturnOnePageQuestionsWithoutAnswer() throws Exception {
+    public void testPaginationQuestionsWithoutAnswer() throws Exception {
 
         this.mockMvc.perform(get("/api/question/withoutAnswer")
                 .param("page", "1")
@@ -258,5 +250,48 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.items").isArray())
                 .andDo(print())
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testIsQuestionWithoutAnswers () throws Exception {
+
+        LocalDateTime persistDateTime = LocalDateTime.of(LocalDate.of(2020, 2, 1), LocalTime.of(13, 58, 56));
+        LocalDateTime lastUpdateDateTime = LocalDateTime.of(LocalDate.of(2020, 2, 1), LocalTime.of(13, 58, 56));
+
+        PageDto<QuestionDto, Object> expectPage = new PageDto<>();
+        expectPage.setCurrentPageNumber(1);
+        expectPage.setItemsOnPage(1);
+        expectPage.setTotalPageCount(7);
+        expectPage.setTotalResultCount(7);
+
+        List<TagDto> tagsList = new ArrayList<>();
+        tagsList.add(new TagDto(1L, "java"));
+
+        List<QuestionDto> itemsList = new ArrayList<>();
+        itemsList.add(new QuestionDto(3L,
+                "Question number three",
+                2L,
+                "Tot",
+                null,
+                "Swagger - add \"path variable\" in request url",
+                2,
+                3,
+                1,
+                persistDateTime,
+                lastUpdateDateTime,
+                tagsList));
+
+        expectPage.setItems(itemsList);
+
+        String result = mockMvc.perform(get("/api/question/withoutAnswer")
+        .param("page", "1")
+        .param("size", "1")
+        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        PageDto<QuestionDto, Object> actualPage = objectMapper.readValue(result, PageDto.class);
+        Assert.assertEquals(expectPage.toString(), actualPage.toString());
     }
 }

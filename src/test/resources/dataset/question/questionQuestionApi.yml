@@ -21,11 +21,11 @@ question:
 
   - id: 3
 #    count_valuable: 2
-    description: "Swagger - add “path variable” in request url"
+    description: "Swagger - add \"path variable\" in request url"
     title: "Question number three"
     view_count: 2
     user_id: 2
-    persist_date: "JS: new Date(new Date().valueOf() - ((24*60*60*1000) * 8)).toISOString().split('T')[0] + ' ' + new Date().toISOString().split('T')[1].split('.')[0]"
+    persist_date: "2020-02-01 13:58:56"
     is_deleted: 0
     last_redaction_date: "2020-02-01 13:58:56"
 
