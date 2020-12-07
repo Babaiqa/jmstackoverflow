@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.dao.abstracts.dto;
 
+import com.javamentor.qa.platform.models.dto.IgnoredTagDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
 
 import com.javamentor.qa.platform.models.dto.TagListDto;
@@ -27,4 +28,6 @@ public interface TagDtoDao {
     List<TagRecentDto> getTagRecentDtoChildTagById(int page, int size, Long id);
 
     int getTotalResultChildTag(Long id);
+
+    List<IgnoredTagDto> getIgnoredTagsByPrincipal(Long id);
 }

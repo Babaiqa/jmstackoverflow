@@ -1,12 +1,7 @@
 package com.javamentor.qa.platform.service.abstracts.dto;
 
-import com.javamentor.qa.platform.models.dto.PageDto;
-import com.javamentor.qa.platform.models.dto.TagDto;
-import com.javamentor.qa.platform.models.dto.TagListDto;
-import com.javamentor.qa.platform.models.dto.TagRecentDto;
-import com.javamentor.qa.platform.models.entity.question.Tag;
-
-import java.util.Optional;
+import com.javamentor.qa.platform.models.dto.*;
+import java.util.List;
 
 
 public interface TagDtoService {
@@ -24,4 +19,5 @@ public interface TagDtoService {
 
     PageDto<TagListDto, Object> getTagListDtoPaginationOrderByNewTag(int page, int size);
 
+    List<IgnoredTagDto> getIgnoredTagsByPrincipal(long id);
 }

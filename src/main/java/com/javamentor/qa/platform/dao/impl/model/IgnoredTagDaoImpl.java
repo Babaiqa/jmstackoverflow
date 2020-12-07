@@ -29,13 +29,4 @@ public class IgnoredTagDaoImpl  extends ReadWriteDaoImpl<IgnoredTag, Long>  impl
     public void addIgnoredTag(IgnoredTag ignoredTag) {
         entityManager.persist(ignoredTag);
     }
-
-    @SuppressWarnings(value = "unchecked")
-    @Override
-    public List<IgnoredTag> getIgnoredTagsByPrincipal(Long id) {
-        return (List<IgnoredTag>) entityManager.unwrap(Session.class)
-                .createQuery("select i from IgnoredTag i inner join User u on i.user.id=u.id where u.id=:id")
-                .setParameter("id", id)
-                .getResultList();
-    }
 }

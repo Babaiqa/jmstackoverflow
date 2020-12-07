@@ -3,7 +3,6 @@ package com.javamentor.qa.platform.webapp.controllers;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.IgnoredTagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -23,15 +22,13 @@ public class TagController {
 
     private final TagDtoService tagDtoService;
     private final UserDtoService userDtoService;
-    private final IgnoredTagService ignoredTagService;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
-    public TagController(TagDtoService tagDtoService, UserDtoService userDtoService, IgnoredTagService ignoredTagService) {
+    public TagController(TagDtoService tagDtoService, UserDtoService userDtoService) {
         this.tagDtoService = tagDtoService;
         this.userDtoService = userDtoService;
-        this.ignoredTagService = ignoredTagService;
     }
 
     @GetMapping("popular")
@@ -201,10 +198,11 @@ public class TagController {
     @GetMapping(value = "ignored")
     @ApiOperation(value = "get list to ignored tags", response = TagDto.class)
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns the List<TagDto> list", response = TagDto.class)
+            @ApiResponse(code = 200, message = "Returns the List<IgnoredTagDto> list", response = TagDto.class)
     })
     public ResponseEntity<?> getUserIgnoredTags() {
-        List<TagDto> tags = ignoredTagService.getIgnoredTagsByPrincipal(userDtoService.getPrincipal());
+        List<IgnoredTagDto> tags =
+                tagDtoService.getIgnoredTagsByPrincipal(userDtoService.getPrincipal().get().getId());
         return ResponseEntity.ok(tags);
     }
 }

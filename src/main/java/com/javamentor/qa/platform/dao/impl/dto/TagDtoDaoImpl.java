@@ -1,14 +1,14 @@
 package com.javamentor.qa.platform.dao.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
+import com.javamentor.qa.platform.models.dto.IgnoredTagDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.dto.TagListDto;
 import com.javamentor.qa.platform.models.dto.TagRecentDto;
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import java.util.*;
 import java.time.LocalDateTime;
 
@@ -157,6 +157,20 @@ public class TagDtoDaoImpl implements TagDtoDao {
                 .setParameter("id", id)
                 .setFirstResult(page * size - size)
                 .setMaxResults(size)
+                .getResultList();
+    }
+
+    @SuppressWarnings(value = "unchecked")
+    @Override
+    public List<IgnoredTagDto> getIgnoredTagsByPrincipal(Long id) {
+        return (List<IgnoredTagDto>) entityManager.unwrap(Session.class)
+                .createQuery("select new com.javamentor.qa.platform.models.dto.IgnoredTagDto(i.ignoredTag.id, i.ignoredTag.name) " +
+                        "from IgnoredTag as i " +
+                        "inner join Tag t on t.name=i.ignoredTag.name " +
+                        "and t.id=i.ignoredTag.id " +
+                        "inner join User u on u.id=i.user.id " +
+                        "where u.id=:id")
+                .setParameter("id", id)
                 .getResultList();
     }
 
