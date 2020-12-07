@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.controllers.question;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
+import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.dao.abstracts.model.QuestionDao;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
@@ -16,6 +17,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -110,9 +119,29 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andDo(print())
                 .andExpect(content().string("Tag not found"))
                 .andExpect(status().isBadRequest());
-
     }
 
+    @Test
+    public void shouldReturnErrorMessageBadParameterWrongSizeQuestionWithoutAnswer() throws Exception {
+        mockMvc.perform(get("/api/question/order/new")
+                        .param("page", "1")
+                        .param("size", "0"))
+                        .andDo(print())
+                        .andExpect(status().is4xxClientError())
+                        .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                        .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
+    }
+
+    @Test
+    public void shouldReturnErrorMessageBadParameterWrongPageQuestionWithoutAnswer () throws Exception {
+        mockMvc.perform(get("/api/question/order/new")
+                .param("page", "0")
+                .param("size", "2"))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
+    }
 
     @Test
     void shouldAddQuestionStatusOk() throws Exception {
@@ -258,4 +287,81 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         Assert.assertTrue(  integer == 3 );
     }
 
+    @Test
+    public void shouldReturnErrorMessageBadParameterMaxPageQuestionWithoutAnswer () throws Exception {
+        mockMvc.perform(get("/api/question/order/new")
+                .param("page", "2")
+                .param("size", "200"))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
+    }
+
+    @Test
+    public void testPaginationQuestionsWithoutAnswer() throws Exception {
+
+        this.mockMvc.perform(get("/api/question/withoutAnswer")
+                .param("page", "1")
+                .param("size", "1")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.currentPageNumber").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPageCount").value(7))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalResultCount").value(7))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.items").isArray())
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/question/usersQuestionApi.yml",
+            "dataset/question/answerQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml",
+            "dataset/question/votes_on_question.yml"},
+            useSequenceFiltering = true, cleanBefore = true, cleanAfter = true)
+    public void testIsQuestionWithoutAnswers () throws Exception {
+
+        LocalDateTime persistDateTime = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(0, 0, 0));
+        LocalDateTime lastUpdateDateTime = LocalDateTime.of(LocalDate.of(2020, 2, 1), LocalTime.of(13, 58, 56));
+
+        PageDto<QuestionDto, Object> expectPage = new PageDto<>();
+        expectPage.setCurrentPageNumber(1);
+        expectPage.setItemsOnPage(1);
+        expectPage.setTotalPageCount(7);
+        expectPage.setTotalResultCount(7);
+
+        List<TagDto> tagsList = new ArrayList<>();
+        tagsList.add(new TagDto(1L, "java"));
+
+        List<QuestionDto> itemsList = new ArrayList<>();
+        itemsList.add(new QuestionDto(3L,
+                "Question number three",
+                2L,
+                "Tot",
+                null,
+                "Swagger - add \"path variable\" in request url",
+                2,
+                3,
+                1,
+                persistDateTime,
+                lastUpdateDateTime,
+                tagsList));
+
+        expectPage.setItems(itemsList);
+
+        String result = mockMvc.perform(get("/api/question/withoutAnswer")
+        .param("page", "1")
+        .param("size", "1")
+        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        PageDto<QuestionDto, Object> actualPage = objectMapper.readValue(result, PageDto.class);
+        Assert.assertEquals(expectPage.toString(), actualPage.toString());
+    }
 }
