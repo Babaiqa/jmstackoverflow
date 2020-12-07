@@ -21,7 +21,7 @@ question:
 
   - id: 3
 #    count_valuable: 2
-    description: "Swagger - add “path variable” in request url"
+    description: "Swagger - add \"path variable\" in request url"
     title: "Question number three"
     view_count: 2
     user_id: 2
