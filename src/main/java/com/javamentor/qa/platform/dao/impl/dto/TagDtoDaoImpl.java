@@ -115,10 +115,20 @@ public class TagDtoDaoImpl implements TagDtoDao {
 
     @Override
     public List<TagListDto> getTagListDtoPagination(int page, int size, String tagName) {
-        return entityManager.createQuery("SELECT new com.javamentor.qa.platform.models.dto.TagListDto(e.id, e.name) " +
-                "from Tag e where UPPER(e.name) LIKE CONCAT('%',UPPER(:tagName),'%')")
+        return entityManager.createQuery("" +
+                "SELECT new com.javamentor.qa.platform.models.dto.TagListDto(t.id, t.name, t.description, COUNT(q.id), " +
+                "(SELECT COUNT(q.id) FROM t.questions AS q WHERE q.persistDateTime BETWEEN :startDate1 AND :endDate1), " +
+                "(SELECT COUNT(q.id) FROM t.questions AS q WHERE q.persistDateTime BETWEEN :startDate2 AND :endDate2)) " +
+                "FROM Tag AS t " +
+                "LEFT JOIN t.questions AS q " +
+                "where UPPER(t.name) like concat('%',UPPER(:tagName),'%' ) " +
+                "GROUP BY t.id")
+                .setParameter("startDate1", LocalDateTime.now().minusDays(7))
+                .setParameter("endDate1", LocalDateTime.now())
+                .setParameter("startDate2", LocalDateTime.now().minusDays(1))
+                .setParameter("endDate2", LocalDateTime.now())
                 .setParameter("tagName", tagName)
-                .setFirstResult(page*size-size)
+                .setFirstResult(page * size - size)
                 .setMaxResults(size)
                 .getResultList();
     }
