@@ -20,11 +20,6 @@ public class TagListDto implements Serializable {
     private long countQuestionToWeek;
     private long countQuestionToDay;
 
-    public TagListDto(long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
     @Override
     public String toString() {
         return "{" +

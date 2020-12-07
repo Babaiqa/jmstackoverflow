@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Getter
@@ -38,12 +39,9 @@ public class QuestionDto implements Serializable {
                 ", viewCount=" + viewCount +
                 ", countAnswer=" + countAnswer +
                 ", countValuable=" + countValuable +
-                ", persistDateTime=" + persistDateTime +
+                ", persistDateTime=" + persistDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) +
                 ", lastUpdateDateTime=" + lastUpdateDateTime +
                 ", listTagDto=" + listTagDto +
                 '}';
     }
-
 }
-
-

@@ -3,13 +3,20 @@ package com.javamentor.qa.platform.controllers.user;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.entity.user.User;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import javax.naming.event.ObjectChangeListener;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +30,9 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Test
     @DataSet(value = "dataset/user/userApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
@@ -432,5 +442,105 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string("resetPassword.userResetPasswordDto.newPassword: Поле не должно быть пустым"))
                 .andExpect(status().isBadRequest());
+    }
+
+    @DataSet(value = {"dataset/user/userPublicInfoApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    public void updatesUserPublicInfo() throws Exception {
+
+        UserPublicInfoDto userPublicInfoDto = new UserPublicInfoDto();
+        userPublicInfoDto.setNickname("BestJavaProgrammer");
+        userPublicInfoDto.setAbout("Best Java Programmer ever");
+        userPublicInfoDto.setLinkImage("https://www.google.com/search?q=D0");
+        userPublicInfoDto.setLinkSite("https://www.yandex.ru");
+        userPublicInfoDto.setLinkVk("https://www.vk.com");
+        userPublicInfoDto.setLinkGitHub("https://www.github.com");
+        userPublicInfoDto.setFullName("Teat");
+        userPublicInfoDto.setCity("Moscow");
+        String jsonRequest = objectMapper.writeValueAsString(userPublicInfoDto);
+
+        this.mockMvc.perform(post("/api/user/public/info")
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        String hql = "FROM User AS u WHERE u.id = 153L";
+        User user = (User) entityManager.createQuery(hql).getResultList().get(0);
+
+        assert (userPublicInfoDto.getNickname().equals(user.getNickname()) &&
+                userPublicInfoDto.getAbout().equals(user.getAbout()) &&
+                userPublicInfoDto.getLinkImage().equals(user.getImageLink()) &&
+                userPublicInfoDto.getLinkSite().equals(user.getLinkSite()) &&
+                userPublicInfoDto.getLinkVk().equals(user.getLinkVk()) &&
+                userPublicInfoDto.getLinkGitHub().equals(user.getLinkGitHub()) &&
+                userPublicInfoDto.getFullName().equals(user.getFullName()) &&
+                userPublicInfoDto.getCity().equals(user.getCity()));
+
+
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            " , someFullName",
+            "'   ', someFullName",
+            "someNickname, ",
+            "someNickname, '    '",
+    })
+    public void ifRequiredFieldsNullOrBlankThenBadRequest(String nickname, String fullName) throws Exception {
+        UserPublicInfoDto userPublicInfoDto = new UserPublicInfoDto();
+        userPublicInfoDto.setNickname(nickname);
+        userPublicInfoDto.setFullName(fullName);
+        userPublicInfoDto.setAbout("Something about");
+        String jsonRequest = objectMapper.writeValueAsString(userPublicInfoDto);
+
+        this.mockMvc.perform(post("/api/user/public/info")
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @DataSet(value = {"dataset/user/userPublicInfoApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    public void ifFrontSendsWrongIdThenCorrectsIdAndUpdatesPrincipal() throws Exception {
+        UserPublicInfoDto userPublicInfoDto = new UserPublicInfoDto();
+        userPublicInfoDto.setId(42L);
+        userPublicInfoDto.setNickname("BestJavaProgrammer");
+        userPublicInfoDto.setAbout("Best Java Programmer ever");
+        userPublicInfoDto.setLinkImage("https://www.google.com/search?q=D0");
+        userPublicInfoDto.setLinkSite("https://www.yandex.ru");
+        userPublicInfoDto.setLinkVk("https://www.vk.com");
+        userPublicInfoDto.setLinkGitHub("https://www.github.com");
+        userPublicInfoDto.setFullName("Teat");
+        userPublicInfoDto.setCity("Moscow");
+        String jsonRequest = objectMapper.writeValueAsString(userPublicInfoDto);
+
+        this.mockMvc.perform(post("/api/user/public/info")
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        String hql = "FROM User AS u where u.id = 153L";
+        User user = (User) entityManager.createQuery(hql).getResultList().get(0);
+
+        assert (userPublicInfoDto.getNickname().equals(user.getNickname()) &&
+                userPublicInfoDto.getAbout().equals(user.getAbout()) &&
+                userPublicInfoDto.getLinkImage().equals(user.getImageLink()) &&
+                userPublicInfoDto.getLinkSite().equals(user.getLinkSite()) &&
+                userPublicInfoDto.getLinkVk().equals(user.getLinkVk()) &&
+                userPublicInfoDto.getLinkGitHub().equals(user.getLinkGitHub()) &&
+                userPublicInfoDto.getFullName().equals(user.getFullName()) &&
+                userPublicInfoDto.getCity().equals(user.getCity()));
+
+        hql = "FROM User AS u WHERE u.id = 42L";
+        User wrongUser = (User) entityManager.createQuery(hql).getResultList().get(0);
+
+        assert (wrongUser.getNickname().equals("wrong_user") &&
+                wrongUser.getAbout().equals("Something about wrong user") &&
+                wrongUser.getImageLink().equals("wrong image") &&
+                wrongUser.getLinkSite().equals("wrong site") &&
+                wrongUser.getLinkVk().equals("wrong vk") &&
+                wrongUser.getLinkGitHub().equals("wrong git") &&
+                wrongUser.getFullName().equals("wrong fullname") &&
+                wrongUser.getCity().equals("wrong city"));
     }
 }
