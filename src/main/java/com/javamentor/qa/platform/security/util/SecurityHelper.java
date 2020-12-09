@@ -1,17 +1,12 @@
 package com.javamentor.qa.platform.security.util;
 
 import com.javamentor.qa.platform.models.dto.UserDto;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.Optional;
 
-public class SecurityHelper {
-
-    Optional<UserDto> getPrincipal() {
-        return null;
-    }
-
-    public UserDetails loadUserByUsername(String username) {
-    return null;
-    }
+public interface SecurityHelper extends UserDetailsService {
+    UserDetails loadUserByUsername(String username);
 }

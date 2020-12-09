@@ -17,14 +17,10 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthTokenFilter extends OncePerRequestFilter {
 
 
-    private final JwtUtils jwtUtils;
-    private final SecurityHelper securityHelper;
-
     @Autowired
-    public AuthTokenFilter(JwtUtils jwtUtils, SecurityHelper securityHelper) {
-        this.jwtUtils = jwtUtils;
-        this.securityHelper = securityHelper;
-    }
+    private JwtUtils jwtUtils;
+    @Autowired
+    private SecurityHelper securityHelper;
 
     @SneakyThrows
     @Override
