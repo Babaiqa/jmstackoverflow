@@ -6,7 +6,6 @@ import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.IgnoredTagService;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -39,4 +38,5 @@ public class IgnoredTagServiceImpl extends ReadWriteServiceImpl<IgnoredTag, Long
         }
 
     }
+
 }
