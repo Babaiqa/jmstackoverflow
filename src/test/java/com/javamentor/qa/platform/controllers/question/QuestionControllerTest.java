@@ -8,6 +8,7 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @DataSet(value = {"dataset/question/roleQuestionApi.yml",
@@ -363,5 +363,58 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
         PageDto<QuestionDto, Object> actualPage = objectMapper.readValue(result, PageDto.class);
         Assert.assertEquals(expectPage.toString(), actualPage.toString());
+    }
+
+    // Тесты для PaginationWithoutTags
+    @Test
+    public void shouldReturnQuestionsWithoutSpecifiedTags() throws Exception {
+
+        List<Long> withoutTagIds = new ArrayList<>();
+        withoutTagIds.add(1L);
+        withoutTagIds.add(2L);
+        withoutTagIds.add(5L);
+
+        String jsonWithoutTagIds = objectMapper.writeValueAsString(withoutTagIds);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/withoutTags")
+                .param("page", "1")
+                .param("size", "10")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonWithoutTagIds))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalPageCount").value(1))
+                .andExpect(jsonPath("$.totalResultCount").value(1))
+                .andExpect(jsonPath("$.items[*].listTagDto[*].id", Matchers.hasItem(3)))
+                .andExpect(jsonPath("$.items[*].listTagDto[*].id", Matchers.not(1)))
+                .andExpect(jsonPath("$.items[*].listTagDto[*].id", Matchers.not(2)))
+                .andExpect(jsonPath("$.items[*].listTagDto[*].id", Matchers.not(5)))
+                .andExpect(jsonPath("$.itemsOnPage").value(10));
+    }
+
+    @Test
+    public void shouldReturnEmptyPaginationIfTagIdsMissing() throws Exception {
+
+        List<Long> withoutTagIds = new ArrayList<>();
+
+        String jsonWithoutTagIds = objectMapper.writeValueAsString(withoutTagIds);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/withoutTags")
+                .param("page", "1")
+                .param("size", "10")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonWithoutTagIds))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalPageCount").value(0))
+                .andExpect(jsonPath("$.totalResultCount").value(0))
+                .andExpect(jsonPath("$.items").isEmpty())
+                .andExpect(jsonPath("$.itemsOnPage").value(10));
     }
 }
