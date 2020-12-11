@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.models.util.OnUpdate;
+import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.converters.UserConverter;
@@ -27,14 +28,21 @@ public class UserController {
     private final UserConverter userConverter;
     private final UserDtoService userDtoService;
     private final PasswordEncoder passwordEncoder;
+    private final SecurityHelper securityHelper;
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
-    public UserController(UserService userService, UserConverter userConverter, UserDtoService userDtoService, PasswordEncoder passwordEncoder) {
+    public UserController(UserService userService,
+                          UserConverter userConverter,
+                          UserDtoService userDtoService,
+                          PasswordEncoder passwordEncoder,
+                          SecurityHelper securityHelper) {
+
         this.userService = userService;
         this.userConverter = userConverter;
         this.userDtoService = userDtoService;
         this.passwordEncoder = passwordEncoder;
+        this.securityHelper = securityHelper;
     }
 
     // Examples for Swagger
@@ -201,20 +209,6 @@ public class UserController {
     }
 
 
-    @GetMapping("principle")
-    @ApiOperation(value = "Return message(UserDto)", response = String.class)
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns the object.", response = UserDto.class),
-            @ApiResponse(code = 400, message = "Something goes wrong",response = String.class)
-    })
-    public  ResponseEntity<?> getPrincipal(){
-        Optional<UserDto> userDto = userDtoService.getPrincipal();
-        return userDto.isPresent() ? ResponseEntity.ok().body(userDto.get()):
-                ResponseEntity.badRequest()
-                        .body("User not found");
-
-    }
-
     @PostMapping("public/info")
     @ApiOperation(value = "Update user public info", response = String.class)
     @ApiResponses({
@@ -225,7 +219,7 @@ public class UserController {
     public ResponseEntity<?> updateUserDtoPublicInfo(@Valid @RequestBody UserPublicInfoDto userPublicInfoDto) {
 
         User user = userConverter.userPublicInfoDtoToUser(userPublicInfoDto);
-        user.setId(userDtoService.getPrincipal().get().getId());
+        user.setId(securityHelper.getPrincipal().getId());
         userService.updateUserPublicInfo(user);
 
         return ResponseEntity.ok(userConverter.userToUserPublicInfoDto(user));
@@ -241,17 +235,15 @@ public class UserController {
     @Validated(OnUpdate.class)
     public ResponseEntity<?> resetPassword (@Valid @RequestBody UserResetPasswordDto userResetPasswordDto) {
 
-        User user;
+        Optional<User> user;
+        user = userService.getById(securityHelper.getPrincipal().getId());
 
-        Optional<UserDto> userDto = userDtoService.getPrincipal();
-        user = userService.getById(userDto.get().getId()).get();
-
-        if (!passwordEncoder.matches(userResetPasswordDto.getOldPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(userResetPasswordDto.getOldPassword(), user.get().getPassword())) {
             return ResponseEntity.badRequest().body("Old password is incorrect");
         }
 
-        user.setPassword(passwordEncoder.encode(userResetPasswordDto.getNewPassword()));
-        userService.resetPassword(user);
+        user.get().setPassword(passwordEncoder.encode(userResetPasswordDto.getNewPassword()));
+        userService.resetPassword(user.get());
 
         return ResponseEntity.ok().body("Password reset successfully");
     }
@@ -265,9 +257,7 @@ public class UserController {
     })
     public ResponseEntity<?> deleteUser() {
 
-        Optional<UserDto> userDto = userDtoService.getPrincipal();
-        if (userDto.isPresent()) {
-            Optional<User> userObj = userService.getById(userDto.get().getId());
+            Optional<User> userObj = userService.getById(securityHelper.getPrincipal().getId());
             if (userObj.isPresent()) {
                 User user = userObj.get();
                 if (Boolean.TRUE.equals(user.getIsDeleted()))
@@ -275,7 +265,7 @@ public class UserController {
                 userService.deleteUserByFlag(user);
                 return ResponseEntity.ok().body("User deleted successfully");
             }
-        }
+
         return ResponseEntity.badRequest().body("Something goes wrong");
     }
 }
