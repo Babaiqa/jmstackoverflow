@@ -42,10 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         http.csrf().disable();
         http.cors();
         http.exceptionHandling().authenticationEntryPoint(unauthenticatedHandler);
-//        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests()
-                .antMatchers("/api/login/**").permitAll()
-                .antMatchers("/api/user/**").hasAuthority("USER")
                 .anyRequest().permitAll();
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }

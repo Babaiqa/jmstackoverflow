@@ -11,9 +11,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PrincipalDto {
 
+    private long id;
     private String email;
-    private String name;
-    private String surname;
+    private String fullName;
     private String avatarUrl;
     private String role;
 }
