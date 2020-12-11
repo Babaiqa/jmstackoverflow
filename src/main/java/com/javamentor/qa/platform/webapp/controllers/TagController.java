@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import io.swagger.annotations.Api;
@@ -22,13 +23,15 @@ public class TagController {
 
     private final TagDtoService tagDtoService;
     private final UserDtoService userDtoService;
+    private final SecurityHelper securityHelper;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
-    public TagController(TagDtoService tagDtoService, UserDtoService userDtoService) {
+    public TagController(TagDtoService tagDtoService, UserDtoService userDtoService, SecurityHelper securityHelper) {
         this.tagDtoService = tagDtoService;
         this.userDtoService = userDtoService;
+        this.securityHelper = securityHelper;
     }
 
     @GetMapping("popular")
@@ -202,7 +205,7 @@ public class TagController {
     })
     public ResponseEntity<?> getUserIgnoredTags() {
         List<IgnoredTagDto> tags =
-                tagDtoService.getIgnoredTagsByPrincipal(userDtoService.getPrincipal().get().getId());
+                tagDtoService.getIgnoredTagsByPrincipal(securityHelper.getPrincipal().getId());
         return ResponseEntity.ok(tags);
     }
 }
