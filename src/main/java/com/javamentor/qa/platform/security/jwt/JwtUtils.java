@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.security.jwt;
 
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.security.dto.TokenDto;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,9 @@ public class JwtUtils {
 
     @Value("${rest.app.jwtExpirationsMs}")
     private long jwtExpirationMs;
+
+    @Value("${rest.app.jwtType}")
+    private String jwtType;
 
     public String generateJwtToken(Authentication authentication) {
         User userPrincipal = (User)authentication.getPrincipal();
@@ -44,5 +48,13 @@ public class JwtUtils {
         }catch (Exception e) {
             throw new Exception("Invalid token " + e.getMessage());
         }
+    }
+
+    public TokenDto getTokenDto (Authentication authentication) {
+        TokenDto tokenDto = new TokenDto();
+        tokenDto.setJwtToken(generateJwtToken(authentication));
+        tokenDto.setJwtType(jwtType);
+
+        return tokenDto;
     }
 }
