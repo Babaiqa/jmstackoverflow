@@ -20,4 +20,6 @@ public interface TagDtoService {
     PageDto<TagListDto, Object> getTagListDtoPaginationOrderByNewTag(int page, int size);
 
     List<IgnoredTagDto> getIgnoredTagsByPrincipal(long id);
+
+    List<TrackedTagDto> getTrackedTagsByPrincipal(long id);
 }

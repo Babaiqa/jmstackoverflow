@@ -133,4 +133,9 @@ public class TagDtoServiceImpl implements TagDtoService {
         return tagDtoDao.getIgnoredTagsByPrincipal(id);
     }
 
+    @Override
+    public List<TrackedTagDto> getTrackedTagsByPrincipal(long id) {
+        return tagDtoDao.getTrackedTagsByPrincipal(id);
+    }
+
 }

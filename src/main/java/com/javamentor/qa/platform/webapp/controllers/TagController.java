@@ -205,6 +205,17 @@ public class TagController {
                 tagDtoService.getIgnoredTagsByPrincipal(userDtoService.getPrincipal().get().getId());
         return ResponseEntity.ok(tags);
     }
+
+    @GetMapping(value = "tracked")
+    @ApiOperation(value = "get list to tracked tags", response = TagDto.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the List<TrackedTagDto> list", response = TagDto.class)
+    })
+    public ResponseEntity<?> getUserTrackedTags() {
+        List<TrackedTagDto> tags =
+                tagDtoService.getTrackedTagsByPrincipal(userDtoService.getPrincipal().get().getId());
+        return ResponseEntity.ok(tags);
+    }
 }
 
 
