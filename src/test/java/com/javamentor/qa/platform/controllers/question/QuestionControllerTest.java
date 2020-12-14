@@ -66,7 +66,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         tagId.add(new Long(1L));
         String jsonRequest = objectMapper.writeValueAsString(tagId);
         this.mockMvc.perform(MockMvcRequestBuilders
-                .patch("/api/question/1/tag/add")
+                .patch("/api/question/2/tag/add")
                 .content(jsonRequest)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -82,7 +82,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         tagId.add(new Long(1L));
         String jsonRequest = objectMapper.writeValueAsString(tagId);
         this.mockMvc.perform(MockMvcRequestBuilders
-                .patch("/api/question/10/tag/add")
+                .patch("/api/question/11/tag/add")
                 .content(jsonRequest)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -101,7 +101,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         tag.add(new Long(3L));
         String jsonRequest = objectMapper.writeValueAsString(tag);
         this.mockMvc.perform(MockMvcRequestBuilders
-                .patch("/api/question/1/tag/add")
+                .patch("/api/question/2/tag/add")
                 .content(jsonRequest)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -115,10 +115,10 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     public void shouldSetTagForQuestionNoTag() throws Exception {
 
         List<Long> tag = new ArrayList<>();
-        tag.add(new Long(6L));
+        tag.add(new Long(11L));
         String jsonRequest = objectMapper.writeValueAsString(tag);
         this.mockMvc.perform(MockMvcRequestBuilders
-                .patch("/api/question/1/tag/add")
+                .patch("/api/question/2/tag/add")
                 .content(jsonRequest)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
