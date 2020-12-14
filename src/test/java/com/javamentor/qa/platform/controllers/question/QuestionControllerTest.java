@@ -10,6 +10,8 @@ import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.entity.question.Question;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -31,6 +33,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -119,6 +125,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andDo(print())
                 .andExpect(content().string("Tag not found"))
                 .andExpect(status().isBadRequest());
+
     }
 
     @Test
@@ -285,6 +292,96 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         integer = (Integer) getMap.get(0).get("id");
 
         Assert.assertTrue(  integer == 3 );
+    }
+
+    @Test
+    public void getQuestionSearchWithStatusOk() throws Exception {
+        QuestionSearchDto questionSearchDto = new QuestionSearchDto("sql query in excel");
+        String json = objectMapper.writeValueAsString(questionSearchDto);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/search")
+                .param("page", "1")
+                .param("size", "5")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getQuestionSearchWithSearchMessageNull() throws Exception {
+        QuestionSearchDto questionSearchDto = new QuestionSearchDto(null);
+        String json = objectMapper.writeValueAsString(questionSearchDto);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/search")
+                .param("page", "1")
+                .param("size", "5")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void getQuestionSearchWithSearchMessageIsEmpty() throws Exception {
+        QuestionSearchDto questionSearchDto = new QuestionSearchDto("");
+        String json = objectMapper.writeValueAsString(questionSearchDto);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/search")
+                .param("page", "1")
+                .param("size", "5")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void getQuestionSearchWithSearchByAuthor() throws Exception {
+        QuestionSearchDto questionSearchDto = new QuestionSearchDto("author:3");
+        String json = objectMapper.writeValueAsString(questionSearchDto);
+
+        PageDto<QuestionDto, Object> expect = new PageDto<>();
+        expect.setTotalResultCount(2);
+        expect.setItemsOnPage(1);
+        expect.setCurrentPageNumber(1);
+        expect.setTotalPageCount(2);
+        expect.setItemsOnPage(1);
+        expect.setMeta(null);
+
+        List<TagDto> tag = new ArrayList<>();
+        tag.add(new TagDto(5L,"sql"));
+
+        List<QuestionDto> items = new ArrayList<>();
+        items.add(new QuestionDto(
+                7L,
+                "Question number seven",
+                3L, "Tot", null,
+                "Changes made in sql query in excel reflects changes only on single sheet",
+                1,3,1,
+                LocalDateTime.of(2020,01,02,00,00, 00),
+                LocalDateTime.of(2020,05,02,13,58, 56),tag));
+
+        expect.setItems(items);
+
+        String jsonResult = objectMapper.writeValueAsString(expect);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/search")
+                .param("page", "1")
+                .param("size", "1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(jsonResult));
     }
 
     @Test

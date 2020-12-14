@@ -4,35 +4,44 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import javax.naming.event.ObjectChangeListener;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class UserControllerTest extends AbstractIntegrationTest {
+
+    /**
+     *This token is for user -  email: ivanov@mail.com1 , password: password1
+     **/
+    private static final String TOKEN = "Bearer_eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpdmFub3ZAbWFpbC5jb20xIiwiaWF0IjoxNjA3NzA0MjgzLCJleHAiOjE2MDc3OTA2ODN9.wh_DJrpXfZ-6CW4AtYsG_VmhRrl3APKuUF6Xv6rQUE0";
 
     @Autowired
     private MockMvc mockMvc;
 
     @PersistenceContext
     EntityManager entityManager;
+
+    @Autowired
+    UserService userService;
+
+    private static final String DELETE = "/api/user/delete";
+    private static final String BAD_REQUEST_MESSAGE_WRONG = "Something goes wrong";
+    private static final String BAD_REQUEST_MESSAGE_ALREADY_DELETED = "The user has already been deleted!";
 
     @Test
     @DataSet(value = "dataset/user/userApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
@@ -388,11 +397,12 @@ public class UserControllerTest extends AbstractIntegrationTest {
     @Test
     public void requestUserPasswordResetStatusOk() throws Exception {
         UserResetPasswordDto ps = new UserResetPasswordDto();
-        ps.setOldPassword("password0");
+        ps.setOldPassword("password1");
         ps.setNewPassword("user");
         String jsonRequest = objectMapper.writeValueAsString(ps);
 
         this.mockMvc.perform(post("/api/user/password/reset")
+                .header("Authorization", TOKEN)
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string("Password reset successfully"))
@@ -408,6 +418,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
         String jsonRequest = objectMapper.writeValueAsString(ps);
 
         this.mockMvc.perform(post("/api/user/password/reset")
+                .header("Authorization", TOKEN)
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string("Old password is incorrect"))
@@ -431,7 +442,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    public void requestUserPasswordResetNewPasswordNull() throws Exception {
+    void requestUserPasswordResetNewPasswordNull() throws Exception {
         UserResetPasswordDto ps = new UserResetPasswordDto();
         ps.setOldPassword("password0");
         ps.setNewPassword("");
@@ -460,11 +471,12 @@ public class UserControllerTest extends AbstractIntegrationTest {
         String jsonRequest = objectMapper.writeValueAsString(userPublicInfoDto);
 
         this.mockMvc.perform(post("/api/user/public/info")
+                .header("Authorization", TOKEN)
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        String hql = "FROM User AS u WHERE u.id = 153L";
+        String hql = "FROM User AS u WHERE u.id = 10L";
         User user = (User) entityManager.createQuery(hql).getResultList().get(0);
 
         assert (userPublicInfoDto.getNickname().equals(user.getNickname()) &&
@@ -515,11 +527,12 @@ public class UserControllerTest extends AbstractIntegrationTest {
         String jsonRequest = objectMapper.writeValueAsString(userPublicInfoDto);
 
         this.mockMvc.perform(post("/api/user/public/info")
+                .header("Authorization", TOKEN)
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        String hql = "FROM User AS u where u.id = 153L";
+        String hql = "FROM User AS u where u.id = 10L";
         User user = (User) entityManager.createQuery(hql).getResultList().get(0);
 
         assert (userPublicInfoDto.getNickname().equals(user.getNickname()) &&
@@ -543,4 +556,35 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 wrongUser.getFullName().equals("wrong fullname") &&
                 wrongUser.getCity().equals("wrong city"));
     }
+
+    //Тесты удаления пользователя (id=153)
+
+    @DataSet(value = {"dataset/user/user153.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestUserDelete() throws Exception{
+        mockMvc.perform(delete(DELETE))
+                .andExpect(status().isOk())
+                .andExpect(content().string("User deleted successfully"));
+        Boolean actualIsDeleted = userService.getById(153L).get().getIsDeleted();
+
+        Assert.assertEquals(true, actualIsDeleted);
+
+    }
+    @DataSet(value = {"dataset/user/userNotExist.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestDeleteNonExistentUser() throws Exception{
+        mockMvc.perform(delete(DELETE))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(BAD_REQUEST_MESSAGE_WRONG));
+    }
+
+    @DataSet(value = {"dataset/user/userDeleted.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestDeleteAlreadyDeletedUser() throws Exception{
+        mockMvc.perform(delete(DELETE))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(BAD_REQUEST_MESSAGE_ALREADY_DELETED));
+    }
+
+
 }
