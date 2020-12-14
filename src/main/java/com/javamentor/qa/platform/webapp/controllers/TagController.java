@@ -216,7 +216,7 @@ public class TagController {
     })
     public ResponseEntity<?> getUserTrackedTags() {
         List<TrackedTagDto> tags =
-                tagDtoService.getTrackedTagsByPrincipal(userDtoService.getPrincipal().get().getId());
+                tagDtoService.getTrackedTagsByPrincipal(securityHelper.getPrincipal().getId());
         return ResponseEntity.ok(tags);
     }
 }
