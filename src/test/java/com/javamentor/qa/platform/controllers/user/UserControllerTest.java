@@ -4,25 +4,22 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import javax.naming.event.ObjectChangeListener;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -38,6 +35,13 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @PersistenceContext
     EntityManager entityManager;
+
+    @Autowired
+    UserService userService;
+
+    private static final String DELETE = "/api/user/delete";
+    private static final String BAD_REQUEST_MESSAGE_WRONG = "Something goes wrong";
+    private static final String BAD_REQUEST_MESSAGE_ALREADY_DELETED = "The user has already been deleted!";
 
     @Test
     @DataSet(value = "dataset/user/userApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
@@ -438,7 +442,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    public void requestUserPasswordResetNewPasswordNull() throws Exception {
+    void requestUserPasswordResetNewPasswordNull() throws Exception {
         UserResetPasswordDto ps = new UserResetPasswordDto();
         ps.setOldPassword("password0");
         ps.setNewPassword("");
@@ -552,4 +556,35 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 wrongUser.getFullName().equals("wrong fullname") &&
                 wrongUser.getCity().equals("wrong city"));
     }
+
+    //Тесты удаления пользователя (id=153)
+
+    @DataSet(value = {"dataset/user/user153.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestUserDelete() throws Exception{
+        mockMvc.perform(delete(DELETE))
+                .andExpect(status().isOk())
+                .andExpect(content().string("User deleted successfully"));
+        Boolean actualIsDeleted = userService.getById(153L).get().getIsDeleted();
+
+        Assert.assertEquals(true, actualIsDeleted);
+
+    }
+    @DataSet(value = {"dataset/user/userNotExist.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestDeleteNonExistentUser() throws Exception{
+        mockMvc.perform(delete(DELETE))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(BAD_REQUEST_MESSAGE_WRONG));
+    }
+
+    @DataSet(value = {"dataset/user/userDeleted.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestDeleteAlreadyDeletedUser() throws Exception{
+        mockMvc.perform(delete(DELETE))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(BAD_REQUEST_MESSAGE_ALREADY_DELETED));
+    }
+
+
 }
