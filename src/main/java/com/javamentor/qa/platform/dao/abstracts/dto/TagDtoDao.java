@@ -1,10 +1,6 @@
 package com.javamentor.qa.platform.dao.abstracts.dto;
 
-import com.javamentor.qa.platform.models.dto.IgnoredTagDto;
-import com.javamentor.qa.platform.models.dto.TagDto;
-
-import com.javamentor.qa.platform.models.dto.TagListDto;
-import com.javamentor.qa.platform.models.dto.TagRecentDto;
+import com.javamentor.qa.platform.models.dto.*;
 
 import java.util.List;
 
@@ -30,4 +26,6 @@ public interface TagDtoDao {
     int getTotalResultChildTag(Long id);
 
     List<IgnoredTagDto> getIgnoredTagsByPrincipal(Long id);
+
+    List<TrackedTagDto> getTrackedTagsByPrincipal(Long id);
 }
