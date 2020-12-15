@@ -10,6 +10,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.*;
@@ -26,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/question/tagQuestionApi.yml",
         "dataset/question/question_has_tagQuestionApi.yml"}
         , cleanBefore = true, cleanAfter = true)
+@WithMockUser(username = "principal@mail.ru", roles={"ADMIN", "USER"})
 public class TagControllerTest extends AbstractIntegrationTest {
 
     @Autowired
