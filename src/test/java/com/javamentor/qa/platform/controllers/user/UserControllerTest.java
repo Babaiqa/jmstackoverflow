@@ -550,25 +550,12 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 wrongUser.getCity().equals("wrong city"));
     }
 
-    //Тесты удаления пользователя (id=153)
-
     @DataSet(value = {"dataset/user/user153.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
     void requestUserDelete() throws Exception{
         mockMvc.perform(delete(DELETE))
                 .andExpect(status().isOk())
                 .andExpect(content().string("User deleted successfully"));
-        Boolean actualIsDeleted = userService.getById(153L).get().getIsDeleted();
-
-        Assert.assertEquals(true, actualIsDeleted);
-
-    }
-    @DataSet(value = {"dataset/user/userNotExist.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
-    @Test
-    void requestDeleteNonExistentUser() throws Exception{
-        mockMvc.perform(delete(DELETE))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(BAD_REQUEST_MESSAGE_WRONG));
     }
 
     @DataSet(value = {"dataset/user/userDeleted.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
