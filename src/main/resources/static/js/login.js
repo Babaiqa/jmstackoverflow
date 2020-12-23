@@ -1,5 +1,6 @@
 const formLogin = document.getElementById('login-page')
 const errorLogin = document.getElementById('login-error')
+const btn = document.getElementById('show-password')
 let email = document.getElementById('email')
 let password = document.getElementById('password')
 let token = ''
@@ -40,6 +41,18 @@ formLogin.addEventListener('submit', (event) => {
         }
     });
 })
+
+function showPassword() {
+    if (password.type === "password") {
+        password.type = "text";
+        btn.innerHTML = ''
+        btn.innerHTML = '&#x2606;'
+    } else {
+        password.type = "password";
+        btn.innerHTML = ''
+        btn.innerHTML = '&#x2605;'
+    }
+}
 
 
 
