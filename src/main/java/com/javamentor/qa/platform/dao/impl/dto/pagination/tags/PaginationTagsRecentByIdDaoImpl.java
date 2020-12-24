@@ -1,6 +1,6 @@
-package com.javamentor.qa.platform.dao.impl.pagination.tags;
+package com.javamentor.qa.platform.dao.impl.dto.pagination.tags;
 
-import com.javamentor.qa.platform.dao.abstracts.pagination.PaginationDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.pagination.PaginationDao;
 import com.javamentor.qa.platform.models.dto.TagRecentDto;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;

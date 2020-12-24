@@ -1,6 +1,6 @@
-package com.javamentor.qa.platform.dao.impl.pagination.user;
+package com.javamentor.qa.platform.dao.impl.dto.pagination.user;
 
-import com.javamentor.qa.platform.dao.abstracts.pagination.PaginationDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.pagination.PaginationDao;
 import com.javamentor.qa.platform.dao.impl.dto.transformers.UserDtoListTranformer;
 import com.javamentor.qa.platform.models.dto.UserDtoList;
 import org.hibernate.Session;

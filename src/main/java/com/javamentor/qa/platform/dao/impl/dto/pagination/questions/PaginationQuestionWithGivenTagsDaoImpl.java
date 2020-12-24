@@ -1,6 +1,6 @@
-package com.javamentor.qa.platform.dao.impl.pagination.questions;
+package com.javamentor.qa.platform.dao.impl.dto.pagination.questions;
 
-import com.javamentor.qa.platform.dao.abstracts.pagination.PaginationDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.pagination.PaginationDao;
 import com.javamentor.qa.platform.dao.impl.dto.transformers.QuestionResultTransformer;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import org.hibernate.Session;

@@ -1,6 +1,6 @@
-package com.javamentor.qa.platform.dao.impl.pagination.questions;
+package com.javamentor.qa.platform.dao.impl.dto.pagination.questions;
 
-import com.javamentor.qa.platform.dao.abstracts.pagination.PaginationDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.pagination.PaginationDao;
 import com.javamentor.qa.platform.dao.impl.dto.transformers.QuestionResultTransformer;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import org.hibernate.Session;
@@ -20,15 +20,6 @@ public class PaginationQuestionOrderByNewDaoImpl implements PaginationDao<Questi
 
     @Override
     public List<QuestionDto> getItems(Map<String, Object> parameters) {
-
-        int page = (int) parameters.get("page");
-        int size = (int) parameters.get("size");
-
-        List<Long> questionsIds = (List<Long>) em.createQuery("select question from Question question")
-                .setFirstResult((page - 1) * size)
-                .setMaxResults(size)
-                .getResultList();
-
         return (List<QuestionDto>) em.unwrap(Session.class)
                 .createQuery("select question.id as question_id, " +
                         " question.title as question_title," +
@@ -46,7 +37,7 @@ public class PaginationQuestionOrderByNewDaoImpl implements PaginationDao<Questi
                         "INNER JOIN  question.user u" +
                         "  join question.tags tag" +
                         " where question_id IN :ids order by question.persistDateTime desc")
-                .setParameter("ids", questionsIds)
+                .setParameter("ids", parameters.get("questionIds"))
                 .unwrap(Query.class)
                 .setResultTransformer(new QuestionResultTransformer())
                 .getResultList();

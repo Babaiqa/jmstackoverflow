@@ -23,4 +23,14 @@ public class QuestionDaoImpl extends ReadWriteDaoImpl<Question, Long> implements
         return question.getTags();
     }
 
+    @SuppressWarnings(value = "unchecked")
+    @Override
+    public List<Long> getPaginationQuestionIds(int page, int size) {
+        return (List<Long>)entityManager
+                .createQuery("select question.id from Question question")
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
+    }
+
 }

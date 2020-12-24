@@ -1,8 +1,8 @@
-package com.javamentor.qa.platform.service.impl.pagination;
+package com.javamentor.qa.platform.service.impl.dto.pagination;
 
-import com.javamentor.qa.platform.dao.abstracts.pagination.PaginationDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.pagination.PaginationDao;
 import com.javamentor.qa.platform.models.dto.PageDto;
-import com.javamentor.qa.platform.service.abstracts.pagination.PaginationService;
+import com.javamentor.qa.platform.service.abstracts.dto.pagination.PaginationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Map;
@@ -10,12 +10,8 @@ import java.util.Map;
 @Service
 public class PaginationServiceImpl<T, V> implements PaginationService<T,V> {
 
-    private final Map<String, PaginationDao> pageBean;
-
     @Autowired
-    public PaginationServiceImpl(Map<String, PaginationDao> pageBean) {
-        this.pageBean = pageBean;
-    }
+    private  Map<String, PaginationDao<T>> pageBean;
 
     @Override
     public PageDto<T, V> getPageDto(String methodName, Map<String, Object> parameters) {

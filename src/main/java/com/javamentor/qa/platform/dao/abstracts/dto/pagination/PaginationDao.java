@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.dao.abstracts.pagination;
+package com.javamentor.qa.platform.dao.abstracts.dto.pagination;
 
 import java.util.List;
 import java.util.Map;

@@ -1,11 +1,10 @@
 package com.javamentor.qa.platform.service.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.QuestionDtoDao;
-import com.javamentor.qa.platform.dao.impl.model.QuestionDaoImpl;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
-import com.javamentor.qa.platform.service.abstracts.pagination.PaginationService;
+import com.javamentor.qa.platform.service.impl.dto.pagination.question.PaginationQuestionDtoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,20 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 @Service
-public class QuestionDtoServiceImpl implements QuestionDtoService {
+public class QuestionDtoServiceImpl extends PaginationQuestionDtoService implements QuestionDtoService{
 
     private final QuestionDtoDao questionDtoDao;
-    private QuestionDaoImpl questionDao;
-    private final PaginationService<QuestionDto, Object> paginationService;
 
     @Autowired
-    public QuestionDtoServiceImpl(QuestionDtoDao questionDtoDao,
-                                  QuestionDaoImpl questionDao,
-                                  PaginationService<QuestionDto, Object> paginationService) {
-
+    public QuestionDtoServiceImpl(QuestionDtoDao questionDtoDao) {
         this.questionDtoDao = questionDtoDao;
-        this.questionDao = questionDao;
-        this.paginationService = paginationService;
     }
 
     @Transactional
@@ -35,44 +27,44 @@ public class QuestionDtoServiceImpl implements QuestionDtoService {
     }
 
     public PageDto<QuestionDto, Object> getPagination(int page, int size) {
-        return paginationService.getPageDto(
+        return getPageDto(
                 "paginationQuestion",
                 setPaginationParameters(page, size, Optional.empty(), Optional.empty()));
     }
 
     public PageDto<QuestionDto, Object> getPaginationPopular(int page, int size) {
-        return paginationService.getPageDto(
+        return getPageDto(
                 "paginationQuestionByPopular",
                 setPaginationParameters(page, size, Optional.empty(), Optional.empty()));
     }
 
     public PageDto<QuestionDto, Object> getPaginationOrderedNew(int page, int size) {
-        return paginationService.getPageDto(
+        return getPageDto(
                 "paginationQuestionOrderByNew",
                 setPaginationParameters(page, size, Optional.empty(), Optional.empty()));
     }
 
     public PageDto<QuestionDto, Object> getPaginationWithoutAnswers(int page, int size) {
-        return paginationService.getPageDto(
+        return getPageDto(
                 "paginationQuestionWithoutAnswers",
                 setPaginationParameters(page, size, Optional.empty(), Optional.empty()));
     }
 
     public PageDto<QuestionDto, Object> getPAginationWithGivenTags(int page, int size, List<Long> tagIds) {
-        return paginationService.getPageDto(
+        return getPageDto(
                 "paginationQuestionWithGivenTags",
                 setPaginationParameters(page, size, Optional.ofNullable(tagIds), Optional.empty()));
     }
 
     public PageDto<QuestionDto, Object> getPaginationWithoutTags(int page, int size, List<Long> tagIds) {
-        return paginationService.getPageDto(
+        return getPageDto(
                 "paginationQuestionWithoutTags",
                 setPaginationParameters(page, size, Optional.ofNullable(tagIds), Optional.empty()));
     }
 
     @Override
     public PageDto<QuestionDto, Object> getQuestionBySearchValue(String message, int page, int size) {
-        return paginationService.getPageDto(
+        return getPageDto(
                 "paginationQuestionBySearchValue",
                 setPaginationParameters(page, size, Optional.empty(), Optional.ofNullable(message)));
     }
