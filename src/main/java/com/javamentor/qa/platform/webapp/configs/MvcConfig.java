@@ -20,7 +20,6 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addViewController("/unansweredAria").setViewName("headerSidebarFooter");
     }
 
-
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**")

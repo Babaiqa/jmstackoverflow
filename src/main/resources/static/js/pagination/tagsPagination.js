@@ -7,15 +7,24 @@ class PaginationTag {
 
         this.tagService = new TagService();
 
-        if(this.sort == 'name'){
+        if (this.sort == 'name') {
             this.tags = this.tagService.getTagDtoPaginationOrderByAlphabet(this.page, this.size);
-        }
-        else if(this.sort == 'new'){
+        } else if (this.sort == 'new') {
             this.tags = this.tagService.getTagRecentDtoPagination(this.page, this.size);
-        }
-        else {
+        } else {
             this.tags = this.tagService.getTagListDtoByPopularPagination(this.page, this.size);
         }
+    }
+
+    search() {
+        $(document).ready(function () {
+            $("#inputFilter").on("keyup", function () {
+                const value = $(this).val().toLowerCase();
+                $('#tagsTable *').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
     }
 
     writeTags() {
