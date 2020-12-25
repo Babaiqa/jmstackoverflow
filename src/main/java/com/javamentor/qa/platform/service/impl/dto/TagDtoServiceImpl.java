@@ -3,129 +3,93 @@ package com.javamentor.qa.platform.service.impl.dto;
 import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.pagination.PaginationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class TagDtoServiceImpl implements TagDtoService {
 
     private final TagDtoDao tagDtoDao;
+    private final PaginationService<TagDto, Object> paginationServiceTagDto;
+    private final PaginationService<TagRecentDto, Object> paginationServiceRecentTag;
+    private final PaginationService<TagListDto, Object> paginationServiceTagListDto;
 
     @Autowired
-    public TagDtoServiceImpl(TagDtoDao tagDtoDao) {
+    public TagDtoServiceImpl(TagDtoDao tagDtoDao,
+                             PaginationService<TagDto, Object> paginationServiceTagDto,
+                             PaginationService<TagRecentDto, Object> paginationServiceRecentTag,
+                             PaginationService<TagListDto, Object> paginationServiceTagListDto) {
         this.tagDtoDao = tagDtoDao;
+        this.paginationServiceTagDto = paginationServiceTagDto;
+        this.paginationServiceRecentTag = paginationServiceRecentTag;
+        this.paginationServiceTagListDto = paginationServiceTagListDto;
     }
 
     @Override
     public PageDto<TagDto, Object> getTagDtoPaginationByPopular(int page, int size) {
-
-        PageDto<TagDto, Object> pageDto = new PageDto<>();
-
-        int totalResultCount = tagDtoDao.getTotalResultCountTagDto();
-
-        pageDto.setItems(tagDtoDao.getTagDtoPagination(page, size));
-        pageDto.setTotalResultCount(totalResultCount);
-        pageDto.setCurrentPageNumber(page);
-        pageDto.setItemsOnPage(size);
-        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount / (double) size));
-
-        return pageDto;
+        return paginationServiceTagDto.getPageDto(
+                "paginationTagsByPopular",
+                setPaginationParameters(page, size, Optional.empty(), Optional.empty()));
     }
 
 
     @Override
     public PageDto<TagListDto, Object> getTagListDtoByPopularPagination(int page, int size) {
-
-        PageDto<TagListDto, Object> pageDto = new PageDto<>();
-
-        int totalResultCount = tagDtoDao.getTotalResultCountTagDto();
-
-        pageDto.setItems(tagDtoDao.getTagListDtoByPopularPagination(page, size));
-        pageDto.setTotalResultCount(totalResultCount);
-        pageDto.setCurrentPageNumber(page);
-        pageDto.setItemsOnPage(size);
-        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount / (double) size));
-
-        return pageDto;
+        return paginationServiceTagListDto.getPageDto(
+                "paginationTagsByOrderPopular",
+                setPaginationParameters(page, size, Optional.empty(), Optional.empty()));
     }
 
     @Override
     public PageDto<TagListDto, Object> getTagDtoPaginationOrderByAlphabet(int page, int size) {
-
-        PageDto<TagListDto, Object> pagelistDto = new PageDto<>();
-
-        int totalResultCount = tagDtoDao.getTotalResultCountTagDto();
-
-        pagelistDto.setItems(tagDtoDao.getTagDtoPaginationOrderByAlphabet(page, size));
-        pagelistDto.setTotalResultCount(totalResultCount);
-        pagelistDto.setCurrentPageNumber(page);
-        pagelistDto.setItemsOnPage(size);
-        pagelistDto.setTotalPageCount((int) Math.ceil(totalResultCount / (double) size));
-
-        return pagelistDto;
+        return paginationServiceTagListDto.getPageDto(
+                "paginationTagsOrderByAlphabet",
+                setPaginationParameters(page, size, Optional.empty(), Optional.empty()));
     }
 
     @Override
     public PageDto<TagRecentDto, Object> getTagRecentDtoPagination(int page, int size) {
-
-        PageDto<TagRecentDto, Object> pageDto = new PageDto<>();
-
-        int totalResultCount = tagDtoDao.getTotalResultCountTagDto();
-
-        pageDto.setItems(tagDtoDao.getTagRecentDtoPagination(page, size));
-        pageDto.setTotalResultCount(totalResultCount);
-        pageDto.setCurrentPageNumber(page);
-        pageDto.setItemsOnPage(size);
-        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount / (double) size));
-
-        return pageDto;
+        return paginationServiceRecentTag.getPageDto(
+                "paginationTagsRecent",
+                setPaginationParameters(page, size, Optional.empty(), Optional.empty()));
     }
 
     @Override
     public PageDto<TagRecentDto, Object> getTagRecentDtoChildTagById(int page, int size, Long tagId) {
-        PageDto<TagRecentDto, Object> pageDto = new PageDto<>();
-
-        int totalResultCount = tagDtoDao.getTotalResultChildTag(tagId);
-
-        pageDto.setItems(tagDtoDao.getTagRecentDtoChildTagById(page, size, tagId));
-        pageDto.setTotalResultCount(totalResultCount);
-        pageDto.setCurrentPageNumber(page);
-        pageDto.setItemsOnPage(size);
-        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount / (double) size));
-
-        return pageDto;
+        return paginationServiceRecentTag.getPageDto(
+                "paginationTagsRecentById",
+                setPaginationParameters(page, size, Optional.empty(), Optional.ofNullable(tagId)));
     }
 
 
     @Override
     public PageDto<TagListDto, Object> getTagDtoPaginationWithSearch(int page, int size, String tagName) {
-
-        PageDto<TagListDto, Object> pageDto = new PageDto<>();
-
-        int totalResultCount = tagDtoDao.getTotalCountTag(tagName);
-
-        pageDto.setItems(tagDtoDao.getTagListDtoPagination(page, size, tagName));
-        pageDto.setTotalResultCount(totalResultCount);
-        pageDto.setCurrentPageNumber(page);
-        pageDto.setItemsOnPage(size);
-        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount / (double) size));
-
-        return pageDto;
+        return paginationServiceTagListDto.getPageDto(
+                "paginationTagsWithNameSearch",
+                setPaginationParameters(page, size, Optional.ofNullable(tagName), Optional.empty()));
     }
 
     @Override
     public PageDto<TagListDto, Object> getTagListDtoPaginationOrderByNewTag(int page, int size) {
-        PageDto<TagListDto, Object> pageDto = new PageDto<>();
-        int totalResultCount = tagDtoDao.getTotalResultCountTagDto();
+        return paginationServiceTagListDto.getPageDto(
+                "paginationTagsOrderByNewTag",
+                setPaginationParameters(page, size, Optional.empty(), Optional.empty()));
+    }
 
-        pageDto.setItems(tagDtoDao.getTagListDtoPaginationOrderByNewTag(page, size));
-        pageDto.setTotalResultCount(totalResultCount);
-        pageDto.setCurrentPageNumber(page);
-        pageDto.setItemsOnPage(size);
-        pageDto.setTotalPageCount((int) Math.ceil(totalResultCount/(double)size));
+    private Map<String, Object> setPaginationParameters(int page, int size, Optional<String> name, Optional<Long> tagId) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("page", page);
+        parameters.put("size", size);
+        parameters.put("tagName", name.orElse(""));
+        parameters.put("tagId", tagId.orElse(0L));
 
-        return pageDto;
+        return parameters;
     }
 
     @Override

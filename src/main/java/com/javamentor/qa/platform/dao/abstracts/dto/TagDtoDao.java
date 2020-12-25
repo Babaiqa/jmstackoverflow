@@ -1,29 +1,9 @@
 package com.javamentor.qa.platform.dao.abstracts.dto;
 
 import com.javamentor.qa.platform.models.dto.*;
-
 import java.util.List;
 
 public interface TagDtoDao {
-    List<TagDto> getTagDtoPagination(int page, int size);
-
-    List<TagListDto> getTagDtoPaginationOrderByAlphabet(int page, int size);
-
-    List<TagListDto> getTagListDtoPaginationOrderByNewTag(int page, int size);
-
-    List<TagListDto> getTagListDtoByPopularPagination(int page, int size);
-
-    List<TagRecentDto> getTagRecentDtoPagination(int page, int size);
-
-    int getTotalResultCountTagDto();
-
-    List<TagListDto> getTagListDtoPagination(int page, int size, String tagName);
-
-    int getTotalCountTag(String tagName);
-
-    List<TagRecentDto> getTagRecentDtoChildTagById(int page, int size, Long id);
-
-    int getTotalResultChildTag(Long id);
 
     List<IgnoredTagDto> getIgnoredTagsByPrincipal(Long id);
 
