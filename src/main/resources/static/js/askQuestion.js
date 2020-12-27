@@ -13,3 +13,53 @@ document.querySelector('.tip-button-3').onclick = function () {
 document.querySelector('.tip-button-4').onclick = function () {
     document.querySelector('.tip-text-4').classList.toggle('d-none');
 }
+
+let buttonAskQuestion = document.getElementById('buttonAskQuestion');
+let newQuestionId = 0;
+
+buttonAskQuestion.onclick = function (e) {
+    e.preventDefault();
+
+    let tagNames = $('#tags').val().split(' ');
+    let tags = [];
+
+    for (let i = 0; i < tagNames.length; i++) {
+
+        let str = '';
+
+        tags.push(
+            {
+                id: i + 1,
+                name: str + tagNames[i]
+            })
+    }
+
+    let questionCreateDto = {
+        title: $('#questionTitle').val(),
+        userId: 153,
+        description: $('#text').val(),
+        tags: tags
+    };
+
+    if (!fetch('http://localhost:5557/api/question/add', {
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json;charset=utf-8'
+        },
+        body: JSON.stringify(questionCreateDto)
+    }).then(response => response.json()
+    ).then(question => {
+        newQuestionId = question.id;
+        let message = 'Ваш вопрос добавлен с id=' + newQuestionId;
+        alert(message);
+        goToNewQuestionPage(newQuestionId);
+    })) {
+        alert('Вопрос не был добавлен');
+    }
+}
+
+function goToNewQuestionPage(questionId) {
+
+    fetch('http://localhost:5557/api/question/' + questionId);
+}
+
