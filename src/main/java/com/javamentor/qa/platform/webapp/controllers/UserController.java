@@ -62,19 +62,6 @@ public class UserController {
 
    }
 
-    @PostMapping("registration")
-    @Validated(OnCreate.class)
-    public ResponseEntity<?> createUser(@Valid @RequestBody UserRegistrationDto userRegistrationDto ) {
-        if (!userService.getUserByEmail(userRegistrationDto.getEmail()).isPresent()) {
-            User us = userConverter.userDtoToUser(userRegistrationDto);
-            userService.persist(us);
-            return ResponseEntity.ok(userConverter.userToDto(us));
-        } else {
-            return ResponseEntity.badRequest().body("User with email " + userRegistrationDto.getEmail() +
-                    " already exist");
-        }
-    }
-
     @GetMapping("order/reputation/week")
     @ApiOperation(value = "Get page List<UserDtoList> order by reputation over week." +
             "UserDtoList contains List<TagDto> with size 3 " +
