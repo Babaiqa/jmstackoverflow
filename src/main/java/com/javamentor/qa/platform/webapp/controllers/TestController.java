@@ -8,8 +8,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 public class TestController {
 
-    @GetMapping("/site")
+    @GetMapping("/test")
     public String test(){
         return "headerSidebarFooter";
+    }
+
+    @GetMapping("/login")
+    public String login(){
+        return "login";
     }
 }
