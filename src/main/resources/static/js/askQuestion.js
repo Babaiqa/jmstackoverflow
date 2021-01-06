@@ -37,7 +37,7 @@ buttonAskQuestion.onclick = function (e) {
     let questionCreateDto = {
         title: $('#questionTitle').val(),
         userId: 153,
-        description: $('#text').val(),
+        description: 'description',
         tags: tags
     };
 
@@ -50,16 +50,9 @@ buttonAskQuestion.onclick = function (e) {
     }).then(response => response.json()
     ).then(question => {
         newQuestionId = question.id;
-        let message = 'Ваш вопрос добавлен с id=' + newQuestionId;
-        alert(message);
-        goToNewQuestionPage(newQuestionId);
+        window.location.href = 'http://localhost:5557/api/question/' + newQuestionId;
     })) {
         alert('Вопрос не был добавлен');
     }
-}
-
-function goToNewQuestionPage(questionId) {
-
-    fetch('http://localhost:5557/api/question/' + questionId);
 }
 
