@@ -58,8 +58,16 @@ class TagService {
 
     getTagName(name, page, size) {
         let query = '/api/tag/name?name=' + name + '&page=' + page + '&size=' + size;
-        return this.getResponse(query);
-
+        return fetch(query)
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    let error = new Error();
+                    error.response = response.text();
+                    throw error;
+                }
+            }).catch(error => error.response.then(message => console.log(message)));
     }
 
     getResponse(query) {

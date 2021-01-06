@@ -12,4 +12,9 @@ public class TestController {
     public String test(){
         return "headerSidebarFooter";
     }
+
+    @GetMapping("/login")
+    public String login(){
+        return "login";
+    }
 }
