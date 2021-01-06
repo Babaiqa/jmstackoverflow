@@ -106,7 +106,7 @@ public class TestDataInitService {
             user.setLinkGitHub("http://github.com");
             user.setLinkVk("http://vk.com");
             user.setAbout("very good man");
-            user.setImageLink("https://www.google.com/search?q=%D0%");
+            user.setImageLink("https://pbs.twimg.com/profile_images/1182694005408186375/i5xT6juJ_400x400.jpg");
             user.setReputationCount(1);
             if (i == 0) user.setRole(ADMIN_ROLE);
             else user.setRole(USER_ROLE);
