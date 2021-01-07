@@ -4,7 +4,7 @@
 }
 
 .content-head {
-    background-image: url(static/images/askQuestion/background.svg);
+    background-image: url(../images/askQuestion/background.svg);
     background-repeat: no-repeat;
     background-position: right bottom;
 }
