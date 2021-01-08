@@ -1,17 +1,20 @@
 class PaginationTag {
 
-    constructor(page, size, sort) {
+    constructor(page, size, sort, name) {
         this.page = page;
         this.size = size;
         this.sort = sort;
+        this.name = name;
 
         this.tagService = new TagService();
 
-        if(this.sort == 'name'){
+        if (this.sort === 'name') {
             this.tags = this.tagService.getTagDtoPaginationOrderByAlphabet(this.page, this.size);
-        }
-        else if(this.sort == 'new'){
+        } else if (this.sort === 'new') {
             this.tags = this.tagService.getTagRecentDtoPagination(this.page, this.size);
+        }
+        else if (this.sort === 'search') {
+            this.tags = this.tagService.getTagName(this.name, this.page, this.size);
         }
         else {
             this.tags = this.tagService.getTagListDtoByPopularPagination(this.page, this.size);
@@ -19,10 +22,10 @@ class PaginationTag {
     }
 
     writeTags() {
-
         $('#tagsTable').children().remove()
 
         this.tags.then(function (response) {
+
             for (var i = 0; i < response.items.length; i++) {
                 $('#tagsTable').append(
                     " <div class=\"child\">"
@@ -41,55 +44,57 @@ class PaginationTag {
     }
 
     tagsPageNavigation() {
-        var size = this.size;
-        var sort = this.sort;
+        const size = this.size;
+        const sort = this.sort;
+        const name = this.name;
+
 
         this.tags.then(function (response) {
-            var currentPageNumber = response.currentPageNumber;
-            var nextPage = response.currentPageNumber + 1;
-            var secondNextPage = response.currentPageNumber + 2;
-            var totalPageCount = response.totalPageCount;
-            var previousPage = response.currentPageNumber - 1;
+            const currentPageNumber = response.currentPageNumber;
+            const nextPage = response.currentPageNumber + 1;
+            const secondNextPage = response.currentPageNumber + 2;
+            const totalPageCount = response.totalPageCount;
+            const previousPage = response.currentPageNumber - 1;
 
 
             $('#tagsPagesNavigation').children().remove();
-            if (currentPageNumber != 1) {
+            if (currentPageNumber !== 1) {
                 $('#tagsPagesNavigation').append(
-                    "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + previousPage + "," + size + "," + "\"" + sort + "\"" + ").writeTags()' >Назад</a></li>"
+                    "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + previousPage + "," + size + "," + "\"" + sort + "\"" + "," + "\""  + name  + "\"" + ").writeTags()' >Назад</a></li>"
                 );
             }
 
-            if (currentPageNumber == totalPageCount) {
+            if (currentPageNumber === totalPageCount) {
                 $('#tagsPagesNavigation').append(
                     "<li class=\"page-item active\"><a class=\"page-link\" href=\"#\" >" + currentPageNumber + "</a></li>"
                 );
             }
 
-            if (nextPage == totalPageCount) {
+            if (nextPage === totalPageCount) {
                 $('#tagsPagesNavigation').append(
                     "<li class=\"page-item active\"><a class=\"page-link\" href=\"#\" >" + currentPageNumber + "</a></li>"
-                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\"" + ").writeTags()'>" + nextPage + "</a></li>"
-                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\"" + ").writeTags()'>" + "Далее" + "</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\"" + "," + "\""  + name  + "\"" + ").writeTags()'>" + nextPage + "</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\"" + "," +  "\""  + name  + "\"" + ").writeTags()'>" + "Далее" + "</a></li>"
                 );
             }
 
-            if (secondNextPage == totalPageCount) {
+            if (secondNextPage === totalPageCount) {
                 $('#tagsPagesNavigation').append(
                     "<li class=\"page-item active\"><a class=\"page-link\" href=\"#\" >" + currentPageNumber + "</a></li>"
-                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\"" + ").writeTags()'>" + nextPage + "</a></li>"
-                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + secondNextPage + "," + size + "," + "\"" + sort + "\"" + ").writeTags()'>" + secondNextPage + "</a></li>"
-                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\"" + ").writeTags()'>" + "Далее" + "</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\"" + "," + "\""  + name  + "\"" + ").writeTags()'>" + nextPage + "</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + secondNextPage + "," + size + ","  + "\"" + sort + "\"" + "," + "\""  + name  + "\"" + ").writeTags()'>" + secondNextPage + "</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + ","  + "\"" + sort + "\"" + "," + "\""  + name  + "\"" + ").writeTags()'>" + "Далее" + "</a></li>"
                 );
             }
 
             if (secondNextPage < totalPageCount) {
                 $('#tagsPagesNavigation').append(
                     "<li class=\"page-item active\"><a class=\"page-link\" href=\"#\" >" + currentPageNumber + "</a></li>"
-                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\"" + ").writeTags()'>" + nextPage + "</a></li>"
-                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + secondNextPage + "," + size + "," + "\"" + sort + "\"" + ").writeTags()'>" + secondNextPage + "</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\"" + "," + "\""  + name  + "\"" + ").writeTags()'>" + nextPage + "</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + secondNextPage + "," + size + "," + "\"" + sort + "\"" + "," + "\""  + name  + "\"" + ").writeTags()'>" + secondNextPage + "</a></li>"
                     + "<li class=\"page-item\"><span class='mr-2 ml-2'>" + "..." + "</span></li>"
-                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + totalPageCount + "," + size + "," + "\"" + sort + "\"" + ").writeTags()'>" + totalPageCount + "</a></li>"
-                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\"" + ").writeTags()'>" + "Далее" + "</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + totalPageCount + "," + size + "," + "\"" + sort + "\"" + "," + "\""  + name  + "\"" + ").writeTags()'>" + totalPageCount + "</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + nextPage + "," + size + "," + "\"" + sort + "\"" + "," + "\""  + name  + "\"" + ").writeTags()'>" + "Далее" + "</a></li>"
                 );
             }
         })

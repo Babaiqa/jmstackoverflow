@@ -16,8 +16,9 @@ class PaginationQuestionWithoutAnswer {
 
                 var text = new String('');
 
-                for (var c = 0; c < response.items[i].listTagDto.length; c++) {
-                    text = text + "<a href=\"#\" class=\"tag\"> " + response.items[i].listTagDto[c].name + " </a>"
+                for (var c = 0; c < 5; c++) {
+                    let random = Math.floor(Math.random() * response.items[i].listTagDto.length)
+                    text = text + "<a href=\"#\" class=\"tag\"> " + response.items[i].listTagDto[random].name + " </a>"
                 }
 
 

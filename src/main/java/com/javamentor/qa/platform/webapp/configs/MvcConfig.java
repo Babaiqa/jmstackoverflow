@@ -10,6 +10,7 @@ public class MvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("login");
         registry.addViewController("/index").setViewName("index");
         registry.addViewController("/ask").setViewName("askQuestion");
         registry.addViewController("/site").setViewName("headerSidebarFooter");
@@ -18,7 +19,6 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addViewController("/questionAria").setViewName("headerSidebarFooter");
         registry.addViewController("/unansweredAria").setViewName("headerSidebarFooter");
     }
-
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
