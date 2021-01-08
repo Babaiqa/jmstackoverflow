@@ -15,9 +15,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @RestController
 @Validated
@@ -70,7 +67,7 @@ public class RegistrationController {
         try {
             User user = userService.getUserByName(jwtUtils.getUsernameFromToken(token)).get();
             user.setIsEnabled(true);
-            userService.persist(user);
+            userService.update(user);
             return ResponseEntity.ok().body(userConverter.userToDto(user));
         } catch (Exception e){
             e.printStackTrace();
