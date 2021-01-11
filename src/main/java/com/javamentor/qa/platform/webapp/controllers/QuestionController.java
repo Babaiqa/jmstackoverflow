@@ -2,14 +2,17 @@ package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.models.entity.question.Tag;
+import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import com.javamentor.qa.platform.webapp.converters.TagMapper;
 import com.javamentor.qa.platform.webapp.converters.UserConverter;
@@ -25,7 +28,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +41,8 @@ public class QuestionController {
     private final TagMapper tagMapper;
     private final TagService tagService;
     private final UserDtoService userDtoService;
+    private final AnswerService answerService;
+    private final AnswerConverter answerConverter;
 
     private final QuestionDtoService questionDtoService;
 
@@ -46,12 +50,14 @@ public class QuestionController {
 
     @Autowired
     public QuestionController(QuestionService questionService, TagMapper tagMapper, TagService tagService,
-                              QuestionDtoService questionDtoService, UserDtoService userDtoService) {
+                              QuestionDtoService questionDtoService, UserDtoService userDtoService, AnswerService answerService, AnswerConverter answerConverter) {
         this.questionService = questionService;
         this.tagMapper = tagMapper;
         this.tagService = tagService;
         this.questionDtoService = questionDtoService;
         this.userDtoService = userDtoService;
+        this.answerService = answerService;
+        this.answerConverter = answerConverter;
     }
 
     @Autowired
@@ -329,5 +335,30 @@ public class QuestionController {
         PageDto<QuestionDto, Object> resultPage =
                 questionDtoService.getQuestionBySearchValue(questionSearchDto.getMessage(), page, size);
         return ResponseEntity.ok(resultPage);
+    }
+
+
+    @PostMapping("{questionId}/answer")
+    @ApiOperation(value = "Add answer", notes = "This method Add answer to question and return AnswerDto")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Answer was added", response = AnswerDto.class),
+            @ApiResponse(code = 400, message = "Question or user not found", response = String.class)
+    })
+
+    public ResponseEntity<?> addAnswerToQuestion(@Valid @RequestBody CreateAnswerDto createAnswerDto) {
+
+        Optional<User> user = userService.getById(createAnswerDto.getUserId());
+        if (!user.isPresent()) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        Optional<Question> question = questionService.getById(createAnswerDto.getQuestionId());
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question not found");
+        }
+
+        Answer answer = answerService.addAnswerToQuestion(createAnswerDto.getBody(), question.get(), user.get());
+
+        return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
     }
 }
