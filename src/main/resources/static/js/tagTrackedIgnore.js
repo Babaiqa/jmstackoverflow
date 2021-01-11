@@ -1,21 +1,11 @@
 let requestURLTagTracked= 'http://localhost:5557/api/tag/tracked';
 let requestURLTagIgnore= 'http://localhost:5557/api/tag/ignored';
-<<<<<<< HEAD
 let tokenCookie = document.cookie.replace("token=", "")
 
 function sendRequestTagTracked(method, url, body = null) {
     return fetch(url, {
         headers: new Headers({
             'Authorization': tokenCookie,
-=======
-let token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpdmFub3ZAbWFpbC5jb20yMyIsImlhdCI6MTYxMDM2NDA0MCwiZXhwIjoxNjEwNDUwNDQwfQ.c0G954GHTFYNbsRRtnHAmB7gCFiFEsn67iOTjsw1XGI'
-
-// Токен который получен ранее от ivanov@mail.com23 через Postman(обновить)
-function sendRequestTagTracked(method, url, body = null) {
-    return fetch(url, {
-        headers: new Headers({
-            'Authorization': 'Bearer_' + token,
->>>>>>> origin/front-functional-tag-ignore-tracked
             'Content-Type': 'application/json'})}
     ).then(response => {
         if (response.ok) {
@@ -33,26 +23,16 @@ sendRequestTagTracked('GET', requestURLTagTracked)
     .then(textUserTagTracked => {
         if (textUserTagTracked !== null && textUserTagTracked !== {}) {
             document.querySelector('#listTagTracked').innerHTML = JSON.stringify(textUserTagTracked[0]['name'])
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/front-functional-tag-ignore-tracked
         }
     })
     .catch(err => console.log(err))
 
-<<<<<<< HEAD
 
 function sendRequestTagIgnore(method, url, body = null) {
     return fetch(url, {
         headers: new Headers({
             'Authorization': tokenCookie,
-=======
-function sendRequestTagIgnore(method, url, body = null) {
-    return fetch(url, {
-        headers: new Headers({
-            'Authorization': 'Bearer_' + token,
->>>>>>> origin/front-functional-tag-ignore-tracked
             'Content-Type': 'application/json'})}
     ).then(response => {
         if (response.ok) {
