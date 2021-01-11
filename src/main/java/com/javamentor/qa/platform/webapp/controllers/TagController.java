@@ -1,9 +1,12 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
+import com.javamentor.qa.platform.dao.abstracts.model.TrackedTagDao;
 import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.entity.question.TrackedTag;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.TrackedTagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -11,6 +14,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -24,14 +28,17 @@ public class TagController {
     private final TagDtoService tagDtoService;
     private final UserDtoService userDtoService;
     private final SecurityHelper securityHelper;
+    private final TrackedTagDao trackedTagDao;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
-    public TagController(TagDtoService tagDtoService, UserDtoService userDtoService, SecurityHelper securityHelper) {
+    public TagController(TagDtoService tagDtoService, UserDtoService userDtoService, SecurityHelper securityHelper,
+                         TrackedTagDao trackedTagDao) {
         this.tagDtoService = tagDtoService;
         this.userDtoService = userDtoService;
         this.securityHelper = securityHelper;
+        this.trackedTagDao = trackedTagDao;
     }
 
     @GetMapping("popular")
@@ -218,6 +225,20 @@ public class TagController {
         List<TrackedTagDto> tags =
                 tagDtoService.getTrackedTagsByPrincipal(securityHelper.getPrincipal().getId());
         return ResponseEntity.ok(tags);
+    }
+
+
+    @Transactional
+    @DeleteMapping(value = "{id}/delete")
+    @ApiOperation(value = "Delete Tracked Tag by id", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Tracked Tag was deleted.", response = String.class),
+            @ApiResponse(code = 400, message = "Tracked tag was not found", response = String.class)
+    })
+    public ResponseEntity<?> deleteTrackedTagById(@ApiParam(name = "id") @PathVariable Long id) {
+        trackedTagDao.deleteById(id);
+
+        return ResponseEntity.ok("Tracked Tag with ID = " + id + " was deleted");
     }
 }
 

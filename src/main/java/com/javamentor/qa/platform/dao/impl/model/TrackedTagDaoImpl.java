@@ -27,4 +27,14 @@ public class TrackedTagDaoImpl extends ReadWriteDaoImpl<TrackedTag, Long>  imple
     public void addTrackedTag(TrackedTag trackedTag) {
         entityManager.persist(trackedTag);
     }
+
+//    @Override
+//    public void deleteTrackedTagById(Long id) {
+////        TrackedTag tag = entityManager.find(TrackedTag.class, id);
+//
+//        entityManager.createQuery("delete from TrackedTag t where t.id=:id")
+//                .setParameter("id", id)
+//                .executeUpdate();
+//
+//    }
 }

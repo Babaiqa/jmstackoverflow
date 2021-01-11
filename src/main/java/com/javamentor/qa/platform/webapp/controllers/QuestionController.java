@@ -3,13 +3,15 @@ package com.javamentor.qa.platform.webapp.controllers;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
+import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
+import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 
-import com.javamentor.qa.platform.service.abstracts.model.TagService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.webapp.converters.AnswerVoteConverter;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import com.javamentor.qa.platform.webapp.converters.TagMapper;
 import com.javamentor.qa.platform.webapp.converters.UserConverter;
@@ -39,6 +41,11 @@ public class QuestionController {
     private final TagMapper tagMapper;
     private final TagService tagService;
     private final UserDtoService userDtoService;
+    //vote
+    private final AnswerVoteService answerVoteService;
+    private final AnswerService answerService;
+    private final AnswerVoteConverter answerVoteConverter;
+
 
     private final QuestionDtoService questionDtoService;
 
@@ -46,12 +53,20 @@ public class QuestionController {
 
     @Autowired
     public QuestionController(QuestionService questionService, TagMapper tagMapper, TagService tagService,
-                              QuestionDtoService questionDtoService, UserDtoService userDtoService) {
+                              QuestionDtoService questionDtoService, UserDtoService userDtoService,
+                              AnswerVoteService answerVoteService,
+                              AnswerService answerService,
+                              AnswerVoteConverter answerVoteConverter) {
         this.questionService = questionService;
         this.tagMapper = tagMapper;
         this.tagService = tagService;
         this.questionDtoService = questionDtoService;
         this.userDtoService = userDtoService;
+        // vote
+        this.answerVoteService = answerVoteService;
+        this.answerService = answerService;
+        this.answerVoteConverter = answerVoteConverter;
+
     }
 
     @Autowired
@@ -330,4 +345,83 @@ public class QuestionController {
                 questionDtoService.getQuestionBySearchValue(questionSearchDto.getMessage(), page, size);
         return ResponseEntity.ok(resultPage);
     }
+
+    // upVote/downVote
+
+    @PatchMapping("/{questionId}/answer/{answerId}/upVote")
+    @ResponseBody
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Answer was up voted", response = String.class),
+            @ApiResponse(code = 400, message = "Question not found", response = String.class)
+    })
+    public ResponseEntity<?> answerUpVote(
+            @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
+            @PathVariable Long questionId,
+            @ApiParam(name = "answerId", value = "type Long", required = true, example = "0")
+            @PathVariable Long answerId,
+            @ApiParam(name = "UserId", value = "UserId. Type long", required = true, example = "1")
+            @RequestParam Long userId) {
+
+        if (questionId == null) {
+            return ResponseEntity.badRequest().body("Question id is null");
+        }
+
+        Optional<User> user = userService.getById(userId);
+        if (!user.isPresent()) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        Optional<Question> question = questionService.getById(questionId);
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question not found");
+        }
+
+        Optional<Answer> answer = answerService.getById(answerId);
+        if (!answer.isPresent()) {
+            return ResponseEntity.badRequest().body("Answer not found");
+        }
+
+        AnswerVote answerVote = answerVoteService.vote(user.get(), answer.get(), 1);
+
+        return ResponseEntity.ok(answerVoteConverter.answerVoteToAnswerVoteDto(answerVote));
+    }
+
+    @PatchMapping("/{questionId}/answer/{answerId}/downVote")
+    @ResponseBody
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Answer was up voted", response = String.class),
+            @ApiResponse(code = 400, message = "Question not found", response = String.class)
+    })
+    public ResponseEntity<?> answerDownVote(
+            @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
+            @PathVariable Long questionId,
+            @ApiParam(name = "answerId", value = "type Long", required = true, example = "0")
+            @PathVariable Long answerId,
+            @ApiParam(name = "UserId", value = "UserId. Type long", required = true, example = "1")
+            @RequestParam Long userId) {
+
+        if (questionId == null) {
+            return ResponseEntity.badRequest().body("Question id is null");
+        }
+
+        Optional<User> user = userService.getById(userId);
+        if (!user.isPresent()) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        Optional<Question> question = questionService.getById(questionId);
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question not found");
+        }
+
+        Optional<Answer> answer = answerService.getById(answerId);
+        if (!answer.isPresent()) {
+            return ResponseEntity.badRequest().body("Answer not found");
+        }
+
+        AnswerVote answerVote = answerVoteService.vote(user.get(), answer.get(), -1);
+
+        return ResponseEntity.ok(answerVoteConverter.answerVoteToAnswerVoteDto(answerVote));
+    }
+
 }
