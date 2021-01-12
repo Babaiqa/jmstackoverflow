@@ -12,22 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AnswerServiceImpl extends ReadWriteServiceImpl<Answer, Long> implements AnswerService {
 
-    private final AnswerDao answerDao;
-
-    public AnswerServiceImpl(ReadWriteDao<Answer, Long> readWriteDao, AnswerDao answerDao) {
+     public AnswerServiceImpl(ReadWriteDao<Answer, Long> readWriteDao) {
         super(readWriteDao);
-        this.answerDao = answerDao;
+     }
+
     }
 
-
-    @Transactional
-    @Override
-    public Answer addAnswerToQuestion(String htmlBody, Question question, User user) {
-        Answer answer = new Answer(question, user, htmlBody, false, false);
-        answer.setQuestion(question);
-
-        answerDao.persist(answer);
-
-        return answer;
-    }
-}
