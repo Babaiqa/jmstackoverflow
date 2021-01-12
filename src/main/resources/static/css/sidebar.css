@@ -128,3 +128,30 @@ a:hover {
 .nav-link-menu {
     width: 100%;
 }
+
+
+.tag-tracked-ignore-container {
+    margin-top:155px;
+    max-height: 400px;
+    max-width: 300px;
+    /*padding: 200px 10px 10px 10px;*/
+    /*border: 2px solid silver;*/
+}
+
+
+.tag-tracked-container {
+    margin-top:10px;
+    max-height: 300px;
+    max-width: 300px;
+    /*border: 2px solid silver;*/
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+.tag-ignore-container {
+    margin-top:10px;
+    max-height: 300px;
+    max-width: 300px;
+    /*border: 2px solid silver;*/
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
