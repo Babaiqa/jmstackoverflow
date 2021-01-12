@@ -6,6 +6,4 @@ import com.javamentor.qa.platform.models.entity.user.User;
 
 public interface AnswerVoteService extends ReadWriteService<AnswerVote, Long> {
 
-    AnswerVote vote(User user, Answer answer, int vote);
-
 }

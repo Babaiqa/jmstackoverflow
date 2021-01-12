@@ -7,6 +7,7 @@ import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
+import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.*;
@@ -41,10 +42,10 @@ public class QuestionController {
     private final TagMapper tagMapper;
     private final TagService tagService;
     private final UserDtoService userDtoService;
-    //vote
     private final AnswerVoteService answerVoteService;
     private final AnswerService answerService;
     private final AnswerVoteConverter answerVoteConverter;
+    private final SecurityHelper securityHelper;
 
 
     private final QuestionDtoService questionDtoService;
@@ -56,17 +57,17 @@ public class QuestionController {
                               QuestionDtoService questionDtoService, UserDtoService userDtoService,
                               AnswerVoteService answerVoteService,
                               AnswerService answerService,
-                              AnswerVoteConverter answerVoteConverter) {
+                              AnswerVoteConverter answerVoteConverter,
+                              SecurityHelper securityHelper) {
         this.questionService = questionService;
         this.tagMapper = tagMapper;
         this.tagService = tagService;
         this.questionDtoService = questionDtoService;
         this.userDtoService = userDtoService;
-        // vote
         this.answerVoteService = answerVoteService;
         this.answerService = answerService;
         this.answerVoteConverter = answerVoteConverter;
-
+        this.securityHelper = securityHelper;
     }
 
     @Autowired
@@ -346,27 +347,24 @@ public class QuestionController {
         return ResponseEntity.ok(resultPage);
     }
 
-    // upVote/downVote
-
     @PatchMapping("/{questionId}/answer/{answerId}/upVote")
     @ResponseBody
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Answer was up voted", response = String.class),
+            @ApiResponse(code = 200, message = "Answer was up voted", response = AnswerVoteDto.class),
             @ApiResponse(code = 400, message = "Question not found", response = String.class)
     })
     public ResponseEntity<?> answerUpVote(
             @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
             @PathVariable Long questionId,
             @ApiParam(name = "answerId", value = "type Long", required = true, example = "0")
-            @PathVariable Long answerId,
-            @ApiParam(name = "UserId", value = "UserId. Type long", required = true, example = "1")
-            @RequestParam Long userId) {
+            @PathVariable Long answerId) {
 
         if (questionId == null) {
             return ResponseEntity.badRequest().body("Question id is null");
         }
 
-        Optional<User> user = userService.getById(userId);
+
+        Optional<User> user = userService.getById(securityHelper.getPrincipal().getId());
         if (!user.isPresent()) {
             return ResponseEntity.badRequest().body("User not found");
         }
@@ -381,7 +379,8 @@ public class QuestionController {
             return ResponseEntity.badRequest().body("Answer not found");
         }
 
-        AnswerVote answerVote = answerVoteService.vote(user.get(), answer.get(), 1);
+        AnswerVote answerVote = new AnswerVote(user.get(), answer.get(), 1);
+        answerVoteService.persist(answerVote);
 
         return ResponseEntity.ok(answerVoteConverter.answerVoteToAnswerVoteDto(answerVote));
     }
@@ -389,22 +388,21 @@ public class QuestionController {
     @PatchMapping("/{questionId}/answer/{answerId}/downVote")
     @ResponseBody
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Answer was up voted", response = String.class),
+            @ApiResponse(code = 200, message = "Answer was up voted", response = AnswerVoteDto.class),
             @ApiResponse(code = 400, message = "Question not found", response = String.class)
     })
     public ResponseEntity<?> answerDownVote(
             @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
             @PathVariable Long questionId,
             @ApiParam(name = "answerId", value = "type Long", required = true, example = "0")
-            @PathVariable Long answerId,
-            @ApiParam(name = "UserId", value = "UserId. Type long", required = true, example = "1")
-            @RequestParam Long userId) {
+            @PathVariable Long answerId) {
 
         if (questionId == null) {
             return ResponseEntity.badRequest().body("Question id is null");
         }
 
-        Optional<User> user = userService.getById(userId);
+
+        Optional<User> user = userService.getById(securityHelper.getPrincipal().getId());
         if (!user.isPresent()) {
             return ResponseEntity.badRequest().body("User not found");
         }
@@ -419,9 +417,9 @@ public class QuestionController {
             return ResponseEntity.badRequest().body("Answer not found");
         }
 
-        AnswerVote answerVote = answerVoteService.vote(user.get(), answer.get(), -1);
+        AnswerVote answerVote = new AnswerVote(user.get(), answer.get(), -1);
+        answerVoteService.persist(answerVote);
 
         return ResponseEntity.ok(answerVoteConverter.answerVoteToAnswerVoteDto(answerVote));
     }
-
 }

@@ -227,7 +227,7 @@ public class TagController {
         return ResponseEntity.ok(tags);
     }
 
-
+ 
     @Transactional
     @DeleteMapping(value = "{id}/delete")
     @ApiOperation(value = "Delete Tracked Tag by id", response = String.class)
