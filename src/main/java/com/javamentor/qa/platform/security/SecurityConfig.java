@@ -44,6 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         http.exceptionHandling().authenticationEntryPoint(unauthenticatedHandler);
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests()
+                .antMatchers("/api/auth/authenticated").authenticated()
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/**").authenticated()
                 .anyRequest().permitAll();

@@ -66,4 +66,13 @@ public class AuthenticationController {
         return ResponseEntity.ok(securityHelper.getPrincipal());
     }
 
+    @GetMapping(value = "authenticated")
+    @ApiOperation(value = "current user is Authenticated?", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "User is Authenticated", response = String.class),
+    })
+    public ResponseEntity<?> auntheticatedCheck() {
+        return ResponseEntity.ok("User is Auntheticated");
+    }
+
 }

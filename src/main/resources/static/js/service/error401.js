@@ -1,7 +1,7 @@
 $( window ).bind('load',function() {
     var cookie = $.cookie("token");
     console.log(cookie)
-    fetch('api/user/1',{
+    fetch('http://localhost:5557/api/auth/authenticated',{
         method: 'GET',
         headers: new Headers({
             'Content-Type': 'application/json',
