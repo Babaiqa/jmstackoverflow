@@ -38,7 +38,7 @@ public class TestDataInitService {
     final IgnoredTagService ignoredTagService;
     final TrackedTagService trackedTagService;
 
-    int numberOfUsers = 50;
+    int numberOfUsers = 6;
     List<Tag> tagList = new ArrayList<>();
     Role USER_ROLE = Role.builder().name("USER").build();
     Role ADMIN_ROLE = Role.builder().name("ADMIN").build();
@@ -119,7 +119,7 @@ public class TestDataInitService {
 
             Question question = new Question();
             question.setTitle("Question Title" + i);
-            question.setViewCount(0);
+            question.setViewCount(i*5);
             question.setDescription("Question Description" + i);
             question.setUser(user);
             question.setTags(tagList);
@@ -128,7 +128,7 @@ public class TestDataInitService {
 
             Question questionNoAnswer = new Question();
             questionNoAnswer.setTitle("Question NoAnswer " + i);
-            questionNoAnswer.setViewCount(0);
+            questionNoAnswer.setViewCount(i*2);
             questionNoAnswer.setDescription("Question NoAnswer Description" + i);
             questionNoAnswer.setUser(user);
             questionNoAnswer.setTags(tagList);
