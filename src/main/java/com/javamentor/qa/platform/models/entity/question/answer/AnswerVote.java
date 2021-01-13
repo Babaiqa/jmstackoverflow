@@ -47,4 +47,10 @@ public class AnswerVote {
     @Column
     private Integer vote;
 
+    public AnswerVote(User user, Answer answer, int vote) {
+        this.user = user;
+        this.answer = answer;
+        this.vote = vote;
+    }
+
 }
