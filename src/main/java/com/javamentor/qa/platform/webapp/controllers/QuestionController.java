@@ -52,9 +52,7 @@ public class QuestionController {
     private final AnswerConverter answerConverter;
     private final SecurityHelper securityHelper;
     private final AnswerVoteService answerVoteService;
-    private final AnswerService answerService;
     private final AnswerVoteConverter answerVoteConverter;
-    private final SecurityHelper securityHelper;
 
 
     private final QuestionDtoService questionDtoService;
@@ -62,25 +60,26 @@ public class QuestionController {
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
-    public QuestionController(QuestionService questionService, TagMapper tagMapper, TagService tagService,
-                              QuestionDtoService questionDtoService, UserDtoService userDtoService, AnswerService answerService, AnswerConverter answerConverter, SecurityHelper securityHelper) {
-                              QuestionDtoService questionDtoService, UserDtoService userDtoService,
+    public QuestionController(QuestionService questionService,
+                              TagMapper tagMapper,
+                              TagService tagService,
+                              QuestionDtoService questionDtoService,
+                              UserDtoService userDtoService,
+                              AnswerConverter answerConverter,
+                              SecurityHelper securityHelper,
                               AnswerVoteService answerVoteService,
                               AnswerService answerService,
-                              AnswerVoteConverter answerVoteConverter,
-                              SecurityHelper securityHelper) {
+                              AnswerVoteConverter answerVoteConverter) {
         this.questionService = questionService;
         this.tagMapper = tagMapper;
         this.tagService = tagService;
         this.questionDtoService = questionDtoService;
         this.userDtoService = userDtoService;
-        this.answerService = answerService;
         this.answerConverter = answerConverter;
         this.securityHelper = securityHelper;
         this.answerVoteService = answerVoteService;
         this.answerService = answerService;
         this.answerVoteConverter = answerVoteConverter;
-        this.securityHelper = securityHelper;
     }
 
     @Autowired
@@ -368,8 +367,8 @@ public class QuestionController {
     })
 
     public ResponseEntity<?> addAnswerToQuestion(@Valid @RequestBody CreateAnswerDto createAnswerDto,
-    @ApiParam(name = "QuestionId", value = "QuestionId. Type long", required = true, example = "1")
-    @PathVariable Long questionId) {
+                                                 @ApiParam(name = "QuestionId", value = "QuestionId. Type long", required = true, example = "1")
+                                                 @PathVariable Long questionId) {
 
 
         Optional<User> user = userService.getById(securityHelper.getPrincipal().getId());
