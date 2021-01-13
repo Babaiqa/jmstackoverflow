@@ -29,5 +29,4 @@ public class PlatformApplication {
                 .paths(PathSelectors.any())
                 .build();
     }
-
 }

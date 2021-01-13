@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AnswerVoteServiceImpl extends ReadWriteServiceImpl<AnswerVote, Long> implements AnswerVoteService {
+
+
     public AnswerVoteServiceImpl(AnswerVoteDao answerVoteDao) {
         super(answerVoteDao);
     }
