@@ -4,16 +4,22 @@ import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.entity.question.Tag;
+import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
+import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
+import com.javamentor.qa.platform.webapp.converters.AnswerVoteConverter;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import com.javamentor.qa.platform.webapp.converters.TagMapper;
 import com.javamentor.qa.platform.webapp.converters.UserConverter;
@@ -45,6 +51,11 @@ public class QuestionController {
     private final AnswerService answerService;
     private final AnswerConverter answerConverter;
     private final SecurityHelper securityHelper;
+    private final AnswerVoteService answerVoteService;
+    private final AnswerService answerService;
+    private final AnswerVoteConverter answerVoteConverter;
+    private final SecurityHelper securityHelper;
+
 
     private final QuestionDtoService questionDtoService;
 
@@ -53,6 +64,11 @@ public class QuestionController {
     @Autowired
     public QuestionController(QuestionService questionService, TagMapper tagMapper, TagService tagService,
                               QuestionDtoService questionDtoService, UserDtoService userDtoService, AnswerService answerService, AnswerConverter answerConverter, SecurityHelper securityHelper) {
+                              QuestionDtoService questionDtoService, UserDtoService userDtoService,
+                              AnswerVoteService answerVoteService,
+                              AnswerService answerService,
+                              AnswerVoteConverter answerVoteConverter,
+                              SecurityHelper securityHelper) {
         this.questionService = questionService;
         this.tagMapper = tagMapper;
         this.tagService = tagService;
@@ -60,6 +76,10 @@ public class QuestionController {
         this.userDtoService = userDtoService;
         this.answerService = answerService;
         this.answerConverter = answerConverter;
+        this.securityHelper = securityHelper;
+        this.answerVoteService = answerVoteService;
+        this.answerService = answerService;
+        this.answerVoteConverter = answerVoteConverter;
         this.securityHelper = securityHelper;
     }
 
@@ -368,5 +388,81 @@ public class QuestionController {
         answerService.persist(answer);
 
         return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
+    }
+
+    @PatchMapping("/{questionId}/answer/{answerId}/upVote")
+    @ResponseBody
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Answer was up voted", response = AnswerVoteDto.class),
+            @ApiResponse(code = 400, message = "Question not found", response = String.class)
+    })
+    public ResponseEntity<?> answerUpVote(
+            @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
+            @PathVariable Long questionId,
+            @ApiParam(name = "answerId", value = "type Long", required = true, example = "0")
+            @PathVariable Long answerId) {
+
+        if (questionId == null) {
+            return ResponseEntity.badRequest().body("Question id is null");
+        }
+
+
+        Optional<User> user = userService.getById(securityHelper.getPrincipal().getId());
+        if (!user.isPresent()) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        Optional<Question> question = questionService.getById(questionId);
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question not found");
+        }
+
+        Optional<Answer> answer = answerService.getById(answerId);
+        if (!answer.isPresent()) {
+            return ResponseEntity.badRequest().body("Answer not found");
+        }
+
+        AnswerVote answerVote = new AnswerVote(user.get(), answer.get(), 1);
+        answerVoteService.persist(answerVote);
+
+        return ResponseEntity.ok(answerVoteConverter.answerVoteToAnswerVoteDto(answerVote));
+    }
+
+    @PatchMapping("/{questionId}/answer/{answerId}/downVote")
+    @ResponseBody
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Answer was up voted", response = AnswerVoteDto.class),
+            @ApiResponse(code = 400, message = "Question not found", response = String.class)
+    })
+    public ResponseEntity<?> answerDownVote(
+            @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
+            @PathVariable Long questionId,
+            @ApiParam(name = "answerId", value = "type Long", required = true, example = "0")
+            @PathVariable Long answerId) {
+
+        if (questionId == null) {
+            return ResponseEntity.badRequest().body("Question id is null");
+        }
+
+
+        Optional<User> user = userService.getById(securityHelper.getPrincipal().getId());
+        if (!user.isPresent()) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        Optional<Question> question = questionService.getById(questionId);
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question not found");
+        }
+
+        Optional<Answer> answer = answerService.getById(answerId);
+        if (!answer.isPresent()) {
+            return ResponseEntity.badRequest().body("Answer not found");
+        }
+
+        AnswerVote answerVote = new AnswerVote(user.get(), answer.get(), -1);
+        answerVoteService.persist(answerVote);
+
+        return ResponseEntity.ok(answerVoteConverter.answerVoteToAnswerVoteDto(answerVote));
     }
 }

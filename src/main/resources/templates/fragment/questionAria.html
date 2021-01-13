@@ -6,38 +6,82 @@
 </head>
 <body>
 <div th:fragment="questionAria" class="snippet-hidden align-self-start" id="questionAria">
-    <div> <!-- переставил отсюда клас на объединит страницу    -->
-        <div class="row">
-            <h2>Все вопросы</h2>
-            <button type="button" class="btn btn-primary float-right" href="#" id="askQuest">Задать вопрос</button>
+    <div class="row" >
+        <div class="col-md-8 col-xl-9  col-lg-9 col-sm-8">
+            <div> <!-- переставил отсюда клас на объединит страницу    -->
+                <div class="row">
+                    <h2>Все вопросы</h2>
+                    <button type="button" class="btn btn-primary float-right" href="#" id="askQuest">Задать вопрос</button>
+                </div>
+
+                <a href="#" id="questionsQuantity"></a>
+                <div class="nav-col btn-group  btn-block mr-0   ">
+                    <button type="button" class="btn  btn-sm   active " href="#">Новые</button>
+                    <button type="button" class="btn btn-sm" href="#">Текущие</button>
+                    <button type="button" class="btn btn-sm" href="#">Неотвеченные</button>
+                    <button type="button" class="btn  btn-sm " href="#">Конкурсные</button>
+                    <button type="button" class="btn  btn-sm overflow-hidden" href="#">Еще</button>
+                </div>
+                <ul class="nav justify-content-end m-3">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="new PaginationQuestion(1, 10, 'normal').setQuestions()">За неделю</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="new PaginationQuestion(1, 10, 'popular').setQuestions()">По
+                            популярности</a>
+                    </li>
+                </ul>
+
+                <a href="#" id="questionsTable" class="list-group-item list-group-item-action"></a>
+
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-end m-3" id="questionsPagesNavigation">
+                    </ul>
+                </nav>
+
+            </div>
+
         </div>
+        <div class="row-md-4 col-xl-3  col-lg-3 col-sm-4">
+            <div class="tag-tracked-ignore-container">
 
-        <a href="#" id="questionsQuantity"></a>
-        <div class="nav-col btn-group  btn-block mr-0   ">
-            <button type="button" class="btn  btn-sm   active " href="#">Новые</button>
-            <button type="button" class="btn btn-sm" href="#">Текущие</button>
-            <button type="button" class="btn btn-sm" href="#">Неотвеченные</button>
-            <button type="button" class="btn  btn-sm " href="#">Конкурсные</button>
-            <button type="button" class="btn  btn-sm overflow-hidden" href="#">Еще</button>
+                <div class="tag-tracked-container">
+                    <hr>
+                    <div align="center">
+                        <h5>
+                            <span>Отслеживаемые метки</span>
+                        </h5>
+                    </div>
+                    <hr>
+                    <ul id = "listTagTracked1">
+                    </ul>
+                    <onsubmit >
+                        <div align="center">
+                            <input type="text"  id="add-tag-tracked1"  size="20"  placeholder="добавить метку">
+                            <button class="btn btn-primary" id="buttonTagTracked1">+</button>
+                        </div>
+                    </onsubmit >
+                </div>
+
+                <div class="tag-ignore-container">
+                    <hr>
+                    <div align="center">
+                        <h5>
+                            <span>Игнорируемые метки </span>
+                        </h5>
+                    </div>
+                    <hr>
+                    <ul id = "listTagIgnore1">
+                    </ul>
+                    <onsubmit >
+                        <div align="center">
+                            <input type="text" id="add-tag-ignore1"  size="20"  placeholder="добавить метку">
+                            <button class="btn btn-primary" id="buttonTagIgnore1">+</button>
+                        </div>
+                    </onsubmit >
+                </div>
+            </div>
         </div>
-
-        <ul class="nav justify-content-end m-3">
-            <li class="nav-item">
-                <a class="nav-link active" href="#" onclick="new PaginationQuestion(1, 10, 'normal').setQuestions()">За неделю</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link active" href="#" onclick="new PaginationQuestion(1, 10, 'popular').setQuestions()">По
-                    популярности</a>
-            </li>
-        </ul>
-
-        <a href="#" id="questionsTable" class="list-group-item list-group-item-action"></a>
-
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-end m-3" id="questionsPagesNavigation">
-            </ul>
-        </nav>
-
     </div>
     <div th:fragment="styleheader">
 
@@ -54,6 +98,10 @@
 
         <link rel="stylesheet" href="/static/css/sidebar.css">
     </div>
+    <script src="/static/js/tagTrackedIgnoreQuestionAria.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"
+            integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/"
+            crossorigin="anonymous"></script>
 
 </div>
 
