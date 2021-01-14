@@ -32,21 +32,9 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
                 setPaginationParameters(page, size, Optional.empty(), Optional.empty()));
     }
 
-    public PageDto<QuestionDto, Object> getPaginationPopular(int page, int size) {
+    public PageDto<QuestionDto, Object> getPaginationPopular(int page, int size, long days) {
         Map<String, Object> parameters = setPaginationParameters(page, size, Optional.empty(), Optional.empty());
-        parameters.put("days", 1L);
-        return getPageDto("paginationQuestionByPopular", parameters);
-    }
-
-    public PageDto<QuestionDto, Object> getPaginationPopularOverWeek(int page, int size) {
-        Map<String, Object> parameters = setPaginationParameters(page, size, Optional.empty(), Optional.empty());
-        parameters.put("days", 7L);
-        return getPageDto("paginationQuestionByPopular", parameters);
-    }
-
-    public PageDto<QuestionDto, Object> getPaginationPopularOverMonth(int page, int size) {
-        Map<String, Object> parameters = setPaginationParameters(page, size, Optional.empty(), Optional.empty());
-        parameters.put("days", 30L);
+        parameters.put("days", days);
         return getPageDto("paginationQuestionByPopular", parameters);
     }
 

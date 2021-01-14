@@ -14,11 +14,7 @@ public interface QuestionDtoService {
 
     PageDto<QuestionDto, Object> getPagination(int page, int size);
 
-    PageDto<QuestionDto, Object> getPaginationPopular(int page, int size);
-
-    PageDto<QuestionDto, Object> getPaginationPopularOverWeek(int page, int size);
-
-    PageDto<QuestionDto, Object> getPaginationPopularOverMonth(int page, int size);
+    PageDto<QuestionDto, Object> getPaginationPopular(int page, int size, long days);
 
     PageDto<QuestionDto, Object> getPaginationWithoutAnswers(int page, int size);
 

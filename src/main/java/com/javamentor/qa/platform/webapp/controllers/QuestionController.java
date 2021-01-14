@@ -189,7 +189,7 @@ public class QuestionController {
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
 
-        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopular(page, size);
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopular(page, size, 1L);
 
         return ResponseEntity.ok(resultPage);
     }
@@ -213,7 +213,7 @@ public class QuestionController {
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
 
-        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopularOverWeek(page, size);
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopular(page, size, 30L);
 
         return ResponseEntity.ok(resultPage);
     }
@@ -237,7 +237,7 @@ public class QuestionController {
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
 
-        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopularOverMonth(page, size);
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopular(page, size, 30L);
 
         return ResponseEntity.ok(resultPage);
     }
