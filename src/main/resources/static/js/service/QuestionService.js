@@ -78,13 +78,11 @@ class QuestionService {
         }).catch( error => error.response.then(message => console.log(message)));
     }
 
-    findPaginationPopular(page, size, period=null) {
+    findPaginationPopularOverPeriod(page, size, period='') {
         var cookie = $.cookie("token");
         console.log(cookie)
-        let query = '/api/question/popular/?page=' + page + '&size=' + size;
-        if (period != null) {
-           query += "&period=" + period
-        }
+        let query = '/api/question/popular/' + period + '?page=' + page + '&size=' + size;
+
         return fetch(query, {
             method: 'GET',
             headers: new Headers({
@@ -111,7 +109,7 @@ class QuestionService {
             method: 'POST',
             headers: new Headers({
                 'Content-Type': 'application/json',
-                'Authorization': cookie
+                'Authorization': cookie,
             })
         }).then(response =>  {
             if (response.ok) {

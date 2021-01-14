@@ -10,11 +10,11 @@ class PaginationQuestionForMainPage {
         if (this.type == 'new') {
             this.questions = this.questionService.findPaginationNew(this.page, this.size);
         } else if (this.type == 'popular') {
-            this.questions = this.questionService.findPaginationPopular(this.page, this.size);
+            this.questions = this.questionService.findPaginationPopularOverPeriod(this.page, this.size);
         } else if (this.type == 'popularWeek') {
-            this.questions = this.questionService.findPaginationPopular(this.page, this.size, "week");
+            this.questions = this.questionService.findPaginationPopularOverPeriod(this.page, this.size, "week");
         } else if (this.type == 'popularMonth') {
-            this.questions = this.questionService.findPaginationPopular(this.page, this.size, "month");
+            this.questions = this.questionService.findPaginationPopularOverPeriod(this.page, this.size, "month");
         } else if (this.type == 'withTags') {
             this.questions = this.questionService.getQuestionsWithGivenTags(this.page, this.size);
         } else {
