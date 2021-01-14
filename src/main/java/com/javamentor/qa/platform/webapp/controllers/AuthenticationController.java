@@ -78,9 +78,9 @@ public class AuthenticationController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             return ResponseEntity.ok("User is Authenticated");
-        } else{
-            return new ResponseEntity<>("Error: User is not Authenticated", HttpStatus.UNAUTHORIZED);
         }
+        return new ResponseEntity<>("Error: User is not Authenticated", HttpStatus.UNAUTHORIZED);
+
     }
 
 }
