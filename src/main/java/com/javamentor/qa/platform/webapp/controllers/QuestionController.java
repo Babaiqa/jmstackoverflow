@@ -3,13 +3,16 @@ package com.javamentor.qa.platform.webapp.controllers;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
+import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
+import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
+import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 
-import com.javamentor.qa.platform.service.abstracts.model.TagService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.webapp.converters.AnswerVoteConverter;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import com.javamentor.qa.platform.webapp.converters.TagMapper;
 import com.javamentor.qa.platform.webapp.converters.UserConverter;
@@ -39,6 +42,11 @@ public class QuestionController {
     private final TagMapper tagMapper;
     private final TagService tagService;
     private final UserDtoService userDtoService;
+    private final AnswerVoteService answerVoteService;
+    private final AnswerService answerService;
+    private final AnswerVoteConverter answerVoteConverter;
+    private final SecurityHelper securityHelper;
+
 
     private final QuestionDtoService questionDtoService;
 
@@ -46,12 +54,20 @@ public class QuestionController {
 
     @Autowired
     public QuestionController(QuestionService questionService, TagMapper tagMapper, TagService tagService,
-                              QuestionDtoService questionDtoService, UserDtoService userDtoService) {
+                              QuestionDtoService questionDtoService, UserDtoService userDtoService,
+                              AnswerVoteService answerVoteService,
+                              AnswerService answerService,
+                              AnswerVoteConverter answerVoteConverter,
+                              SecurityHelper securityHelper) {
         this.questionService = questionService;
         this.tagMapper = tagMapper;
         this.tagService = tagService;
         this.questionDtoService = questionDtoService;
         this.userDtoService = userDtoService;
+        this.answerVoteService = answerVoteService;
+        this.answerService = answerService;
+        this.answerVoteConverter = answerVoteConverter;
+        this.securityHelper = securityHelper;
     }
 
     @Autowired
@@ -172,12 +188,59 @@ public class QuestionController {
             return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
-        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopular(page, size);
+
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopular(page, size, 1L);
 
         return ResponseEntity.ok(resultPage);
     }
 
+    @GetMapping(value = "/popular/week", params = {"page", "size"})
+    @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination popular List<QuestionDto>"),
+    })
+    public ResponseEntity<?> findPaginationPopularWeek(
 
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopular(page, size, 30L);
+
+        return ResponseEntity.ok(resultPage);
+    }
+
+    @GetMapping(value = "/popular/month", params = {"page", "size"})
+    @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination popular List<QuestionDto>"),
+    })
+    public ResponseEntity<?> findPaginationPopularMonth(
+
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopular(page, size, 30L);
+
+        return ResponseEntity.ok(resultPage);
+    }
 
     @PostMapping("/add")
     @Validated(OnCreate.class)
@@ -329,5 +392,81 @@ public class QuestionController {
         PageDto<QuestionDto, Object> resultPage =
                 questionDtoService.getQuestionBySearchValue(questionSearchDto.getMessage(), page, size);
         return ResponseEntity.ok(resultPage);
+    }
+
+    @PatchMapping("/{questionId}/answer/{answerId}/upVote")
+    @ResponseBody
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Answer was up voted", response = AnswerVoteDto.class),
+            @ApiResponse(code = 400, message = "Question not found", response = String.class)
+    })
+    public ResponseEntity<?> answerUpVote(
+            @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
+            @PathVariable Long questionId,
+            @ApiParam(name = "answerId", value = "type Long", required = true, example = "0")
+            @PathVariable Long answerId) {
+
+        if (questionId == null) {
+            return ResponseEntity.badRequest().body("Question id is null");
+        }
+
+
+        Optional<User> user = userService.getById(securityHelper.getPrincipal().getId());
+        if (!user.isPresent()) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        Optional<Question> question = questionService.getById(questionId);
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question not found");
+        }
+
+        Optional<Answer> answer = answerService.getById(answerId);
+        if (!answer.isPresent()) {
+            return ResponseEntity.badRequest().body("Answer not found");
+        }
+
+        AnswerVote answerVote = new AnswerVote(user.get(), answer.get(), 1);
+        answerVoteService.persist(answerVote);
+
+        return ResponseEntity.ok(answerVoteConverter.answerVoteToAnswerVoteDto(answerVote));
+    }
+
+    @PatchMapping("/{questionId}/answer/{answerId}/downVote")
+    @ResponseBody
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Answer was up voted", response = AnswerVoteDto.class),
+            @ApiResponse(code = 400, message = "Question not found", response = String.class)
+    })
+    public ResponseEntity<?> answerDownVote(
+            @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
+            @PathVariable Long questionId,
+            @ApiParam(name = "answerId", value = "type Long", required = true, example = "0")
+            @PathVariable Long answerId) {
+
+        if (questionId == null) {
+            return ResponseEntity.badRequest().body("Question id is null");
+        }
+
+
+        Optional<User> user = userService.getById(securityHelper.getPrincipal().getId());
+        if (!user.isPresent()) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        Optional<Question> question = questionService.getById(questionId);
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question not found");
+        }
+
+        Optional<Answer> answer = answerService.getById(answerId);
+        if (!answer.isPresent()) {
+            return ResponseEntity.badRequest().body("Answer not found");
+        }
+
+        AnswerVote answerVote = new AnswerVote(user.get(), answer.get(), -1);
+        answerVoteService.persist(answerVote);
+
+        return ResponseEntity.ok(answerVoteConverter.answerVoteToAnswerVoteDto(answerVote));
     }
 }
