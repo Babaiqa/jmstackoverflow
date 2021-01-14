@@ -32,10 +32,10 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
                 setPaginationParameters(page, size, Optional.empty(), Optional.empty()));
     }
 
-    public PageDto<QuestionDto, Object> getPaginationPopular(int page, int size) {
-        return getPageDto(
-                "paginationQuestionByPopular",
-                setPaginationParameters(page, size, Optional.empty(), Optional.empty()));
+    public PageDto<QuestionDto, Object> getPaginationPopular(int page, int size, long days) {
+        Map<String, Object> parameters = setPaginationParameters(page, size, Optional.empty(), Optional.empty());
+        parameters.put("days", days);
+        return getPageDto("paginationQuestionByPopular", parameters);
     }
 
     public PageDto<QuestionDto, Object> getPaginationOrderedNew(int page, int size) {
