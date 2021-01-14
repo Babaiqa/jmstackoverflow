@@ -72,6 +72,7 @@ public class AuthenticationController {
     @ApiOperation(value = "current user is Authenticated?", response = String.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "User is Authenticated", response = String.class),
+            @ApiResponse(code = 401, message = "User is not Authenticated", response = String.class),
     })
     public ResponseEntity<?> auntheticatedCheck() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
