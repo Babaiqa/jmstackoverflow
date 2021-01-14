@@ -182,29 +182,65 @@ public class QuestionController {
             @ApiParam(name = "size", value = "Number of entries per page.Type int." +
                     " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
                     example = "10")
-            @RequestParam("size") int size,
-            @ApiParam(name = "period", value = "Period in which the popularity of question would be evaluated",
-                    required = false, example = "month", allowableValues = "month, week, day", defaultValue  = "day")
-            @RequestParam(value = "period", defaultValue = "day") String period) {
+            @RequestParam("size") int size) {
 
         if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
             return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
 
-        PageDto<QuestionDto, Object> resultPage;
-        if(period.equals("week")) {
-            resultPage = questionDtoService.getPaginationPopular(page, size, 7L);
-        } else if (period.equals("month")) {
-            resultPage = questionDtoService.getPaginationPopular(page, size, 30L);
-        } else {
-            resultPage = questionDtoService.getPaginationPopular(page, size, 1L);
-        }
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopular(page, size);
 
         return ResponseEntity.ok(resultPage);
     }
 
+    @GetMapping(value = "/popular/week", params = {"page", "size"})
+    @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination popular List<QuestionDto>"),
+    })
+    public ResponseEntity<?> findPaginationPopularWeek(
 
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopularOverWeek(page, size);
+
+        return ResponseEntity.ok(resultPage);
+    }
+
+    @GetMapping(value = "/popular/month", params = {"page", "size"})
+    @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination popular List<QuestionDto>"),
+    })
+    public ResponseEntity<?> findPaginationPopularMonth(
+
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopularOverMonth(page, size);
+
+        return ResponseEntity.ok(resultPage);
+    }
 
     @PostMapping("/add")
     @Validated(OnCreate.class)
