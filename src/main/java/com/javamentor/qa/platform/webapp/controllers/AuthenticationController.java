@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.UserDto;
+import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.dto.PrincipalDto;
 import com.javamentor.qa.platform.security.dto.TokenDto;
@@ -68,7 +69,16 @@ public class AuthenticationController {
             @ApiResponse(code = 400, message = "Principal not found",response = String.class)
     })
     public ResponseEntity<?> getPrincipalUser() {
-        return ResponseEntity.ok(userConverter.userToDto(securityHelper.getPrincipal()));
+        User user = securityHelper.getPrincipal();
+        if (user != null) {
+//            return ResponseEntity.ok(new PrincipalDto(user.getId(),
+//                    user.getEmail(),
+//                    user.getFullName(),
+//                    user.getImageLink(),
+//                    user.getRole().getName()));
+            return ResponseEntity.ok(userConverter.userToPrincipalDto(user));
+        }
+        return ResponseEntity.badRequest().body("Error: User is not found");
     }
 
 }

@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.models.dto.UserPublicInfoDto;
 import com.javamentor.qa.platform.models.dto.UserRegistrationDto;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.security.dto.PrincipalDto;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.RoleService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
@@ -56,4 +57,11 @@ public abstract class UserConverter {
     @Mapping(source = "user.fullName", target = "fullName")
     @Mapping(source = "user.city", target = "city")
     public abstract UserPublicInfoDto userToUserPublicInfoDto(User user);
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "email", target = "email")
+    @Mapping(source = "fullName", target = "fullName")
+    @Mapping(source = "imageLink", target = "avatarUrl")
+    @Mapping(source = "role.name", target = "role")
+    public abstract PrincipalDto userToPrincipalDto(User user);
 }

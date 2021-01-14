@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.security.dto.PrincipalDto;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.converters.UserConverter;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,6 +24,7 @@ public class SecurityHelper implements UserDetailsService {
     @Autowired
     AuthenticationManager authenticationManager;
 
+
     public UserDetails loadUserByUsername(String username) {
         return userService.getUserByEmail(username).get();
     }
@@ -30,7 +32,10 @@ public class SecurityHelper implements UserDetailsService {
     public User getPrincipal () {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-    return (User) userService.getUserByEmail(authentication.getName()).get();
+    User user = userService.getUserByEmail(authentication.getName()).get();
+    if (user != null)
+        return user;
+    return null;
     }
 
     public Authentication getAuthentication(String username, String password) {
