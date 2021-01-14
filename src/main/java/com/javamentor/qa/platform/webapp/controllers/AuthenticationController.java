@@ -11,7 +11,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -72,7 +74,12 @@ public class AuthenticationController {
             @ApiResponse(code = 200, message = "User is Authenticated", response = String.class),
     })
     public ResponseEntity<?> auntheticatedCheck() {
-        return ResponseEntity.ok("User is Auntheticated");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            return ResponseEntity.ok("User is Authenticated");
+        } else{
+            return new ResponseEntity<>("Error: User is not Authenticated", HttpStatus.UNAUTHORIZED);
+        }
     }
 
 }
