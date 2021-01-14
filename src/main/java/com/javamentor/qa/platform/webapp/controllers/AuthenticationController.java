@@ -63,22 +63,17 @@ public class AuthenticationController {
 
 
     @GetMapping(value = "principal")
-    @ApiOperation(value = "get UserDto", response = UserDto.class)
+    @ApiOperation(value = "get PrincipalDto", response = PrincipalDto.class)
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Return UserDto", response = UserDto.class),
+            @ApiResponse(code = 200, message = "Return PrincipalDto", response = PrincipalDto.class),
             @ApiResponse(code = 400, message = "Principal not found",response = String.class)
     })
     public ResponseEntity<?> getPrincipalUser() {
         User user = securityHelper.getPrincipal();
         if (user != null) {
-//            return ResponseEntity.ok(new PrincipalDto(user.getId(),
-//                    user.getEmail(),
-//                    user.getFullName(),
-//                    user.getImageLink(),
-//                    user.getRole().getName()));
             return ResponseEntity.ok(userConverter.userToPrincipalDto(user));
         }
-        return ResponseEntity.badRequest().body("Error: User is not found");
+        return ResponseEntity.badRequest().body("Principal not found");
     }
 
 }
