@@ -55,7 +55,7 @@ class PaginationQuestionForMainPage {
                     "                <div class=\"col-sm-10\">\n" +
                     "                    <div class=\"d-flex w-100 justify-content-between\">\n" +
                     "                        <h5 href=\"#\" class=\"mb-1\">" + response.items[i].title + "</h5>\n" +
-                    "                        <small>3 days ago</small>\n" +
+                    "                        <small> задан "+ response.items[i].persistDateTime + "</small>\n" +
                     "                    </div>\n" +
                     "                    <div class=\"nav-col btn-group  btn-block mr-0   \">\n" +
                     "                        <button type=\"button\" class=\"btn  btn-sm   active \">" + response.items[i].listTagDto[0].name + "</button>\n" +
