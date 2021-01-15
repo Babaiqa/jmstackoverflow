@@ -1,7 +1,10 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
+import com.javamentor.qa.platform.dao.abstracts.model.TagDao;
 import com.javamentor.qa.platform.dao.abstracts.model.TrackedTagDao;
+import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.question.TrackedTag;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
@@ -17,6 +20,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -29,16 +35,22 @@ public class TagController {
     private final UserDtoService userDtoService;
     private final SecurityHelper securityHelper;
     private final TrackedTagDao trackedTagDao;
+    private final TrackedTagService trackedTagService;
+    private final TagDao tagDao;
+    private final UserDao userDao;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
     public TagController(TagDtoService tagDtoService, UserDtoService userDtoService, SecurityHelper securityHelper,
-                         TrackedTagDao trackedTagDao) {
+                         TrackedTagDao trackedTagDao, TrackedTagService trackedTagService, TagDao tagDao, UserDao userDao) {
         this.tagDtoService = tagDtoService;
         this.userDtoService = userDtoService;
         this.securityHelper = securityHelper;
         this.trackedTagDao = trackedTagDao;
+        this.trackedTagService = trackedTagService;
+        this.tagDao = tagDao;
+        this.userDao = userDao;
     }
 
     @GetMapping("popular")
@@ -239,6 +251,30 @@ public class TagController {
         trackedTagDao.deleteById(id);
 
         return ResponseEntity.ok("Tracked Tag with ID = " + id + " was deleted");
+    }
+
+    @PostMapping(value = "tracked/add")
+    @ApiOperation(value = "add trackedTags", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "successfully added a tracked tag", response = TrackedTagDto.class)
+    })
+    public ResponseEntity<?> addTrackedTagsList(@Valid @RequestParam String name) {
+        if(!tagDao.getTagByName(name).isPresent()){
+            return ResponseEntity.badRequest().body(  "The " + name + " does not exist on this site");
+        }
+        List<TrackedTagDto> tagsTrackedDtoList =
+                tagDtoService.getTrackedTagsByPrincipal(securityHelper.getPrincipal().getId());
+        if(Arrays.toString(tagsTrackedDtoList.toArray()).contains(name)) {
+            return ResponseEntity.badRequest().body("The tracked tag has already been added");
+        }
+        TrackedTag createTrackedTag = new TrackedTag();
+        createTrackedTag.setUser(userDao.getById(securityHelper.getPrincipal().getId()).get());
+        createTrackedTag.setTrackedTag(tagDao.getTagByName(name).get());
+        trackedTagService.persist(createTrackedTag);
+        TagDto creatTagDto = new TagDto();;
+        creatTagDto.setId(tagDao.getTagByName(name).get().getId());
+        creatTagDto.setName(tagDao.getTagByName(name).get().getName());
+        return ResponseEntity.ok(creatTagDto);
     }
 }
 
