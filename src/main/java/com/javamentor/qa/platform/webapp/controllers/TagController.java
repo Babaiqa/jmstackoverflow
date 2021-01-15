@@ -260,7 +260,7 @@ public class TagController {
     })
     public ResponseEntity<?> addTrackedTagsList(@Valid @RequestParam String name) {
         if(!tagDao.getTagByName(name).isPresent()){
-            return ResponseEntity.badRequest().body(  "The " + name + " does not exist on this site");
+            return ResponseEntity.badRequest().body("The " + name + " does not exist on this site");
         }
         List<TrackedTagDto> tagsTrackedDtoList =
                 tagDtoService.getTrackedTagsByPrincipal(securityHelper.getPrincipal().getId());
@@ -271,7 +271,7 @@ public class TagController {
         createTrackedTag.setUser(userDao.getById(securityHelper.getPrincipal().getId()).get());
         createTrackedTag.setTrackedTag(tagDao.getTagByName(name).get());
         trackedTagService.persist(createTrackedTag);
-        TagDto creatTagDto = new TagDto();;
+        TagDto creatTagDto = new TagDto();
         creatTagDto.setId(tagDao.getTagByName(name).get().getId());
         creatTagDto.setName(tagDao.getTagByName(name).get().getName());
         return ResponseEntity.ok(creatTagDto);
