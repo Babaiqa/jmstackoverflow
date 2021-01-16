@@ -7,6 +7,7 @@ import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.dto.TagListDto;
 import com.javamentor.qa.platform.models.dto.TagRecentDto;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -553,12 +554,16 @@ public class TagControllerTest extends AbstractIntegrationTest {
         PageDto<TagListDto, Object> expected = new PageDto<>();
         expected.setCurrentPageNumber(1);
         expected.setTotalPageCount(1);
-        expected.setTotalResultCount(5);
+        expected.setTotalResultCount(6);
         expected.setItemsOnPage(10);
 
         List<TagListDto> expectedItems = new ArrayList<>();
-        expectedItems.add(new TagListDto(6L, "kotlin", "kotlin is", 3, 1, 0));
-        expectedItems.add(new TagListDto(8L, "nosql", "nosqk is", 8, 3, 1));
+        expectedItems.add(new TagListDto(1L, "java", "Java is a popular high-level programming language.", 3, 0, 0));
+        expectedItems.add(new TagListDto(5L, "sql", "Structured Query Language (SQL) is a language for querying databases.", 3, 0, 0));
+        expectedItems.add(new TagListDto(2L, "javaScript", "For questions regarding programming in ECMAScript (JavaScript/JS) and its various dialects/implementations (excluding ActionScript).", 2, 0, 0));
+        expectedItems.add(new TagListDto(3L, "html", "HTML (HyperText Markup Language) is the markup language for creating web pages and other information to be displayed in a web browser.", 1, 0, 0));
+        expectedItems.add(new TagListDto(4L, "bootstrap-4", "Bootstrap 4 is the fourth major version of the popular front-end component library. The Bootstrap framework aids in the creation of responsive, mobile-first websites and web apps.", 0, 0, 0));
+        expectedItems.add(new TagListDto(6L, "sql22", "aaStructured Query Language (SQL) is a language for querying databases.", 0, 0, 0));
         expected.setItems(expectedItems);
 
         String resultContext = mockMvc.perform(get(NEW_TAG)
@@ -575,7 +580,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         PageDto<TagListDto, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
-        Assert.assertEquals(expected.toString(), actual.toString());
+        Assertions.assertEquals(expected.toString(), actual.toString());
     }
 
     @Test
