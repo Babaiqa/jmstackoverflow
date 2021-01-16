@@ -48,7 +48,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
         PageDto<TagDto, Object> expected = new PageDto<>();
         expected.setCurrentPageNumber(1);
         expected.setTotalPageCount(1);
-        expected.setTotalResultCount(5);
+        expected.setTotalResultCount(6);
         expected.setItemsOnPage(10);
 
         List<TagDto> expectedItems = new ArrayList<>();
@@ -57,6 +57,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
         expectedItems.add(new TagDto(2L, "javaScript"));
         expectedItems.add(new TagDto(3L, "html"));
         expectedItems.add(new TagDto(4L, "bootstrap-4"));
+        expectedItems.add(new TagDto(6L, "sql22"));
         expected.setItems(expectedItems);
 
         String resultContext = mockMvc.perform(get(POPULAR)
@@ -216,11 +217,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
         expected.setItemsOnPage(10);
 
         List<TagListDto> expectedItems = new ArrayList<>();
-        expectedItems.add(new TagListDto(4L, "bootstrap-4", "Bootstrap 4 is the fourth major version of the popular front-end component library. The Bootstrap framework aids in the creation of responsive, mobile-first websites and web apps.", 0, 0, 0));
-        expectedItems.add(new TagListDto(3L, "html", "HTML (HyperText Markup Language) is the markup language for creating web pages and other information to be displayed in a web browser.", 1, 1, 0));
-        expectedItems.add(new TagListDto(1L, "java", "Java is a popular high-level programming language.", 3, 0, 0));
-        expectedItems.add(new TagListDto(2L, "javaScript", "For questions regarding programming in ECMAScript (JavaScript/JS) and its various dialects/implementations (excluding ActionScript).", 2, 1, 0));
-        expectedItems.add(new TagListDto(5L, "sql", "Structured Query Language (SQL) is a language for querying databases.", 3, 3, 3));
+
         expected.setItems(expectedItems);
 
         String resultContext = mockMvc.perform(get(ALPHABET)
