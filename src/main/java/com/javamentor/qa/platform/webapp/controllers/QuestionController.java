@@ -412,12 +412,6 @@ public class QuestionController {
             return ResponseEntity.badRequest().body("Question id is null");
         }
 
-
-        Optional<User> user = userService.getById(securityHelper.getPrincipal().getId());
-        if (!user.isPresent()) {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-
         Optional<Question> question = questionService.getById(questionId);
         if (!question.isPresent()) {
             return ResponseEntity.badRequest().body("Question not found");
@@ -428,7 +422,7 @@ public class QuestionController {
             return ResponseEntity.badRequest().body("Answer not found");
         }
 
-        AnswerVote answerVote = new AnswerVote(user.get(), answer.get(), 1);
+        AnswerVote answerVote = new AnswerVote(securityHelper.getPrincipal(), answer.get(), 1);
         answerVoteService.persist(answerVote);
 
         return ResponseEntity.ok(answerVoteConverter.answerVoteToAnswerVoteDto(answerVote));
@@ -450,12 +444,6 @@ public class QuestionController {
             return ResponseEntity.badRequest().body("Question id is null");
         }
 
-
-        Optional<User> user = userService.getById(securityHelper.getPrincipal().getId());
-        if (!user.isPresent()) {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-
         Optional<Question> question = questionService.getById(questionId);
         if (!question.isPresent()) {
             return ResponseEntity.badRequest().body("Question not found");
@@ -466,7 +454,7 @@ public class QuestionController {
             return ResponseEntity.badRequest().body("Answer not found");
         }
 
-        AnswerVote answerVote = new AnswerVote(user.get(), answer.get(), -1);
+        AnswerVote answerVote = new AnswerVote(securityHelper.getPrincipal(), answer.get(), -1);
         answerVoteService.persist(answerVote);
 
         return ResponseEntity.ok(answerVoteConverter.answerVoteToAnswerVoteDto(answerVote));
