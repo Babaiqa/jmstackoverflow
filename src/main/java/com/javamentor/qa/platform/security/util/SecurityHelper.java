@@ -26,15 +26,15 @@ public class SecurityHelper implements UserDetailsService {
     }
 
     public PrincipalDto getPrincipal () {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-    User user = userService.getUserByEmail(authentication.getName()).get();
-        return new PrincipalDto(
-                user.getId(),
-                user.getEmail(),
-                user.getFullName(),
-                user.getImageLink(),
-                user.getRole().getName());
+        User user = userService.getUserByEmail(authentication.getName()).get();
+            return new PrincipalDto(
+                    user.getId(),
+                    user.getEmail(),
+                    user.getFullName(),
+                    user.getImageLink(),
+                    user.getRole().getName());
     }
 
     public Authentication getAuthentication(String username, String password) {
