@@ -69,11 +69,7 @@ public class AuthenticationController {
             @ApiResponse(code = 400, message = "Principal not found",response = String.class)
     })
     public ResponseEntity<?> getPrincipalUser() {
-        User user = securityHelper.getPrincipal();
-        if (user != null) {
-            return ResponseEntity.ok(userConverter.userToPrincipalDto(user));
-        }
-        return ResponseEntity.badRequest().body("Principal not found");
+        return ResponseEntity.ok(userConverter.userToPrincipalDto(securityHelper.getPrincipal()));
     }
 
 }

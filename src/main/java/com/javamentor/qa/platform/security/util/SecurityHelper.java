@@ -33,9 +33,9 @@ public class SecurityHelper implements UserDetailsService {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     User user = userService.getUserByEmail(authentication.getName()).get();
-    if (user != null)
-        return user;
-    return null;
+    if (user == null)
+        throw new SecurityException("User is not logged in") ;
+    return user;
     }
 
     public Authentication getAuthentication(String username, String password) {
