@@ -14,13 +14,8 @@ class PaginationQuestionWithoutAnswer {
 
             for (var i = 0; i < response.items.length; i++) {
 
-                var text = new String('');
-
-                for (var c = 0; c < 5; c++) {
-                    let random = Math.floor(Math.random() * response.items[i].listTagDto.length)
-                    text = text + "<a href=\"#\" class=\"tag\"> " + response.items[i].listTagDto[random].name + " </a>"
-                }
-
+                    let shuffledNames = response.items[i].listTagDto.map(i => i.name).sort(() => Math.random() - 0.5);
+                    let text  = shuffledNames.map(i => `<a href="#" class="tag"> ${i} </a>`).join('');
 
                 $('.questionWithoutAnswers').append(
                     "<div class=\"question-card d-flex\">" +
