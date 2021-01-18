@@ -244,8 +244,9 @@ public class UserController {
     public ResponseEntity<?> deleteUser() {
 
         User user = securityHelper.getPrincipal();
-        if (Boolean.TRUE.equals(user.getIsDeleted()))
+        if (Boolean.TRUE.equals(user.getIsDeleted())) {
             return ResponseEntity.badRequest().body("The user has already been deleted!");
+        }
         userService.deleteUserByFlag(user);
         return ResponseEntity.ok().body("User deleted successfully");
 

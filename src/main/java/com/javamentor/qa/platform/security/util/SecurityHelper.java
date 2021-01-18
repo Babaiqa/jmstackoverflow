@@ -30,11 +30,12 @@ public class SecurityHelper implements UserDetailsService {
     }
 
     public User getPrincipal () {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-    User user = userService.getUserByEmail(authentication.getName()).get();
-    if (user == null)
-        throw new SecurityException("User is not logged in") ;
+        User user = userService.getUserByEmail(authentication.getName()).get();
+        if (user == null) {
+            throw new SecurityException("User is not logged in");
+        }
     return user;
     }
 
