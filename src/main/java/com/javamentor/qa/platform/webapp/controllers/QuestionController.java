@@ -35,6 +35,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,11 +51,13 @@ public class QuestionController {
     private final TagMapper tagMapper;
     private final TagService tagService;
     private final UserDtoService userDtoService;
+    private final AnswerVoteService answerVoteService;
     private final AnswerService answerService;
     private final AnswerConverter answerConverter;
     private final SecurityHelper securityHelper;
     private final AnswerVoteService answerVoteService;
     private final AnswerVoteConverter answerVoteConverter;
+    private final SecurityHelper securityHelper;
 
 
     private final QuestionDtoService questionDtoService;
@@ -80,6 +85,7 @@ public class QuestionController {
         this.answerVoteService = answerVoteService;
         this.answerService = answerService;
         this.answerVoteConverter = answerVoteConverter;
+        this.securityHelper = securityHelper;
     }
 
     @Autowired
@@ -201,7 +207,7 @@ public class QuestionController {
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
 
-        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopular(page, size, 1L);
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopular(page, size, LocalDateTime.now().getLong(ChronoField.EPOCH_DAY));
 
         return ResponseEntity.ok(resultPage);
     }
@@ -225,7 +231,7 @@ public class QuestionController {
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
 
-        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopular(page, size, 30L);
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopular(page, size, 7L);
 
         return ResponseEntity.ok(resultPage);
     }
