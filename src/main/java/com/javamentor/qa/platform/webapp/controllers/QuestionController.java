@@ -408,17 +408,14 @@ public class QuestionController {
                                                  @PathVariable Long questionId) {
 
 
-        Optional<User> user = userService.getById(securityHelper.getPrincipal().getId());
-        if (!user.isPresent()) {
-            return ResponseEntity.badRequest().body("User not found");
-        }
+        User user = securityHelper.getPrincipal();
 
         Optional<Question> question = questionService.getById(questionId);
         if (!question.isPresent()) {
             return ResponseEntity.badRequest().body("Question not found");
         }
 
-        Answer answer = new Answer(question.get(), user.get(), createAnswerDto.getHtmlBody(), false, false);
+        Answer answer = new Answer(question.get(), user, createAnswerDto.getHtmlBody(), false, false);
         answer.setQuestion(question.get());
 
         answerService.persist(answer);
