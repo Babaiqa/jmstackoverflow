@@ -28,6 +28,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -188,12 +190,59 @@ public class QuestionController {
             return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
-        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopular(page, size);
+
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopular(page, size, LocalDateTime.now().getLong(ChronoField.EPOCH_DAY));
 
         return ResponseEntity.ok(resultPage);
     }
 
+    @GetMapping(value = "/popular/week", params = {"page", "size"})
+    @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination popular List<QuestionDto>"),
+    })
+    public ResponseEntity<?> findPaginationPopularWeek(
 
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopular(page, size, 7L);
+
+        return ResponseEntity.ok(resultPage);
+    }
+
+    @GetMapping(value = "/popular/month", params = {"page", "size"})
+    @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination popular List<QuestionDto>"),
+    })
+    public ResponseEntity<?> findPaginationPopularMonth(
+
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopular(page, size, 30L);
+
+        return ResponseEntity.ok(resultPage);
+    }
 
     @PostMapping("/add")
     @Validated(OnCreate.class)

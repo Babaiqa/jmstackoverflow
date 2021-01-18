@@ -8,6 +8,7 @@ import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -36,8 +37,11 @@ public class PaginationQuestionByPopularDaoImpl implements PaginationDao<Questio
                         "from Question question  " +
                         "INNER JOIN  question.user u" +
                         "  join question.tags tag " +
-                        " where question_id IN :ids order by question.viewCount desc")
-                .setParameter("ids", parameters.get("questionIds"))
+                        "  where question.persistDateTime BETWEEN :startDate1 AND :endDate1 " +
+                        " order by question.viewCount desc")
+                .unwrap(Query.class)
+                .setParameter("startDate1", LocalDateTime.now().minusDays((Long) parameters.get("days")))
+                .setParameter("endDate1", LocalDateTime.now())
                 .unwrap(Query.class)
                 .setResultTransformer(new QuestionResultTransformer())
                 .getResultList();
