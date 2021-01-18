@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
+import com.javamentor.qa.platform.dao.abstracts.model.IgnoredTagDao;
 import com.javamentor.qa.platform.dao.abstracts.model.TrackedTagDao;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.TrackedTag;
@@ -29,16 +30,18 @@ public class TagController {
     private final UserDtoService userDtoService;
     private final SecurityHelper securityHelper;
     private final TrackedTagDao trackedTagDao;
+    private final IgnoredTagDao ignoredTagDao;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
     public TagController(TagDtoService tagDtoService, UserDtoService userDtoService, SecurityHelper securityHelper,
-                         TrackedTagDao trackedTagDao) {
+                         TrackedTagDao trackedTagDao, IgnoredTagDao ignoredTagDao) {
         this.tagDtoService = tagDtoService;
         this.userDtoService = userDtoService;
         this.securityHelper = securityHelper;
         this.trackedTagDao = trackedTagDao;
+        this.ignoredTagDao = ignoredTagDao;
     }
 
     @GetMapping("popular")
@@ -239,6 +242,19 @@ public class TagController {
         trackedTagDao.deleteById(id);
 
         return ResponseEntity.ok("Tracked Tag with ID = " + id + " was deleted");
+    }
+
+    @Transactional
+    @DeleteMapping(value = "{id}/deleteIgnored")
+    @ApiOperation(value = "Delete Ignored tag by id", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Ignored tag was deleted.", response = String.class),
+            @ApiResponse(code = 400, message = "Ignored tag was not found", response = String.class)
+    })
+    public ResponseEntity<?> deleteIgnoredTagById(@ApiParam(name = "id") @PathVariable Long id) {
+        ignoredTagDao.deleteById(id);
+
+        return ResponseEntity.ok("Ignored Tag with ID = " + id + " was deleted");
     }
 }
 
