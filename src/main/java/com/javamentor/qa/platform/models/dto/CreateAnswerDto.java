@@ -18,12 +18,6 @@ public class CreateAnswerDto implements Serializable {
 
     @NotNull(groups = OnCreate.class, message = "Значение body отсутствует")
     @NotBlank(groups = OnCreate.class, message = "Значение body не должно быть пустым")
-    private String body;
-
-    @NotNull(groups = OnCreate.class, message = "Значение userId должно быть заполнено")
-    private Long userId;
-
-    @NotNull(groups = OnCreate.class, message = "Значение questionId должно быть заполнено")
-    private Long questionId;
+    private String htmlBody;
 
 }

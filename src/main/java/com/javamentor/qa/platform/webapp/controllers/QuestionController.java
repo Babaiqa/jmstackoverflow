@@ -381,7 +381,7 @@ public class QuestionController {
             return ResponseEntity.badRequest().body("Question not found");
         }
 
-        Answer answer = new Answer(question.get(), user.get(), createAnswerDto.getBody(), false, false);
+        Answer answer = new Answer(question.get(), user.get(), createAnswerDto.getHtmlBody(), false, false);
         answer.setQuestion(question.get());
 
         answerService.persist(answer);
