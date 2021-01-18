@@ -3,31 +3,15 @@ package com.javamentor.qa.platform.webapp.controllers;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
-import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.models.entity.question.Tag;
-import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.*;
-
-import com.javamentor.qa.platform.service.abstracts.model.TagService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
-import com.javamentor.qa.platform.webapp.converters.AnswerVoteConverter;
-import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
-import com.javamentor.qa.platform.webapp.converters.TagMapper;
-import com.javamentor.qa.platform.webapp.converters.UserConverter;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import com.javamentor.qa.platform.webapp.converters.*;
+import io.swagger.annotations.*;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -55,9 +39,8 @@ public class QuestionController {
     private final AnswerService answerService;
     private final AnswerConverter answerConverter;
     private final SecurityHelper securityHelper;
-    private final AnswerVoteService answerVoteService;
     private final AnswerVoteConverter answerVoteConverter;
-    private final SecurityHelper securityHelper;
+
 
 
     private final QuestionDtoService questionDtoService;
@@ -85,7 +68,7 @@ public class QuestionController {
         this.answerVoteService = answerVoteService;
         this.answerService = answerService;
         this.answerVoteConverter = answerVoteConverter;
-        this.securityHelper = securityHelper;
+
     }
 
     @Autowired
@@ -414,7 +397,7 @@ public class QuestionController {
     }
 
 
-    @PostMapping("{questionId}/answer")
+    @PostMapping("/{questionId}/answer")
     @ApiOperation(value = "Add answer", notes = "This method Add answer to question and return AnswerDto")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Answer was added", response = AnswerDto.class),
