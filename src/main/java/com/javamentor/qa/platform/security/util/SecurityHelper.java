@@ -24,7 +24,6 @@ public class SecurityHelper implements UserDetailsService {
     @Autowired
     AuthenticationManager authenticationManager;
 
-
     public UserDetails loadUserByUsername(String username) {
         return userService.getUserByEmail(username).get();
     }
