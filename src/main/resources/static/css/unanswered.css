@@ -131,6 +131,10 @@
 .status-unanswered strong {
     font-weight: normal;
 }
+.question-container{
+    min-height: 1000px;
+}
+
 
 .question-details {
     padding-left: 25px;
