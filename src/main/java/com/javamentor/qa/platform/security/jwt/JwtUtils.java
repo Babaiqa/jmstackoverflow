@@ -36,7 +36,7 @@ public class JwtUtils {
     public String generateJwtTokenOAuth(Authentication authentication) {
 
         return Jwts.builder()
-                .setSubject(SecurityContextHolder.getContext().getAuthentication().getName())
+                .setSubject(authentication.getName())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + jwtExpirationMs))
                 .signWith(SignatureAlgorithm.HS256, jwtSecretKey)
