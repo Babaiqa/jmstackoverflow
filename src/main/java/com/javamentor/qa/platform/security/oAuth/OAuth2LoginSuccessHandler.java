@@ -7,7 +7,12 @@ import com.javamentor.qa.platform.security.jwt.JwtUtils;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -19,15 +24,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
-
 @Component
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-    private final SecurityHelper securityHelper;
     private final UserService userService;
     private final JwtUtils jwtUtils;
     @Autowired
-    OAuth2LoginSuccessHandler(SecurityHelper securityHelper, UserService userService, JwtUtils jwtUtils){
-        this.securityHelper = securityHelper;
+    OAuth2LoginSuccessHandler(UserService userService, JwtUtils jwtUtils){
         this.userService = userService;
         this.jwtUtils = jwtUtils;
     }
