@@ -34,10 +34,22 @@
         <div class="form-button">
             <button class="btn btn-lg btn-primary btn-block" type="submit" id="button">Войти</button>
         </div>
+        <div class="form-button">
+            <a type="button" class="btn btn-lg btn-primary btn-block" href="http://localhost:5557/oauth2/authorization/google">
+                Войти через Google
+            </a>
+        </div>
+        <div class="form-button">
+            <a type="button" class="btn btn-lg btn-primary btn-block" href="http://localhost:5557/oauth2/authorization/custom">
+                Войти через ВКонтакте
+            </a>
+        </div>
         <div class="form-error" id="login-error">
             <div class="alert" role="alert">&nbsp;</div>
         </div>
     </form>
+
+
 </div>
 
 <div th:insert="~{fragment/footer :: footer}"></div>
