@@ -22,14 +22,15 @@ import java.util.Optional;
 
 @Component
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+    private final SecurityHelper securityHelper;
+    private final UserService userService;
+    private final JwtUtils jwtUtils;
     @Autowired
-    SecurityHelper securityHelper;
-    @Autowired
-    SecurityConfig securityConfig;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    JwtUtils jwtUtils;
+    OAuth2LoginSuccessHandler(SecurityHelper securityHelper, UserService userService, JwtUtils jwtUtils){
+        this.securityHelper = securityHelper;
+        this.userService = userService;
+        this.jwtUtils = jwtUtils;
+    }
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
