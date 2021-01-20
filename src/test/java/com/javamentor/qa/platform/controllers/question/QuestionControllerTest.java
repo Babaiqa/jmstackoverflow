@@ -227,6 +227,8 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().string("addQuestion.questionCreateDto.tags: Значение tags должно быть заполнено"));
     }
 
+//
+
     @Test
     public void shouldReturnQuestionsWithGivenTags() throws Exception {
         Long a[] = {1L, 3L, 5L};
