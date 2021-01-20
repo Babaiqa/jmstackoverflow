@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Data
 @Service
-public class TestDataInitService {
+public class  TestDataInitService {
 
     final UserService userService;
     final QuestionService questionService;
