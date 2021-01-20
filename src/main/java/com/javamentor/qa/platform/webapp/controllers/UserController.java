@@ -222,15 +222,14 @@ public class UserController {
     @Validated(OnUpdate.class)
     public ResponseEntity<?> resetPassword (@Valid @RequestBody UserResetPasswordDto userResetPasswordDto) {
 
-        Optional<User> user;
-        user = userService.getById(securityHelper.getPrincipal().getId());
+        User user = securityHelper.getPrincipal();
 
-        if (!passwordEncoder.matches(userResetPasswordDto.getOldPassword(), user.get().getPassword())) {
+        if (!passwordEncoder.matches(userResetPasswordDto.getOldPassword(), user.getPassword())) {
             return ResponseEntity.badRequest().body("Old password is incorrect");
         }
 
-        user.get().setPassword(passwordEncoder.encode(userResetPasswordDto.getNewPassword()));
-        userService.resetPassword(user.get());
+        user.setPassword(passwordEncoder.encode(userResetPasswordDto.getNewPassword()));
+        userService.resetPassword(user);
 
         return ResponseEntity.ok().body("Password reset successfully");
     }
@@ -244,15 +243,12 @@ public class UserController {
     })
     public ResponseEntity<?> deleteUser() {
 
-            Optional<User> userObj = userService.getById(securityHelper.getPrincipal().getId());
-            if (userObj.isPresent()) {
-                User user = userObj.get();
-                if (Boolean.TRUE.equals(user.getIsDeleted()))
-                    return ResponseEntity.badRequest().body("The user has already been deleted!");
-                userService.deleteUserByFlag(user);
-                return ResponseEntity.ok().body("User deleted successfully");
-            }
+        User user = securityHelper.getPrincipal();
+        if (Boolean.TRUE.equals(user.getIsDeleted())) {
+            return ResponseEntity.badRequest().body("The user has already been deleted!");
+        }
+        userService.deleteUserByFlag(user);
+        return ResponseEntity.ok().body("User deleted successfully");
 
-        return ResponseEntity.badRequest().body("Something goes wrong");
     }
 }

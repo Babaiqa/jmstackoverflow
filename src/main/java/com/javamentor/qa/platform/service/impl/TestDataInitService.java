@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Service
@@ -122,7 +123,7 @@ public class TestDataInitService {
             question.setViewCount(i*5);
             question.setDescription("Question Description" + i);
             question.setUser(user);
-            question.setTags(tagList);
+            question.setTags(tagList.stream().limit(5).collect(Collectors.toList()));
             question.setIsDeleted(false);
             questionService.persist(question);
 
@@ -131,7 +132,7 @@ public class TestDataInitService {
             questionNoAnswer.setViewCount(i*2);
             questionNoAnswer.setDescription("Question NoAnswer Description" + i);
             questionNoAnswer.setUser(user);
-            questionNoAnswer.setTags(tagList);
+            questionNoAnswer.setTags(tagList.stream().limit(5).collect(Collectors.toList()));
             questionNoAnswer.setIsDeleted(false);
             questionService.persist(questionNoAnswer);
 
