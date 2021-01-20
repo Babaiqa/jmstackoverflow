@@ -37,11 +37,11 @@ public class PaginationQuestionByPopularDaoImpl implements PaginationDao<Questio
                         "from Question question  " +
                         "INNER JOIN  question.user u" +
                         "  join question.tags tag " +
-                        "  where question.persistDateTime BETWEEN :startDate1 AND :endDate1 " +
+                        "  where question.persistDateTime BETWEEN :startDate AND :endDate" +
                         " order by question.viewCount desc")
                 .unwrap(Query.class)
-                .setParameter("startDate1", LocalDateTime.now().minusDays((Long) parameters.get("days")))
-                .setParameter("endDate1", LocalDateTime.now())
+                .setParameter("startDate", LocalDateTime.now().minusDays((Long) parameters.get("days")))
+                .setParameter("endDate", LocalDateTime.now())
                 .unwrap(Query.class)
                 .setResultTransformer(new QuestionResultTransformer())
                 .getResultList();
