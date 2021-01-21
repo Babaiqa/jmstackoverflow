@@ -27,6 +27,7 @@ class PaginationQuestionForMainPage {
 
     setQuestions() {
         $('#questionsAll').children().remove()
+        $('#buttonToQuestionArea').children().remove()
 
         this.questions.then(function (response) {
             for (var i = 0; i < response.items.length; i++) {
@@ -69,6 +70,11 @@ class PaginationQuestionForMainPage {
                     "        </a>"
                 )
             }
+            $('#buttonToQuestionArea').append(
+                "            <div class=\"text-right\">\n" +
+                "                <a type=\"button\" class=\"btn btn-primary\" href=\"/questionAria\" id=\"otherQuest\">Посмотреть другие вопросы</a>\n" +
+                "            </div>"
+            )
         })
     }
 }
