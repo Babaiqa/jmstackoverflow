@@ -46,9 +46,8 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         CustomOAuth2User oAuthUser = (CustomOAuth2User) authentication.getPrincipal();
         Optional userOptional = userService.getUserByEmail(authentication.getName());
         Optional<Role> role = roleService.getRoleByName("USER");
-        User user = null;
         if(!userOptional.isPresent()){
-            user = new User();
+            User user = new User();
             user.setPassword(generatePassword());
             user.setEmail(oAuthUser.getId());
             user.setIsEnabled(true);
