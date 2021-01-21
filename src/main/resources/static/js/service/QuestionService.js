@@ -124,18 +124,18 @@ class QuestionService {
 
     getResponseQuestion(query) {
         let result = new Array();
-        // fetch(query)
-        //     .then(response => {
-        //         if (response.ok) {
-        //             return response.json()
-        //         } else {
-        //             let error = new Error();
-        //             error.response = response.text();
-        //             throw error;
-        //         }
-        //     })
-        //     .then(entity => result.push.apply(result, entity.items))
-        //     .catch(error => error.response.then(message => console.log(message)));
+        fetch(query)
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    let error = new Error();
+                    error.response = response.text();
+                    throw error;
+                }
+            })
+            .then(entity => result.push.apply(result, entity.items))
+            .catch(error => error.response.then(message => console.log(message)));
         return result;
     }
 

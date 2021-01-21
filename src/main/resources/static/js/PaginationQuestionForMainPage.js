@@ -78,24 +78,3 @@ class PaginationQuestionForMainPage {
         })
     }
 }
-
-// $('#questionsTable').append(
-//     "<div class=\"d-flex w-100 justify-content-between\">\n" +
-//     "<h5 class=\"mb-1\">" + response.items[i].title + "</h5>\n" +
-//     "<small class=\"text-muted\">" + response.items[i].lastUpdateDateTime + "</small>\n" +
-//     "</div>\n" +
-//     "<p class=\"mb-1\">" + response.items[i].description + "<</p>\n" +
-//     "<div class=\"nav-col btn-group  btn-block mr-0   \">\n" +
-//     "<button type=\"button\" class=\"btn  btn-sm   active \">" + response.items[i].listTagDto[0].name + "</button>\n" +
-//     "<button type=\"button\" class=\"btn  btn-sm   active \">" + response.items[i].listTagDto[1].name + "</button>\n" +
-//     "<button type=\"button\" class=\"btn  btn-sm   active \">" + response.items[i].listTagDto[2].name + "</button>\n" +
-//     "<button type=\"button\" class=\"btn  btn-sm   active \">" + response.items[i].listTagDto[3].name + "</button>\n" +
-//     "<button type=\"button\" class=\"btn  btn-sm overflow-hidden\">" + response.items[i].listTagDto[4].name + "</button>\n" +
-//     "</div>\n" +
-//     "<small class=\"text-muted\">" + response.items[i].countValuable + " голосов</small>\n" +
-//     "<small class=\"text-muted\">" + response.items[i].countAnswer + " ответов</small>\n" +
-//     "<small class=\"text-muted\">" + response.items[i].viewCount + " просмотров</small>\n" +
-//     "<p/> <small class=\"text-muted\">задан " + response.items[i].persistDateTime + "</small>\n " +
-//     "<p/> <small class=\"text-muted\">" + response.items[i].authorName + "</small>\n " +
-//     "<img src=" + response.items[i].authorImage + " class=\"mr-3\" alt=\"...\">"
-// )
