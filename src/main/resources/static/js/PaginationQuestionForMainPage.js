@@ -31,6 +31,10 @@ class PaginationQuestionForMainPage {
 
         this.questions.then(function (response) {
             for (var i = 0; i < response.items.length; i++) {
+                const date = new Date(response.items[i].persistDateTime)
+                const stringDate = ('0' + date.getDate()).slice(-2) + "."
+                                 + ('0' + (date.getMonth() + 1)).slice(-2) + "."
+                                 + date.getFullYear()
                 $('#questionsAll').append(
                     "        <a href=\"#\" class=\"list-group-item list-group-item-action h-100\">\n" +
                     "            <div class=\"row align-items-center h-100\">\n" +
@@ -56,7 +60,7 @@ class PaginationQuestionForMainPage {
                     "                <div class=\"col-sm-10\">\n" +
                     "                    <div class=\"d-flex w-100 justify-content-between\">\n" +
                     "                        <h5 href=\"#\" class=\"mb-1\">" + response.items[i].title + "</h5>\n" +
-                    "                        <small> задан "+ response.items[i].persistDateTime + "</small>\n" +
+                    "                        <small> задан "+ stringDate + "</small>\n" +
                     "                    </div>\n" +
                     "                    <div class=\"nav-col btn-group  btn-block mr-0   \">\n" +
                     "                        <button type=\"button\" class=\"btn  btn-sm   active \">" + response.items[i].listTagDto[0].name + "</button>\n" +
