@@ -21,6 +21,7 @@ public class PaginationQuestionByPopularDaoImpl implements PaginationDao<Questio
 
     @Override
     public List<QuestionDto> getItems(Map<String, Object> parameters) {
+
         return (List<QuestionDto>) em.unwrap(Session.class)
                 .createQuery("select question.id as question_id, " +
                         " question.title as question_title," +
@@ -38,7 +39,9 @@ public class PaginationQuestionByPopularDaoImpl implements PaginationDao<Questio
                         "INNER JOIN  question.user u" +
                         "  join question.tags tag " +
                         "  where question.persistDateTime BETWEEN :startDate AND :endDate" +
+                        " and question.id IN :ids"+
                         " order by question.viewCount desc")
+                .setParameter("ids", parameters.get("questionIds"))
                 .unwrap(Query.class)
                 .setParameter("startDate", LocalDateTime.now().minusDays((Long) parameters.get("days")))
                 .setParameter("endDate", LocalDateTime.now())
