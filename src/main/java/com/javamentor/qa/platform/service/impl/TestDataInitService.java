@@ -39,7 +39,7 @@ public class  TestDataInitService {
     final IgnoredTagService ignoredTagService;
     final TrackedTagService trackedTagService;
 
-    int numberOfUsers = 50;
+    int numberOfUsers = 10;
     List<Tag> tagList = new ArrayList<>();
     Role USER_ROLE = Role.builder().name("USER").build();
     Role ADMIN_ROLE = Role.builder().name("ADMIN").build();
