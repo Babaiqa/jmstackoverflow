@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -36,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/question/tagQuestionApi.yml",
         "dataset/question/question_has_tagQuestionApi.yml",
         "dataset/question/votes_on_question.yml"},
-        useSequenceFiltering = true, cleanBefore = true, cleanAfter = true)
+        useSequenceFiltering = true, cleanBefore = true, cleanAfter = false)
 @WithMockUser(username = "principal@mail.ru", roles={"ADMIN", "USER"})
 class QuestionControllerTest extends AbstractIntegrationTest {
 
@@ -207,7 +208,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().string("questionCreateDto.userId dont`t exist"));
     }
 
-
     @Test
     public void shouldAddQuestionResponseBadRequestTagsNotExist() throws Exception {
         QuestionCreateDto questionCreateDto = new QuestionCreateDto();
@@ -227,7 +227,42 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().string("addQuestion.questionCreateDto.tags: Значение tags должно быть заполнено"));
     }
 
-//
+
+
+
+    //    -------------------------------------------------------------------
+    @Test
+    void shouldAddAnswerToQuestionStatusOk() throws Exception {
+
+        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
+        createAnswerDto.setHtmlBody("test answer");
+
+        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/3/answer")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequest))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldAddAnswerToQuestionResponseBadRequestQuestionNotFound() throws Exception {
+
+        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
+        createAnswerDto.setHtmlBody("test answer");
+
+        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/2222/answer")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequest))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Question not found"));
+    }
 
     @Test
     public void shouldReturnQuestionsWithGivenTags() throws Exception {

@@ -11,7 +11,7 @@ user_entity:
     role_id: 1
     id: 1
 
-  - email: "2020-04-04"
+  - email: "2020-04-03"
     reputation_count: 1
     password: "2020-04-04"
     about: "description 2"
@@ -22,7 +22,7 @@ user_entity:
     role_id: 1
     id: 2
 
-  - email: "2020-04-04"
+  - email: "2020-04-02"
     reputation_count: 0
     password: "2020-04-04"
     about: "description 2"
@@ -33,6 +33,13 @@ user_entity:
     role_id: 1
     id: 3
 
-
-
-
+  - email: "principal@mail.ru"
+    reputation_count: 2
+    password: "$2a$10$G.l/LUSaCNeNK3d5Bhm2KOJLF8aFynLFxiKirvrcJHwveXmcAXQcy"
+    about: "description 2"
+    full_name: "Uou"
+    is_enabled: 1
+    last_redaction_date: "2020-05-28 13:58:56"
+    persist_date: "2020-05-28 13:58:56"
+    role_id: 1
+    id: 153
