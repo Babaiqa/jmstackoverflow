@@ -313,7 +313,7 @@ public class QuestionController {
         return ResponseEntity.ok(resultPage);
     }
 
-    @GetMapping(value = "/withTags", params = {"page", "size"})
+    @GetMapping(value = "/withTags", params = {"page","size", "tagIds"})
     @ApiOperation(value = "Return questions that include all given tags")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Return the pagination PageDto", response = PageDto.class),
@@ -328,8 +328,7 @@ public class QuestionController {
                     example = "10")
             @RequestParam("size") int size,
             @ApiParam(name = "tagIds", required = true, type = "List<Long>")
-            @Valid
-            @RequestBody List<Long> tagIds
+            @RequestParam("tagIds") List<Long> tagIds
     ) {
         if (size <= 0 || page <= 0 || size > MAX_ITEMS_ON_PAGE) {
             ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +

@@ -1,11 +1,10 @@
 $(document).ready(function (){
-    $('#mainTag').children().remove();
-    $.get("/api/tag/order/popular?page=1&size=20",function (response) {
-        for (var i = 0; i < response.items.length; i++) {
+    let mainTag = new TagService().getTagListDtoByPopularPagination(1,20).then(function (response) {
+        for (let i = 0; i < response.items.length; i++) {
             $('#mainTag').append(
                 '<tr>'
                 + '<td>'
-                + '<div class="mb-1">'
+                + '<div class="mb-1" onclick="new PaginationQuestionForMainPage(1,10,`withTags`,'+ response.items[i].id +').setQuestions()">'
                 + response.items[i].name
                 + '</div>'
                 + '<span id="spanX">'
@@ -20,13 +19,12 @@ $(document).ready(function (){
 })
 
 $(document).ready(function (){
-    $('#questionTag').children().remove();
-    $.get("/api/tag/order/popular?page=1&size=20",function (response) {
-        for (var i = 0; i < response.items.length; i++) {
+    let questionTag = new TagService().getTagListDtoByPopularPagination(1,20).then(function (response) {
+        for (let i = 0; i < response.items.length; i++) {
             $('#questionTag').append(
                 '<tr>'
                 + '<td>'
-                + '<div class="mb-1">'
+                + '<div class="mb-1" onclick="new PaginationQuestion(1,10,`withTags`,'+ response.items[i].id +').setQuestions()">'
                 + response.items[i].name
                 + '</div>'
                 + '<span id="spanX">'

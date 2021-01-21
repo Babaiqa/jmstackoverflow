@@ -121,10 +121,10 @@ class QuestionService {
             }).catch( error => error.response.then(message => console.log(message)));
     }
 
-    getQuestionsWithGivenTags(page, size) {
-        let query = '/api/question/withTags?page=' + page + '&size=' + size;
+    getQuestionsWithGivenTags(page, size, id) {
+        let query = '/api/question/withTags?page=' + page + '&size=' + size + '&tagIds=' + id;
         return fetch(query, {
-            method: 'POST',
+            method: 'GET',
             headers: new Headers({
                 'Content-Type': 'application/json',
                 'Authorization': $.cookie("token")
