@@ -2,7 +2,6 @@ package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -11,16 +10,8 @@ import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.*;
-
-import com.javamentor.qa.platform.webapp.converters.AnswerVoteConverter;
-import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
-import com.javamentor.qa.platform.webapp.converters.TagMapper;
-import com.javamentor.qa.platform.webapp.converters.UserConverter;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import com.javamentor.qa.platform.webapp.converters.*;
+import io.swagger.annotations.*;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,8 +36,10 @@ public class QuestionController {
     private final UserDtoService userDtoService;
     private final AnswerVoteService answerVoteService;
     private final AnswerService answerService;
-    private final AnswerVoteConverter answerVoteConverter;
+    private final AnswerConverter answerConverter;
     private final SecurityHelper securityHelper;
+    private final AnswerVoteConverter answerVoteConverter;
+
 
 
     private final QuestionDtoService questionDtoService;
@@ -55,21 +47,27 @@ public class QuestionController {
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
-    public QuestionController(QuestionService questionService, TagMapper tagMapper, TagService tagService,
-                              QuestionDtoService questionDtoService, UserDtoService userDtoService,
+    public QuestionController(QuestionService questionService,
+                              TagMapper tagMapper,
+                              TagService tagService,
+                              QuestionDtoService questionDtoService,
+                              UserDtoService userDtoService,
+                              AnswerConverter answerConverter,
+                              SecurityHelper securityHelper,
                               AnswerVoteService answerVoteService,
                               AnswerService answerService,
-                              AnswerVoteConverter answerVoteConverter,
-                              SecurityHelper securityHelper) {
+                              AnswerVoteConverter answerVoteConverter) {
         this.questionService = questionService;
         this.tagMapper = tagMapper;
         this.tagService = tagService;
         this.questionDtoService = questionDtoService;
         this.userDtoService = userDtoService;
+        this.answerConverter = answerConverter;
+        this.securityHelper = securityHelper;
         this.answerVoteService = answerVoteService;
         this.answerService = answerService;
         this.answerVoteConverter = answerVoteConverter;
-        this.securityHelper = securityHelper;
+
     }
 
     @Autowired
@@ -126,7 +124,7 @@ public class QuestionController {
             return ResponseEntity.ok().body("Tags were added");
         }
 
-            return ResponseEntity.badRequest().body("Tag not found");
+        return ResponseEntity.badRequest().body("Tag not found");
     }
 
 
@@ -244,6 +242,7 @@ public class QuestionController {
         return ResponseEntity.ok(resultPage);
     }
 
+
     @PostMapping("/add")
     @Validated(OnCreate.class)
     @ResponseBody
@@ -263,7 +262,7 @@ public class QuestionController {
 
         QuestionDto questionDtoNew = questionConverter.questionToQuestionDto(question);
 
-        return  ResponseEntity.ok(questionDtoNew);
+        return ResponseEntity.ok(questionDtoNew);
     }
 
 
@@ -298,8 +297,8 @@ public class QuestionController {
             @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDto>"),
     })
     public ResponseEntity<?> getQuestionsWithoutAnswer(
-            @ApiParam(name= "page", value = "Number Page. type int", required = true, example = "1")
-            @RequestParam ("page") int page,
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
             @ApiParam(name = "size", value = "Number of entries per page.Type int." +
                     " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
                     required = true,
@@ -314,15 +313,15 @@ public class QuestionController {
         return ResponseEntity.ok(resultPage);
     }
 
-    @GetMapping(value = "/withTags", params = {"page","size"})
+    @GetMapping(value = "/withTags", params = {"page", "size"})
     @ApiOperation(value = "Return questions that include all given tags")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Return the pagination PageDto", response = PageDto.class),
             @ApiResponse(code = 400, message = "QuestionList with given TagIds not found.")
     })
     public ResponseEntity<?> getQuestionsWithGivenTags(
-            @ApiParam(name= "page", value = "Number Page. type int", required = true, example = "1")
-            @RequestParam ("page") int page,
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
             @ApiParam(name = "size", value = "Number of entries per page.Type int." +
                     " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
                     required = true,
@@ -331,8 +330,8 @@ public class QuestionController {
             @ApiParam(name = "tagIds", required = true, type = "List<Long>")
             @Valid
             @RequestBody List<Long> tagIds
-    ){
-        if (size <= 0|| page <= 0 || size > MAX_ITEMS_ON_PAGE){
+    ) {
+        if (size <= 0 || page <= 0 || size > MAX_ITEMS_ON_PAGE) {
             ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
@@ -345,7 +344,7 @@ public class QuestionController {
         return ResponseEntity.ok(resultPage);
     }
 
-    @PostMapping (value = "/withoutTags", params = {"page", "size"})
+    @PostMapping(value = "/withoutTags", params = {"page", "size"})
     @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the pagination without tags List<QuestionDto>"),
@@ -377,16 +376,16 @@ public class QuestionController {
             @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDto>"),
             @ApiResponse(code = 400, message = "Bad Request", response = String.class)
     })
-    public ResponseEntity<?> qetQuestionBySearch (
+    public ResponseEntity<?> qetQuestionBySearch(
             @Valid @RequestBody QuestionSearchDto questionSearchDto,
-            @ApiParam(name= "page", value = "Number Page. type int", required = true, example = "1")
-            @RequestParam ("page") int page,
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
             @ApiParam(name = "size", value = "Number of entries per page.Type int." +
-                " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
-                required = true, example = "10")
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    required = true, example = "10")
             @RequestParam("size") int size) {
 
-        if (size <= 0|| page <= 0 || size > MAX_ITEMS_ON_PAGE){
+        if (size <= 0 || page <= 0 || size > MAX_ITEMS_ON_PAGE) {
             ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
@@ -394,6 +393,34 @@ public class QuestionController {
         PageDto<QuestionDto, Object> resultPage =
                 questionDtoService.getQuestionBySearchValue(questionSearchDto.getMessage(), page, size);
         return ResponseEntity.ok(resultPage);
+    }
+
+
+    @PostMapping("/{questionId}/answer")
+    @ApiOperation(value = "Add answer", notes = "This method Add answer to question and return AnswerDto")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Answer was added", response = AnswerDto.class),
+            @ApiResponse(code = 400, message = "Question or user not found", response = String.class)
+    })
+
+    public ResponseEntity<?> addAnswerToQuestion(@Valid @RequestBody CreateAnswerDto createAnswerDto,
+                                                 @ApiParam(name = "QuestionId", value = "QuestionId. Type long", required = true, example = "1")
+                                                 @PathVariable Long questionId) {
+
+
+        User user = securityHelper.getPrincipal();
+
+        Optional<Question> question = questionService.getById(questionId);
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question not found");
+        }
+
+        Answer answer = new Answer(question.get(), user, createAnswerDto.getHtmlBody(), false, false);
+        answer.setQuestion(question.get());
+
+        answerService.persist(answer);
+
+        return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
     }
 
     @PatchMapping("/{questionId}/answer/{answerId}/upVote")
