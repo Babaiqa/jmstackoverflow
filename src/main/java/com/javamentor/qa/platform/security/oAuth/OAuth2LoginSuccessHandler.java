@@ -5,7 +5,9 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.security.SecurityConfig;
 import com.javamentor.qa.platform.security.jwt.JwtUtils;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
+import com.javamentor.qa.platform.service.abstracts.model.RoleService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -24,39 +27,51 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Random;
+
 @Component
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final UserService userService;
     private final JwtUtils jwtUtils;
+    private final RoleService roleService;
     @Autowired
-    OAuth2LoginSuccessHandler(UserService userService, JwtUtils jwtUtils){
+    OAuth2LoginSuccessHandler(UserService userService, JwtUtils jwtUtils, RoleService roleService){
         this.userService = userService;
         this.jwtUtils = jwtUtils;
+        this.roleService = roleService;
     }
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         CustomOAuth2User oAuthUser = (CustomOAuth2User) authentication.getPrincipal();
         Optional userOptional = userService.getUserByEmail(authentication.getName());
+        Optional<Role> role = roleService.getRoleByName("USER");
         User user = null;
         if(!userOptional.isPresent()){
             user = new User();
-            user.setPassword("oauth2user");
-            user.setEmail(oAuthUser.getEmail());
+            user.setPassword(generatePassword());
+            user.setEmail(oAuthUser.getId());
             user.setIsEnabled(true);
-            Role role = new Role();
-            role.setId(151L);
-            role.setName("ROLE_USER");
-            user.setRole(role);
+            user.setRole(role.get());
             userService.persist(user);
-        } else {
-            user = (User) userOptional.get();
         }
         Cookie cookie = new Cookie("token","Bearer_" + jwtUtils.generateJwtTokenOAuth(authentication));
         cookie.setPath("/");
         response.addCookie(cookie);
         this.handle(request,response);
 
+    }
+
+    private String generatePassword(){
+        String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        Random rnd = new Random();
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < rnd.nextInt(AB.length()); i++) {
+            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+        }
+        System.out.println(sb.toString() + " сгенерированны пароль");
+        return sb.toString();
     }
 
     protected void handle(HttpServletRequest request,
