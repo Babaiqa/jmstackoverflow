@@ -11,6 +11,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class TrackedTagDto implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private long id;
     private String name;
 }
