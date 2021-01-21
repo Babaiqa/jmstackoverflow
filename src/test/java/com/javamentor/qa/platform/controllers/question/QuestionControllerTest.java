@@ -248,6 +248,26 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void shouldAddAnswerToQuestionResponseStatusOk() throws Exception {
+        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
+        createAnswerDto.setHtmlBody("test answer");
+
+        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/3/answer")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequest))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.body").value("test answer"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.questionId").value(3))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("Question Description493"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(153));
+    }
+
+    @Test
     void shouldAddAnswerToQuestionResponseBadRequestQuestionNotFound() throws Exception {
 
         CreateAnswerDto createAnswerDto = new CreateAnswerDto();
