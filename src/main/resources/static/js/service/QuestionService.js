@@ -1,8 +1,12 @@
-class QuestionService {
 
+class QuestionService {
     deleteQuestionById(id) {
         fetch('/api/question/' + id + '/delete', {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
         }).then(function(response) {
             if (!response.ok) {
                 let error = new Error();
@@ -18,7 +22,8 @@ class QuestionService {
             method: 'PATCH',
             headers: {
                 'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
             },
             body: JSON.stringify(tagDto)
         }).then(function(response) {
@@ -39,7 +44,13 @@ class QuestionService {
 
     findPagination(page, size) {
         let query = '/api/question/?page=' + page + '&size=' + size;
-        return fetch(query)
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        })
             .then(response =>  {
                 if (response.ok) {
                     return response.json()
@@ -53,7 +64,13 @@ class QuestionService {
 
     findPaginationPopular(page, size) {
         let query = '/api/question/popular/?page=' + page + '&size=' + size;
-        return fetch(query)
+        return fetch(query,{
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        })
             .then(response =>  {
                 if (response.ok) {
                     return response.json()
@@ -67,7 +84,13 @@ class QuestionService {
 
     getResponseQuestion(query) {
         let result = new Array();
-        fetch(query)
+        fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        })
             .then(response => {
                 if (response.ok) {
                     return response.json()
@@ -84,7 +107,13 @@ class QuestionService {
 
     getQuestionWithoutAnswers(page, size) {
         let query = '/api/question/withoutAnswer?page=' + page + '&size=' + size;
-        return fetch(query)
+        return fetch(query,{
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        })
             .then(response => {
                 if (response.ok) {
                     return response.json()

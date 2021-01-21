@@ -1,8 +1,14 @@
-class TagService {
 
+class TagService {
     getTagDtoPaginationByPopular(page, size) {
         let query = '/api/tag/popular?page=' + page + '&size=' + size;
-        return fetch(query)
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        })
             .then(response =>  {
                 if (response.ok) {
                     return response.json()
@@ -16,7 +22,13 @@ class TagService {
 
     getTagDtoPaginationOrderByAlphabet(page, size) {
         let query = '/api/tag/alphabet/order?page=' + page + '&size=' + size;
-        return fetch(query)
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        })
             .then(response =>  {
                 if (response.ok) {
                     return response.json()
@@ -30,7 +42,13 @@ class TagService {
 
     getTagListDtoByPopularPagination(page, size) {
         let query = '/api/tag/order/popular?page=' + page + '&size=' + size;
-        return fetch(query)
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        })
             .then(response =>  {
                 if (response.ok) {
                     return response.json()
@@ -44,7 +62,13 @@ class TagService {
 
     getTagRecentDtoPagination(page, size) {
         let query = '/api/tag/recent?page=' + page + '&size=' + size;
-        return fetch(query)
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        })
             .then(response =>  {
                 if (response.ok) {
                     return response.json()
@@ -58,7 +82,13 @@ class TagService {
 
     getTagName(name, page, size) {
         let query = '/api/tag/name?name=' + name + '&page=' + page + '&size=' + size;
-        return fetch(query)
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        })
             .then(response => {
                 if (response.ok) {
                     return response.json()
@@ -72,7 +102,13 @@ class TagService {
 
     getResponse(query) {
         let result = new Array();
-        fetch(query)
+        fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        })
             .then(response => {
                 if (response.ok) {
                     return response.json()
