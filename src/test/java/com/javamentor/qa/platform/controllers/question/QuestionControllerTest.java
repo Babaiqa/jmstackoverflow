@@ -18,6 +18,9 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -43,6 +46,9 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Test
     void getAllDto() throws Exception {
@@ -254,7 +260,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
         String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
 
-        this.mockMvc.perform(MockMvcRequestBuilders
+        String response = mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/question/3/answer")
                 .contentType("application/json;charset=UTF-8")
                 .content(jsonRequest))
@@ -264,7 +270,13 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.body").value("test answer"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.questionId").value(3))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("Question Description493"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(153));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(153))
+                .andReturn().getResponse().toString();
+
+        response.
+        entityManager.createNativeQuery("SELECT * FROM answer Where id = :id", AnswerDto.class)
+                .setParameter("id", )
+
     }
 
     @Test
