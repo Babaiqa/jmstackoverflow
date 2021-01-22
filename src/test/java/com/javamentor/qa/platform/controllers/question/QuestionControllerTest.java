@@ -233,15 +233,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         List<Long> tagIds = Arrays.stream(a).collect(Collectors.toList());
         String jsonRequest = objectMapper.writeValueAsString(tagIds);
 
-        PageDto<QuestionDto, Object> expected = new PageDto<>();
-
-        expected.setCurrentPageNumber(1);
-        expected.setItemsOnPage(3);
-        expected.setTotalPageCount(1);
-        expected.setTotalResultCount(3);
-        ArrayList<QuestionDto> questionDtos = new ArrayList<>();
-        expected.setItems(questionDtos);
-
         String resultContext = mockMvc.perform(MockMvcRequestBuilders.get("/api/question/withTags")
                 .content(jsonRequest)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -251,36 +242,16 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.currentPageNumber").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPageCount").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.totalResultCount").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPageCount").value(3))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalResultCount").value(7))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.itemsOnPage").value(3))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.items").isNotEmpty())
                 .andReturn().getResponse().getContentAsString();
 
         PageDto<LinkedHashMap, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
 
-        LinkedHashMap<String, Object> linkedHashMap  = actual.getItems().get(0);
-
-        ArrayList<LinkedHashMap<String, Object>> getMap = (ArrayList<LinkedHashMap<String, Object>>) linkedHashMap.get("listTagDto");
-
-        Integer integer = (Integer) getMap.get(0).get("id");
-
-        Assert.assertTrue(  integer == 1 );
-
-        linkedHashMap  = actual.getItems().get(1);
-
-        getMap = (ArrayList<LinkedHashMap<String, Object>>) linkedHashMap.get("listTagDto");
-
-        integer = (Integer) getMap.get(0).get("id");
-
-        Assert.assertTrue(  integer == 1 );
-
-        linkedHashMap  = actual.getItems().get(2);
-
-        getMap = (ArrayList<LinkedHashMap<String, Object>>) linkedHashMap.get("listTagDto");
-
-        integer = (Integer) getMap.get(0).get("id");
-
-        Assert.assertTrue(  integer == 3 );
+        int numberOfItemsOnPage = actual.getItems().size();
+        Assert.assertTrue(numberOfItemsOnPage == 3);
     }
 
     @Test

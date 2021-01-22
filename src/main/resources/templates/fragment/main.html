@@ -11,7 +11,7 @@
 
             <div class="row">
                 <h2>Исследуйте вопросы на сайте</h2>
-                <button type="button" class="btn btn-primary float-right" href="#"  id="askQuest">Задать вопрос</button>
+                <a type="button" class="btn btn-primary float-right" href="/ask"  id="askQuest">Задать вопрос</a>
             </div>
             <div class="nav-col btn-group  btn-block mr-0">
                 <button type="button" class="btn  btn-sm   active ">тэг 1</button>
@@ -28,13 +28,13 @@
                 <button type="button" class="btn  btn-sm overflow-hidden">тэг 10</button>
             </div>
             <div class="nav-col btn-group  btn-block mr-0   ">
-                <button type="button" class="btn  btn-sm   active " href="#">Интересные</button>
-                <button type="button" class="btn btn-sm"href="#">Конкурсные</button>
-                <button type="button" class="btn btn-sm" href="#">Популярные</button>
-                <button type="button" class="btn  btn-sm " href="#">За неделю</button>
-                <button type="button" class="btn  btn-sm" href="#">За месяц</button>
+                <button type="button" class="btn  btn-sm   active " href="#" onclick="new PaginationQuestionForMainPage(1,10, 'new').setQuestions()">Интересные</button>
+                <!-- button type="button" class="btn btn-sm"href="#">Конкурсные</button-->
+                <button type="button" class="btn btn-sm" href="#" onclick="new PaginationQuestionForMainPage(1,10, 'popular').setQuestions()">Популярные</button>
+                <button type="button" class="btn  btn-sm " href="#" onclick="new PaginationQuestionForMainPage(1,10, 'popularWeek').setQuestions()">За неделю</button>
+                <button type="button" class="btn  btn-sm" href="#" onclick="new PaginationQuestionForMainPage(1,10, 'popularMonth').setQuestions()">За месяц</button>
             </div>
-            <div style= "min-height:350px">
+            <div id="questionsAll" style= "min-height:350px">
             <a href="#" class="list-group-item list-group-item-action h-100">
                 <div class="row align-items-center h-100">
                     <div class="col-sm-2 mx-auto">
@@ -324,10 +324,8 @@
                 </div>
             </a>
         </div>
-        <div class="list-group-item">
-            <div class="text-right">
-                <button type="button" class="btn btn-primary" href="#" id="otherQuest">Посмотреть другие вопросы</button>
-            </div>
+        <div id = "buttonToQuestionArea" class="list-group-item">
+
         </div>
         </div>
         <div class="row-md-4 col-xl-3  col-lg-3 col-sm-4">
@@ -369,6 +367,17 @@
                         </onsubmit >
                     </div>
             </div>
+
+            <table class="table" id="mainCountTag">
+                <thead>
+                <tr>
+                    <th><h4 id="h4Tag">Недавние метки</h4></th>
+                </tr>
+                </thead>
+                <tbody id="mainTag">
+                </tbody>
+            </table>
+
         </div>
     </div>
 

@@ -11,7 +11,7 @@
             <div> <!-- переставил отсюда клас на объединит страницу    -->
                 <div class="row">
                     <h2>Все вопросы</h2>
-                    <button type="button" class="btn btn-primary float-right" href="#" id="askQuest">Задать вопрос</button>
+                    <a type="button" class="btn btn-primary float-right" href="/" id="askQuest">Задать вопрос</a>
                 </div>
 
                 <a href="#" id="questionsQuantity"></a>
@@ -81,6 +81,17 @@
                     </onsubmit >
                 </div>
             </div>
+
+            <table class="table" id="mainCountTag">
+                <thead>
+                <tr>
+                    <th><h4 id="h4Tag">Недавние метки</h4></th>
+                </tr>
+                </thead>
+                <tbody id="questionTag">
+                </tbody>
+            </table>
+
         </div>
     </div>
     <div th:fragment="styleheader">

@@ -15,10 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Service
-public class TestDataInitService {
+public class  TestDataInitService {
 
     final UserService userService;
     final QuestionService questionService;
@@ -119,19 +120,19 @@ public class TestDataInitService {
 
             Question question = new Question();
             question.setTitle("Question Title" + i);
-            question.setViewCount(0);
+            question.setViewCount(i*5);
             question.setDescription("Question Description" + i);
             question.setUser(user);
-            question.setTags(tagList);
+            question.setTags(tagList.stream().limit(5).collect(Collectors.toList()));
             question.setIsDeleted(false);
             questionService.persist(question);
 
             Question questionNoAnswer = new Question();
             questionNoAnswer.setTitle("Question NoAnswer " + i);
-            questionNoAnswer.setViewCount(0);
+            questionNoAnswer.setViewCount(i*2);
             questionNoAnswer.setDescription("Question NoAnswer Description" + i);
             questionNoAnswer.setUser(user);
-            questionNoAnswer.setTags(tagList);
+            questionNoAnswer.setTags(tagList.stream().limit(5).collect(Collectors.toList()));
             questionNoAnswer.setIsDeleted(false);
             questionService.persist(questionNoAnswer);
 

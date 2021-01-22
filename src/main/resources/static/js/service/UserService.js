@@ -1,3 +1,4 @@
+
 class UserService {
     getUserById(id) {
         let query = '/api/user/' + id;
@@ -24,7 +25,13 @@ class UserService {
 
     getUserDtoPaginationByReputationOverMonth(page, size) {
         let query = '/api/user/order/reputation/month?page=' + page + '&size=' + size;
-        return fetch(query)
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        })
             .then(response =>  {
                 if (response.ok) {
                     return response.json()
@@ -38,7 +45,13 @@ class UserService {
 
     getUserDtoPaginationByReputationOverWeek(page, size) {
         let query = '/api/user/order/reputation/week?page=' + page + '&size=' + size;
-        return fetch(query)
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        })
             .then(response =>  {
                 if (response.ok) {
                     return response.json()
@@ -53,7 +66,13 @@ class UserService {
 
     getResponse(query) {
         let result = new Array();
-        fetch(query)
+        fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        })
             .then(response =>  {
                 if (response.ok) {
                     return response.json()
