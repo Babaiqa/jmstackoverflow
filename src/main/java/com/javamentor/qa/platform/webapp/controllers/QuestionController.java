@@ -405,7 +405,7 @@ public class QuestionController {
     })
 
     public ResponseEntity<?> addAnswerToQuestion(@Valid @RequestBody CreateAnswerDto createAnswerDto,
-                                                 @ApiParam(name = "questionId", value = "QuestionId. Type long", required = true, example = "1")
+                                                 @ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
                                                  @PathVariable Long questionId) {
 
 
