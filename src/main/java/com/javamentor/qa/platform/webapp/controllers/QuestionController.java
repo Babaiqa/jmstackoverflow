@@ -189,7 +189,8 @@ public class QuestionController {
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
 
-        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationPopular(page, size, LocalDateTime.now().getLong(ChronoField.EPOCH_DAY));
+        PageDto<QuestionDto, Object> resultPage = questionDtoService
+                .getPaginationPopular(page, size, LocalDateTime.now().getLong(ChronoField.EPOCH_DAY));
 
         return ResponseEntity.ok(resultPage);
     }
