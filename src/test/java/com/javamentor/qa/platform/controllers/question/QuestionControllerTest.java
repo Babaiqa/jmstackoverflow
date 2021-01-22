@@ -7,13 +7,8 @@ import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
-import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
-import org.checkerframework.checker.units.qual.A;
 import org.hamcrest.Matchers;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 import org.junit.Assert;
 import com.javamentor.qa.platform.models.dto.*;
 import org.junit.jupiter.api.Test;
@@ -21,13 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -159,7 +152,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldAddQuestionStatusOk() throws Exception {
-
         QuestionCreateDto questionCreateDto = new QuestionCreateDto();
         questionCreateDto.setUserId(2L);
         questionCreateDto.setTitle("Question number one1");
@@ -244,10 +236,8 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().string("addQuestion.questionCreateDto.tags: Значение tags должно быть заполнено"));
     }
 
-    //    -------------------------------------------------------------------
     @Test
     void shouldAddAnswerToQuestionStatusOk() throws Exception {
-
         CreateAnswerDto createAnswerDto = new CreateAnswerDto();
         createAnswerDto.setHtmlBody("test answer");
 
@@ -291,7 +281,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
     @Test
     void shouldAddAnswerToQuestionResponseBadRequestQuestionNotFound() throws Exception {
-
         CreateAnswerDto createAnswerDto = new CreateAnswerDto();
         createAnswerDto.setHtmlBody("test answer");
 
@@ -305,7 +294,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Question not found"));
     }
-//    --------------------------------------------------------------------
 
     @Test
     public void shouldReturnQuestionsWithGivenTags() throws Exception {
@@ -502,7 +490,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         Assert.assertEquals(expectPage.toString(), actualPage.toString());
     }
 
-    // Тесты для PaginationWithoutTags
     @Test
     public void shouldReturnQuestionsWithoutSpecifiedTags() throws Exception {
 
