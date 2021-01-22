@@ -404,7 +404,7 @@ public class QuestionController {
     })
 
     public ResponseEntity<?> addAnswerToQuestion(@Valid @RequestBody CreateAnswerDto createAnswerDto,
-                                                 @ApiParam(name = "QuestionId", value = "QuestionId. Type long", required = true, example = "1")
+                                                 @ApiParam(name = "questionId", value = "QuestionId. Type long", required = true, example = "1")
                                                  @PathVariable Long questionId) {
 
 
@@ -415,9 +415,6 @@ public class QuestionController {
             return ResponseEntity.badRequest().body("Question not found");
         }
 
-//        System.out.println(userService.getUserByEmail("principal@mail.ru").orElse(null));
-//        System.out.println(userService.getUserByEmail("2020-04-04").orElse(null));
-        System.out.println("-----OLOLOLOLO----"+user);
         Answer answer = new Answer(question.get(), user, createAnswerDto.getHtmlBody(), false, false);
         answer.setQuestion(question.get());
 

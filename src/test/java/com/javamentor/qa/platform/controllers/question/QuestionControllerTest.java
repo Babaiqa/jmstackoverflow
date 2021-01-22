@@ -6,7 +6,14 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
+import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
+import org.checkerframework.checker.units.qual.A;
 import org.hamcrest.Matchers;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import org.junit.Assert;
 import com.javamentor.qa.platform.models.dto.*;
 import org.junit.jupiter.api.Test;
@@ -20,6 +27,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -49,6 +57,9 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private AnswerConverter answerConverter;
 
     @Test
     void getAllDto() throws Exception {
@@ -233,9 +244,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().string("addQuestion.questionCreateDto.tags: Значение tags должно быть заполнено"));
     }
 
-
-
-
     //    -------------------------------------------------------------------
     @Test
     void shouldAddAnswerToQuestionStatusOk() throws Exception {
@@ -260,23 +268,25 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
         String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
 
-        String response = mockMvc.perform(MockMvcRequestBuilders
+        String resultContext = mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/question/3/answer")
                 .contentType("application/json;charset=UTF-8")
                 .content(jsonRequest))
                 .andDo(print())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.body").value("test answer"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.body").value(createAnswerDto.getHtmlBody()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.questionId").value(3))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("Question Description493"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(153))
-                .andReturn().getResponse().toString();
+                .andReturn().getResponse().getContentAsString();
 
-        response.
-        entityManager.createNativeQuery("SELECT * FROM answer Where id = :id", AnswerDto.class)
-                .setParameter("id", )
+        AnswerDto answerDtoFromResponse = objectMapper.readValue(resultContext, AnswerDto.class);
+        Answer answer = entityManager
+                .createQuery("from Answer where id = :id", Answer.class)
+                .setParameter("id", answerDtoFromResponse.getId())
+                .getSingleResult();
+        AnswerDto answerDtoFromDB = answerConverter.answerToAnswerDTO(answer);
 
+        Assert.assertTrue(answerDtoFromResponse.getBody().equals(answerDtoFromDB.getBody()));
     }
 
     @Test
@@ -295,6 +305,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Question not found"));
     }
+//    --------------------------------------------------------------------
 
     @Test
     public void shouldReturnQuestionsWithGivenTags() throws Exception {
