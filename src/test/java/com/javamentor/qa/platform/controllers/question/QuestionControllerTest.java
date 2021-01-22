@@ -229,29 +229,27 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
     @Test
     public void shouldReturnQuestionsWithGivenTags() throws Exception {
-        Long a[] = {1L, 3L, 5L};
-        List<Long> tagIds = Arrays.stream(a).collect(Collectors.toList());
-        String jsonRequest = objectMapper.writeValueAsString(tagIds);
+        QuestionSearchDto questionSearchDto = new QuestionSearchDto("sql query in excel");
+        String json = objectMapper.writeValueAsString(questionSearchDto);
 
-        String resultContext = mockMvc.perform(MockMvcRequestBuilders.get("/api/question/withTags")
-                .content(jsonRequest)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+        PageDto<QuestionDto, Object> expected = new PageDto<>();
+
+        expected.setCurrentPageNumber(1);
+        expected.setItemsOnPage(3);
+        expected.setTotalPageCount(1);
+        expected.setTotalResultCount(3);
+        ArrayList<QuestionDto> questionDtos = new ArrayList<>();
+        expected.setItems(questionDtos);
+
+        this.mockMvc.perform(get("/api/question/withTags")
                 .param("page", "1")
-                .param("size", "3"))
+                .param("size", "3")
+                .param("tagIds","10")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.currentPageNumber").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPageCount").value(3))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.totalResultCount").value(7))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.itemsOnPage").value(3))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.items").isNotEmpty())
-                .andReturn().getResponse().getContentAsString();
-
-        PageDto<LinkedHashMap, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
-
-        int numberOfItemsOnPage = actual.getItems().size();
-        Assert.assertTrue(numberOfItemsOnPage == 3);
+                .andExpect(status().isOk());
     }
 
     @Test
