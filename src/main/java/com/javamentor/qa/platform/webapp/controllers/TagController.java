@@ -270,15 +270,16 @@ public class TagController {
         if(!createTag.isPresent()){
             return ResponseEntity.badRequest().body("The " + name + " does not exist on this site");
         }
-        Optional <User> createUser = userService.getUserByName(securityHelper.getPrincipal().getFullName());
+        if(trackedTagService.getTrackedTagDtoByName(securityHelper.getPrincipal().getId(), name).isPresent()){
+            return ResponseEntity.badRequest().body("The tracked tag has already been added");
+        }
         TrackedTag createTrackedTag = new TrackedTag();
-        createTrackedTag.setUser(createUser.get());
+        createTrackedTag.setUser(userService.getById(securityHelper.getPrincipal().getId()).get());
         createTrackedTag.setTrackedTag(createTag.get());
         trackedTagService.persist(createTrackedTag);
         TrackedTagDto creatTagDtoNew = tagTrackedConverter.trackedTagToTrackedTagDto(createTrackedTag);;
         return ResponseEntity.ok(creatTagDtoNew);
     }
-
 }
 
 

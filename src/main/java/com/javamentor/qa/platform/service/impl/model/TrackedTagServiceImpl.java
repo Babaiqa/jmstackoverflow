@@ -11,6 +11,7 @@ import com.javamentor.qa.platform.service.abstracts.model.TrackedTagService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TrackedTagServiceImpl extends ReadWriteServiceImpl<TrackedTag, Long> implements TrackedTagService {
@@ -41,5 +42,10 @@ public class TrackedTagServiceImpl extends ReadWriteServiceImpl<TrackedTag, Long
             trackedTagDao.addTrackedTag(trackedTag);
         }
 
+    }
+
+    @Override
+    public Optional<TrackedTag> getTrackedTagDtoByName(Long id, String name){
+        return trackedTagDao.getTrackedTagDtoByName(id, name);
     }
 }
