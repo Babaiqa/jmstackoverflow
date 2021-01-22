@@ -66,7 +66,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         tagId.add(new Long(1L));
         String jsonRequest = objectMapper.writeValueAsString(tagId);
         this.mockMvc.perform(MockMvcRequestBuilders
-                .patch("/api/question/12/tag/add")
+                .patch("/api/question/13/tag/add")
                 .content(jsonRequest)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -101,7 +101,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         tag.add(new Long(3L));
         String jsonRequest = objectMapper.writeValueAsString(tag);
         this.mockMvc.perform(MockMvcRequestBuilders
-                .patch("/api/question/12/tag/add")
+                .patch("/api/question/13/tag/add")
                 .content(jsonRequest)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -118,7 +118,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         tag.add(new Long(11L));
         String jsonRequest = objectMapper.writeValueAsString(tag);
         this.mockMvc.perform(MockMvcRequestBuilders
-                .patch("/api/question/12/tag/add")
+                .patch("/api/question/13/tag/add")
                 .content(jsonRequest)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -246,7 +246,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
 
         this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/3/answer")
+                .post("/api/question/14/answer")
                 .contentType("application/json;charset=UTF-8")
                 .content(jsonRequest))
                 .andDo(print())
@@ -261,13 +261,13 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
 
         String resultContext = mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/3/answer")
+                .post("/api/question/14/answer")
                 .contentType("application/json;charset=UTF-8")
                 .content(jsonRequest))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.body").value(createAnswerDto.getHtmlBody()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.questionId").value(3))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.questionId").value(14))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(153))
                 .andReturn().getResponse().getContentAsString();
 
@@ -391,7 +391,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
         List<QuestionDto> items = new ArrayList<>();
         items.add(new QuestionDto(
-                7L,
+                18L,
                 "Question number seven",
                 3L, "Tot", null,
                 "Changes made in sql query in excel reflects changes only on single sheet",
@@ -466,7 +466,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         tagsList.add(new TagDto(1L, "java"));
 
         List<QuestionDto> itemsList = new ArrayList<>();
-        itemsList.add(new QuestionDto(3L,
+        itemsList.add(new QuestionDto(14L,
                 "Question number three",
                 2L,
                 "Tot",
