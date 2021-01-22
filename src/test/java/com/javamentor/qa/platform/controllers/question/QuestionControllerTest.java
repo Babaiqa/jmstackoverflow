@@ -233,7 +233,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         List<Long> tagIds = Arrays.stream(a).collect(Collectors.toList());
         String jsonRequest = objectMapper.writeValueAsString(tagIds);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/question/withTags")
+        String resultContext = mockMvc.perform(MockMvcRequestBuilders.get("/api/question/withTags")
                 .content(jsonRequest)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .param("page", "1")
@@ -248,6 +248,10 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.items").isNotEmpty())
                 .andReturn().getResponse().getContentAsString();
 
+        PageDto<LinkedHashMap, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
+
+        int numberOfItemsOnPage = actual.getItems().size();
+        Assert.assertTrue(numberOfItemsOnPage == 3);
     }
 
     @Test
