@@ -120,7 +120,7 @@ public class  TestDataInitService {
 
             Question question = new Question();
             question.setTitle("Question Title" + i);
-            question.setViewCount(0);
+            question.setViewCount(i*5);
             question.setDescription("Question Description" + i);
             question.setUser(user);
             question.setTags(tagList.stream().limit(5).collect(Collectors.toList()));
@@ -129,7 +129,7 @@ public class  TestDataInitService {
 
             Question questionNoAnswer = new Question();
             questionNoAnswer.setTitle("Question NoAnswer " + i);
-            questionNoAnswer.setViewCount(0);
+            questionNoAnswer.setViewCount(i*2);
             questionNoAnswer.setDescription("Question NoAnswer Description" + i);
             questionNoAnswer.setUser(user);
             questionNoAnswer.setTags(tagList.stream().limit(5).collect(Collectors.toList()));
