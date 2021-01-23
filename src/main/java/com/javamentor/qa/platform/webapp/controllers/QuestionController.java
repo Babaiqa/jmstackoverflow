@@ -435,18 +435,15 @@ public class QuestionController {
             @ApiParam(name = "answerId", value = "type Long", required = true, example = "0")
             @PathVariable Long answerId) {
 
-        if (questionId == null) {
-            return ResponseEntity.badRequest().body("Question id is null");
-        }
 
         Optional<Question> question = questionService.getById(questionId);
         if (!question.isPresent()) {
-            return ResponseEntity.badRequest().body("Question not found");
+            return ResponseEntity.badRequest().body("Question was not found");
         }
 
         Optional<Answer> answer = answerService.getById(answerId);
         if (!answer.isPresent()) {
-            return ResponseEntity.badRequest().body("Answer not found");
+            return ResponseEntity.badRequest().body("Answer was not found");
         }
 
         AnswerVote answerVote = new AnswerVote(securityHelper.getPrincipal(), answer.get(), 1);
@@ -467,18 +464,15 @@ public class QuestionController {
             @ApiParam(name = "answerId", value = "type Long", required = true, example = "0")
             @PathVariable Long answerId) {
 
-        if (questionId == null) {
-            return ResponseEntity.badRequest().body("Question id is null");
-        }
 
         Optional<Question> question = questionService.getById(questionId);
         if (!question.isPresent()) {
-            return ResponseEntity.badRequest().body("Question not found");
+            return ResponseEntity.badRequest().body("Question was not found");
         }
 
         Optional<Answer> answer = answerService.getById(answerId);
         if (!answer.isPresent()) {
-            return ResponseEntity.badRequest().body("Answer not found");
+            return ResponseEntity.badRequest().body("Answer was not found");
         }
 
         AnswerVote answerVote = new AnswerVote(securityHelper.getPrincipal(), answer.get(), -1);

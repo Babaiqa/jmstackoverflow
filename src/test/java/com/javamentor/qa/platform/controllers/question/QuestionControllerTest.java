@@ -6,6 +6,8 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
+import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
+import com.javamentor.qa.platform.service.abstracts.model.AnswerVoteService;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import com.javamentor.qa.platform.models.dto.*;
@@ -42,6 +44,8 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private AnswerVoteService answerVoteService;
 
     @Test
     void getAllDto() throws Exception {
@@ -114,7 +118,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andDo(print())
                 .andExpect(content().string("Tag not found"))
                 .andExpect(status().isBadRequest());
-
     }
 
     @Test
@@ -502,5 +505,102 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.totalResultCount").value(0))
                 .andExpect(jsonPath("$.items").isEmpty())
                 .andExpect(jsonPath("$.itemsOnPage").value(10));
+    }
+
+
+    @Test
+    void voteUpStatusOk() throws Exception {
+
+        List<AnswerVote> before = answerVoteService.getAll();
+        int first = before.size();
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/10/answer/1/upVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.userId").isNumber())
+                .andExpect(jsonPath("$.answerId").isNumber())
+                .andExpect(jsonPath("$.persistDateTime").isNotEmpty())
+                .andExpect(jsonPath("$.vote").isNumber());
+
+        List<AnswerVote> after = answerVoteService.getAll();
+        int second = after.size();
+        Assert.assertEquals(first + 1, second);
+    }
+
+    @Test
+    void voteUpQuestionIsNotExist() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/1/answer/1/upVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Question was not found"));
+
+    }
+
+    @Test
+    void voteUpAnswerIsNotExist() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/10/answer/4/upVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Answer was not found"));
+    }
+
+    @Test
+    void voteDownStatusOk() throws Exception {
+
+        List<AnswerVote> before = answerVoteService.getAll();
+        int first = before.size();
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/10/answer/1/downVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.userId").isNumber())
+                .andExpect(jsonPath("$.answerId").isNumber())
+                .andExpect(jsonPath("$.persistDateTime").isNotEmpty())
+                .andExpect(jsonPath("$.vote").isNumber());
+
+        List<AnswerVote> after = answerVoteService.getAll();
+        int second = after.size();
+        Assert.assertEquals(first + 1, second);
+    }
+
+    @Test
+    void voteDownQuestionIsNotExist() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/1/answer/1/downVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Question was not found"));
+
+    }
+
+    @Test
+    void voteDownAnswerIsNotExist() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/10/answer/4/downVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Answer was not found"));
     }
 }
