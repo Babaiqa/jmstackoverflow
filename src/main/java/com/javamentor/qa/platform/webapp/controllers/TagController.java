@@ -279,7 +279,7 @@ public class TagController {
             return ResponseEntity.badRequest().body("The tracked tag has already been added");
         }
         TrackedTag createTrackedTag = new TrackedTag();
-        createTrackedTag.setUser(userService.getById(securityHelper.getPrincipal().getId()).get());
+        createTrackedTag.setUser(securityHelper.getPrincipal());
         createTrackedTag.setTrackedTag(createTag.get());
         trackedTagService.persist(createTrackedTag);
         TrackedTagDto creatTagDtoNew = tagTrackedConverter.trackedTagToTrackedTagDto(createTrackedTag);;
@@ -300,7 +300,7 @@ public class TagController {
             return ResponseEntity.badRequest().body("The ignored tag has already been added");
         }
         IgnoredTag createIgnoredTag = new IgnoredTag();
-        createIgnoredTag.setUser(userService.getById(securityHelper.getPrincipal().getId()).get());
+        createIgnoredTag.setUser(securityHelper.getPrincipal());
         createIgnoredTag.setIgnoredTag(createTag.get());
         ignoredTagService.persist(createIgnoredTag);
         IgnoredTagDto creatTagDtoNew = tagIgnoredConverter.trackedTagToIgnoredTagDto(createIgnoredTag);;
