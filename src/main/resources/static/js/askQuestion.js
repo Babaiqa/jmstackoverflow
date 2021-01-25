@@ -44,13 +44,13 @@ buttonAskQuestion.onclick = function (e) {
     if (!fetch('http://localhost:5557/api/question/add', {
         method: 'POST',
         headers: {
-            'content-type': 'application/json;charset=utf-8'
+            'content-type': 'application/json;charset=utf-8', 'Authorization': $.cookie("token")
         },
         body: JSON.stringify(questionCreateDto)
     }).then(response => response.json()
     ).then(question => {
         newQuestionId = question.id;
-        window.location.href = 'http://localhost:5557/api/question/' + newQuestionId;
+        window.location.href = '/site';
     })) {
         alert('Вопрос не был добавлен');
     }
