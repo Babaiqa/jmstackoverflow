@@ -274,7 +274,7 @@ public class TagController {
             return ResponseEntity.badRequest().body("The tracked tag has already been added");
         }
         TrackedTag createTrackedTag = new TrackedTag();
-        createTrackedTag.setUser(userService.getById(securityHelper.getPrincipal().getId()).get());
+        createTrackedTag.setUser(securityHelper.getPrincipal());
         createTrackedTag.setTrackedTag(createTag.get());
         trackedTagService.persist(createTrackedTag);
         TrackedTagDto creatTagDtoNew = tagTrackedConverter.trackedTagToTrackedTagDto(createTrackedTag);;
