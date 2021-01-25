@@ -30,7 +30,7 @@ import java.time.LocalDateTime;
 public class AnswerVote {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = "AnswerVote_seq")
     private Long id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

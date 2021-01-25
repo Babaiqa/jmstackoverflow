@@ -33,6 +33,13 @@ user_entity:
     role_id: 1
     id: 3
 
-
-
-
+  - email: "principal@mail.ru"
+    reputation_count: 2
+    password: "$2a$10$G.l/LUSaCNeNK3d5Bhm2KOJLF8aFynLFxiKirvrcJHwveXmcAXQcy"
+    about: "description 2"
+    full_name: "Uou"
+    is_enabled: 1
+    last_redaction_date: "2020-05-28 13:58:56"
+    persist_date: "2020-05-28 13:58:56"
+    role_id: 1
+    id: 153
