@@ -7,6 +7,7 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converters.CommentConverter;
 import io.swagger.annotations.*;
@@ -28,13 +29,16 @@ public class CommentController {
     private final CommentConverter commentConverter;
     private final AnswerService answerService;
     private final CommentAnswerService commentAnswerService;
+    private final SecurityHelper securityHelper;
+
 
     public CommentController(QuestionService questionService,
                              CommentQuestionService commentQuestionService,
                              UserService userService,
                              CommentConverter commentConverter,
                              AnswerService answerService,
-                             CommentAnswerService commentAnswerService) {
+                             CommentAnswerService commentAnswerService,
+                             SecurityHelper securityHelper) {
 
         this.questionService = questionService;
         this.commentQuestionService = commentQuestionService;
@@ -42,6 +46,7 @@ public class CommentController {
         this.commentConverter = commentConverter;
         this.answerService = answerService;
         this.commentAnswerService = commentAnswerService;
+        this.securityHelper = securityHelper;
     }
 
 
@@ -88,23 +93,17 @@ public class CommentController {
     public ResponseEntity<?> addCommentToAnswer(
             @ApiParam(name = "AnswerId", value = "AnswerId. Type long", required = true, example = "1")
             @PathVariable Long answerId,
-            @ApiParam(name = "UserId", value = "UserId. Type long", required = true, example = "1")
-            @RequestParam Long userId,
-
             @ApiParam(name = "text", value = "Text of comment. Type string", required = true, example = "Some comment")
             @RequestBody String commentText) {
 
-        Optional<User> user = userService.getById(userId);
-        if (!user.isPresent()) {
-            return ResponseEntity.badRequest().body("User not found");
-        }
+        User user = securityHelper.getPrincipal();
 
         Optional<Answer> answer = answerService.getById(answerId);
         if (!answer.isPresent()) {
             return ResponseEntity.badRequest().body("Answer not found");
         }
 
-        CommentAnswer commentAnswer = commentAnswerService.addCommentToAnswer(commentText, answer.get(), user.get());
+        CommentAnswer commentAnswer = commentAnswerService.addCommentToAnswer(commentText, answer.get(), user);
 
         return ResponseEntity.ok(commentConverter.commentToCommentDTO(commentAnswer));
     }

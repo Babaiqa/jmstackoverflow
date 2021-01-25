@@ -1,8 +1,11 @@
 package com.javamentor.qa.platform.security.util;
 
+import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.security.dto.PrincipalDto;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.webapp.converters.UserConverter;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,16 +28,14 @@ public class SecurityHelper implements UserDetailsService {
         return userService.getUserByEmail(username).get();
     }
 
-    public PrincipalDto getPrincipal () {
+    public User getPrincipal () {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         User user = userService.getUserByEmail(authentication.getName()).get();
-            return new PrincipalDto(
-                    user.getId(),
-                    user.getEmail(),
-                    user.getFullName(),
-                    user.getImageLink(),
-                    user.getRole().getName());
+        if (user == null) {
+            throw new SecurityException("User is not logged in");
+        }
+    return user;
     }
 
     public Authentication getAuthentication(String username, String password) {
