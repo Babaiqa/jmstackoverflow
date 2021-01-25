@@ -140,6 +140,25 @@ class QuestionService {
         }).catch( error => error.response.then(message => console.log(message)));
     }
 
+    getQuestionsWithoutAnswers(page, size) {
+        let query = '/api/question/withoutAnswer?page=' + page + '&size=' + size;
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        }).then(response =>  {
+            if (response.ok) {
+                return response.json()
+            } else {
+                let error = new Error();
+                error.response = response.text();
+                throw error;
+            }
+        }).catch( error => error.response.then(message => console.log(message)));
+    }
+
     getResponseQuestion(query) {
         let result = new Array();
         fetch(query, {

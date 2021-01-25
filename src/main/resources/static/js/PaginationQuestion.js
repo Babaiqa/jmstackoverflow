@@ -14,6 +14,10 @@ class PaginationQuestion {
             this.questions = this.questionService.findPaginationPopular(this.page, this.size);
         } else if (this.type === 'withTags') {
                 this.questions = this.questionService.getQuestionsWithGivenTags(this.page, this.size, this.id);
+        } else if (this.type === 'withoutAnswers') {
+            this.questions = this.questionService.getQuestionsWithoutAnswers(this.page, this.size)
+        } else if (this.type === 'new') {
+            this.questions = this.questionService.findPaginationNew(this.page, this.size);
         } else {
             this.questions = this.questionService.findPagination(this.page, this.size);
         }
@@ -21,6 +25,7 @@ class PaginationQuestion {
 
     setQuestions() {
         $('#questionsTable').children().remove()
+        $('#questionsPagesNavigation').children().remove();
 
 
 
