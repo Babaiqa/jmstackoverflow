@@ -11,6 +11,10 @@ class PaginationQuestion {
             this.questions = this.questionService.findPagination(this.page, this.size);
         } else if (this.type == 'popular') {
             this.questions = this.questionService.findPaginationPopular(this.page, this.size);
+        } else if (this.type === 'withoutAnswers') {
+            this.questions = this.questionService.getQuestionsWithoutAnswers(this.page, this.size)
+        } else if (this.type === 'new') {
+            this.questions = this.questionService.findPaginationNew(this.page, this.size);
         } else {
             this.questions = this.questionService.findPagination(this.page, this.size);
         }
@@ -18,11 +22,12 @@ class PaginationQuestion {
 
     setQuestions() {
         $('#questionsTable').children().remove()
+        $('#questionsPagesNavigation').children().remove();
 
 
 
         this.questions.then(function (response) {
-            $('#questionsQuantity').append(response.totalResultCount + " вопросов");
+            document.getElementById("questionsQuantity").innerText = response.totalResultCount + " вопросов"
 
             for (var i = 0; i < response.items.length; i++) {
 
@@ -62,7 +67,6 @@ class PaginationQuestion {
             var previousPage = response.currentPageNumber - 1;
 
 
-            $('#questionsPagesNavigation').children().remove();
             if (currentPageNumber != 1) {
                 $('#questionsPagesNavigation').append(
                     "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationQuestion(" + previousPage + "," + size + "," + "\"" + type + "\"" + ").setQuestions()' >Назад</a></li>"

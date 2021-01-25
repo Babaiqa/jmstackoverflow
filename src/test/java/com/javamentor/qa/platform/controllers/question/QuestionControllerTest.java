@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/question/tagQuestionApi.yml",
         "dataset/question/question_has_tagQuestionApi.yml",
         "dataset/question/votes_on_question.yml"},
-        useSequenceFiltering = true, cleanBefore = true, cleanAfter = false)
+        useSequenceFiltering = true, cleanBefore = true, cleanAfter = true)
 @WithMockUser(username = "principal@mail.ru", roles={"ADMIN", "USER"})
 class QuestionControllerTest extends AbstractIntegrationTest {
 
