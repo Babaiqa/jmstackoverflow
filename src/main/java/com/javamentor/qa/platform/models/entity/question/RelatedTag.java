@@ -17,7 +17,7 @@ public class RelatedTag implements Serializable {
 
     private static final long serialVersionUID = 2976172897344367292L;
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = "RelatedTag_seq")
     private Long id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

@@ -1,4 +1,5 @@
 question:
+
   - id: 10
 #    count_valuable: 1
     description: "Stream filter on list keeping some of the filtered values"
@@ -9,7 +10,7 @@ question:
     is_deleted: 0
     last_redaction_date: "2020-01-02 13:58:56"
 
-  - id: 2
+  - id: 13
 #    count_valuable: 3
     description: "while using java timer, error that The constructor Timer(int, ActionListener) is undefined"
     title: "Question number two"
@@ -19,7 +20,7 @@ question:
     is_deleted: 0
     last_redaction_date: "2020-01-20 13:58:56"
 
-  - id: 3
+  - id: 14
 #    count_valuable: 2
     description: "Swagger - add \"path variable\" in request url"
     title: "Question number three"
@@ -29,7 +30,7 @@ question:
     is_deleted: 0
     last_redaction_date: "2020-02-01 13:58:56"
 
-  - id: 4
+  - id: 15
 #    count_valuable: 5
     description: "Chart js drill down chart"
     title: "Question number four"
@@ -39,7 +40,7 @@ question:
     is_deleted: 1
     last_redaction_date: "2020-02-02 13:58:56"
 
-  - id: 5
+  - id: 16
 #    count_valuable: 2
     description: "Save web page who as exit"
     title: "Question number five"
@@ -49,7 +50,7 @@ question:
     is_deleted: 0
     last_redaction_date: "2020-02-01 13:58:56"
 
-  - id: 6
+  - id: 17
 #    count_valuable: 1
     description: "Glightbox problem in mobile horizontal scroll"
     persist_date: "2020-01-02"
@@ -59,7 +60,7 @@ question:
     is_deleted: 0
     last_redaction_date: "2020-05-01 13:58:56"
 
-  - id: 7
+  - id: 18
 #    count_valuable: 4
     description: "Changes made in sql query in excel reflects changes only on single sheet"
     persist_date: "2020-01-02"
@@ -69,7 +70,7 @@ question:
     is_deleted: 0
     last_redaction_date: "2020-05-02 13:58:56"
 
-  - id: 8
+  - id: 19
 #    count_valuable: 5
     description: "can someone Explain why the following query will return an error message?"
     persist_date: "2020-01-02"
@@ -79,7 +80,7 @@ question:
     is_deleted: 0
     last_redaction_date: "2020-05-03 13:58:56"
 
-  - id: 9
+  - id: 20
 #    count_valuable: 1
     description: "Conceptual explanation: why COUNT() syntax doesn't work on SQLZoo JOIN Lesson Challenge 13?"
     persist_date: "2020-01-02"

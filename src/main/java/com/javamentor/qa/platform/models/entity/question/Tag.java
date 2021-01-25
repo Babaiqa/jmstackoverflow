@@ -23,7 +23,7 @@ public class Tag implements Serializable {
 
     private static final long serialVersionUID = 6264105282197120461L;
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = "Tag_seq")
     private Long id;
 
     @NotNull
