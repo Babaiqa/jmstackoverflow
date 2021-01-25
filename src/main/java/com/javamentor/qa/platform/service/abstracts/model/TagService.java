@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface TagService extends ReadWriteService<Tag, Long> {
 
     void addTagToQuestion(List<Long> tagId, Question question);
+    Optional<Tag> getTagByName(String name);
 }
