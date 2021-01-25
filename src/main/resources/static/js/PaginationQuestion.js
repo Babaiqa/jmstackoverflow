@@ -25,7 +25,6 @@ class PaginationQuestion {
 
 
         this.questions.then(function (response) {
-            $('#questionsQuantity').append(response.totalResultCount + " вопросов");
 
             for (var i = 0; i < response.items.length; i++) {
 
