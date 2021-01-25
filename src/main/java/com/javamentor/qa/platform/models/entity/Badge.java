@@ -16,7 +16,7 @@ public class Badge implements Serializable {
 
     private static final long serialVersionUID = 3714949012456624550L;
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = "Badge_seq")
     private Long id;
 
     @Column(name = "badge_name")

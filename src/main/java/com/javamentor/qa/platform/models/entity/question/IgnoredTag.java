@@ -22,7 +22,7 @@ public class IgnoredTag  implements Serializable {
 
     private static final long serialVersionUID = 7657497719741178473L;
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = "IgnoreTag_seq")
     private Long id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

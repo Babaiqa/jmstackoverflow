@@ -25,7 +25,7 @@ public class VoteQuestion implements Serializable {
     private static final long serialVersionUID = 6479035497338780810L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = "VoteQuestion_seq")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
