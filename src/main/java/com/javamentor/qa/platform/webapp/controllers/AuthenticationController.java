@@ -1,11 +1,14 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
+import com.javamentor.qa.platform.models.dto.UserDto;
+import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.dto.PrincipalDto;
 import com.javamentor.qa.platform.security.dto.TokenDto;
 import com.javamentor.qa.platform.security.dto.UserAuthorizationDto;
 import com.javamentor.qa.platform.security.jwt.JwtUtils;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
+import com.javamentor.qa.platform.webapp.converters.UserConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -29,11 +32,14 @@ public class AuthenticationController {
 
     private final JwtUtils jwtUtils;
     private final SecurityHelper securityHelper;
+    private final UserConverter userConverter;
 
     @Autowired
-    public AuthenticationController(JwtUtils jwtUtils, SecurityHelper securityHelper) {
+    public AuthenticationController(JwtUtils jwtUtils, SecurityHelper securityHelper,
+                                    UserConverter userConverter) {
         this.jwtUtils = jwtUtils;
         this.securityHelper = securityHelper;
+        this.userConverter = userConverter;
     }
 
     @PostMapping(value = "token")
@@ -65,7 +71,7 @@ public class AuthenticationController {
             @ApiResponse(code = 400, message = "Principal not found",response = String.class)
     })
     public ResponseEntity<?> getPrincipalUser() {
-        return ResponseEntity.ok(securityHelper.getPrincipal());
+        return ResponseEntity.ok(userConverter.userToPrincipalDto(securityHelper.getPrincipal()));
     }
 
     @GetMapping(value = "authenticated")

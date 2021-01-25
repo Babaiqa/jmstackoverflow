@@ -25,6 +25,10 @@ class PaginationQuestion {
             $('#questionsQuantity').append(response.totalResultCount + " вопросов");
 
             for (var i = 0; i < response.items.length; i++) {
+
+                let shuffledNames = response.items[i].listTagDto.map(i => i.name).sort(() => Math.random() - 0.5);
+                let text  = shuffledNames.map(i => `<a href="#" class="tag"> ${i} </a>`).join('');
+
                 $('#questionsTable').append(
                     "<div class=\"d-flex w-100 justify-content-between\">\n" +
                     "<h5 class=\"mb-1\">" + response.items[i].title + "</h5>\n" +
@@ -32,11 +36,7 @@ class PaginationQuestion {
                     "</div>\n" +
                     "<p class=\"mb-1\">" + response.items[i].description + "<</p>\n" +
                     "<div class=\"nav-col btn-group  btn-block mr-0   \">\n" +
-                    "<button type=\"button\" class=\"btn  btn-sm   active \">" + response.items[i].listTagDto[0].name + "</button>\n" +
-                    "<button type=\"button\" class=\"btn  btn-sm   active \">" + response.items[i].listTagDto[1].name + "</button>\n" +
-                    "<button type=\"button\" class=\"btn  btn-sm   active \">" + response.items[i].listTagDto[2].name + "</button>\n" +
-                    "<button type=\"button\" class=\"btn  btn-sm   active \">" + response.items[i].listTagDto[3].name + "</button>\n" +
-                    "<button type=\"button\" class=\"btn  btn-sm overflow-hidden\">" + response.items[i].listTagDto[4].name + "</button>\n" +
+                    text +
                     "</div>\n" +
                     "<small class=\"text-muted\">" + response.items[i].countValuable + " голосов</small>\n" +
                     "<small class=\"text-muted\">" + response.items[i].countAnswer + " ответов</small>\n" +

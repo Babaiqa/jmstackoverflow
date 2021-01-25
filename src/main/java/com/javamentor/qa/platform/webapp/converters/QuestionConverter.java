@@ -38,6 +38,4 @@ public abstract class QuestionConverter {
         return userService.getById(id).get();
     }
 
-
-
 }
