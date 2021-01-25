@@ -21,7 +21,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,26 +35,20 @@ import java.util.Optional;
 public class TagController {
 
     private final TagDtoService tagDtoService;
-    private final UserDtoService userDtoService;
     private final SecurityHelper securityHelper;
-    private final TrackedTagDao trackedTagDao;
     private final TrackedTagService trackedTagService;
     private final IgnoredTagService ignoredTagService;
-    private final UserService userService;
     private final TagService tagService;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
-    public TagController(TagDtoService tagDtoService, UserDtoService userDtoService, SecurityHelper securityHelper,
-                         TrackedTagDao trackedTagDao, TrackedTagService trackedTagService, IgnoredTagService ignoredTagService, UserService userService, TagService tagService) {
+    public TagController(TagDtoService tagDtoService, SecurityHelper securityHelper,
+                         TrackedTagService trackedTagService, IgnoredTagService ignoredTagService, TagService tagService) {
         this.tagDtoService = tagDtoService;
-        this.userDtoService = userDtoService;
         this.securityHelper = securityHelper;
-        this.trackedTagDao = trackedTagDao;
         this.trackedTagService = trackedTagService;
         this.ignoredTagService = ignoredTagService;
-        this.userService = userService;
         this.tagService = tagService;
     }
 
@@ -251,20 +244,6 @@ public class TagController {
         return ResponseEntity.ok(tags);
     }
 
- 
-    @Transactional
-    @DeleteMapping(value = "{id}/delete")
-    @ApiOperation(value = "Delete Tracked Tag by id", response = String.class)
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Tracked Tag was deleted.", response = String.class),
-            @ApiResponse(code = 400, message = "Tracked tag was not found", response = String.class)
-    })
-    public ResponseEntity<?> deleteTrackedTagById(@ApiParam(name = "id") @PathVariable Long id) {
-        trackedTagDao.deleteById(id);
-
-        return ResponseEntity.ok("Tracked Tag with ID = " + id + " was deleted");
-    }
-
     @PostMapping(value = "tracked/add")
     @ApiOperation(value = "add trackedTags", response = String.class)
     @ApiResponses({
@@ -282,7 +261,7 @@ public class TagController {
         createTrackedTag.setUser(securityHelper.getPrincipal());
         createTrackedTag.setTrackedTag(createTag.get());
         trackedTagService.persist(createTrackedTag);
-        TrackedTagDto creatTagDtoNew = tagTrackedConverter.trackedTagToTrackedTagDto(createTrackedTag);;
+        TrackedTagDto creatTagDtoNew = tagTrackedConverter.trackedTagToTrackedTagDto(createTrackedTag);
         return ResponseEntity.ok(creatTagDtoNew);
     }
 
@@ -303,7 +282,7 @@ public class TagController {
         createIgnoredTag.setUser(securityHelper.getPrincipal());
         createIgnoredTag.setIgnoredTag(createTag.get());
         ignoredTagService.persist(createIgnoredTag);
-        IgnoredTagDto creatTagDtoNew = tagIgnoredConverter.trackedTagToIgnoredTagDto(createIgnoredTag);;
+        IgnoredTagDto creatTagDtoNew = tagIgnoredConverter.trackedTagToIgnoredTagDto(createIgnoredTag);
         return ResponseEntity.ok(creatTagDtoNew);
     }
 }
