@@ -1,16 +1,19 @@
 class PaginationQuestion {
 
-    constructor(page, size, type) {
+    constructor(page, size, type, id) {
         this.page = page;
         this.size = size;
         this.type = type;
+        this.id = id;
 
         this.questionService = new QuestionService();
 
-        if (this.type == 'normal') {
+        if (this.type === 'normal') {
             this.questions = this.questionService.findPagination(this.page, this.size);
-        } else if (this.type == 'popular') {
+        } else if (this.type === 'popular') {
             this.questions = this.questionService.findPaginationPopular(this.page, this.size);
+        } else if (this.type === 'withTags') {
+                this.questions = this.questionService.getQuestionsWithGivenTags(this.page, this.size, this.id);
         } else if (this.type === 'withoutAnswers') {
             this.questions = this.questionService.getQuestionsWithoutAnswers(this.page, this.size)
         } else if (this.type === 'new') {
@@ -27,7 +30,6 @@ class PaginationQuestion {
 
 
         this.questions.then(function (response) {
-            document.getElementById("questionsQuantity").innerText = response.totalResultCount + " вопросов"
 
             for (var i = 0; i < response.items.length; i++) {
 
@@ -67,6 +69,7 @@ class PaginationQuestion {
             var previousPage = response.currentPageNumber - 1;
 
 
+            $('#questionsPagesNavigation').children().remove();
             if (currentPageNumber != 1) {
                 $('#questionsPagesNavigation').append(
                     "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationQuestion(" + previousPage + "," + size + "," + "\"" + type + "\"" + ").setQuestions()' >Назад</a></li>"

@@ -28,9 +28,12 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
 import java.util.*;
 import java.util.stream.Collectors;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -43,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/question/question_has_tagQuestionApi.yml",
         "dataset/question/votes_on_question.yml"},
         useSequenceFiltering = true, cleanBefore = true, cleanAfter = true)
-@WithMockUser(username = "principal@mail.ru", roles={"ADMIN", "USER"})
+@WithMockUser(username = "principal@mail.ru", roles = {"ADMIN", "USER"})
 class QuestionControllerTest extends AbstractIntegrationTest {
 
     @Autowired
@@ -131,16 +134,16 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     @Test
     public void shouldReturnErrorMessageBadParameterWrongSizeQuestionWithoutAnswer() throws Exception {
         mockMvc.perform(get("/api/question/order/new")
-                        .param("page", "1")
-                        .param("size", "0"))
-                        .andDo(print())
-                        .andExpect(status().is4xxClientError())
-                        .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
-                        .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
+                .param("page", "1")
+                .param("size", "0"))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
     }
 
     @Test
-    public void shouldReturnErrorMessageBadParameterWrongPageQuestionWithoutAnswer () throws Exception {
+    public void shouldReturnErrorMessageBadParameterWrongPageQuestionWithoutAnswer() throws Exception {
         mockMvc.perform(get("/api/question/order/new")
                 .param("page", "0")
                 .param("size", "2"))
@@ -308,13 +311,14 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .content(jsonRequest)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .param("page", "1")
-                .param("size", "3"))
+                .param("size", "3")
+                .param("tagIds", "1"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.currentPageNumber").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPageCount").value(3))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.totalResultCount").value(7))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPageCount").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalResultCount").value(3))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.itemsOnPage").value(3))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.items").isNotEmpty())
                 .andReturn().getResponse().getContentAsString();
@@ -387,7 +391,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         expect.setMeta(null);
 
         List<TagDto> tag = new ArrayList<>();
-        tag.add(new TagDto(5L,"sql"));
+        tag.add(new TagDto(5L, "sql"));
 
         List<QuestionDto> items = new ArrayList<>();
         items.add(new QuestionDto(
@@ -395,9 +399,9 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 "Question number seven",
                 3L, "Tot", null,
                 "Changes made in sql query in excel reflects changes only on single sheet",
-                1,3,1,
-                LocalDateTime.of(2020,01,02,00,00, 00),
-                LocalDateTime.of(2020,05,02,13,58, 56),tag));
+                1, 3, 1,
+                LocalDateTime.of(2020, 01, 02, 00, 00, 00),
+                LocalDateTime.of(2020, 05, 02, 13, 58, 56), tag));
 
         expect.setItems(items);
 
@@ -416,7 +420,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldReturnErrorMessageBadParameterMaxPageQuestionWithoutAnswer () throws Exception {
+    public void shouldReturnErrorMessageBadParameterMaxPageQuestionWithoutAnswer() throws Exception {
         mockMvc.perform(get("/api/question/order/new")
                 .param("page", "2")
                 .param("size", "200"))
@@ -451,7 +455,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
             "dataset/question/question_has_tagQuestionApi.yml",
             "dataset/question/votes_on_question.yml"},
             useSequenceFiltering = true, cleanBefore = true, cleanAfter = true)
-    public void testIsQuestionWithoutAnswers () throws Exception {
+    public void testIsQuestionWithoutAnswers() throws Exception {
 
         LocalDateTime persistDateTime = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(0, 0, 0));
         LocalDateTime lastUpdateDateTime = LocalDateTime.of(LocalDate.of(2020, 2, 1), LocalTime.of(13, 58, 56));
@@ -482,9 +486,9 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         expectPage.setItems(itemsList);
 
         String result = mockMvc.perform(get("/api/question/withoutAnswer")
-        .param("page", "1")
-        .param("size", "1")
-        .accept(MediaType.APPLICATION_JSON))
+                .param("page", "1")
+                .param("size", "1")
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
