@@ -7,6 +7,7 @@ import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -548,11 +549,11 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     @Test
     void voteUpStatusOk() throws Exception {
 
-        List<AnswerVote> before = answerVoteService.getAll();
+        List<AnswerVote> before = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int first = before.size();
 
         this.mockMvc.perform(MockMvcRequestBuilders
-                .patch("/api/question/10/answer/1/upVote")
+                .patch("/api/question/10/answer/51/upVote")
                 .contentType("application/json;charset=UTF-8"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -563,7 +564,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.persistDateTime").isNotEmpty())
                 .andExpect(jsonPath("$.vote").isNumber());
 
-        List<AnswerVote> after = answerVoteService.getAll();
+        List<AnswerVote> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int second = after.size();
         Assert.assertEquals(first + 1, second);
     }
@@ -596,11 +597,11 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     @Test
     void voteDownStatusOk() throws Exception {
 
-        List<AnswerVote> before = answerVoteService.getAll();
+        List<AnswerVote> before = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int first = before.size();
 
         this.mockMvc.perform(MockMvcRequestBuilders
-                .patch("/api/question/10/answer/1/downVote")
+                .patch("/api/question/10/answer/51/downVote")
                 .contentType("application/json;charset=UTF-8"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -611,7 +612,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.persistDateTime").isNotEmpty())
                 .andExpect(jsonPath("$.vote").isNumber());
 
-        List<AnswerVote> after = answerVoteService.getAll();
+        List<AnswerVote> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int second = after.size();
         Assert.assertEquals(first + 1, second);
     }
