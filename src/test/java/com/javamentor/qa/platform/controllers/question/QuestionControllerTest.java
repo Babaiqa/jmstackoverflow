@@ -173,7 +173,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
 
     @Test
-    public void shouldAddQuestionResponseStatusOk() throws Exception {
+    public void shouldAddQuestionAnswerStatusOk() throws Exception {
         QuestionCreateDto questionCreateDto = new QuestionCreateDto();
         questionCreateDto.setUserId(1L);
         questionCreateDto.setTitle("Question number one1");

@@ -17,7 +17,7 @@ public class Role implements GrantedAuthority {
 
     private static final long serialVersionUID = 5731253987889984670L;
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = "Role_seq")
     private Long id;
 
     @Column
