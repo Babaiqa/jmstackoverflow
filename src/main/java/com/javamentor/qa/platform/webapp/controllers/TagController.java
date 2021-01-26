@@ -285,6 +285,22 @@ public class TagController {
         IgnoredTagDto creatTagDtoNew = tagIgnoredConverter.trackedTagToIgnoredTagDto(createIgnoredTag);
         return ResponseEntity.ok(creatTagDtoNew);
     }
+
+    @DeleteMapping(value = "deleteIgnored")
+    @ApiOperation(value = "Delete Ignored tag by id", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Ignored tag was deleted.", response = IgnoredTagDto.class),
+    })
+    public ResponseEntity<?> deleteIgnoredTags(@Valid @RequestParam Long id) {
+        Optional<Tag> tagDelete = tagService.getById(id);
+        if(!tagDelete.isPresent()){
+            return ResponseEntity.badRequest().body("Ignored tag was not found");
+        }
+        Optional<IgnoredTag> deleteIgnoredTag = ignoredTagService.getIgnoredTagDtoByName(securityHelper.getPrincipal().getId(),
+                tagDelete.get().getName());
+        ignoredTagService.delete(deleteIgnoredTag.get());
+        return ResponseEntity.ok("Ignored Tag with ID = " + id + "  was deleted");
+    }
 }
 
 
