@@ -21,6 +21,25 @@
         <org.mapstruct.version>1.4.1.Final</org.mapstruct.version>
     </properties>
 
+   <!-- Разделение профилей для properties -->
+    <profiles>
+        <profile>
+            <id>local</id>
+            <properties>
+                <activatedProperties>local</activatedProperties>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <activatedProperties>dev</activatedProperties>
+            </properties>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>org.mapstruct</groupId>
