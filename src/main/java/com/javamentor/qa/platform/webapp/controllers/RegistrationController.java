@@ -27,7 +27,7 @@ public class RegistrationController {
     private final JwtUtils jwtUtils;
     private final MailService mailService;
     private final String subject = "Registration confirm";
-    private final String text = "For finish registration follow to link http://localhost:5557/api/auth/reg/confirm?token=";
+    private final String text = "For finish registration follow to link http://localhost:5557/registration/confirm?token=";
 
     @Autowired
     public RegistrationController(UserService userService,
