@@ -37,7 +37,7 @@ class PaginationQuestionForMainPage {
                                  + ('0' + (date.getMonth() + 1)).slice(-2) + "."
                                  + date.getFullYear()
                 $('#questionsAll').append(
-                    "        <a href=\"#\" class=\"list-group-item list-group-item-action h-100\">\n" +
+                    "        <a href=\"api/question/" + response.items[i].id + "\" class=\"list-group-item list-group-item-action h-100\">\n" +
                     "            <div class=\"row align-items-center h-100\">\n" +
                     "                <div class=\"col-sm-2 mx-auto\">\n" +
                     "                    <div class=\"row\">\n" +
