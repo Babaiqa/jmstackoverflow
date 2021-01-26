@@ -48,7 +48,7 @@ public class RegistrationController {
             User user = userConverter.userDtoToUser(userRegistrationDto);
             user.setIsEnabled(false);
             userService.persist(user);
-            String token = jwtUtils.generateRegJwtToken(userRegistrationDto.getFullName());
+            String token = jwtUtils.generateRegJwtToken(userRegistrationDto.getEmail());
             mailService.sendSimpleMessage(user.getEmail(), subject, text + token);
             return ResponseEntity.ok(userConverter.userToDto(user));
         }
@@ -65,7 +65,7 @@ public class RegistrationController {
     @GetMapping("confirm")
     public ResponseEntity<?> confirmUser(@ApiParam String token){
         try {
-            User user = userService.getUserByName(jwtUtils.getUsernameFromToken(token)).get();
+            User user = userService.getUserByEmail(jwtUtils.getUsernameFromToken(token)).get();
             user.setIsEnabled(true);
             userService.update(user);
             return ResponseEntity.ok().body(userConverter.userToDto(user));
