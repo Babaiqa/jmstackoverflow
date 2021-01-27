@@ -37,6 +37,7 @@ class PaginationQuestion {
                 let text  = shuffledNames.map(i => `<a href="#" class="tag"> ${i} </a>`).join('');
 
                 $('#questionsTable').append(
+                    "<a href=\"api/question/" + response.items[i].id + "\">\n" +
                     "<div class=\"d-flex w-100 justify-content-between\">\n" +
                     "<h5 class=\"mb-1\">" + response.items[i].title + "</h5>\n" +
                     "<small class=\"text-muted\">" + response.items[i].lastUpdateDateTime + "</small>\n" +
@@ -50,7 +51,8 @@ class PaginationQuestion {
                     "<small class=\"text-muted\">" + response.items[i].viewCount + " просмотров</small>\n" +
                     "<p/> <small class=\"text-muted\">задан " + response.items[i].persistDateTime + "</small>\n " +
                     "<p/> <small class=\"text-muted\">" + response.items[i].authorName + "</small>\n " +
-                    "<img src=" + response.items[i].authorImage + " class=\"mr-3\" alt=\"...\">"
+                    "<img src=" + response.items[i].authorImage + " class=\"mr-3\" alt=\"...\">" +
+                    "</a>"
                 )
             }
         })
