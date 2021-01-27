@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
+import com.javamentor.qa.platform.dao.abstracts.dto.AnswerDtoDao;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
@@ -7,6 +8,7 @@ import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
+import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.*;
@@ -36,12 +38,10 @@ public class QuestionController {
     private final UserDtoService userDtoService;
     private final AnswerVoteService answerVoteService;
     private final AnswerService answerService;
+    private final AnswerDtoService answerDtoService;
     private final AnswerConverter answerConverter;
     private final SecurityHelper securityHelper;
     private final AnswerVoteConverter answerVoteConverter;
-
-
-
     private final QuestionDtoService questionDtoService;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
@@ -56,6 +56,7 @@ public class QuestionController {
                               SecurityHelper securityHelper,
                               AnswerVoteService answerVoteService,
                               AnswerService answerService,
+                              AnswerDtoService answerDtoService,
                               AnswerVoteConverter answerVoteConverter) {
         this.questionService = questionService;
         this.tagMapper = tagMapper;
@@ -66,6 +67,7 @@ public class QuestionController {
         this.securityHelper = securityHelper;
         this.answerVoteService = answerVoteService;
         this.answerService = answerService;
+        this.answerDtoService = answerDtoService;
         this.answerVoteConverter = answerVoteConverter;
 
     }
@@ -306,6 +308,8 @@ public class QuestionController {
                     example = "10")
             @RequestParam("size") int size) {
 
+        answerDtoService.getAllAnswersByQuestionId(3L);
+
         if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
             return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
@@ -395,6 +399,26 @@ public class QuestionController {
         return ResponseEntity.ok(resultPage);
     }
 
+
+    @GetMapping("/{questionId}/answer")
+    @ApiOperation(value = "Get answers of question", notes = "This method return List<AnswerDto> with answers with has presented questionId")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Return answers for question", response = AnswerDto.class),
+            @ApiResponse(code = 400, message = "Question not found", response = String.class)
+    })
+
+    public ResponseEntity<?> getAnswerListByQuestionId(@ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
+                                                 @PathVariable Long questionId) {
+
+        Optional<Question> question = questionService.getById(questionId);
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question not found");
+        }
+
+        List<AnswerDto> answerDtoList = answerDtoService.getAllAnswersByQuestionId(questionId);
+
+        return ResponseEntity.ok(answerDtoList);
+    }
 
     @PostMapping("/{questionId}/answer")
     @ApiOperation(value = "Add answer", notes = "This method Add answer to question and return AnswerDto")

@@ -17,7 +17,7 @@ public class AnswerDto implements Serializable {
     private LocalDateTime persistDate;
     private Boolean isHelpful;
     private LocalDateTime dateAccept;
-    private int countValuable;
+    private Long countValuable;
     private String image;
     private String nickName;
 }
