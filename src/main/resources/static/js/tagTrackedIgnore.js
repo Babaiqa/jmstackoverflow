@@ -1,6 +1,53 @@
 let requestURLTagTracked= 'http://localhost:5557/api/tag/tracked';
 let requestURLTagIgnore= 'http://localhost:5557/api/tag/ignored';
-let tokenCookie = document.cookie.replace("token=", "")
+let requestURLSearchTag= 'http://localhost:5557/api/tag/name';
+
+function sendRequestSearchTag(method, url, body = null) {
+    return fetch(url, {
+        method: 'GET',
+        headers: new Headers({
+            'Content-Type': 'application/json',
+            'Authorization': $.cookie("token")
+        })
+    }).then(response => {
+        if (response.ok) {
+            return response.json()
+        }
+        return response.json().then(error => {
+            const exc = new Error('Ошибка')
+            exc.data = error
+            throw exc
+        })
+    })
+}
+
+
+
+
+
+const input = document.getElementById('add-tag-tracked1')
+input.onclick = function () {
+    document.getElementById('listOfSuitableTags').setAttribute("style", "display: block")
+}
+input.oninput = function () {
+    sendRequestSearchTag('GET', requestURLSearchTag + "?&page=1&size=5&name=" + input.value)
+        .then(response=> {
+            console.log(response)
+            console.log(response.items)
+            document.getElementById('listOfSuitableTags').innerHTML=""
+            response.items.forEach(elem => {
+                document.getElementById('listOfSuitableTags').innerHTML +=
+                    "            <option class=\"dropdown-item\" style=\"z-index: 10\" data-id="+elem.id+">" + elem.name + "</option>"
+            })
+        })
+        .catch(err => console.log(err))
+
+}
+
+
+
+
+
 
 function sendRequestTagTracked(method, url, body = null) {
     return fetch(url, {
