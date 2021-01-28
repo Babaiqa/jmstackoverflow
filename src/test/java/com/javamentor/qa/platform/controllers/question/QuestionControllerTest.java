@@ -310,7 +310,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .contentType("application/json;charset=UTF-8")
                 .param("page", "1")
                 .param("size", "10"))
-                .andDo(print())
                 .andExpect(status().isOk());
     }
 
