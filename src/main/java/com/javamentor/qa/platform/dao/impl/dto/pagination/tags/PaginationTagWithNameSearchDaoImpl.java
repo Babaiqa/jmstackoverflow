@@ -35,11 +35,12 @@ public class PaginationTagWithNameSearchDaoImpl implements PaginationDao<TagList
                 .setParameter("endDate1", LocalDateTime.now())
                 .setParameter("startDate2", LocalDateTime.now().minusDays(1))
                 .setParameter("endDate2", LocalDateTime.now())
-                .setParameter("tagName", "1")
+                .setParameter("tagName", tagName)
                 .setFirstResult(page * size - size)
                 .setMaxResults(size)
                 .getResultList();
-        System.out.println("OLOLOLO1"+tagListDtos.size());
+        System.out.println(parameters.get("tagName"));
+        System.out.println("OLOLOLO1---"+tagListDtos.size());
         tagListDtos.forEach(elem -> System.out.println("UUU  "+elem.getName()));
         System.out.println("OLOLOLO2");
 
