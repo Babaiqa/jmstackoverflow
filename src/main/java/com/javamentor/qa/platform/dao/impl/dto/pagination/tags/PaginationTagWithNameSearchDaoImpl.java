@@ -21,9 +21,9 @@ public class PaginationTagWithNameSearchDaoImpl implements PaginationDao<TagList
 
         int page = (int)parameters.get("page");
         int size = (int)parameters.get("size");
-        String tagName = (String)parameters.get("tagName");
+        String tagName = (String) parameters.get("tagName");
 
-        return em.createQuery("" +
+        List<TagListDto> tagListDtos = em.createQuery("" +
                 "SELECT new com.javamentor.qa.platform.models.dto.TagListDto(t.id, t.name, t.description, COUNT(q.id), " +
                 "(SELECT COUNT(q.id) FROM t.questions AS q WHERE q.persistDateTime BETWEEN :startDate1 AND :endDate1), " +
                 "(SELECT COUNT(q.id) FROM t.questions AS q WHERE q.persistDateTime BETWEEN :startDate2 AND :endDate2)) " +
@@ -35,10 +35,15 @@ public class PaginationTagWithNameSearchDaoImpl implements PaginationDao<TagList
                 .setParameter("endDate1", LocalDateTime.now())
                 .setParameter("startDate2", LocalDateTime.now().minusDays(1))
                 .setParameter("endDate2", LocalDateTime.now())
-                .setParameter("tagName", tagName)
+                .setParameter("tagName", "1")
                 .setFirstResult(page * size - size)
                 .setMaxResults(size)
                 .getResultList();
+        System.out.println("OLOLOLO1"+tagListDtos.size());
+        tagListDtos.forEach(elem -> System.out.println("UUU  "+elem.getName()));
+        System.out.println("OLOLOLO2");
+
+        return tagListDtos;
     }
 
     @Override

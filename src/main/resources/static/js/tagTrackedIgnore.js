@@ -4,10 +4,12 @@ let tokenCookie = document.cookie.replace("token=", "")
 
 function sendRequestTagTracked(method, url, body = null) {
     return fetch(url, {
+        method: 'GET',
         headers: new Headers({
-            'Authorization': tokenCookie,
-            'Content-Type': 'application/json'})}
-    ).then(response => {
+            'Content-Type': 'application/json',
+            'Authorization': $.cookie("token")
+        })
+    }).then(response => {
         if (response.ok) {
             return response.json()
         }
@@ -20,21 +22,34 @@ function sendRequestTagTracked(method, url, body = null) {
 }
 
 sendRequestTagTracked('GET', requestURLTagTracked)
-    .then(textUserTagTracked => {
-        if (textUserTagTracked !== null && textUserTagTracked !== {}) {
-            document.querySelector('#listTagTracked').innerHTML = JSON.stringify(textUserTagTracked[0]['name'])
+    .then(response=> {
+        document.getElementById('listTagTracked').innerHTML=""
+        response.forEach(elem => {
+            document.getElementById('listTagTracked').innerHTML +=
+                "            <div href=\"#\" class=\"mb-1\">" + elem.name + "</div>\n" +
+                "            <br> "
+        })
 
-        }
+        // <a href="/questions/tagged/python" class="post-tag"  rel="tag">python</a>
+        // <span class="item-multiplier">
+        //     <span class="item-multiplier-x">×</span>
+        //     &nbsp;
+        //     <span class="item-multiplier-count">148</span>
+        // </span>
+        // <br>
+
     })
     .catch(err => console.log(err))
 
 
 function sendRequestTagIgnore(method, url, body = null) {
     return fetch(url, {
+        method: 'GET',
         headers: new Headers({
-            'Authorization': tokenCookie,
-            'Content-Type': 'application/json'})}
-    ).then(response => {
+            'Content-Type': 'application/json',
+            'Authorization': $.cookie("token")
+        })
+    }).then(response => {
         if (response.ok) {
             return response.json()
         }
@@ -47,11 +62,14 @@ function sendRequestTagIgnore(method, url, body = null) {
 }
 
 sendRequestTagIgnore('GET', requestURLTagIgnore)
-    .then(textUserTagIgnore=> {
-        if (textUserTagIgnore !== null && textUserTagIgnore !== {}) {
-            document.querySelector('#listTagIgnore').innerHTML = JSON.stringify(textUserTagIgnore[0]['name'])
-        }
-    })
+    .then(response=> {
+        document.getElementById('listTagIgnore').innerHTML=""
+        response.forEach(elem => {
+            document.getElementById('listTagIgnore').innerHTML +=
+                "            <div href=\"#\" class=\"mb-1\">" + elem.name + "</div>\n" +
+                "            <br> "
+        })
+   })
     .catch(err => console.log(err))
 
 

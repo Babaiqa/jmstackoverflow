@@ -1,10 +1,13 @@
 
 function sendRequestTagTrackedtagQuestionAria(method, url, body = null) {
     return fetch(url, {
+        method: 'GET',
         headers: new Headers({
-            'Authorization': tokenCookie,
-            'Content-Type': 'application/json'})}
-    ).then(response => {
+            'Content-Type': 'application/json',
+            'Authorization': $.cookie("token")
+
+        })
+    }).then(response => {
         if (response.ok) {
             return response.json()
         }
@@ -17,19 +20,24 @@ function sendRequestTagTrackedtagQuestionAria(method, url, body = null) {
 }
 
 sendRequestTagTrackedtagQuestionAria('GET', requestURLTagTracked)
-    .then(textUserTagTracked1 => {
-        if (textUserTagTracked1 !== null && textUserTagTracked1 !== {}) {
-            document.querySelector('#listTagTracked1').innerHTML = JSON.stringify(textUserTagTracked1[0]['name'])
-        }
+    .then(response=> {
+        document.getElementById('listTagTracked1').innerHTML=""
+        response.forEach(elem => {
+            document.getElementById('listTagTracked1').innerHTML +=
+                "            <div href=\"#\" class=\"mb-1\">" + elem.name + "</div>\n" +
+                "            <br> "
+        })
     })
     .catch(err => console.log(err))
 
 function sendRequestTagIgnoreQuestionAria(method, url, body = null) {
     return fetch(url, {
+        method: 'GET',
         headers: new Headers({
-            'Authorization': tokenCookie,
-            'Content-Type': 'application/json'})}
-    ).then(response => {
+            'Content-Type': 'application/json',
+            'Authorization': $.cookie("token")
+        })
+    }).then(response => {
         if (response.ok) {
             return response.json()
         }
@@ -42,10 +50,13 @@ function sendRequestTagIgnoreQuestionAria(method, url, body = null) {
 }
 
 sendRequestTagIgnoreQuestionAria('GET', requestURLTagIgnore)
-    .then(textUserTagIgnore1=> {
-        if (textUserTagIgnore1 !== null && textUserTagIgnore1 !== {}) {
-            document.querySelector('#listTagIgnore1').innerHTML = JSON.stringify(textUserTagIgnore1[0]['name'])
-        }
+    .then(response=> {
+        document.getElementById('listTagIgnore1').innerHTML=""
+        response.forEach(elem => {
+            document.getElementById('listTagIgnore1').innerHTML +=
+                "            <div href=\"#\" class=\"mb-1\">" + elem.name + "</div>\n" +
+                "            <br> "
+        })
     })
     .catch(err => console.log(err))
 
