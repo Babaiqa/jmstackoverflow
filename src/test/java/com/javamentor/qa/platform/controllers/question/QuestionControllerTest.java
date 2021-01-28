@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.controllers.question;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.PageDto;
@@ -10,6 +11,7 @@ import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import org.hamcrest.Matchers;
+import org.hibernate.Session;
 import org.junit.Assert;
 import com.javamentor.qa.platform.models.dto.*;
 import org.junit.jupiter.api.Test;
@@ -45,7 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/question/tagQuestionApi.yml",
         "dataset/question/question_has_tagQuestionApi.yml",
         "dataset/question/votes_on_question.yml"},
-        useSequenceFiltering = true, cleanBefore = true, cleanAfter = true)
+        useSequenceFiltering = true, cleanBefore = true, cleanAfter = false)
 @WithMockUser(username = "principal@mail.ru", roles = {"ADMIN", "USER"})
 class QuestionControllerTest extends AbstractIntegrationTest {
 
@@ -300,6 +302,60 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Question not found"));
     }
+
+    @Test
+    void shouldGetAnswersListFromQuestionStatusOk() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/10/answer")
+                .contentType("application/json;charset=UTF-8")
+                .param("page", "1")
+                .param("size", "10"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldGetAnswersListFromQuestionResponseStatusOk() throws Exception {
+
+        String resultContext = mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/10/answer")
+                .param("page", "1")
+                .param("size", "10"))
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+
+        List<AnswerDto> answerDtoListFromResponse = objectMapper.readValue(resultContext, new TypeReference<List<AnswerDto>>(){});
+        List<AnswerDto> answerList = (List<AnswerDto>) entityManager
+                .createQuery("SELECT new com.javamentor.qa.platform.models.dto.AnswerDto(a.id, u.id, q.id, " +
+                        "a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime, " +
+                        "(SELECT COUNT(av.answer.id) FROM AnswerVote AS av WHERE av.answer.id = a.id), " +
+                        "u.imageLink, u.fullName) " +
+                        "FROM Answer as a " +
+                        "INNER JOIN a.user as u " +
+                        "JOIN a.question as q " +
+                        "WHERE q.id = :questionId")
+                .setParameter("questionId", 10L)
+                .getResultList();
+
+        Assert.assertTrue(answerDtoListFromResponse.equals(answerList));
+    }
+
+    @Test
+    void shouldGetAnswersListFromQuestionResponseBadRequestQuestionNotFound() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/2222/answer")
+                .contentType("application/json;charset=UTF-8")
+                .param("page", "1")
+                .param("size", "10"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Question not found"));
+    }
+// ------------------------------------------------------
+
+
 
     @Test
     public void shouldReturnQuestionsWithGivenTags() throws Exception {

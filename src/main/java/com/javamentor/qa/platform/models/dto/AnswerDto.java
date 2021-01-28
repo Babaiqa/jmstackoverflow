@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 public class AnswerDto implements Serializable {
     private Long id;
     private Long userId;

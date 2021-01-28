@@ -401,9 +401,9 @@ public class QuestionController {
 
 
     @GetMapping("/{questionId}/answer")
-    @ApiOperation(value = "Get answers of question", notes = "This method return List<AnswerDto> with answers with has presented questionId")
+    @ApiOperation(value = "Return List<AnswerDto> with answers for question", notes = "This method return List<AnswerDto> with answers with has presented questionId")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Return answers for question", response = AnswerDto.class),
+            @ApiResponse(code = 200, message = "Return answers for question", response = AnswerDto.class,  responseContainer = "List"),
             @ApiResponse(code = 400, message = "Question not found", response = String.class)
     })
 
