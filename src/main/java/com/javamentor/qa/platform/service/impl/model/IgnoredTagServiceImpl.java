@@ -46,4 +46,8 @@ public class IgnoredTagServiceImpl extends ReadWriteServiceImpl<IgnoredTag, Long
         return ignoredTagDao.getIgnoredTagDtoByName(id, name);
     }
 
+    @Override
+    public void deleteIgnoredTagByIdTagIdUser(Long id, Long tagId) {
+        ignoredTagDao.deleteIgnoredTagByIdTagIdUser(id, tagId);
+    }
 }

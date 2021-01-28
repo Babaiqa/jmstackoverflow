@@ -134,9 +134,8 @@ public class TagController {
             @ApiParam(name = "page", value = "Number page. Type int.", required = true, example = "1")
             @RequestParam("page") int page,
             @ApiParam(name = "size", value = "Number of entries per page. Type int." +
-                    "Recommended number of items per page "+ MAX_ITEMS_ON_PAGE, example = "10")
-            @RequestParam("size") int size)
-    {
+                    "Recommended number of items per page " + MAX_ITEMS_ON_PAGE, example = "10")
+            @RequestParam("size") int size) {
         if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
             return ResponseEntity.badRequest().body("Page and Size have to be positive. " +
                     "Max number of items per page " + MAX_ITEMS_ON_PAGE);
@@ -185,7 +184,7 @@ public class TagController {
                     example = "tag")
             @RequestParam("name") String tagName,
             @ApiParam(name = "size", value = "Number of entries per page.Type int." +
-                    " Maximum number of records per page -"+ MAX_ITEMS_ON_PAGE ,
+                    " Maximum number of records per page -" + MAX_ITEMS_ON_PAGE,
                     example = "10")
             @RequestParam("size") int size) {
 
@@ -209,9 +208,9 @@ public class TagController {
             @RequestParam("page") int page,
             @PathVariable Long tagId,
             @ApiParam(name = "size", value = "Number of entries per page.Type int." +
-                    " Maximum number of records per page -"+ MAX_ITEMS_ON_PAGE ,
+                    " Maximum number of records per page -" + MAX_ITEMS_ON_PAGE,
                     example = "10")
-            @RequestParam("size") int size){
+            @RequestParam("size") int size) {
         if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
             return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
@@ -250,11 +249,11 @@ public class TagController {
             @ApiResponse(code = 200, message = "successfully added a tracked tag", response = TrackedTagDto.class)
     })
     public ResponseEntity<?> addTrackedTagsList(@Valid @RequestParam String name) {
-        Optional <Tag> createTag = tagService.getTagByName(name);
-        if(!createTag.isPresent()){
+        Optional<Tag> createTag = tagService.getTagByName(name);
+        if (!createTag.isPresent()) {
             return ResponseEntity.badRequest().body("The " + name + " does not exist on this site");
         }
-        if(trackedTagService.getTrackedTagDtoByName(securityHelper.getPrincipal().getId(), name).isPresent()){
+        if (trackedTagService.getTrackedTagDtoByName(securityHelper.getPrincipal().getId(), name).isPresent()) {
             return ResponseEntity.badRequest().body("The tracked tag has already been added");
         }
         TrackedTag createTrackedTag = new TrackedTag();
@@ -271,11 +270,11 @@ public class TagController {
             @ApiResponse(code = 200, message = "successfully added a ignored tag", response = IgnoredTagDto.class)
     })
     public ResponseEntity<?> addIgnoredTagsList(@Valid @RequestParam String name) {
-        Optional <Tag> createTag = tagService.getTagByName(name);
-        if(!createTag.isPresent()){
+        Optional<Tag> createTag = tagService.getTagByName(name);
+        if (!createTag.isPresent()) {
             return ResponseEntity.badRequest().body("The " + name + " does not exist on this site");
         }
-        if(ignoredTagService.getIgnoredTagDtoByName(securityHelper.getPrincipal().getId(), name).isPresent()){
+        if (ignoredTagService.getIgnoredTagDtoByName(securityHelper.getPrincipal().getId(), name).isPresent()) {
             return ResponseEntity.badRequest().body("The ignored tag has already been added");
         }
         IgnoredTag createIgnoredTag = new IgnoredTag();
@@ -286,20 +285,15 @@ public class TagController {
         return ResponseEntity.ok(creatTagDtoNew);
     }
 
-    @DeleteMapping(value = "deleteIgnored")
+    @DeleteMapping(value = "ignored/delete")
     @ApiOperation(value = "Delete Ignored tag by id", response = String.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "Ignored tag was deleted.", response = IgnoredTagDto.class),
     })
-    public ResponseEntity<?> deleteIgnoredTags(@Valid @RequestParam Long id) {
-        Optional<Tag> tagDelete = tagService.getById(id);
-        if(!tagDelete.isPresent()){
-            return ResponseEntity.badRequest().body("Ignored tag was not found");
-        }
-        Optional<IgnoredTag> deleteIgnoredTag = ignoredTagService.getIgnoredTagDtoByName(securityHelper.getPrincipal().getId(),
-                tagDelete.get().getName());
-        ignoredTagService.delete(deleteIgnoredTag.get());
-        return ResponseEntity.ok("Ignored Tag with ID = " + id + "  was deleted");
+    public ResponseEntity<?> deleteIgnoredTag(@Valid @RequestParam Long tagId) {
+
+        ignoredTagService.deleteIgnoredTagByIdTagIdUser(securityHelper.getPrincipal().getId(),tagId);
+        return ResponseEntity.ok("Ignored Tag with ID = " + tagId + " was deleted");
     }
 }
 
