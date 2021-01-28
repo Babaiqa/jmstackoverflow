@@ -11,7 +11,6 @@ import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import org.hamcrest.Matchers;
-import org.hibernate.Session;
 import org.junit.Assert;
 import com.javamentor.qa.platform.models.dto.*;
 import org.junit.jupiter.api.Test;
@@ -353,9 +352,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Question not found"));
     }
-// ------------------------------------------------------
-
-
 
     @Test
     public void shouldReturnQuestionsWithGivenTags() throws Exception {
