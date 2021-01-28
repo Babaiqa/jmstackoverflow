@@ -21,25 +21,6 @@
         <org.mapstruct.version>1.4.1.Final</org.mapstruct.version>
     </properties>
 
-   <!-- Разделение профилей для properties -->
-    <profiles>
-        <profile>
-            <id>local</id>
-            <properties>
-                <activatedProperties>local</activatedProperties>
-            </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-        <profile>
-            <id>dev</id>
-            <properties>
-                <activatedProperties>dev</activatedProperties>
-            </properties>
-        </profile>
-    </profiles>
-
     <dependencies>
         <dependency>
             <groupId>org.mapstruct</groupId>
@@ -197,6 +178,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+
+                <!-- Разделение профилей для properties -->
+                <configuration>
+                    <profiles>
+                        <profile>local</profile>
+                        <profile>dev</profile>
+                    </profiles>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -221,6 +210,13 @@
                 </configuration>
             </plugin>
         </plugins>
+        <!--Фильтрация ресурсов-->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
 
 </project>
