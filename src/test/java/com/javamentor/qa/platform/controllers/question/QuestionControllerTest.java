@@ -320,7 +320,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .get("/api/question/10/answer")
                 .param("page", "1")
                 .param("size", "10"))
-                .andDo(print())
                 .andReturn().getResponse().getContentAsString();
 
         List<AnswerDto> answerDtoListFromResponse = objectMapper.readValue(resultContext, new TypeReference<List<AnswerDto>>(){});
@@ -347,7 +346,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .contentType("application/json;charset=UTF-8")
                 .param("page", "1")
                 .param("size", "10"))
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Question not found"));
     }
