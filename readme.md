@@ -92,7 +92,16 @@ Build.
  
  - установите плагин SonarLint. Перейдите File -> Settings -> Plugins. В открывшемся окне плагинов введите «SonarLint» в строке
   поиска, а нажмите кнопку «Install».
+   
 
+
+- Необходимо задать профиль, чтоб указать Spring на нужный application.properties.
+ Для этого перейти к настройкам конфигурации запуска приложения (Run -> Edit) и в поле "Active profiles"
+  указать имя профиля, в данном случае - local.
+  
+  ![](src/main/resources/static/images/editConfigurationButton.png)
+
+  ![](src/main/resources/static/images/activeProfilesField.png)
 
 ## Сущности
 

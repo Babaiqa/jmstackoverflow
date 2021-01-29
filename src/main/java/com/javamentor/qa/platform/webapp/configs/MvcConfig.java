@@ -18,6 +18,8 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addViewController("/tagsAria").setViewName("headerSidebarFooter");
         registry.addViewController("/questionAria").setViewName("headerSidebarFooter");
         registry.addViewController("/unansweredAria").setViewName("headerSidebarFooter");
+        registry.addViewController("/registration").setViewName("registration");
+        registry.addViewController("/registration/confirm").setViewName("registrationConfirm");
     }
 
     @Override

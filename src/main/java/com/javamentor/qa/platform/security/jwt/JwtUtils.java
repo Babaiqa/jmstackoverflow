@@ -33,10 +33,10 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String generateJwtTokenOAuth(Authentication authentication) {
+    public String generateJwtTokenOAuth(String id) {
 
         return Jwts.builder()
-                .setSubject(authentication.getName())
+                .setSubject(id)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + jwtExpirationMs))
                 .signWith(SignatureAlgorithm.HS256, jwtSecretKey)
@@ -64,13 +64,6 @@ public class JwtUtils {
     public TokenDto getTokenDto (Authentication authentication) {
         TokenDto tokenDto = new TokenDto();
         tokenDto.setJwtToken(generateJwtToken(authentication));
-        tokenDto.setJwtType(jwtType);
-
-        return tokenDto;
-    }
-    public TokenDto getTokenDtoOAuth (Authentication authentication) {
-        TokenDto tokenDto = new TokenDto();
-        tokenDto.setJwtToken(generateJwtTokenOAuth(authentication));
         tokenDto.setJwtType(jwtType);
 
         return tokenDto;
