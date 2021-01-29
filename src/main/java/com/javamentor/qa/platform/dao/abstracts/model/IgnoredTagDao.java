@@ -11,4 +11,6 @@ public interface IgnoredTagDao extends ReadWriteDao<IgnoredTag, Long>{
     void addIgnoredTag(IgnoredTag ignoredTag);
 
     Optional<IgnoredTag> getIgnoredTagDtoByName(Long id, String name);
+
+    void deleteIgnoredTagByIdTagIdUser(Long id, Long tagId);
 }
