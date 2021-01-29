@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Data
@@ -71,12 +72,20 @@ public class  TestDataInitService {
         this.trackedTagService = trackedTagService;
     }
 
-
+    private String generateNameTag(){
+        String AB = "abcdefghijklmnopqrstuvwxyz";
+        Random rnd = new Random();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < rnd.nextInt(AB.length()); i++) {
+            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+        }
+        return sb.toString();
+    }
     public void createTagEntity() {
         for (int i = 0; i < numberOfUsers; i++) {
             Tag childTag = Tag.builder().name("Child").description("DescriptionChildTag").build();
             Tag tag = new Tag();
-            tag.setName("Tag Name" + i);
+            tag.setName(generateNameTag());
             tag.setDescription("Tag Description " + i);
             tagService.persist(tag);
             tagService.persist(childTag);
