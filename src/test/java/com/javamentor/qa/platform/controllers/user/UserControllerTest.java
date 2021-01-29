@@ -81,9 +81,10 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
         String jsonRequest = objectMapper.writeValueAsString(user);
 
-        this.mockMvc.perform(post("/api/user/registration").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(post("/api/auth/reg/registration")
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("id").exists())
                 .andExpect(jsonPath("email").value(user.email))
                 .andExpect(jsonPath("fullName").value(user.fullName))
@@ -100,7 +101,9 @@ public class UserControllerTest extends AbstractIntegrationTest {
         user.setPassword("100");
         user.setFullName("Ivan Ivanich");
         String jsonRequest = objectMapper.writeValueAsString(user);
-        this.mockMvc.perform(post("/api/user/registration").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(post("/api/auth/reg/registration")
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(content().string("User with email " + user.getEmail() + " already exist"))
                 .andExpect(status().isBadRequest());
@@ -113,7 +116,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
         user.setPassword("100");
         user.setFullName("Ivan Ivanich");
         String jsonRequest = objectMapper.writeValueAsString(user);
-        this.mockMvc.perform(post("/api/user/registration").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(post("/api/auth/reg/registration").content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(content().string("createUser.userRegistrationDto.email: Заданный email не может существовать"))
                 .andExpect(status().isBadRequest());
