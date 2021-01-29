@@ -18,7 +18,7 @@ public abstract class AnswerConverter {
     @Mapping(source = "answer.persistDateTime", target = "persistDate")
     @Mapping(source = "answer.isHelpful", target = "isHelpful")
     @Mapping(source = "answer.dateAcceptTime", target = "dateAccept")
-    @Mapping(target = "countValuable", constant = "0")
+    @Mapping(target = "countValuable", constant = "0L")
     @Mapping(source = "answer.user.imageLink", target = "image")
     @Mapping(source = "answer.user.nickname", target = "nickName")
     public abstract AnswerDto answerToAnswerDTO(Answer answer);

@@ -45,4 +45,15 @@ public class IgnoredTagDaoImpl  extends ReadWriteDaoImpl<IgnoredTag, Long>  impl
                 .setParameter("name", name)
                 .uniqueResultOptional();
     }
+
+    @Override
+    public void deleteIgnoredTagByIdTagIdUser(Long id, Long tagId) {
+         entityManager.unwrap(Session.class)
+                .createQuery("DELETE IgnoredTag tr " +
+                                "WHERE user.id=:id and ignoredTag.id=:tagId"
+                )
+                .setParameter("id", id)
+                .setParameter("tagId", tagId)
+                .executeUpdate();
+    }
 }
