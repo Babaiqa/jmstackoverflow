@@ -344,14 +344,12 @@
                                 <input type="text" id="add-tag-tracked1"  size="20"  placeholder="добавить метку">
                                 <button class="btn btn-primary" id="buttonTagTracked1">+</button>
                             </div>
-                            <select multiple class="list-group" id="listOfSuitableTagsForTracking1" style="display: none">
 
-                            </select>
                         </onsubmit >
                     </div>
                 </div>
 
-                <div class="card tag-ignore-container" style="z-index: 1">
+                <div class="card tag-ignore-container" style="position: relative">
                     <div class = "card-header">
                         <span style="font-size: 120%">Игнорируемые метки </span>
                     </div>
@@ -364,14 +362,10 @@
                                 <input type="text" id="add-tag-ignore1"  size="20"  placeholder="добавить метку">
                                 <button class="btn btn-primary" id="buttonTagIgnore1">+</button>
                             </div>
-                            <select multiple class="list-group" id="listOfSuitableTagsForIgnoring1" style="display: none">
-
-                            </select>
                         </onsubmit >
                     </div>
                 </div>
             </div>
-
             <table class="table" id="mainCountTag">
                 <thead>
                 <tr>
@@ -381,10 +375,15 @@
                 <tbody id="mainTag">
                 </tbody>
             </table>
+            <div  class="list-group" id="listOfSuitableTagsForTracking1" style="display: none">
 
+            </div>
+
+            <div  class="list-group" id="listOfSuitableTagsForIgnoring1" style="display: none">
+
+            </div>
         </div>
     </div>
-
     <div th:fragment="styleheader">
 
         <!-- Required meta tags -->

@@ -48,4 +48,9 @@ public class TrackedTagServiceImpl extends ReadWriteServiceImpl<TrackedTag, Long
     public Optional<TrackedTag> getTrackedTagDtoByName(Long id, String name){
         return trackedTagDao.getTrackedTagDtoByName(id, name);
     }
+
+    @Override
+    public void deleteTrackedTagByIdTagIdUser(Long id, Long tagId) {
+        trackedTagDao.deleteTrackedTagByIdTagIdUser(id, tagId);
+    }
 }

@@ -25,7 +25,7 @@ function sendRequestSearchTag(requestMethod, url, body = null) {
 //---------------Tracked Tag listners for Main tab ------------------
 const inputTracked1 = document.getElementById('add-tag-tracked1')
 inputTracked1.onclick = function () {
-    document.getElementById('listOfSuitableTagsForTracking1').setAttribute("style", "display: block")
+    document.getElementById('listOfSuitableTagsForTracking1').setAttribute("style", "display: block; background: white; position: relative; width: 170px; max-height: 200px; bottom: 950px; left: 90px; box-shadow: -1px 2px 7px rgba(0,0,0,0.1);")
 }
 inputTracked1.oninput = function () {
     sendRequestSearchTag('GET', requestURLSearchTag + "?&page=1&size=5&name=" + inputTracked1.value)
@@ -46,13 +46,18 @@ inputTracked1.oninput = function () {
 document.getElementById('buttonTagTracked1').addEventListener('click', function (){
     //api/tag/ignored/add      сделать универсальный запрос
     sendRequestSearchTag('POST', "http://localhost:5557/api/tag/tracked/add?name=" + inputTracked1.value)
-        .then( data => populateTrackedTags1())
+        .then( data => {
+            populateTrackedTags1()
+            inputTracked1.value=""
+            document.getElementById('listOfSuitableTagsForTracking1').setAttribute("style", "display: none; background: white; position: relative; width: 170px; max-height: 200px; bottom: 950px; left: 90px; box-shadow: -1px 2px 7px rgba(0,0,0,0.1);")
+            document.getElementById('listOfSuitableTagsForTracking1').innerHTML = ""
+        })
 })
 
 //---------------Ignore Tag listners for Main tab ------------------
 const inputIgnore1 = document.getElementById('add-tag-ignore1')
 inputIgnore1.onclick = function () {
-    document.getElementById('listOfSuitableTagsForIgnoring1').setAttribute("style", "display: block")
+    document.getElementById('listOfSuitableTagsForIgnoring1').setAttribute("style", "display: block; background: white; position: relative; width: 170px; max-height: 200px; bottom: 750px; left: 90px; box-shadow: -1px 2px 7px rgba(0,0,0,0.1);")
 }
 inputIgnore1.oninput = function () {
     sendRequestSearchTag('GET', requestURLSearchTag + "?&page=1&size=5&name=" + inputIgnore1.value)
@@ -73,7 +78,12 @@ inputIgnore1.oninput = function () {
 document.getElementById('buttonTagIgnore1').addEventListener('click', function (){
     //api/tag/ignored/add      сделать универсальный запрос
     sendRequestSearchTag('POST', "http://localhost:5557/api/tag/ignored/add?name=" + inputIgnore1.value)
-        .then( data => populateIgnoredTags1())
+        .then( data => {
+            populateIgnoredTags1()
+            inputTracked1.value=""
+            document.getElementById('listOfSuitableTagsForIgnoring1').setAttribute("style", "display: none;")
+            document.getElementById('listOfSuitableTagsForIgnoring1').innerHTML = ""
+        })
 })
 
 //---------------Tracked Tag listners for Question tab ------------------
@@ -137,9 +147,9 @@ populateIgnoredTags1()
 populateIgnoredTags2()
 
 
-function sendRequestTagTracked(method, url, body = null) {
+function sendRequestTagTracked(requestMethod, url, body = null) {
     return fetch(url, {
-        method: 'GET',
+        method: requestMethod,
         headers: new Headers({
             'Content-Type': 'application/json',
             'Authorization': $.cookie("token")
@@ -158,7 +168,12 @@ function sendRequestTagTracked(method, url, body = null) {
 
 function deleteTrackedTag() {
     event.target.parentNode.remove()
-    // sendRequestTagTracked('DELETE', requestURLTagTracked)
+    sendRequestTagTracked('DELETE', 'http://localhost:5557/api/tag/tracked/delete?tagId=' + event.target.dataset.id)
+}
+
+function deleteIgnoredTag() {
+    event.target.parentNode.remove()
+    sendRequestTagTracked('DELETE', 'http://localhost:5557/api/tag/ignored/delete?tagId=' + event.target.dataset.id)
 }
 
 function populateTrackedTags1() {
@@ -169,9 +184,8 @@ function populateTrackedTags1() {
                 document.getElementById('listTagTracked1').innerHTML +=
                     "<div class=\"mb-1\">" +
                         elem.name + " " +
-                    "   <span class='close' onclick='deleteTrackedTag()' style='font-size: 100%; margin-left: 5px;'>X</span>\n" +
-                    "</div>\n" +
-                    "<br> "
+                    "   <span class='close' data-id=\"" + elem.id + "\" onclick='deleteTrackedTag()' style='font-size: 100%; margin-left: 5px;'>X</span>\n" +
+                    "</div>"
             })
         })
         .catch(err => console.log(err))
@@ -196,8 +210,10 @@ function populateIgnoredTags1() {
             document.getElementById('listTagIgnore1').innerHTML=""
             response.forEach(elem => {
                 document.getElementById('listTagIgnore1').innerHTML +=
-                    "            <div href=\"#\" class=\"mb-1\">" + elem.name + "</div>\n" +
-                    "            <br> "
+                    "<div class=\"mb-1\">" +
+                    elem.name + " " +
+                    "   <span class='close' data-id=\"" + elem.id + "\" onclick='deleteIgnoredTag()' style='font-size: 100%; margin-left: 5px;'>X</span>\n" +
+                    "</div>"
             })
         })
         .catch(err => console.log(err))
@@ -218,9 +234,9 @@ function populateIgnoredTags2 () {
 
 
 
-function sendRequestTagIgnore(method, url, body = null) {
+function sendRequestTagIgnore(requestMethod, url, body = null) {
     return fetch(url, {
-        method: 'GET',
+        method: requestMethod,
         headers: new Headers({
             'Content-Type': 'application/json',
             'Authorization': $.cookie("token")
