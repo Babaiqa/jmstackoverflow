@@ -362,7 +362,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .param("page", "1")
                 .param("size", "3")
                 .param("tagIds", "1"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.currentPageNumber").isNotEmpty())
