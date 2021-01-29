@@ -74,7 +74,7 @@ public class  TestDataInitService {
 
     public void createTagEntity() {
         for (int i = 0; i < numberOfUsers; i++) {
-            Tag childTag = Tag.builder().name("Child").description("DescriptionChildTag").build();
+            Tag childTag = Tag.builder().name("Child" + i).description("DescriptionChildTag").build();
             Tag tag = new Tag();
             tag.setName("Tag Name" + i);
             tag.setDescription("Tag Description " + i);
