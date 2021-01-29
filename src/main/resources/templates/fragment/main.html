@@ -336,34 +336,17 @@
                         <span style="font-size: 120%">Отслеживаемые метки</span>
                     </div>
                     <div class="card-body">
-                        <ul id="listTagTracked">
+                        <ul id="listTagTracked1">
 
                         </ul>
                         <onsubmit >
                             <div align="center">
                                 <input type="text" id="add-tag-tracked1"  size="20"  placeholder="добавить метку">
-<!--                                <script>-->
-<!--                                    const input = document.getElementById('add-tag-tracked1')-->
-<!--                                    input.oninput = function () {-->
-<!--                                        sendRequestSearchTag('GET', requestURLSearchTag + "?&page=1&size=10&name=" + input.value)-->
-<!--                                            .then(response=> {-->
-<!--                                                console.log(response)-->
-<!--                                                console.log(response.items)-->
-<!--                                                document.getElementById('listOfSuitableTags').innerHTML=""-->
-<!--                                                response.items.forEach(elem => {-->
-<!--                                                    document.getElementById('listOfSuitableTags').innerHTML +=-->
-<!--                                                        "            <option value="+elem.id+">" + elem.name + "</option>"-->
-<!--                                                })-->
-<!--                                            })-->
-<!--                                            .catch(err => console.log(err))-->
-
-<!--                                    }-->
-<!--                                </script>-->
                                 <button class="btn btn-primary" id="buttonTagTracked1">+</button>
                             </div>
-                            <div class="list-group" id="listOfSuitableTags" style="display: none">
+                            <select multiple class="list-group" id="listOfSuitableTagsForTracking1" style="display: none">
 
-                            </div>
+                            </select>
                         </onsubmit >
                     </div>
                 </div>
@@ -373,7 +356,7 @@
                         <span style="font-size: 120%">Игнорируемые метки </span>
                     </div>
                     <div class="card-body">
-                        <ul id = "listTagIgnore">
+                        <ul id = "listTagIgnore1">
 
                         </ul>
                         <onsubmit >
@@ -381,6 +364,9 @@
                                 <input type="text" id="add-tag-ignore1"  size="20"  placeholder="добавить метку">
                                 <button class="btn btn-primary" id="buttonTagIgnore1">+</button>
                             </div>
+                            <select multiple class="list-group" id="listOfSuitableTagsForIgnoring1" style="display: none">
+
+                            </select>
                         </onsubmit >
                     </div>
                 </div>

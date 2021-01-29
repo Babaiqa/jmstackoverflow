@@ -50,29 +50,37 @@
                         <span style="font-size: 120%">Отслеживаемые метки</span>
                     </div>
                     <div class="card-body">
-                        <ul id = "listTagTracked1">
+                        <ul id = "listTagTracked2">
+
                         </ul>
                         <onsubmit >
                             <div align="center">
-                                <input type="text"  id="add-tag-tracked1"  size="20"  placeholder="добавить метку">
-                                <button class="btn btn-primary" id="buttonTagTracked1">+</button>
+                                <input type="text" id="add-tag-tracked2"  size="20"  placeholder="добавить метку">
+                                <button class="btn btn-primary" id="buttonTagTracked2">+</button>
                             </div>
+                            <select multiple class="list-group" id="listOfSuitableTagsForTracking2" style="display: none">
+
+                            </select>
                         </onsubmit >
                     </div>
                 </div>
 
-                <div class="card tag-ignore-container">
+                <div class="card tag-ignore-container" style="z-index: 1">
                     <div class = "card-header">
                         <span style="font-size: 120%">Игнорируемые метки </span>
                     </div>
                     <div class="card-body">
-                        <ul id = "listTagIgnore1">
+                        <ul id = "listTagIgnore2">
+
                         </ul>
                         <onsubmit >
                             <div align="center">
-                                <input type="text" id="add-tag-ignore1"  size="20"  placeholder="добавить метку">
-                                <button class="btn btn-primary" id="buttonTagIgnore1">+</button>
+                                <input type="text" id="add-tag-ignore2"  size="20"  placeholder="добавить метку">
+                                <button class="btn btn-primary" id="buttonTagIgnore2">+</button>
                             </div>
+                            <select multiple class="list-group" id="listOfSuitableTagsForIgnoring2" style="display: none">
+
+                            </select>
                         </onsubmit >
                     </div>
                 </div>
