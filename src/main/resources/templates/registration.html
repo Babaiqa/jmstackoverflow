@@ -18,13 +18,17 @@
     </nav>
 </div>
 <div class="auth-container">
-    <form class="form-group" id="login-page">
+    <form class="form-group" id="registration-page">
         <div class="form-heading">
-            <h2 id="heading">Вход в систему</h2>
+            <h2 id="heading">Регистрация</h2>
         </div>
         <div class="form-input">
             <label class="sr-only" for="email"></label>
-            <input class="form-control form-control-lg" type="email" placeholder="Email" name="username" id="email" required autofocus>
+            <input class="form-control form-control-lg" type="email" placeholder="Email" name="email" id="email" required autofocus>
+        </div>
+        <div class="form-input">
+            <label class="sr-only" for="fullname"></label>
+            <input class="form-control form-control-lg" type="text" placeholder="Fullname" name="fullname" id="fullname" required>
         </div>
         <div class="form-input input-group">
             <label class="sr-only" for="password"></label>
@@ -32,24 +36,9 @@
             <button class="btn btn-lg btn-primary" type="button" onclick="showPassword()" id="show-password">&#x2605;</button>
         </div>
         <div class="form-button">
-            <button class="btn btn-lg btn-primary btn-block" type="submit" id="button">Войти</button>
+            <button class="btn btn-lg btn-primary btn-block" type="submit" id="button">Регистрация</button>
         </div>
-        <div class="form-button">
-            <a type="button" class="btn btn-lg btn-primary btn-block" href="http://localhost:5557/oauth2/authorization/google">
-                Войти через Google
-            </a>
-        </div>
-        <div class="form-button">
-            <a type="button" class="btn btn-lg btn-primary btn-block" href="http://localhost:5557/oauth2/authorization/custom">
-                Войти через ВКонтакте
-            </a>
-        </div>
-        <div class="form-button">
-            <a type="button" class="btn btn-lg btn-primary btn-block" href="http://localhost:5557/registration">
-                Регистрация
-            </a>
-        </div>
-        <div class="form-error" id="login-error">
+        <div class="form-error" id="registration-error">
             <div class="alert" role="alert">&nbsp;</div>
         </div>
     </form>

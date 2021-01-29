@@ -1,7 +1,7 @@
 .auth-container {
     background-color: #eeeeee;
 }
-.form-group {
+.form-group, .reg-confirm {
     padding-top: 7%;
     padding-bottom: 15%;
     max-width: 25%;

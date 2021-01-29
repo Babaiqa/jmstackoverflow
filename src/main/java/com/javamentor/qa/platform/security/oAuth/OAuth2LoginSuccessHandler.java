@@ -44,7 +44,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         CustomOAuth2User oAuthUser = (CustomOAuth2User) authentication.getPrincipal();
-        Optional userOptional = userService.getUserByEmail(authentication.getName());
+        Optional userOptional = userService.getUserByEmail(oAuthUser.getId());
         Optional<Role> role = roleService.getRoleByName("USER");
         if(!userOptional.isPresent()){
             User user = new User();
@@ -54,7 +54,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             user.setRole(role.get());
             userService.persist(user);
         }
-        Cookie cookie = new Cookie("token","Bearer_" + jwtUtils.generateJwtTokenOAuth(authentication));
+        Cookie cookie = new Cookie("token","Bearer_" + jwtUtils.generateJwtTokenOAuth(oAuthUser.getId()));
         cookie.setPath("/");
         response.addCookie(cookie);
         this.handle(request,response);
