@@ -1,6 +1,5 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.AnswerDtoDao;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
@@ -9,6 +8,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.*;
@@ -43,6 +43,7 @@ public class QuestionController {
     private final SecurityHelper securityHelper;
     private final AnswerVoteConverter answerVoteConverter;
     private final QuestionDtoService questionDtoService;
+    private final CommentDtoService commentDtoService;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
@@ -57,7 +58,8 @@ public class QuestionController {
                               AnswerVoteService answerVoteService,
                               AnswerService answerService,
                               AnswerDtoService answerDtoService,
-                              AnswerVoteConverter answerVoteConverter) {
+                              AnswerVoteConverter answerVoteConverter,
+                              CommentDtoService commentDtoService) {
         this.questionService = questionService;
         this.tagMapper = tagMapper;
         this.tagService = tagService;
@@ -69,7 +71,7 @@ public class QuestionController {
         this.answerService = answerService;
         this.answerDtoService = answerDtoService;
         this.answerVoteConverter = answerVoteConverter;
-
+        this.commentDtoService = commentDtoService;
     }
 
     @Autowired
@@ -504,4 +506,45 @@ public class QuestionController {
 
         return ResponseEntity.ok(answerVoteConverter.answerVoteToAnswerVoteDto(answerVote));
     }
+
+    @GetMapping("/{questionId}/comments")
+    @ApiOperation(value = "Return all Comments by questionID", notes = "Return all Comments by questionID")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Return all Comments by questionID", response = CommentDto.class,  responseContainer = "List"),
+            @ApiResponse(code = 400, message = "Question not found", response = String.class)
+    })
+
+    public ResponseEntity<?> getCommentListByQuestionId(@ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
+                                                       @PathVariable Long questionId) {
+
+        Optional<Question> question = questionService.getById(questionId);
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question not found");
+        }
+
+        List<CommentQuestionDto> commentQuestionDtoList = commentDtoService.getAllCommentsByQuestionId(questionId);
+
+        return ResponseEntity.ok(commentQuestionDtoList);
+    }
+
+    @GetMapping("/answer/{answerId}/comments")
+    @ApiOperation(value = "Return all Comments by answerID", notes = "Return all Comments by answerID")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Return all Comments by answerID", response = CommentDto.class,  responseContainer = "List"),
+            @ApiResponse(code = 400, message = "Answer not found", response = String.class)
+    })
+
+    public ResponseEntity<?> getCommentListByAnswerId(@ApiParam(name = "answerId", value = "answerId. Type long", required = true, example = "1")
+                                                        @PathVariable Long answerId) {
+
+        Optional<Answer> answer = answerService.getById(answerId);
+        if (!answer.isPresent()) {
+            return ResponseEntity.badRequest().body("Answer not found");
+        }
+
+        List<CommentAnswerDto> commentAnswerDtoList = commentDtoService.getAllCommentsByAnswerId(answerId);
+
+        return ResponseEntity.ok(commentAnswerDtoList);
+    }
+
 }
