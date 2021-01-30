@@ -24,9 +24,9 @@
 <div class="container-fluid">
     <div class="row ">
         <div class="col-md-3 col-xl-2  col-lg-2 col-sm-3">
-            <div th:insert="~{fragment/sidebar :: sidebar}" id="sidebarArea"></div>
+            <div th:insert="~{fragment/sidebar :: sidebar}" id="sidebarArea" style="border-left: 1px red"></div>
         </div>
-        <div class="col-md-9 col-xl-10  col-lg-10 col-sm-9">
+        <div class="col-md-9 col-xl-9  col-lg-9 col-sm-9 p-4" style="border-left: 1px solid #D6D9DC;">
             <div header class="row">
                 <div class = "col">
                     <h2>Парсинг сайта myip.ms</h2>
@@ -38,39 +38,29 @@
             </div>
 
             <div underheader class="row">
-                <div class="col-1" title="2021-01-29 17:20:32Z">
-                    <span class="fc-light mr2">Вопрос задан</span>
-                    <time itemprop="dateCreated" datetime="2021-01-29T17:20:32">сегодня</time>
-                </div>
-                <div class="col-1">
-                    <span class="fc-light mr2">Последняя активность</span>
-                    <a href="https://ru.stackoverflow.com/questions/1237608/%d0%9f%d0%b0%d1%80%d1%81%d0%b8%d0%bd%d0%b3-%d1%81%d0%b0%d0%b9%d1%82%d0%b0-myip-ms?lastactivity" class="s-link s-link__inherit" title="2021-01-29 17:20:32Z">сегодня</a>
-                </div>
-                <div class="col-1" title="Просмотрен 4 раза">
-                    <span class="fc-light mr2">Просмотрен</span>
-                    4 раза
+                <div class="col">
+                    <p>
+                        <span style="color: #6a737c">Вопрос задан:</span> сегодня&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span style="color: #6a737c">Последняя активность:</span> сегодня&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span style="color: #6a737c">Просмотрен:</span> 24 раза
+                    </p>
                 </div>
             </div>
-
             <hr />
 
             <div main-area class="row">
-                <div class="col-md-8 col-xl-9  col-lg-9 col-sm-8" aria-label="question and answers">
+                <div question and answers class="col-md-12 col-xl-9  col-lg-9 col-sm-12" aria-label="question and answers">
                     <div question >
                         <div class="row">
                             <div vote-area-question class="col-1">
                                 <div class="js-voting-container grid jc-center fd-column ai-stretch gs4 fc-black-200" data-post-id="1237608" data-suppress-vote-requests="false">
-                                    <button class="js-vote-up-btn grid--cell s-btn s-btn__unset c-pointer" data-controller="s-tooltip" data-s-tooltip-placement="right" aria-pressed="false" aria-label="Up vote" data-selected-classes="fc-theme-primary" aria-describedby="--stacks-s-tooltip-vsbp1ztj">
-                                        <svg aria-hidden="true" class="m0 svg-icon iconArrowUpLg" width="36" height="36" viewBox="0 0 36 36">
-                                            <path d="M2 26h32L18 10 2 26z"></path>
-                                        </svg>
-                                    </button>
-                                    <div class="js-vote-count grid--cell fc-black-500 fs-title grid fd-column ai-center" itemprop="upvoteCount" data-value="0">0</div>
-                                    <button class="js-vote-down-btn grid--cell s-btn s-btn__unset c-pointer" data-controller="s-tooltip" data-s-tooltip-placement="right" aria-pressed="false" aria-label="Down vote" data-selected-classes="fc-theme-primary" aria-describedby="--stacks-s-tooltip-jpdnb4o1">
-                                        <svg aria-hidden="true" class="m0 svg-icon iconArrowDownLg" width="36" height="36" viewBox="0 0 36 36">
-                                            <path d="M2 10h32L18 26 2 10z"></path>
-                                        </svg>
-                                    </button>
+                                    <svg width="36" height="36">
+                                        <path d="M2 26h32L18 10 2 26z"></path>
+                                    </svg>
+                                    <div style="size: 150%">0</div>
+                                    <svg  width="36" height="36" >
+                                        <path d="M2 10h32L18 26 2 10z"></path>
+                                    </svg>
                                 </div>
 
                             </div>
@@ -140,28 +130,22 @@ print(link_list)
                                                 <a href="#">Поделиться</a>
                                                 <a href="#">Править</a>
                                                 <a href="#">Отслеживать</a>
-
-
-
                                             </div>
                                             <div class="col-md-4 offset-md-4">
                                                 <div class="card" style="width: 250px">
-                                                    <div class="card-body" style="background: #e0ebf3">
+                                                    <div class="card-body p-2" style="background: #e0ebf3">
                                                         <div>
                                                             <span>Задан 3 часа назад</span>
                                                         </div>
                                                         <div class="row">
-                                                            <div class="col-4">
-                                                                <a href="https://ru.stackoverflow.com/users/427467/%d0%9a%d0%be%d0%bb%d1%8f-%d0%9d%d0%b0%d1%80%d1%83%d1%88%d0%b5%d0%b2"><div class="gravatar-wrapper-32"><img src="./python - Парсинг сайта myip.ms - Stack Overflow на русском_files/515e40ef493fb346d428c6c173db632c" alt="" width="32" height="32" class="bar-sm"></div></a>
+                                                            <div class="col-3">
+                                                                <img width="48" height="48" src="https://pbs.twimg.com/profile_images/1182694005408186375/i5xT6juJ_400x400.jpg" alt="...">
                                                             </div>
                                                             <div class="col-8">
                                                                 <div>Коля Нарушев</div>
-                                                                <div>1  1 </div>
+                                                                <div><b>17</b>&nbsp;&nbsp;&nbsp;12</div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="card-footer" style="background: #d0e4f0">
-                                                        2 days ago
                                                     </div>
                                                 </div>
                                             </div>
@@ -169,10 +153,24 @@ print(link_list)
                                         </div>
                                     </div>
                                 </div>
-                                <div comments? class="post-layout--right">
+                                <div comments class="post-layout--right">
                                     <div id="comments-1237608" class="comments js-comments-container bt bc-black-075 mt12  dno" data-post-id="1237608" data-min-length="15">
                                         <ul class="comments-list js-comments-list" data-remaining-comments-count="0" data-canpost="false" data-cansee="true" data-comments-unavailable="false" data-addlink-disabled="true">
-
+                                            <hr/>
+                                            <li>
+                                                <span>Что такое var_with_long_name ?</span>
+                                                –
+                                                <a href="#">Alpensin</a>
+                                                <span>1 час назад</span>
+                                            </li>
+                                            <hr/>
+                                            <li>
+                                                <span>Возможное имя переменной.</span>
+                                                –
+                                                <a href="#">Алексей</a>
+                                                <span>44 минуты назад</span>
+                                            </li>
+                                            <hr/>
                                         </ul>
                                     </div>
 
@@ -188,8 +186,7 @@ print(link_list)
 
                     <hr />
 
-
-                    <div answer >
+                    <div answers  >
                         <div answer1 class="row">
                             <div vote-area-answer class="col-1">
                                 <div class="js-voting-container grid jc-center fd-column ai-stretch gs4 fc-black-200" data-post-id="1237608" data-suppress-vote-requests="false">
@@ -204,12 +201,20 @@ print(link_list)
                                             <path d="M2 10h32L18 26 2 10z"></path>
                                         </svg>
                                     </button>
+                                    <div class="js-accepted-answer-indicator grid--cell fc-green-500 py6 mtn8" data-s-tooltip-placement="right" title="Loading when this answer was accepted…" tabindex="0" role="note" aria-label="Accepted">
+                                        <div class="ta-center">
+                                            <svg aria-hidden="true" class="svg-icon iconCheckmarkLg" width="36" height="36" viewBox="0 0 36 36">
+                                                <path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+
+
                                 </div>
 
                             </div>
-
                             <div answer-and-comments-area class="col-11">
-                                <div>
+                                <div answer-area>
                                     <p>Можно проще, без явного применения SQL запроса(если вы можете подключиться к базе):</p>
                                     в phpMyAdmin:
 
@@ -225,7 +230,62 @@ print(link_list)
                                     <p>   далее интуитивно понятно</p>
 
                                 </div>
+                                <div usderanswer class="mb0 ">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <a href="#">Поделиться</a>
+                                            <a href="#">Править</a>
+                                            <a href="#">Отслеживать</a>
 
+                                        </div>
+                                        <div class="col-md-4 offset-md-4">
+                                            <div style="width: 250px">
+                                                <div>
+                                                    <div>
+                                                        <span>Ответ дан: 6 часа назад</span>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-3">
+                                                            <img width="48" height="48" src="https://pbs.twimg.com/profile_images/1182694005408186375/i5xT6juJ_400x400.jpg" alt="...">
+                                                        </div>
+                                                        <div class="col-8">
+                                                            <div>Вася Пупкин</div>
+                                                            <div><b>25</b>&nbsp;&nbsp;&nbsp;1</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div comments class="post-layout--right">
+                                    <div id="comments-1237601" class="comments js-comments-container bt bc-black-075 mt12  dno" data-post-id="1237608" data-min-length="15">
+                                        <ul class="comments-list js-comments-list" data-remaining-comments-count="0" data-canpost="false" data-cansee="true" data-comments-unavailable="false" data-addlink-disabled="true">
+                                            <hr/>
+                                            <li>
+                                                <span>Что такое var_with_long_name ?</span>
+                                                –
+                                                <a href="#">Alpensin</a>
+                                                <span>1 час назад</span>
+                                            </li>
+                                            <hr/>
+                                            <li>
+                                                <span>Возможное имя переменной.</span>
+                                                –
+                                                <a href="#">Алексей</a>
+                                                <span>44 минуты назад</span>
+                                            </li>
+                                            <hr/>
+                                        </ul>
+                                    </div>
+
+                                    <div id="comments-link-1237602" data-rep="50" data-reg="true">
+                                        <a class="js-add-link comments-link disabled-link" title="Используйте комментарии для запроса дополнительной информации или предложения улучшений. Избегайте публикации ответа на вопросы в комментариях." href="https://ru.stackoverflow.com/questions/1237608/%d0%9f%d0%b0%d1%80%d1%81%d0%b8%d0%bd%d0%b3-%d1%81%d0%b0%d0%b9%d1%82%d0%b0-myip-ms#" role="button">добавить комментарий</a>
+                                        <span class="js-link-separator dno">&nbsp;|&nbsp;</span>
+                                        <a class="js-show-link comments-link dno" title="разверните, чтобы увидеть все комментарии к сообщению" href="https://ru.stackoverflow.com/questions/1237608/%d0%9f%d0%b0%d1%80%d1%81%d0%b8%d0%bd%d0%b3-%d1%81%d0%b0%d0%b9%d1%82%d0%b0-myip-ms#" onclick="" role="button"></a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <hr/>
@@ -244,75 +304,153 @@ print(link_list)
                                         </svg>
                                     </button>
                                 </div>
-
                             </div>
-
                             <div answer-and-comments-area class="col-11">
+                                <div answer-area>
+                                    <p>Можно проще, без явного применения SQL запроса(если вы можете подключиться к базе):</p>
+                                    в phpMyAdmin:
 
+                                    <p>   нажать на ссылку "На главную"<p>
+                                    <p>    затем выбрать "Учетные записи пользователя" а там уже</p>
+                                    <p>   выбрать строку с необходимым пользователем и в столбце действия</p>
+                                    <p>   выбрать "редактировать привилегии" в появившемся окне будет ссылка</p>
+                                    <p>   "Изменить пароль" дальше интуитивно и так понятно</p>
+                                    <p>   в HeidiSQL:</p>
+
+                                    <p>   Инструменты</p>
+                                    <p>   Управление пользователями</p>
+                                    <p>   далее интуитивно понятно</p>
+
+                                </div>
+                                <div usderanswer class="mb0 ">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <a href="#">Поделиться</a>
+                                            <a href="#">Править</a>
+                                            <a href="#">Отслеживать</a>
+
+                                        </div>
+                                        <div class="col-md-4 offset-md-4">
+                                            <div style="width: 250px">
+                                                <div>
+                                                    <div>
+                                                        <span>Ответ дан: 6 часа назад</span>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-3 ">
+                                                            <img width="48" height="48" src="https://pbs.twimg.com/profile_images/1182694005408186375/i5xT6juJ_400x400.jpg" alt="...">
+                                                        </div>
+                                                        <div class="col-8 ">
+                                                            <div>Коля Нарушев</div>
+                                                            <div><b>100</b>&nbsp;&nbsp;&nbsp;1</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div comments class="post-layout--right">
+                                    <div id="comments-1337601" class="comments js-comments-container bt bc-black-075 mt12  dno" data-post-id="1237608" data-min-length="15">
+                                        <ul class="comments-list js-comments-list" data-remaining-comments-count="0" data-canpost="false" data-cansee="true" data-comments-unavailable="false" data-addlink-disabled="true">
+                                            <hr/>
+                                            <li>
+                                                <span>Что такое var_with_long_name ?</span>
+                                                –
+                                                <a href="#">Alpensin</a>
+                                                <span>1 час назад</span>
+                                            </li>
+                                            <hr/>
+                                            <li>
+                                                <span>Возможное имя переменной.</span>
+                                                –
+                                                <a href="#">Алексей</a>
+                                                <span>44 минуты назад</span>
+                                            </li>
+                                            <hr/>
+                                        </ul>
+                                    </div>
+
+                                    <div id="comments-link-1337602" data-rep="50" data-reg="true">
+                                        <a class="js-add-link comments-link disabled-link" title="Используйте комментарии для запроса дополнительной информации или предложения улучшений. Избегайте публикации ответа на вопросы в комментариях." href="https://ru.stackoverflow.com/questions/1237608/%d0%9f%d0%b0%d1%80%d1%81%d0%b8%d0%bd%d0%b3-%d1%81%d0%b0%d0%b9%d1%82%d0%b0-myip-ms#" role="button">добавить комментарий</a>
+                                        <span class="js-link-separator dno">&nbsp;|&nbsp;</span>
+                                        <a class="js-show-link comments-link dno" title="разверните, чтобы увидеть все комментарии к сообщению" href="https://ru.stackoverflow.com/questions/1237608/%d0%9f%d0%b0%d1%80%d1%81%d0%b8%d0%bd%d0%b3-%d1%81%d0%b0%d0%b9%d1%82%d0%b0-myip-ms#" onclick="" role="button"></a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <hr/>
-
-                        <div class="col-11 float-right">
-                            <div class="card-body">
-                                <h6 class="card-title">Ваш ответ</h6>
-                                <p class="card-text">Добавьте всю информацию, которая может понадобиться для ответа на ваш вопрос.</p>
-                                <div id="summernote"></div>
-                                <script>
-                                    $('#summernote').summernote({
-                                        tabsize: 2,
-                                        height: 200
-                                    });
-                                </script>
-                            </div>
+                    </div>
+                    <div your-answer>
+                        <div class="card-body">
+                            <h6 class="card-title">Ваш ответ</h6>
+                            <p class="card-text">Добавьте всю информацию, которая может понадобиться для ответа на ваш вопрос.</p>
+                            <div id="summernote"></div>
+                            <script>
+                                $('#summernote').summernote({
+                                    tabsize: 2,
+                                    height: 200
+                                });
+                            </script>
                         </div>
                     </div>
                 </div>
-                <div class="row-md-4 col-xl-3  col-lg-3 col-sm-4" aria-label="боковая панель">
-                    <div class="module sidebar-related">
-                        <h4 id="h-related">Похожие</h4>
-                        <div class="related js-gps-related-questions" data-tracker="rq=1">
-                            <div class="spacer js-gps-track">
-                                <a href="https://ru.stackoverflow.com/q/475764?rq=1" title="Количество голосов («за» − «против»)">
-                                    <div class="answer-votes answered-accepted default">0</div>
-                                </a>
-                                <a href="https://ru.stackoverflow.com/questions/475764/python-%d0%bf%d0%b0%d1%80%d1%81%d0%b8%d0%bd%d0%b3-%d1%81%d0%b0%d0%b9%d1%82%d0%b0-%d1%85%d0%b0%d1%80%d0%b0%d0%ba%d1%82%d0%b5%d1%80%d0%b8%d1%81%d1%82%d0%b8%d0%ba%d0%b8?rq=1" class="question-hyperlink">python парсинг сайта (характеристики)</a>
+                <div lest sidebar  class="row-md-4 col-xl-3  col-lg-3 col-sm-4" aria-label="боковая панель">
+                    <div style="width: 350px">
+                        <div info-block class="card">
+                            <div class="card-footer" style="background: #faf1d3">
+                                Важное на мете
                             </div>
-                            <div class="spacer js-gps-track">
-                                <a href="https://ru.stackoverflow.com/q/716614?rq=1" title="Количество голосов («за» − «против»)">
-                                    <div class="answer-votes answered-accepted default">0</div>
-                                </a>
-                                <a href="https://ru.stackoverflow.com/questions/716614/%d0%9f%d0%b0%d1%80%d1%81%d0%b8%d0%bd%d0%b3-%d0%b2%d0%bd%d1%83%d1%82%d1%80%d0%b5%d0%bd%d0%bd%d0%b8%d1%85-%d1%81%d1%81%d1%8b%d0%bb%d0%be%d0%ba-%d1%81%d0%b0%d0%b9%d1%82%d0%b0?rq=1" class="question-hyperlink">Парсинг внутренних ссылок сайта</a>
+                            <div class="card-body" style="background: #fcf6e2">
+                                Opt-in alpha test for a new Stacks editor
+                                Visual design changes to the review queues
+                                Модерация за 2020 год в цифрах
                             </div>
-                            <div class="spacer js-gps-track">
-                                <a href="https://ru.stackoverflow.com/q/962282?rq=1" title="Количество голосов («за» − «против»)">
-                                    <div class="answer-votes answered-accepted default">0</div>
-                                </a>
-                                <a href="https://ru.stackoverflow.com/questions/962282/%d0%9f%d0%b0%d1%80%d1%81%d0%b8%d0%bd%d0%b3-%d1%81%d0%b0%d0%b9%d1%82%d0%b0-python?rq=1" class="question-hyperlink">Парсинг сайта python</a>
+                            <div class="card-footer" style="background: #faf1d3">
+                                Важное на мете
                             </div>
-                            <div class="spacer js-gps-track">
-                                <a href="https://ru.stackoverflow.com/q/992047?rq=1" title="Количество голосов («за» − «против»)">
-                                    <div class="answer-votes answered-accepted default">0</div>
-                                </a>
-                                <a href="https://ru.stackoverflow.com/questions/992047/%d0%9f%d0%b0%d1%80%d1%81%d0%b8%d0%bd%d0%b3-%d0%92%d0%a1%d0%95%d0%93%d0%9e-%d1%81%d0%b0%d0%b9%d1%82%d0%b0?rq=1" class="question-hyperlink">Парсинг ВСЕГО сайта</a>
+                            <div class="card-body" style="background: #fcf6e2">
+                                Opt-in alpha test for a new Stacks editor
+                                Visual design changes to the review queues
+                                Модерация за 2020 год в цифрах
                             </div>
-                            <div class="spacer js-gps-track">
-                                <a href="https://ru.stackoverflow.com/q/993768?rq=1" title="Количество голосов («за» − «против»)">
-                                    <div class="answer-votes answered-accepted default">0</div>
-                                </a>
-                                <a href="https://ru.stackoverflow.com/questions/993768/%d0%9d%d0%b5-%d1%80%d0%b0%d0%b1%d0%be%d1%82%d0%b0%d0%b5%d1%82-%d0%bf%d0%b0%d1%80%d1%81%d0%b5%d1%80-keyerror-%d0%b5%d1%81%d0%bb%d0%b8-%d0%bc%d0%be%d0%b6%d0%bd%d0%be-%d1%82%d0%b0%d0%ba%d0%b6%d0%b5-%d0%be%d0%b1%d1%8c%d1%8f%d1%81%d0%bd%d0%b8%d1%82%d0%b5-%d0%ba%d0%b0%d0%ba-%d0%bf%d0%b0%d1%80%d1%81%d0%b8%d1%82%d1%8c-%d0%b2%d0%ba-%d0%bd%d0%b0-%d0%bb%d0%b0%d0%b9%d0%ba%d0%b8?rq=1" class="question-hyperlink">Не работает парсер (KeyError) если можно также обьясните как парсить вк на лайки комменты (кол-во)</a>
-                            </div>
-                            <div class="spacer js-gps-track">
-                                <a href="https://ru.stackoverflow.com/q/1087114?rq=1" title="Количество голосов («за» − «против»)">
-                                    <div class="answer-votes answered-accepted default">0</div>
-                                </a>
-                                <a href="https://ru.stackoverflow.com/questions/1087114/%d0%9f%d0%b0%d1%80%d1%81%d0%b8%d0%bd%d0%b3-%d1%81%d0%b0%d0%b9%d1%82%d0%b0-beautifulsoup?rq=1" class="question-hyperlink">Парсинг сайта BeautifulSoup</a>
-                            </div>
-                            <div class="spacer js-gps-track">
-                                <a href="https://ru.stackoverflow.com/q/1123193?rq=1" title="Количество голосов («за» − «против»)">
-                                    <div class="answer-votes answered-accepted default">0</div>
-                                </a>
-                                <a href="https://ru.stackoverflow.com/questions/1123193/%d0%9f%d0%b0%d1%80%d1%81%d0%b8%d0%bd%d0%b3-%d1%81%d0%b0%d0%b9%d1%82%d0%b0-%d0%af%d0%bd%d0%b4%d0%b5%d0%ba%d1%81?rq=1" class="question-hyperlink">Парсинг сайта Яндекс</a>
+                        </div>
+                        <div class="module sidebar-related">
+                            <h4 id="h-related">Похожие</h4>
+                            <div class="related js-gps-related-questions" data-tracker="rq=1">
+                                <div class="spacer js-gps-track py-3">
+                                    <div class="btn btn-success">&nbsp; 1 &nbsp; </div>
+                                    <a href="#">python парсинг сайта</a>
+                                </div>
+                                <div class="spacer js-gps-track py-3">
+                                    <div class="btn btn-success">&nbsp; 1 &nbsp;</div>
+                                    <a href="#">Проверка на соответствие нескольким условиям</a>
+                                </div>
+                                <div class="spacer js-gps-track py-3">
+                                    <div class="btn btn-success ">&nbsp; 3 &nbsp;</div>
+                                    <a href="#">PHP - Использование переменной в переменной (строке)</a>
+                                </div>
+                                <div class="spacer js-gps-track py-3">
+                                    <div class="btn btn-success">&nbsp; 1 &nbsp;</div>
+                                    <a href="#">роверка строки на соответствие нескольким шаблонам</a>
+                                </div>
+                                <div class="spacer js-gps-track py-3">
+                                    <div class="btn btn-success">&nbsp; 0 &nbsp;</div>
+                                    <a href="#">Вызов переменной в Python</a>
+                                </div>
+                                <div class="spacer js-gps-track py-3">
+                                    <div class="btn btn-success">&nbsp; 0 &nbsp;</div>
+                                    <a href="#">Проверка на существование переменной python</a>
+                                </div>
+                                <div class="spacer js-gps-track py-3">
+                                    <div class="btn btn-success">&nbsp; 2 &nbsp;</div>
+                                    <a href="#">Не работает проверка строки на соответствие</a>
+                                </div>
+                                <div class="spacer js-gps-track py-3">
+                                    <div class="btn btn-success">&nbsp; 1 &nbsp;</div>
+                                    <a href="#">python Как получить имени переменной в виде строки?</a>
+                                </div>
                             </div>
                         </div>
                     </div>
