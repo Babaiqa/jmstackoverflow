@@ -24,7 +24,7 @@
 <div class="container-fluid">
     <div class="row ">
         <div class="col-md-3 col-xl-2  col-lg-2 col-sm-3">
-            <div th:insert="~{fragment/sidebar :: sidebar}" id="sidebarArea" style="border-left: 1px red"></div>
+            <div th:insert="~{fragment/sidebar :: sidebar}" id="sidebarArea" ></div>
         </div>
         <div class="col-md-9 col-xl-9  col-lg-9 col-sm-9 p-4" style="border-left: 1px solid #D6D9DC;">
             <div header class="row">
@@ -49,22 +49,18 @@
             <hr />
 
             <div main-area class="row">
-                <div question and answers class="col-md-12 col-xl-9  col-lg-9 col-sm-12" aria-label="question and answers">
+                <div question-and-answers class="col-md-12 col-xl-9  col-lg-9 col-sm-12" aria-label="question and answers">
                     <div question >
                         <div class="row">
                             <div vote-area-question class="col-1">
-                                <div class="js-voting-container grid jc-center fd-column ai-stretch gs4 fc-black-200" data-post-id="1237608" data-suppress-vote-requests="false">
-                                    <svg width="36" height="36">
-                                        <path d="M2 26h32L18 10 2 26z"></path>
-                                    </svg>
-                                    <div style="size: 150%">0</div>
-                                    <svg  width="36" height="36" >
-                                        <path d="M2 10h32L18 26 2 10z"></path>
-                                    </svg>
-                                </div>
-
+                                <svg width="36" height="36" >
+                                    <path d="M2 26h32L18 10 2 26z"></path>
+                                </svg>
+                                <div style="font-size: 200%"> &nbsp;0</div>
+                                <svg  width="36" height="36" >
+                                    <path d="M2 10h32L18 26 2 10z"></path>
+                                </svg>
                             </div>
-
                             <div question-and-comments-area class="col-11">
                                 <div question-area>
                                     <div describlion class="s-prose js-post-body" itemprop="text">
@@ -74,54 +70,16 @@
                                             С этой ссылкой всё работает отлично, но если перейти на другую страницу <a href="https://myip.ms/browse/sites/2/ipID/23.227.38.0/ipIDii/23.227.38.255/own/376714" rel="nofollow noreferrer">https://myip.ms/browse/sites/2/ipID/23.227.38.0/ipIDii/23.227.38.255/own/376714</a>
                                             То никаких данных не выводит, хотя структура сайта такая же. Я думаю что это может быть связанно с тем что на сайте стоит лимит на просмотры, или из-за того что надо зарегистрироваться, но я не могу найти какой запрос надо отправить для входа в аккаунт.
                                             Подскажите что сделать?</p>
-                                        <pre class="lang-py s-code-block hljs python"><code><span class="hljs-keyword">import</span> requests
-<span class="hljs-keyword">from</span> bs4 <span class="hljs-keyword">import</span> BeautifulSoup
-<span class="hljs-keyword">import</span> time
-link_list = []
-
-URL = <span class="hljs-string">'https://myip.ms/browse/sites/2/ipID/23.227.38.0/ipIDii/23.227.38.255/own/376714'</span>
-
-HEADERS = {<span class="hljs-string">'user-agent'</span>:<span class="hljs-string">'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 YaBrowser/20.12.2.105 Yowser/2.5 Safari/537.36'</span>,<span class="hljs-string">'accept'</span>:<span class="hljs-string">'*/*'</span>}
-<span class="hljs-comment">#HOST =</span>
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get_html</span>(<span class="hljs-params">url,params=<span class="hljs-literal">None</span></span>):</span>
-r = requests.get(url,headers=HEADERS,params=params)
-<span class="hljs-keyword">return</span> r
-
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get_content</span>(<span class="hljs-params">html</span>):</span>
-soup = BeautifulSoup(html,<span class="hljs-string">'html.parser'</span>)
-items = soup.find_all(<span class="hljs-string">'td'</span>,class_=<span class="hljs-string">'row_name'</span>)
-<span class="hljs-keyword">for</span> item <span class="hljs-keyword">in</span> items:
-    links = item.find(<span class="hljs-string">'a'</span>).get(<span class="hljs-string">'href'</span>)
-    link_list.append({
-        <span class="hljs-string">'link'</span>: links
-    })
-
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">parser</span>():</span>
-print(URL)
-
-html = get_html(URL)
-<span class="hljs-keyword">if</span> html.status_code == <span class="hljs-number">200</span>:
-    get_content(html.text)
-<span class="hljs-keyword">else</span>:
-    print(<span class="hljs-string">'Error'</span>)
-
-parser()
-print(link_list)
-</code></pre>
                                     </div>
-                                    <div tags class="mt24 mb12">
-                                        <div class="post-taglist grid gs4 gsy fd-column">
-                                            <div class="grid ps-relative">
-                                                <div class="mb-1">
-                                                    python
-                                                </div>
-                                                <div class="mb-1">
-                                                    python-3.x
-                                                </div>
-                                                <div class="mb-1">
-                                                    парсер
-                                                </div>
-                                            </div>
+                                    <div class="tags">
+                                        <div class="mb-1">
+                                            python
+                                        </div>
+                                        <div class="mb-1">
+                                            python-3.x
+                                        </div>
+                                        <div class="mb-1">
+                                            парсер
                                         </div>
                                     </div>
                                     <div underquestion class="mb0 ">
@@ -175,60 +133,41 @@ print(link_list)
                                     </div>
 
                                     <div id="comments-link-1237608" data-rep="50" data-reg="true">
-                                        <a class="js-add-link comments-link disabled-link" title="Используйте комментарии для запроса дополнительной информации или предложения улучшений. Избегайте публикации ответа на вопросы в комментариях." href="https://ru.stackoverflow.com/questions/1237608/%d0%9f%d0%b0%d1%80%d1%81%d0%b8%d0%bd%d0%b3-%d1%81%d0%b0%d0%b9%d1%82%d0%b0-myip-ms#" role="button">добавить комментарий</a>
-                                        <span class="js-link-separator dno">&nbsp;|&nbsp;</span>
-                                        <a class="js-show-link comments-link dno" title="разверните, чтобы увидеть все комментарии к сообщению" href="https://ru.stackoverflow.com/questions/1237608/%d0%9f%d0%b0%d1%80%d1%81%d0%b8%d0%bd%d0%b3-%d1%81%d0%b0%d0%b9%d1%82%d0%b0-myip-ms#" onclick="" role="button"></a>
+                                        <a href="#">добавить комментарий</a>
+                                        <span >&nbsp;|&nbsp;</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <hr />
-
+                    <hr/>
                     <div answers  >
                         <div answer1 class="row">
                             <div vote-area-answer class="col-1">
-                                <div class="js-voting-container grid jc-center fd-column ai-stretch gs4 fc-black-200" data-post-id="1237608" data-suppress-vote-requests="false">
-                                    <button class="js-vote-up-btn grid--cell s-btn s-btn__unset c-pointer" data-controller="s-tooltip" data-s-tooltip-placement="right" aria-pressed="false" aria-label="Up vote" data-selected-classes="fc-theme-primary" aria-describedby="--stacks-s-tooltip-vsbp1ztj">
-                                        <svg aria-hidden="true" class="m0 svg-icon iconArrowUpLg" width="36" height="36" viewBox="0 0 36 36">
-                                            <path d="M2 26h32L18 10 2 26z"></path>
-                                        </svg>
-                                    </button>
-                                    <div class="js-vote-count grid--cell fc-black-500 fs-title grid fd-column ai-center" itemprop="upvoteCount" data-value="0">0</div>
-                                    <button class="js-vote-down-btn grid--cell s-btn s-btn__unset c-pointer" data-controller="s-tooltip" data-s-tooltip-placement="right" aria-pressed="false" aria-label="Down vote" data-selected-classes="fc-theme-primary" aria-describedby="--stacks-s-tooltip-jpdnb4o1">
-                                        <svg aria-hidden="true" class="m0 svg-icon iconArrowDownLg" width="36" height="36" viewBox="0 0 36 36">
-                                            <path d="M2 10h32L18 26 2 10z"></path>
-                                        </svg>
-                                    </button>
-                                    <div class="js-accepted-answer-indicator grid--cell fc-green-500 py6 mtn8" data-s-tooltip-placement="right" title="Loading when this answer was accepted…" tabindex="0" role="note" aria-label="Accepted">
-                                        <div class="ta-center">
-                                            <svg aria-hidden="true" class="svg-icon iconCheckmarkLg" width="36" height="36" viewBox="0 0 36 36">
-                                                <path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>
-                                            </svg>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-
+                                <svg width="36" height="36" >
+                                    <path d="M2 26h32L18 10 2 26z"></path>
+                                </svg>
+                                <div style="font-size: 200%"> &nbsp;3</div>
+                                <svg  width="36" height="36" >
+                                    <path d="M2 10h32L18 26 2 10z"></path>
+                                </svg>
+                                <svg width="36" height="36">
+                                    <path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>
+                                </svg>
                             </div>
                             <div answer-and-comments-area class="col-11">
                                 <div answer-area>
                                     <p>Можно проще, без явного применения SQL запроса(если вы можете подключиться к базе):</p>
                                     в phpMyAdmin:
-
                                     <p>   нажать на ссылку "На главную"<p>
                                     <p>    затем выбрать "Учетные записи пользователя" а там уже</p>
                                     <p>   выбрать строку с необходимым пользователем и в столбце действия</p>
                                     <p>   выбрать "редактировать привилегии" в появившемся окне будет ссылка</p>
                                     <p>   "Изменить пароль" дальше интуитивно и так понятно</p>
                                     <p>   в HeidiSQL:</p>
-
                                     <p>   Инструменты</p>
                                     <p>   Управление пользователями</p>
                                     <p>   далее интуитивно понятно</p>
-
                                 </div>
                                 <div usderanswer class="mb0 ">
                                     <div class="row">
@@ -236,7 +175,6 @@ print(link_list)
                                             <a href="#">Поделиться</a>
                                             <a href="#">Править</a>
                                             <a href="#">Отслеживать</a>
-
                                         </div>
                                         <div class="col-md-4 offset-md-4">
                                             <div style="width: 250px">
@@ -256,12 +194,11 @@ print(link_list)
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
                                 <div comments class="post-layout--right">
-                                    <div id="comments-1237601" class="comments js-comments-container bt bc-black-075 mt12  dno" data-post-id="1237608" data-min-length="15">
-                                        <ul class="comments-list js-comments-list" data-remaining-comments-count="0" data-canpost="false" data-cansee="true" data-comments-unavailable="false" data-addlink-disabled="true">
+                                    <div>
+                                        <ul>
                                             <hr/>
                                             <li>
                                                 <span>Что такое var_with_long_name ?</span>
@@ -279,11 +216,9 @@ print(link_list)
                                             <hr/>
                                         </ul>
                                     </div>
-
                                     <div id="comments-link-1237602" data-rep="50" data-reg="true">
-                                        <a class="js-add-link comments-link disabled-link" title="Используйте комментарии для запроса дополнительной информации или предложения улучшений. Избегайте публикации ответа на вопросы в комментариях." href="https://ru.stackoverflow.com/questions/1237608/%d0%9f%d0%b0%d1%80%d1%81%d0%b8%d0%bd%d0%b3-%d1%81%d0%b0%d0%b9%d1%82%d0%b0-myip-ms#" role="button">добавить комментарий</a>
-                                        <span class="js-link-separator dno">&nbsp;|&nbsp;</span>
-                                        <a class="js-show-link comments-link dno" title="разверните, чтобы увидеть все комментарии к сообщению" href="https://ru.stackoverflow.com/questions/1237608/%d0%9f%d0%b0%d1%80%d1%81%d0%b8%d0%bd%d0%b3-%d1%81%d0%b0%d0%b9%d1%82%d0%b0-myip-ms#" onclick="" role="button"></a>
+                                        <a href="#" >добавить комментарий</a>
+                                        <span>&nbsp;|&nbsp;</span>
                                     </div>
                                 </div>
                             </div>
@@ -292,17 +227,13 @@ print(link_list)
                         <div answer2 class="row">
                             <div vote-area-answer class="col-1">
                                 <div class="js-voting-container grid jc-center fd-column ai-stretch gs4 fc-black-200" data-post-id="1237608" data-suppress-vote-requests="false">
-                                    <button class="js-vote-up-btn grid--cell s-btn s-btn__unset c-pointer" data-controller="s-tooltip" data-s-tooltip-placement="right" aria-pressed="false" aria-label="Up vote" data-selected-classes="fc-theme-primary" aria-describedby="--stacks-s-tooltip-vsbp1ztj">
-                                        <svg aria-hidden="true" class="m0 svg-icon iconArrowUpLg" width="36" height="36" viewBox="0 0 36 36">
-                                            <path d="M2 26h32L18 10 2 26z"></path>
-                                        </svg>
-                                    </button>
-                                    <div class="js-vote-count grid--cell fc-black-500 fs-title grid fd-column ai-center" itemprop="upvoteCount" data-value="0">0</div>
-                                    <button class="js-vote-down-btn grid--cell s-btn s-btn__unset c-pointer" data-controller="s-tooltip" data-s-tooltip-placement="right" aria-pressed="false" aria-label="Down vote" data-selected-classes="fc-theme-primary" aria-describedby="--stacks-s-tooltip-jpdnb4o1">
-                                        <svg aria-hidden="true" class="m0 svg-icon iconArrowDownLg" width="36" height="36" viewBox="0 0 36 36">
-                                            <path d="M2 10h32L18 26 2 10z"></path>
-                                        </svg>
-                                    </button>
+                                    <svg width="36" height="36" >
+                                        <path d="M2 26h32L18 10 2 26z"></path>
+                                    </svg>
+                                    <div style="font-size: 200%"> &nbsp;1</div>
+                                    <svg  width="36" height="36" >
+                                        <path d="M2 10h32L18 26 2 10z"></path>
+                                    </svg>
                                 </div>
                             </div>
                             <div answer-and-comments-area class="col-11">
@@ -385,7 +316,6 @@ print(link_list)
                     <div your-answer>
                         <div class="card-body">
                             <h6 class="card-title">Ваш ответ</h6>
-                            <p class="card-text">Добавьте всю информацию, которая может понадобиться для ответа на ваш вопрос.</p>
                             <div id="summernote"></div>
                             <script>
                                 $('#summernote').summernote({
@@ -417,37 +347,37 @@ print(link_list)
                             </div>
                         </div>
                         <div class="module sidebar-related">
-                            <h4 id="h-related">Похожие</h4>
-                            <div class="related js-gps-related-questions" data-tracker="rq=1">
-                                <div class="spacer js-gps-track py-3">
+                            <h4>Похожие</h4>
+                            <div>
+                                <div class="py-3">
                                     <div class="btn btn-success">&nbsp; 1 &nbsp; </div>
                                     <a href="#">python парсинг сайта</a>
                                 </div>
-                                <div class="spacer js-gps-track py-3">
+                                <div class="py-3">
                                     <div class="btn btn-success">&nbsp; 1 &nbsp;</div>
                                     <a href="#">Проверка на соответствие нескольким условиям</a>
                                 </div>
-                                <div class="spacer js-gps-track py-3">
+                                <div class="py-3">
                                     <div class="btn btn-success ">&nbsp; 3 &nbsp;</div>
                                     <a href="#">PHP - Использование переменной в переменной (строке)</a>
                                 </div>
-                                <div class="spacer js-gps-track py-3">
+                                <div class="py-3">
                                     <div class="btn btn-success">&nbsp; 1 &nbsp;</div>
                                     <a href="#">роверка строки на соответствие нескольким шаблонам</a>
                                 </div>
-                                <div class="spacer js-gps-track py-3">
+                                <div class="py-3">
                                     <div class="btn btn-success">&nbsp; 0 &nbsp;</div>
                                     <a href="#">Вызов переменной в Python</a>
                                 </div>
-                                <div class="spacer js-gps-track py-3">
+                                <div class="py-3">
                                     <div class="btn btn-success">&nbsp; 0 &nbsp;</div>
                                     <a href="#">Проверка на существование переменной python</a>
                                 </div>
-                                <div class="spacer js-gps-track py-3">
+                                <div class="py-3">
                                     <div class="btn btn-success">&nbsp; 2 &nbsp;</div>
                                     <a href="#">Не работает проверка строки на соответствие</a>
                                 </div>
-                                <div class="spacer js-gps-track py-3">
+                                <div class="py-3">
                                     <div class="btn btn-success">&nbsp; 1 &nbsp;</div>
                                     <a href="#">python Как получить имени переменной в виде строки?</a>
                                 </div>
