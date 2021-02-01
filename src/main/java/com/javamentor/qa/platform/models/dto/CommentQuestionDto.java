@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 public class CommentQuestionDto implements Serializable {
 private Long id;
 private Long questionId;
-private CommentType commentType;
 private LocalDateTime lastRedactionDate;
 private LocalDateTime persistDate;
 private String text;

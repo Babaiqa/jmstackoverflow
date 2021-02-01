@@ -23,7 +23,6 @@ public class CommentDtoDaoImpl implements CommentDtoDao {
                 .createQuery("SELECT new com.javamentor.qa.platform.models.dto.CommentQuestionDto(" +
                         "cq.id, " +
                         "cq.question.id, " +
-                        "cq.comment.commentType, " +
                         "cq.comment.lastUpdateDateTime, " +
                         "cq.comment.persistDateTime, " +
                         "cq.comment.text, " +
@@ -40,7 +39,6 @@ public class CommentDtoDaoImpl implements CommentDtoDao {
                 .createQuery("SELECT new com.javamentor.qa.platform.models.dto.CommentAnswerDto(" +
                         "ca.id, " +
                         "ca.answer.id, " +
-                        "ca.comment.commentType, " +
                         "ca.comment.lastUpdateDateTime, " +
                         "ca.comment.persistDateTime, " +
                         "ca.comment.text, " +

@@ -527,24 +527,6 @@ public class QuestionController {
         return ResponseEntity.ok(commentQuestionDtoList);
     }
 
-    @GetMapping("/answer/{answerId}/comments")
-    @ApiOperation(value = "Return all Comments by answerID", notes = "Return all Comments by answerID")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Return all Comments by answerID", response = CommentDto.class,  responseContainer = "List"),
-            @ApiResponse(code = 400, message = "Answer not found", response = String.class)
-    })
 
-    public ResponseEntity<?> getCommentListByAnswerId(@ApiParam(name = "answerId", value = "answerId. Type long", required = true, example = "1")
-                                                        @PathVariable Long answerId) {
-
-        Optional<Answer> answer = answerService.getById(answerId);
-        if (!answer.isPresent()) {
-            return ResponseEntity.badRequest().body("Answer not found");
-        }
-
-        List<CommentAnswerDto> commentAnswerDtoList = commentDtoService.getAllCommentsByAnswerId(answerId);
-
-        return ResponseEntity.ok(commentAnswerDtoList);
-    }
 
 }
