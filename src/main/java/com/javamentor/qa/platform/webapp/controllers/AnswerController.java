@@ -2,9 +2,11 @@ package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.CommentAnswerDto;
 import com.javamentor.qa.platform.models.dto.CommentDto;
+import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,30 +21,40 @@ import java.util.Optional;
 
 @RestController
 @Validated
-@RequestMapping("/api/answer")
+@RequestMapping("/api/question")
 @Api(value = "AnswerApi")
 public class AnswerController {
 
 
     private final AnswerService answerService;
     private final CommentDtoService commentDtoService;
+    private final QuestionService questionService;
 
     @Autowired
-    public AnswerController(AnswerService answerService, CommentDtoService commentDtoService) {
+    public AnswerController(AnswerService answerService, CommentDtoService commentDtoService, QuestionService questionService) {
         this.answerService = answerService;
         this.commentDtoService = commentDtoService;
+        this.questionService = questionService;
     }
 
 
-    @GetMapping("/{answerId}/comments")
+    @GetMapping("/{questionId}/answer/{answerId}/comments")
     @ApiOperation(value = "Return all Comments by answerID", notes = "Return all Comments by answerID")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Return all Comments by answerID", response = CommentDto.class,  responseContainer = "List"),
             @ApiResponse(code = 400, message = "Answer not found", response = String.class)
     })
 
-    public ResponseEntity<?> getCommentListByAnswerId(@ApiParam(name = "answerId", value = "answerId. Type long", required = true, example = "1")
-                                                      @PathVariable Long answerId) {
+    public ResponseEntity<?> getCommentListByAnswerId(
+            @ApiParam(name = "questionId", value = "questionId. Type Long", required = true, example = "0")
+            @PathVariable Long questionId,
+            @ApiParam(name = "answerId", value = "answerId. Type long", required = true, example = "1")
+            @PathVariable Long answerId) {
+
+        Optional<Question> question = questionService.getById(questionId);
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question was not found");
+        }
 
         Optional<Answer> answer = answerService.getById(answerId);
         if (!answer.isPresent()) {
