@@ -10,6 +10,7 @@ import com.javamentor.qa.platform.webapp.converters.UserConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -21,13 +22,14 @@ import javax.validation.Valid;
 @RequestMapping("api/auth/reg/")
 @Api(value = "RegApi")
 public class RegistrationController {
-
+    @Value("${address.mail.confirm}")
+    private String address;
     private final UserService userService;
     private final UserConverter userConverter;
     private final JwtUtils jwtUtils;
     private final MailService mailService;
     private final String subject = "Registration confirm";
-    private final String text = "For finish registration follow to link http://localhost:5557/registration/confirm?token=";
+    private final String text = "For finish registration follow to link ";
 
     @Autowired
     public RegistrationController(UserService userService,
@@ -49,7 +51,7 @@ public class RegistrationController {
             user.setIsEnabled(false);
             userService.persist(user);
             String token = jwtUtils.generateRegJwtToken(userRegistrationDto.getEmail());
-            mailService.sendSimpleMessage(user.getEmail(), subject, text + token);
+            mailService.sendSimpleMessage(user.getEmail(), subject, text  + address + "registration/confirm?token=" + token);
             return ResponseEntity.ok(userConverter.userToDto(user));
         }
         else {
