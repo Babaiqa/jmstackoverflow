@@ -32,27 +32,65 @@ class PaginationQuestion {
         this.questions.then(function (response) {
 
             for (var i = 0; i < response.items.length; i++) {
+                const date = new Date(response.items[i].persistDateTime)
+                const stringDate = ('0' + date.getDate()).slice(-2) + "."
+                    + ('0' + (date.getMonth() + 1)).slice(-2) + "."
+                    + date.getFullYear() + " " + ('0' + date.getHours()).slice(-2) + ":"
+                    + ('0' + date.getMinutes()).slice(-2)
 
                 let shuffledNames = response.items[i].listTagDto.map(i => i.name).sort(() => Math.random() - 0.5);
                 let text  = shuffledNames.map(i => `<a href="#" class="tag"> ${i} </a>`).join('');
 
-                $('#questionsTable').append(
-                    "<a href=\"api/question/" + response.items[i].id + "\">\n" +
-                    "<div class=\"d-flex w-100 justify-content-between\">\n" +
-                    "<h5 class=\"mb-1\">" + response.items[i].title + "</h5>\n" +
-                    "<small class=\"text-muted\">" + response.items[i].lastUpdateDateTime + "</small>\n" +
-                    "</div>\n" +
-                    "<p class=\"mb-1\">" + response.items[i].description + "<</p>\n" +
-                    "<div class=\"nav-col btn-group  btn-block mr-0   \">\n" +
+                $('.questionsTable').append(
+                    "<a href=\"api/question/" + response.items[i].id + "\"</a>" +
+                    "<div class=\"question-card d-flex\">" +
+                    "   <div class=\"question-stats-container\">" +
+                    "       <div class=\"stats\">" +
+                    "           <div class=\"vote\">" +
+                    "               <div class=\"vote-count\">" +
+                    "                   <strong>" + response.items[i].countValuable + "</strong>" +
+                    "               </div>" +
+                    "               <div class=\"view-count-vote\">голосов</div>" +
+                    "               <div class=\"view-count-answer\">" +
+                    "                   <div class=\"status-unanswered\"><strong>" + response.items[i].countAnswer + "</strong></div>" +
+                    "                   <div class=\"view-count\">ответов</div>" +
+                    "               </div>" +
+                    "               <div class=\"views warm d-flex\">" +
+                    "                   <div class=\"views-number\">" + response.items[i].viewCount + "</div>" +
+                    "                   <div class=\"views-text\">показов</div>" +
+                    "               </div>" +
+                    "           </div>" +
+                    "       </div>" +
+                    "</div>" +
+                    "<div class=\"question-details\">" +
+                    "   <div class=\"question-title\"><a href=\"#\">" + response.items[i].title + "</a>" +
+                    "<a href=\"api/question/" + response.items[i].id + "\"</a>" +
+                    "</div>" +
+                    "   <div class=\"question-text\">" + response.items[i].description +
+                    "</div>" +
+                    "<div class=\"d-flex item-between\">" +
+                    "   <div class=\"w-50 card-body question-tags-container\">" +
                     text +
-                    "</div>\n" +
-                    "<small class=\"text-muted\">" + response.items[i].countValuable + " голосов</small>\n" +
-                    "<small class=\"text-muted\">" + response.items[i].countAnswer + " ответов</small>\n" +
-                    "<small class=\"text-muted\">" + response.items[i].viewCount + " просмотров</small>\n" +
-                    "<p/> <small class=\"text-muted\">задан " + response.items[i].persistDateTime + "</small>\n " +
-                    "<p/> <small class=\"text-muted\">" + response.items[i].authorName + "</small>\n " +
-                    "<img src=" + response.items[i].authorImage + " class=\"mr-3\" alt=\"...\">" +
-                    "</a>"
+                    "   </div>" +
+                    "<div class=\"user-info\">" +
+                    "   <div class=\"user-info-change\">" +
+                    "       <a href=\"#\" class=\"user-info-change-link\">задан "+ stringDate + " " +
+                    "       </a>" +
+                    "   </div>" +
+                    "<div class=\"user-info-gravatar d-flex\">" +
+                    "   <a href=\"#\" class=\"user-info-gravatar-link\">" +
+                    "       <div class=\"user-info-gravatar-wrapper\">" +
+                    "           <img src=\"" + response.items[i].authorImage + "\" alt=\"\" width=\"32\" height=\"32\" class=\"user-info-img\"></div>" +
+                    "   </a>" +
+                    "<div class=\"user-info-details-wrapper\">" +
+                    "   <a class=\"user-info-details-name\" href=\"#\">" + response.items[i].authorName + "</a>" +
+                    "   <div class=\"user-info-stats\">" +
+                    "       <span class=\"user-reputation\">" + "!!!" + "</span>" +
+                    "       <span class=\"user-gold active-stats\">" + "###" + "</span>" +
+                    "       <span class=\"user-silver active-stats\">" + "###" + "</span>" +
+                    "       <span class=\"user-bronze active-stats\">" + "###" + "</span>" +
+                    "   </div>" +
+                    "</div>"
                 )
             }
         })
