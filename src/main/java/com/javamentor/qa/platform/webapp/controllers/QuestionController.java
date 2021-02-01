@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.AnswerDtoDao;
 import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
@@ -43,6 +44,8 @@ public class QuestionController {
     private final SecurityHelper securityHelper;
     private final AnswerVoteConverter answerVoteConverter;
     private final QuestionDtoService questionDtoService;
+    private final CommentQuestionService commentQuestionService;
+    private final CommentConverter commentConverter;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
@@ -57,7 +60,9 @@ public class QuestionController {
                               AnswerVoteService answerVoteService,
                               AnswerService answerService,
                               AnswerDtoService answerDtoService,
-                              AnswerVoteConverter answerVoteConverter) {
+                              AnswerVoteConverter answerVoteConverter,
+                              CommentQuestionService commentQuestionService,
+                              CommentConverter commentConverter) {
         this.questionService = questionService;
         this.tagMapper = tagMapper;
         this.tagService = tagService;
@@ -69,6 +74,8 @@ public class QuestionController {
         this.answerService = answerService;
         this.answerDtoService = answerDtoService;
         this.answerVoteConverter = answerVoteConverter;
+        this.commentQuestionService = commentQuestionService;
+        this.commentConverter = commentConverter;
 
     }
 
@@ -503,5 +510,33 @@ public class QuestionController {
         answerVoteService.persist(answerVote);
 
         return ResponseEntity.ok(answerVoteConverter.answerVoteToAnswerVoteDto(answerVote));
+    }
+
+    @PostMapping("{questionId}/comment")
+    @ApiOperation(value = "Add comment", notes = "This method Add comment to question and return CommentDto")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Comment was added", response = CommentDto.class),
+            @ApiResponse(code = 400, message = "Question or user not found", response = String.class)
+    })
+
+    public ResponseEntity<?> addCommentToQuestion(
+            @ApiParam(name = "QuestionId", value = "QuestionId. Type long", required = true, example = "1")
+            @PathVariable Long questionId,
+
+            @ApiParam(name = "text", value = "Text of comment. Type string", required = true, example = "Some comment")
+            @RequestBody String commentText) {
+
+
+        User user = securityHelper.getPrincipal();
+
+        Optional<Question> question = questionService.getById(questionId);
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question not found");
+        }
+
+        CommentQuestion commentQuestion =
+                commentQuestionService.addCommentToQuestion(commentText, question.get(), user);
+
+        return ResponseEntity.ok(commentConverter.commentToCommentDTO(commentQuestion));
     }
 }
