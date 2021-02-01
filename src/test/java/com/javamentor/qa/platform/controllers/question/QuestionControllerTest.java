@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -48,6 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/question/votes_on_question.yml"},
         useSequenceFiltering = true, cleanBefore = true, cleanAfter = false)
 @WithMockUser(username = "principal@mail.ru", roles = {"ADMIN", "USER"})
+@ActiveProfiles("local")
 class QuestionControllerTest extends AbstractIntegrationTest {
 
     @Autowired

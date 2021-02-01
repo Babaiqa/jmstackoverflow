@@ -61,17 +61,11 @@ public class CommentController {
             @ApiParam(name = "QuestionId", value = "QuestionId. Type long", required = true, example = "1")
             @PathVariable Long questionId,
 
-            @ApiParam(name = "UserId", value = "UserId. Type long", required = true, example = "1")
-            @RequestParam Long userId,
-
             @ApiParam(name = "text", value = "Text of comment. Type string", required = true, example = "Some comment")
             @RequestBody String commentText) {
 
 
-        Optional<User> user = userService.getById(userId);
-        if (!user.isPresent()) {
-            return ResponseEntity.badRequest().body("User not found");
-        }
+        User user = securityHelper.getPrincipal();
 
         Optional<Question> question = questionService.getById(questionId);
         if (!question.isPresent()) {
@@ -79,7 +73,7 @@ public class CommentController {
         }
 
         CommentQuestion commentQuestion =
-                commentQuestionService.addCommentToQuestion(commentText, question.get(), user.get());
+                commentQuestionService.addCommentToQuestion(commentText, question.get(), user);
 
         return ResponseEntity.ok(commentConverter.commentToCommentDTO(commentQuestion));
     }
