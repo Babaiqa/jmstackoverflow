@@ -10,6 +10,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.*;
@@ -46,6 +47,7 @@ public class QuestionController {
     private final QuestionDtoService questionDtoService;
     private final CommentQuestionService commentQuestionService;
     private final CommentConverter commentConverter;
+    private final CommentDtoService commentDtoService;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
@@ -62,7 +64,8 @@ public class QuestionController {
                               AnswerDtoService answerDtoService,
                               AnswerVoteConverter answerVoteConverter,
                               CommentQuestionService commentQuestionService,
-                              CommentConverter commentConverter) {
+                              CommentConverter commentConverter,
+                              CommentDtoService commentDtoService) {
         this.questionService = questionService;
         this.tagMapper = tagMapper;
         this.tagService = tagService;
@@ -74,6 +77,7 @@ public class QuestionController {
         this.answerService = answerService;
         this.answerDtoService = answerDtoService;
         this.answerVoteConverter = answerVoteConverter;
+        this.commentDtoService = commentDtoService;
         this.commentQuestionService = commentQuestionService;
         this.commentConverter = commentConverter;
 
@@ -539,4 +543,27 @@ public class QuestionController {
 
         return ResponseEntity.ok(commentConverter.commentToCommentDTO(commentQuestion));
     }
+
+    @GetMapping("/{questionId}/comments")
+    @ApiOperation(value = "Return all Comments by questionID", notes = "Return all Comments by questionID")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Return all Comments by questionID", response = CommentDto.class,  responseContainer = "List"),
+            @ApiResponse(code = 400, message = "Question not found", response = String.class)
+    })
+
+    public ResponseEntity<?> getCommentListByQuestionId(@ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
+                                                       @PathVariable Long questionId) {
+
+        Optional<Question> question = questionService.getById(questionId);
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question not found");
+        }
+
+        List<CommentQuestionDto> commentQuestionDtoList = commentDtoService.getAllCommentsByQuestionId(questionId);
+
+        return ResponseEntity.ok(commentQuestionDtoList);
+    }
+
+
+
 }
