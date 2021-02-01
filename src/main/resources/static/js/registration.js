@@ -28,6 +28,7 @@ formRegistration.addEventListener('submit', (event) => {
                     emailRegistration.value = ''
                     fullnameRegistration.value = ''
                     passwordRegistration.value = ''
+                    passwordConfirmation.value = ''
                     registrationInfo.innerHTML = ''
                     registrationInfo.innerHTML = '<div class="alert alert-success " role="alert">' +
                         'Регистрация прошла успешно! Cсылка для подтверждения регистрации отправлена на ваш email</div>'
@@ -38,6 +39,7 @@ formRegistration.addEventListener('submit', (event) => {
                     fullnameRegistration.value = ''
                     passwordRegistration.value = ''
                     registrationInfo.innerHTML = ''
+                    passwordConfirmation.value = ''
                     registrationInfo.innerHTML = '<div class="alert alert-danger" role="alert">' +
                         'Пользователь с таким email уже существует</div>'
                 }
