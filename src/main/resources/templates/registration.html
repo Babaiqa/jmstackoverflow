@@ -18,7 +18,7 @@
     </nav>
 </div>
 <div class="auth-container">
-    <form class="form-group" id="registration-page">
+    <form class="form-group" id="registration-page" oninput="">
         <div class="form-heading">
             <h2 id="heading">Регистрация</h2>
         </div>
@@ -35,6 +35,11 @@
             <input class="form-control form-control-lg" type="password" placeholder="Password" name="password" id="password" required>
             <button class="btn btn-lg btn-primary" type="button" onclick="showPassword()" id="show-password">&#x2605;</button>
         </div>
+        <div class="form-input input-group">
+            <label class="sr-only" for="password"></label>
+            <input class="form-control form-control-lg" type="password" placeholder="Password" name="password" id="password2" required>
+            <button class="btn btn-lg btn-primary" type="button" onclick="showPasswordConfirm()" id="show-password2">&#x2605;</button>
+        </div>
         <div class="form-button">
             <button class="btn btn-lg btn-primary btn-block" type="submit" id="button">Регистрация</button>
         </div>
@@ -49,8 +54,8 @@
 <div th:insert="~{fragment/footer :: footer}"></div>
 <div th:insert="fragment/generalFragments :: styleheader"></div>
 <div th:insert="fragment/generalFragments :: scriptfooter"></div>
-
-<script src="/static/js/login.js"></script>
+<script src="/static/js/registration.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
         crossorigin="anonymous"></script>

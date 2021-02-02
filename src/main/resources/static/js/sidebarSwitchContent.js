@@ -17,6 +17,8 @@ $( document ).ready(function() {
             break;
         case "/unansweredAria": openContent("areaUnansweredLink", "areaUnanswered")
             break;
+        case "/question/questionId": openContent("questionLink", "question")
+            break;
     }
 
     function openContent(evt, contentName){

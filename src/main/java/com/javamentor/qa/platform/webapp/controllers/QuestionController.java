@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.AnswerDtoDao;
 import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
@@ -9,6 +10,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.*;
@@ -43,6 +45,9 @@ public class QuestionController {
     private final SecurityHelper securityHelper;
     private final AnswerVoteConverter answerVoteConverter;
     private final QuestionDtoService questionDtoService;
+    private final CommentQuestionService commentQuestionService;
+    private final CommentConverter commentConverter;
+    private final CommentDtoService commentDtoService;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
@@ -57,7 +62,10 @@ public class QuestionController {
                               AnswerVoteService answerVoteService,
                               AnswerService answerService,
                               AnswerDtoService answerDtoService,
-                              AnswerVoteConverter answerVoteConverter) {
+                              AnswerVoteConverter answerVoteConverter,
+                              CommentQuestionService commentQuestionService,
+                              CommentConverter commentConverter,
+                              CommentDtoService commentDtoService) {
         this.questionService = questionService;
         this.tagMapper = tagMapper;
         this.tagService = tagService;
@@ -69,6 +77,9 @@ public class QuestionController {
         this.answerService = answerService;
         this.answerDtoService = answerDtoService;
         this.answerVoteConverter = answerVoteConverter;
+        this.commentDtoService = commentDtoService;
+        this.commentQuestionService = commentQuestionService;
+        this.commentConverter = commentConverter;
 
     }
 
@@ -504,4 +515,55 @@ public class QuestionController {
 
         return ResponseEntity.ok(answerVoteConverter.answerVoteToAnswerVoteDto(answerVote));
     }
+
+    @PostMapping("{questionId}/comment")
+    @ApiOperation(value = "Add comment", notes = "This method Add comment to question and return CommentDto")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Comment was added", response = CommentDto.class),
+            @ApiResponse(code = 400, message = "Question or user not found", response = String.class)
+    })
+
+    public ResponseEntity<?> addCommentToQuestion(
+            @ApiParam(name = "QuestionId", value = "QuestionId. Type long", required = true, example = "1")
+            @PathVariable Long questionId,
+
+            @ApiParam(name = "text", value = "Text of comment. Type string", required = true, example = "Some comment")
+            @RequestBody String commentText) {
+
+
+        User user = securityHelper.getPrincipal();
+
+        Optional<Question> question = questionService.getById(questionId);
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question not found");
+        }
+
+        CommentQuestion commentQuestion =
+                commentQuestionService.addCommentToQuestion(commentText, question.get(), user);
+
+        return ResponseEntity.ok(commentConverter.commentToCommentDTO(commentQuestion));
+    }
+
+    @GetMapping("/{questionId}/comments")
+    @ApiOperation(value = "Return all Comments by questionID", notes = "Return all Comments by questionID")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Return all Comments by questionID", response = CommentDto.class,  responseContainer = "List"),
+            @ApiResponse(code = 400, message = "Question not found", response = String.class)
+    })
+
+    public ResponseEntity<?> getCommentListByQuestionId(@ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
+                                                       @PathVariable Long questionId) {
+
+        Optional<Question> question = questionService.getById(questionId);
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question not found");
+        }
+
+        List<CommentQuestionDto> commentQuestionDtoList = commentDtoService.getAllCommentsByQuestionId(questionId);
+
+        return ResponseEntity.ok(commentQuestionDtoList);
+    }
+
+
+
 }

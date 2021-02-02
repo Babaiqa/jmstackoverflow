@@ -39,7 +39,7 @@ public class  TestDataInitService {
     final IgnoredTagService ignoredTagService;
     final TrackedTagService trackedTagService;
 
-    int numberOfUsers = 25;
+    int numberOfUsers = 10;
     List<Tag> tagList = new ArrayList<>();
     Role USER_ROLE = Role.builder().name("USER").build();
     Role ADMIN_ROLE = Role.builder().name("ADMIN").build();
@@ -74,7 +74,7 @@ public class  TestDataInitService {
 
     public void createTagEntity() {
         for (int i = 0; i < numberOfUsers; i++) {
-            Tag childTag = Tag.builder().name("Child"+i*2).description("DescriptionChildTag").build();
+            Tag childTag = Tag.builder().name("Child" + i).description("DescriptionChildTag").build();
             Tag tag = new Tag();
             tag.setName("Tag Name" + i);
             tag.setDescription("Tag Description " + i);

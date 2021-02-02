@@ -7,10 +7,12 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.TagDto;
+import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import org.hamcrest.Matchers;
+import org.json.JSONObject;
 import org.junit.Assert;
 import com.javamentor.qa.platform.models.dto.*;
 import org.junit.jupiter.api.Test;
@@ -18,7 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -48,6 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/question/votes_on_question.yml"},
         useSequenceFiltering = true, cleanBefore = true, cleanAfter = false)
 @WithMockUser(username = "principal@mail.ru", roles = {"ADMIN", "USER"})
+@ActiveProfiles("local")
 class QuestionControllerTest extends AbstractIntegrationTest {
 
     @Autowired
@@ -692,5 +697,39 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
                 .andExpect(content().string("Answer was not found"));
+    }
+
+    @Test
+    public void shouldAddCommentToQuestionResponseBadRequestQuestionNotFound() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/9999/comment")
+                .content("This is very good question!")
+                .accept(MediaType.TEXT_PLAIN_VALUE))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Question not found"));
+    }
+
+    @Test
+    public void shouldAddCommentToQuestionResponseCommentDto() throws Exception {
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/10/comment")
+                .content("This is very good question!")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.text").value("This is very good question!"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.persistDate", org.hamcrest.Matchers.containsString(LocalDate.now().toString())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.lastRedactionDate", org.hamcrest.Matchers.containsString(LocalDate.now().toString())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.commentType").value("QUESTION"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(153))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("Uou"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.reputation").value(2))
+                .andReturn();
+
+        JSONObject dto = new JSONObject(result.getResponse().getContentAsString());
+
+        List<CommentQuestion> resultList = entityManager.createNativeQuery("select * from comment_question where comment_id = " + dto.get("id")).getResultList();
+        Assert.assertFalse(resultList.isEmpty());
     }
 }

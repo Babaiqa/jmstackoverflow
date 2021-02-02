@@ -15,14 +15,14 @@
 }
 /*headerSidebarFooter*/
 
-#areaQuestion, #example, #areaTag, #areaUsers, #mainPage, #areaUnanswered{
-    margin-top: 60px;
+#areaQuestion, #example, #areaTag, #areaUsers, #mainPage, #areaUnanswered, #question{
+    /*margin-top: 60px;*/
     display: none;
 }
 
 #sidebarArea{
     /*position: fixed;*/
-    margin-top: 60px;
+    /*margin-top: 60px;*/
     min-height: 1000px;
 }
 #askQuest{                 /*кнопка "Задать вопрос"*/
