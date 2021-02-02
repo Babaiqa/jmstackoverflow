@@ -1,6 +1,7 @@
 $( document ).ready(function() {
 
     new PaginationTag(1, 12, 'popular').writeTags()
+    new PaginationTag(1, 10, 'popular').writeTopTenTags()
     new PaginationUser(1,20,'week').writeUsers()
     new PaginationQuestion(1,10,'normal').setQuestions()
     new PaginationQuestionForMainPage(1,10, 'new').setQuestions()
