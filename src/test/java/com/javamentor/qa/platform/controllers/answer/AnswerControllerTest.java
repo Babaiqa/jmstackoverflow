@@ -43,7 +43,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     @Test
     public void shouldAddCommentToAnswerResponseBadRequestAnswerNotFound() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/answer/9999/comment")
+                .post("/api/question/1/answer/99999/comment")
                 .content("This is very good answer!")
                 .accept(MediaType.TEXT_PLAIN_VALUE))
                 .andExpect(status().isBadRequest())
@@ -52,10 +52,21 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void shouldAddCommentToAnswerResponseBadRequestQuestionNotFound() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/9999/answer/1/comment")
+                .content("This is very good answer!")
+                .accept(MediaType.TEXT_PLAIN_VALUE))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Question not found"));
+    }
+
+    @Test
     public void shouldAddCommentToAnswerResponseCommentDto() throws Exception {
 
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/answer/1/comment")
+                .post("/api/question/1/answer/1/comment")
                 .content("This is very good answer!")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())

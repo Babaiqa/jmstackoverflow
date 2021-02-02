@@ -32,54 +32,62 @@ import java.util.Optional;
 
 @RestController
 @Validated
-@RequestMapping("api/answer")
+@RequestMapping("/api/question")
 @Api(value = "AnswerApi")
 public class AnswerController {
     private final AnswerService answerService;
     private final CommentAnswerService commentAnswerService;
     private final CommentConverter commentConverter;
     private final SecurityHelper securityHelper;
+    private final CommentDtoService commentDtoService;
+    private final QuestionService questionService;
+
 
     @Autowired
     public AnswerController(AnswerService answerService,
                             CommentAnswerService commentAnswerService,
                             CommentConverter commentConverter,
-                            SecurityHelper securityHelper) {
+                            SecurityHelper securityHelper,
+                            CommentDtoService commentDtoService,
+                            QuestionService questionService) {
         this.answerService = answerService;
         this.commentAnswerService = commentAnswerService;
         this.commentConverter = commentConverter;
         this.securityHelper = securityHelper;
-    }
-
-    @PostMapping("{answerId}/comment")
-    @ApiOperation(value = "Add comment", notes = "This method Add comment to answer and return CommentDto")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Comment was added", response = CommentDto.class),
-            @ApiResponse(code = 400, message = "Answer or user not found", response = String.class)
-    })
-    public ResponseEntity<?> addCommentToAnswer(
-            @ApiParam(name = "AnswerId", value = "AnswerId. Type long", required = true, example = "1")
-            @PathVariable Long answerId,
-            @ApiParam(name = "text", value = "Text of comment. Type string", required = true, example = "Some comment")
-            @RequestBody String commentText) {
-
-        User user = securityHelper.getPrincipal();
-@RequestMapping("/api/question")
-@Api(value = "AnswerApi")
-public class AnswerController {
-
-
-    private final AnswerService answerService;
-    private final CommentDtoService commentDtoService;
-    private final QuestionService questionService;
-
-    @Autowired
-    public AnswerController(AnswerService answerService, CommentDtoService commentDtoService, QuestionService questionService) {
-        this.answerService = answerService;
         this.commentDtoService = commentDtoService;
         this.questionService = questionService;
     }
 
+    @PostMapping("/{questionId}/answer/{answerId}/comment")
+    @ApiOperation(value = "Add comment", notes = "This method Add comment to answer and return CommentDto")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Comment was added", response = CommentDto.class),
+            @ApiResponse(code = 400, message = "Answer or question not found", response = String.class)
+    })
+    public ResponseEntity<?> addCommentToAnswer(
+            @ApiParam(name = "AnswerId", value = "AnswerId. Type long", required = true, example = "1")
+            @PathVariable Long answerId,
+            @ApiParam(name = "QuestionId", value = "QuestionId. Type long", required = true, example = "1")
+            @PathVariable Long questionId,
+            @ApiParam(name = "text", value = "Text of comment. Type string", required = true, example = "Some comment")
+            @RequestBody String commentText) {
+
+        User user = securityHelper.getPrincipal();
+
+        Optional<Question> question = questionService.getById(questionId);
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question not found");
+        }
+
+        Optional<Answer> answer = answerService.getById(answerId);
+        if (!answer.isPresent()) {
+            return ResponseEntity.badRequest().body("Answer not found");
+        }
+
+        CommentAnswer commentAnswer = commentAnswerService.addCommentToAnswer(commentText, answer.get(), user);
+
+        return ResponseEntity.ok(commentConverter.commentToCommentDTO(commentAnswer));
+    }
 
     @GetMapping("/{questionId}/answer/{answerId}/comments")
     @ApiOperation(value = "Return all Comments by answerID", notes = "Return all Comments by answerID")
@@ -104,11 +112,9 @@ public class AnswerController {
             return ResponseEntity.badRequest().body("Answer not found");
         }
 
-        CommentAnswer commentAnswer = commentAnswerService.addCommentToAnswer(commentText, answer.get(), user);
-
-        return ResponseEntity.ok(commentConverter.commentToCommentDTO(commentAnswer));
         List<CommentAnswerDto> commentAnswerDtoList = commentDtoService.getAllCommentsByAnswerId(answerId);
 
         return ResponseEntity.ok(commentAnswerDtoList);
     }
+
 }
