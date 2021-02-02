@@ -12,23 +12,27 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 
 @DataSet(value = {"dataset/question/roleQuestionApi.yml",
         "dataset/question/usersQuestionApi.yml",
         "dataset/question/questionQuestionApi.yml",
         "dataset/question/tagQuestionApi.yml",
-        "dataset/question/question_has_tagQuestionApi.yml"}
+        "dataset/question/question_has_tagQuestionApi.yml",
+        "dataset/tag/tracked_tag.yml",
+        "dataset/tag/ignored_tag.yml"}
         , cleanBefore = true, cleanAfter = true)
-@WithMockUser(username = "principal@mail.ru", roles={"ADMIN", "USER"})
+@WithMockUser(username = "principal@mail.ru", roles = {"ADMIN", "USER"})
+@ActiveProfiles("local")
 public class TagControllerTest extends AbstractIntegrationTest {
 
     @Autowired
@@ -41,6 +45,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     private static final String NAME = "/api/tag/name";
     private static final String NEW_TAG = "/api/tag/new/order";
     private static final String BAD_REQUEST_MESSAGE = "Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100";
+    private static final String REQUEST_PARAM_FOR_ADD_TAGS = "name";
 
     // Тесты запросов популярных тэгов
     @Test
@@ -510,7 +515,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestChildTagsWithWrongTagId() throws Exception{
+    public void requestChildTagsWithWrongTagId() throws Exception {
         long id = 500L;
         mockMvc.perform(get("/api/tag/{id}/child", id)
                 .param("page", "1")
@@ -537,6 +542,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
                 .andExpect(content().string(BAD_REQUEST_MESSAGE));
     }
+
     @Test
     public void requestPageDontExistsGetPageWithEmptyTagRecentDto() throws Exception {
         long id = 4L;
@@ -632,5 +638,69 @@ public class TagControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
                 .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
                 .andExpect(jsonPath("$.items").isEmpty());
+    }
+
+    @Test
+    public void addTagTrackedStatusOk() throws Exception {
+
+        final String TAG_NAME = "Tag Name111";
+
+        this.mockMvc.perform(post("/api/tag/tracked/add").param(REQUEST_PARAM_FOR_ADD_TAGS, TAG_NAME))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void addTagTrackedStatusNotExistOnThisSite() throws Exception {
+
+        final String TAG_NAME = "Tag Name11";
+
+        this.mockMvc.perform(post("/api/tag/tracked/add").param(REQUEST_PARAM_FOR_ADD_TAGS, TAG_NAME))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("The Tag Name11 does not exist on this site"));
+    }
+
+    @Test
+    public void addTagTrackedStatusHasAlreadyBeenAdded() throws Exception {
+
+        final String TAG_NAME = "Tag Name111";
+
+        this.mockMvc.perform(post("/api/tag/tracked/add").param(REQUEST_PARAM_FOR_ADD_TAGS, TAG_NAME))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(post("/api/tag/tracked/add").param(REQUEST_PARAM_FOR_ADD_TAGS, TAG_NAME))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("The tracked tag has already been added"));
+    }
+
+    @Test
+    public void addTagIgnoredStatusOk() throws Exception {
+
+        final String TAG_NAME = "Tag Name111";
+
+        this.mockMvc.perform(post("/api/tag/ignored/add").param(REQUEST_PARAM_FOR_ADD_TAGS, TAG_NAME))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void addTagIgnoredStatusNotExistOnThisSite() throws Exception {
+
+        final String TAG_NAME = "Tag Name11";
+
+        this.mockMvc.perform(post("/api/tag/ignored/add").param(REQUEST_PARAM_FOR_ADD_TAGS, TAG_NAME))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("The Tag Name11 does not exist on this site"));
+    }
+
+    @Test
+    public void addTagIgnoredStatusHasAlreadyBeenAdded() throws Exception {
+
+        final String TAG_NAME = "Tag Name111";
+
+        this.mockMvc.perform(post("/api/tag/ignored/add").param(REQUEST_PARAM_FOR_ADD_TAGS, TAG_NAME))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(post("/api/tag/ignored/add").param(REQUEST_PARAM_FOR_ADD_TAGS, TAG_NAME))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("The ignored tag has already been added"));
     }
 }
