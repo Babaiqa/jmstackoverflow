@@ -43,19 +43,18 @@ function addListenersForTagBarElems(pageName, tagType) {
     const input = document.getElementById('add-'+tagType+'-tag-'+pageName)
 
     input.addEventListener("click",function(){
-        const searchList = document.createElement("div")
-        searchList.id = 'search-list-' + tagType + '-tag-' + pageName
-        // searchList.style.display = "none"
-        document.getElementsByTagName("body")[0].append(searchList)
+        // const searchList = document.createElement("div")
+        // searchList.id = 'search-list-' + tagType + '-tag-' + pageName
+        // // searchList.style.display = "none"
+        // document.getElementsByTagName("body")[0].append(searchList)
 
 
-        // const searchList = document.getElementById('search-list-' + tagType + '-tag-' + pageName)
+        const searchList = document.getElementById('search-list-' + tagType + '-tag-' + pageName)
+        searchList.setAttribute("style", "display: block; background: white; position: relative; width: 170px; max-height: 200px; top: 1px; left: 90px; box-shadow: -1px 2px 7px rgba(0,0,0,0.1);")
         let coordsSearchList = getCoords(searchList)
         let coordsInput = getCoords(input)
-
-        searchList.setAttribute("style", "display: block; background: white; position: relative; width: 170px; max-height: 200px; top: 1px; left: 90px; box-shadow: -1px 2px 7px rgba(0,0,0,0.1);")
-        searchList.style.top = coordsInput.bottom+"px"
-        // searchList.style.left = (coords.left+20)+"px"
+        searchList.style.top = (coordsInput.bottom - coordsSearchList.bottom)+"px"
+        searchList.style.left = (coordsInput.left - coordsSearchList.left)+"px"
         console.log(coordsInput)
         console.log(searchList.style.top)
         console.log(coordsSearchList)
