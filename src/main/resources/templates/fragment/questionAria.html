@@ -50,17 +50,14 @@
                         <span style="font-size: 120%">Отслеживаемые метки</span>
                     </div>
                     <div class="card-body">
-                        <ul id = "listTagTracked2">
+                        <ul id = "list-tracked-tag-question-area">
 
                         </ul>
                         <onsubmit >
                             <div align="center">
-                                <input type="text" id="add-tag-tracked2"  size="20"  placeholder="добавить метку">
-                                <button class="btn btn-primary" id="buttonTagTracked2">+</button>
+                                <input type="text" id="add-tracked-tag-question-area"  size="20"  placeholder="добавить метку">
+                                <button class="btn btn-primary" id="button-add-tracked-tag-question-area">+</button>
                             </div>
-                            <select multiple class="list-group" id="listOfSuitableTagsForTracking2" style="display: none">
-
-                            </select>
                         </onsubmit >
                     </div>
                 </div>
@@ -70,17 +67,14 @@
                         <span style="font-size: 120%">Игнорируемые метки </span>
                     </div>
                     <div class="card-body">
-                        <ul id = "listTagIgnore2">
+                        <ul id = "list-ignored-tag-question-area">
 
                         </ul>
                         <onsubmit >
                             <div align="center">
-                                <input type="text" id="add-tag-ignore2"  size="20"  placeholder="добавить метку">
-                                <button class="btn btn-primary" id="buttonTagIgnore2">+</button>
+                                <input type="text" id="add-ignored-tag-question-area"  size="20"  placeholder="добавить метку">
+                                <button class="btn btn-primary" id="button-add-ignored-tag-question-area">+</button>
                             </div>
-                            <select multiple class="list-group" id="listOfSuitableTagsForIgnoring2" style="display: none">
-
-                            </select>
                         </onsubmit >
                     </div>
                 </div>
@@ -95,7 +89,13 @@
                 <tbody id="questionTag">
                 </tbody>
             </table>
+            <div  class="list-group" id="search-list-tracked-tag-question-area" style="display: none">
 
+            </div>
+
+            <div  class="list-group" id="search-list-ignored-tag-question-area" style="display: none">
+
+            </div>
         </div>
     </div>
     <div th:fragment="styleheader">

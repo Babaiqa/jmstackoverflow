@@ -331,18 +331,20 @@
         <div class="row-md-4 col-sm-4">
             <div class="tag-tracked-ignore-container">
 
+
+
                 <div class="card tag-tracked-container">
                     <div class="card-header" >
                         <span style="font-size: 120%">Отслеживаемые метки</span>
                     </div>
                     <div class="card-body">
-                        <ul id="listTagTracked1">
+                        <ul id="list-tracked-tag-main">
 
                         </ul>
                         <onsubmit >
                             <div align="center">
-                                <input type="text" id="add-tag-tracked1"  size="20"  placeholder="добавить метку">
-                                <button class="btn btn-primary" id="buttonTagTracked1">+</button>
+                                <input type="text" id="add-tracked-tag-main"  size="20"  placeholder="добавить метку">
+                                <button class="btn btn-primary" id="button-add-tracked-tag-main">+</button>
                             </div>
 
                         </onsubmit >
@@ -354,13 +356,13 @@
                         <span style="font-size: 120%">Игнорируемые метки </span>
                     </div>
                     <div class="card-body">
-                        <ul id = "listTagIgnore1">
+                        <ul id = "list-ignored-tag-main">
 
                         </ul>
                         <onsubmit >
                             <div align="center">
-                                <input type="text" id="add-tag-ignore1"  size="20"  placeholder="добавить метку">
-                                <button class="btn btn-primary" id="buttonTagIgnore1">+</button>
+                                <input type="text" id="add-ignored-tag-main"  size="20"  placeholder="добавить метку">
+                                <button class="btn btn-primary" id="button-add-ignored-tag-main">+</button>
                             </div>
                         </onsubmit >
                     </div>
@@ -375,15 +377,15 @@
                 <tbody id="mainTag">
                 </tbody>
             </table>
-            <div  class="list-group" id="listOfSuitableTagsForTracking1" style="display: none">
-
-            </div>
-
-            <div  class="list-group" id="listOfSuitableTagsForIgnoring1" style="display: none">
-
-            </div>
         </div>
     </div>
+<!--    <div  class="list-group" id="search-list-tracked-tag-main" style="display: none">-->
+
+<!--    </div>-->
+
+<!--    <div  class="list-group" id="search-list-ignored-tag-main" style="display: none">-->
+
+<!--    </div>-->
     <div th:fragment="styleheader">
 
         <!-- Required meta tags -->
