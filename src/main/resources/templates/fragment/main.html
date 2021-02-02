@@ -6,10 +6,10 @@
 </head>
 <body>
 <div th:fragment="main" class="snippet-hidden align-self-start" id="main">
-    <div class="row" >
+    <div class="row p-4" >
         <div class="col-xl-8 col-lg-8  col-md-12 col-sm-12">
 
-            <div class="row">
+            <div class="row justify-content-between">
                 <h2>Исследуйте вопросы на сайте</h2>
                 <a type="button" class="btn btn-primary float-right" href="/ask"  id="askQuest">Задать вопрос</a>
             </div>
@@ -328,7 +328,7 @@
 
         </div>
         </div>
-        <div class="row-md-4 col-sm-4">
+        <div class="col-md-4 col-sm-4">
             <div class="tag-tracked-ignore-container">
                 <div class="card tag-tracked-container">
                     <div class="card-header" >
@@ -345,16 +345,14 @@
                             </div>
                         </onsubmit >
                     </div>
+                </div>
+                <div class="card tag-ignore-container" >
+                    <div class = "card-header">
+                        <span style="font-size: 120%">Игнорируемые метки </span>
+                    </div>
+                    <div class="card-body">
+                        <ul id = "list-ignored-tag-main">
 
-                    <div class="tag-ignore-container">
-                        <hr>
-                        <div align="center">
-                            <h5>
-                                <span>Игнорируемые метки </span>
-                            </h5>
-                        </div>
-                        <hr>
-                        <ul id = "listTagIgnore">
                         </ul>
                         <onsubmit >
                             <div align="center">
