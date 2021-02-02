@@ -51,16 +51,6 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().string("Answer not found"));
     }
 
-    @Test
-    public void shouldAddCommentToAnswerResponseBadRequestQuestionNotFound() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/9999/answer/1/comment")
-                .content("This is very good answer!")
-                .accept(MediaType.TEXT_PLAIN_VALUE))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
-                .andExpect(content().string("Question not found"));
-    }
 
     @Test
     public void shouldAddCommentToAnswerResponseCommentDto() throws Exception {

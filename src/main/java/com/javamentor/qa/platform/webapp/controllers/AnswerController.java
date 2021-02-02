@@ -74,11 +74,6 @@ public class AnswerController {
 
         User user = securityHelper.getPrincipal();
 
-        Optional<Question> question = questionService.getById(questionId);
-        if (!question.isPresent()) {
-            return ResponseEntity.badRequest().body("Question not found");
-        }
-
         Optional<Answer> answer = answerService.getById(answerId);
         if (!answer.isPresent()) {
             return ResponseEntity.badRequest().body("Answer not found");
