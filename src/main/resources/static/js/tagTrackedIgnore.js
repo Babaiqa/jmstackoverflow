@@ -21,6 +21,37 @@ function sendRequestSearchTag(requestMethod, url, body = null) {
     })
 }
 
+
+
+// function closeDropBoxes() {
+//     if(!((event.target.id === "listOfSuitableTagsForTracking1") ||
+//         (event.target.id === "listOfSuitableTagsForIgnored1") ||
+//         (event.target.id === "add-tag-tracked1") ||
+//         (event.target.id === "add-tag-ignore1"))) {
+//         document.getElementById('listOfSuitableTagsForIgnoring1').setAttribute("style", "display: none;")
+//         document.getElementById('listOfSuitableTagsForIgnoring1').innerHTML = ""
+//         document.getElementById('listOfSuitableTagsForTracking1').setAttribute("style", "display: none;")
+//         document.getElementById('listOfSuitableTagsForTracking1').innerHTML = ""
+//         document.getElementById("add-tag-ignore1").value =""
+//         document.getElementById("add-tag-tracked1").value =""
+//         document.removeEventListener("click", closeDropBoxes)
+//         console.log("OLOLOLLOLo")
+//     }
+// }
+//
+// inputIgnore1.onclick = function () {
+//     document.getElementById('listOfSuitableTagsForIgnoring1').setAttribute("style", "display: block; background: white; position: relative; width: 170px; max-height: 200px; bottom: 750px; left: 90px; box-shadow: -1px 2px 7px rgba(0,0,0,0.1);")
+//     document.addEventListener("click", closeDropBoxes)
+//     console.log("click on input")
+// }
+
+
+
+
+
+
+
+
 // ----------------Universal methods------------------
 function getCoords(elem) {
     let box = elem.getBoundingClientRect();
@@ -47,8 +78,23 @@ function addListenersForTagBarElems(pageName, tagType) {
         searchList.setAttribute("style", "display: block; background: white; position: relative; width: 170px; max-height: 200px; top: 1px; left: 90px; box-shadow: -1px 2px 7px rgba(0,0,0,0.1);")
         let coordsSearchList = getCoords(searchList)
         let coordsInput = getCoords(input)
-        searchList.style.top = (coordsInput.bottom - coordsSearchList.bottom)+"px"
-        searchList.style.left = (coordsInput.left - coordsSearchList.left+100)+"px"
+        searchList.style.top = (coordsInput.bottom - coordsSearchList.bottom+2)+"px"
+        searchList.style.left = (coordsInput.left - coordsSearchList.left+91)+"px"
+
+        //Закрытие выпадающего окна с тегами, при клике на область за пределами окна
+        jQuery(function($){
+            $(document).mouseup(function (e){ // событие клика по веб-документу
+                const div = $("#search-list-" + tagType + "-tag-" + pageName); // тут указываем ID элемента
+                const addButton = $("#button-add-" + tagType + "-tag-" + pageName); // тут указываем ID элемента
+                if (!div.is(e.target) // если клик был не по нашему блоку
+                    && div.has(e.target).length === 0
+                    && (!addButton.is(e.target))) { // и не по его дочерним элементам
+                    div.hide(); // скрываем его
+                    document.getElementById("search-list-" + tagType + "-tag-" + pageName).innerHTML=""
+                    input.value=""
+                }
+            });
+        });
         console.log(coordsInput)
         console.log(searchList.style.top)
         console.log(coordsSearchList)
