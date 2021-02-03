@@ -7,7 +7,6 @@ window.onload = function() {
     populateTagBar('question-area','tracked')
     addListenersForTagBarElems('question-area','ignored')
     populateTagBar('question-area','ignored')
-
 }
 
 // ----------------Functions------------------
@@ -27,21 +26,20 @@ function sendRequest(requestMethod, url, tagType = null, pageName = null) {
             'Content-Type': 'application/json',
             'Authorization': $.cookie("token")
         })
-    }).then(response => {
+    }).then(response =>{
         if (response.ok) {
             return response.json()
-        } else if(response.status == 400 && requestMethod=='POST') {
-            console.log('error-'+tagType+'-tag-'+pageName)
+        } else if (response.status == 400) {
             document.getElementById('error-'+tagType+'-tag-'+pageName).style.display = 'block'
             document.getElementById('search-list-'+tagType+'-tag-'+pageName).style.display = 'none'
             document.getElementById('add-'+tagType+'-tag-'+pageName).value = ''
+            return response.json()
+        } else {
+            let error = new Error();
+            error.response = response.text();
+            throw error;
         }
-        return response.json().then(error => {
-            const exc = new Error('Ошибка')
-            exc.data = error
-            throw exc
-        })
-    })
+    }).catch(error => console.log(error.message))
 }
 
 function addListenersForTagBarElems(pageName, tagType) {
@@ -94,8 +92,8 @@ function addListenersForTagBarElems(pageName, tagType) {
                 searchList.setAttribute("style", "display: none;")
                 searchList.innerHTML = ""
             })
+            .catch(err=>console.log(err))
     })
-
 }
 
 function deleteTag(tagType) {
