@@ -9,7 +9,7 @@ $( window ).bind('load',function() {
         })
     })
         .then(response =>  {
-            if (response.status === 401 && filterUrl() === false && window.location.href !== "http://localhost:5557/registration/**") {
+            if (response.status === 500 && filterUrl() === false && window.location.href !== "http://localhost:5557/registration/**") {
                 window.location.href = '/'
             } else if (response.status === 200 && filterUrl() === true) {
                 window.location.href = '/site'

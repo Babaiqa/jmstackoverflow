@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.persistence.EntityManager;
@@ -25,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WithMockUser(username = "principal@mail.ru", roles={"ADMIN", "USER"})
+@ActiveProfiles("local")
 public class UserControllerTest extends AbstractIntegrationTest {
 
     @Autowired

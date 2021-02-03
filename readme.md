@@ -103,6 +103,13 @@ Build.
 
   ![](src/main/resources/static/images/activeProfilesField.png)
 
+
+- При написании тестов так же нужно указать профиль. Делается это с помощью аннотации @ActiveProfile("local").
+Аннотация ставится перед объявлением класса.
+ 
+ 
+- Если вы хотите запустить сервер из командной строки, вам понадобится команда: mvn spring-boot:run -Dspring-boot.run.profiles=имя профиля
+
 ## Сущности
 
 ### User
