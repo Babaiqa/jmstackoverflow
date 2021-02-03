@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
 
-
     @Autowired
     private JwtUtils jwtUtils;
 
@@ -25,18 +24,26 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     @SneakyThrows
     @Override
-    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain)  {
-        String jwt = parseJwt(httpServletRequest);
+    protected void doFilterInternal(HttpServletRequest httpServletRequest,
+                                    HttpServletResponse httpServletResponse, FilterChain filterChain)  {
 
-        if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-            String username = jwtUtils.getUsernameFromToken(jwt);
+        try {
+            String jwt = parseJwt(httpServletRequest);
 
-            UserDetails userDetails = securityHelper.loadUserByUsername(username);
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
+                String username = jwtUtils.getUsernameFromToken(jwt);
+
+                UserDetails userDetails = securityHelper.loadUserByUsername(username);
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities()
+                );
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            }
+
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
+        } catch (Exception e) {
+            httpServletResponse.sendError(401);
         }
-
-        filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
     private String parseJwt(HttpServletRequest request) {
