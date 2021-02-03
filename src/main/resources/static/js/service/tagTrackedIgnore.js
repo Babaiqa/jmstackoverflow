@@ -1,11 +1,13 @@
-addListenersForTagBarElems('main','tracked')
-populateTagBar('main','tracked')
-addListenersForTagBarElems('main','ignored')
-populateTagBar('main','ignored')
-addListenersForTagBarElems('question-area','tracked')
-populateTagBar('question-area','tracked')
-addListenersForTagBarElems('question-area','ignored')
-populateTagBar('question-area','ignored')
+window.onload = function() {
+    addListenersForTagBarElems('main','tracked')
+    populateTagBar('main','tracked')
+    addListenersForTagBarElems('main','ignored')
+    populateTagBar('main','ignored')
+    addListenersForTagBarElems('question-area','tracked')
+    populateTagBar('question-area','tracked')
+    addListenersForTagBarElems('question-area','ignored')
+    populateTagBar('question-area','ignored')
+}
 
 // ----------------Functions------------------
 function getCoords(elem) {
@@ -84,7 +86,7 @@ function addListenersForTagBarElems(pageName, tagType) {
     })
 
     input.oninput = function () {
-        sendRequest('GET', "http://localhost:5557/api/tag/name?&page=1&size=5&name=" + input.value)
+        sendRequest('GET', "http://localhost:5557/api/tag/name?page=1&size=5&name=" + input.value)
             .then(response=> {
                 searchList.innerHTML=""
                 searchList.addEventListener("click",function (){input.value = event.target.id})
@@ -114,6 +116,7 @@ function deleteTag(tagType) {
 
 function populateTagBar(pageName, tagType) {
     sendRequest('GET', 'http://localhost:5557/api/tag/'+tagType)
+   // let popul = new TagService().sendRequest('GET', 'http://localhost:5557/api/tag/'+tagType)
         .then(response=> {
             document.getElementById('list-'+tagType+'-tag-'+pageName).innerHTML=""
             response.forEach(elem => {
@@ -126,3 +129,5 @@ function populateTagBar(pageName, tagType) {
         })
         .catch(err => console.log(err))
 }
+
+
