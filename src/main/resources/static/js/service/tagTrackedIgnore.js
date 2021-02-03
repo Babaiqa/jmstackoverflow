@@ -7,6 +7,7 @@ window.onload = function() {
     populateTagBar('question-area','tracked')
     addListenersForTagBarElems('question-area','ignored')
     populateTagBar('question-area','ignored')
+
 }
 
 // ----------------Functions------------------
@@ -19,7 +20,7 @@ function getCoords(elem) {
     };
 }
 
-function sendRequest(requestMethod, url, body = null) {
+function sendRequest(requestMethod, url, tagType = null, pageName = null) {
     return fetch(url, {
         method: requestMethod,
         headers: new Headers({
@@ -29,6 +30,11 @@ function sendRequest(requestMethod, url, body = null) {
     }).then(response => {
         if (response.ok) {
             return response.json()
+        } else if(response.status == 400 && requestMethod=='POST') {
+            console.log('error-'+tagType+'-tag-'+pageName)
+            document.getElementById('error-'+tagType+'-tag-'+pageName).style.display = 'block'
+            document.getElementById('search-list-'+tagType+'-tag-'+pageName).style.display = 'none'
+            document.getElementById('add-'+tagType+'-tag-'+pageName).value = ''
         }
         return response.json().then(error => {
             const exc = new Error('Ошибка')
@@ -58,6 +64,13 @@ function addListenersForTagBarElems(pageName, tagType) {
                 searchList.style.display = "none"
                 searchList.innerHTML=""
                 input.value=""
+                let errors = document.getElementsByClassName("error")
+                console.log(errors)
+                for (let elem of errors) {
+                    if (elem.style.display == 'block') {
+                        elem.style.display = 'none'
+                    }
+                }
             }
         })
     })
@@ -74,7 +87,7 @@ function addListenersForTagBarElems(pageName, tagType) {
             .catch(err => console.log(err))
     }
     button.addEventListener('click', function (){
-        sendRequest('POST', "http://localhost:5557/api/tag/"+tagType+"/add?name=" + input.value)
+        sendRequest('POST', "http://localhost:5557/api/tag/"+tagType+"/add?name=" + input.value, tagType, pageName)
             .then( data => {
                 populateTagBar(pageName, tagType)
                 input.value=""
