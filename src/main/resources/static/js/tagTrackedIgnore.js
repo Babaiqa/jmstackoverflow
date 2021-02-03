@@ -36,6 +36,29 @@ function sendRequest(requestMethod, url, body = null) {
     })
 }
 
+// getTagName(name, page, size) {
+//     let query = '/api/tag/name?name=' + name + '&page=' + page + '&size=' + size;
+//     return fetch(query, {
+//         method: 'GET',
+//         headers: new Headers({
+//             'Content-Type': 'application/json',
+//             'Authorization': $.cookie("token")
+//         })
+//     })
+//         .then(response => {
+//             if (response.ok) {
+//                 return response.json()
+//             } else {
+//                 let error = new Error();
+//                 error.response = response.text();
+//                 throw error;
+//             }
+//         }).catch(error => error.response.then(message => console.log(message)));
+// }
+
+
+
+
 function addListenersForTagBarElems(pageName, tagType) {
     const input = document.getElementById('add-'+tagType+'-tag-'+pageName)
     const searchList = document.getElementById('search-list-' + tagType + '-tag-' + pageName)
