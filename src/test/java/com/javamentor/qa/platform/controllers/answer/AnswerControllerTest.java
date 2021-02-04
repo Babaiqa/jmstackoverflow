@@ -2,8 +2,12 @@ package com.javamentor.qa.platform.controllers.answer;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
+import com.javamentor.qa.platform.models.dto.AnswerDto;
 import com.javamentor.qa.platform.models.dto.CommentDto;
+import com.javamentor.qa.platform.models.dto.CreateAnswerDto;
+import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
+import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -21,6 +25,7 @@ import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,7 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/answer/usersApi.yml",
         "dataset/answer/answerApi.yml",
         "dataset/answer/roleApi.yml",
-        "dataset/answer/questionApi.yml"},
+        "dataset/answer/questionApi.yml",
+        "dataset/question/questionQuestionApi.yml"},
         cleanBefore = true, cleanAfter = false)
 @WithMockUser(username = "principal@mail.ru", roles={"ADMIN", "USER"})
 @ActiveProfiles("local")
@@ -36,6 +42,9 @@ class AnswerControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private AnswerConverter answerConverter;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -56,7 +65,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     public void shouldAddCommentToAnswerResponseCommentDto() throws Exception {
 
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/1/answer/1/comment")
+                .post("/api/question/4/answer/4/comment")
                 .content("This is very good answer!")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
@@ -75,4 +84,77 @@ class AnswerControllerTest extends AbstractIntegrationTest {
         List<CommentAnswer> resultList = entityManager.createNativeQuery("select * from comment_answer where comment_id = " + dto.get("id")).getResultList();
         Assert.assertFalse(resultList.isEmpty());
     }
+
+    @Test
+    void shouldGetAnswersListFromQuestionStatusOk() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/10/answer")
+                .contentType("application/json;charset=UTF-8")
+                .param("page", "1")
+                .param("size", "10"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldAddAnswerToQuestionStatusOk() throws Exception {
+
+        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
+        createAnswerDto.setHtmlBody("test answer");
+
+        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/14/answer")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequest))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldAddAnswerToQuestionResponseStatusOk() throws Exception {
+        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
+        createAnswerDto.setHtmlBody("test answer");
+
+        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
+
+        String resultContext = mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/14/answer")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequest))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.body").value(createAnswerDto.getHtmlBody()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.questionId").value(14))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(1))
+                .andReturn().getResponse().getContentAsString();
+
+        AnswerDto answerDtoFromResponse = objectMapper.readValue(resultContext, AnswerDto.class);
+        Answer answer = entityManager
+                .createQuery("from Answer where id = :id", Answer.class)
+                .setParameter("id", answerDtoFromResponse.getId())
+                .getSingleResult();
+        AnswerDto answerDtoFromDB = answerConverter.answerToAnswerDTO(answer);
+
+        Assert.assertTrue(answerDtoFromResponse.getBody().equals(answerDtoFromDB.getBody()));
+    }
+
+    @Test
+    void shouldAddAnswerToQuestionResponseBadRequestQuestionNotFound() throws Exception {
+
+        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
+        createAnswerDto.setHtmlBody("test answer");
+
+        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/2222/answer")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequest))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Question not found"));
+    }
+
 }

@@ -247,77 +247,16 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().string("addQuestion.questionCreateDto.tags: Значение tags должно быть заполнено"));
     }
 
-    @Test
-    void shouldAddAnswerToQuestionStatusOk() throws Exception {
-
-        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
-        createAnswerDto.setHtmlBody("test answer");
-
-        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
-
-        this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/14/answer")
-                .contentType("application/json;charset=UTF-8")
-                .content(jsonRequest))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void shouldAddAnswerToQuestionResponseStatusOk() throws Exception {
-        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
-        createAnswerDto.setHtmlBody("test answer");
-
-        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
-
-        String resultContext = mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/14/answer")
-                .contentType("application/json;charset=UTF-8")
-                .content(jsonRequest))
-                .andDo(print())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.body").value(createAnswerDto.getHtmlBody()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.questionId").value(14))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(153))
-                .andReturn().getResponse().getContentAsString();
-
-        AnswerDto answerDtoFromResponse = objectMapper.readValue(resultContext, AnswerDto.class);
-        Answer answer = entityManager
-                .createQuery("from Answer where id = :id", Answer.class)
-                .setParameter("id", answerDtoFromResponse.getId())
-                .getSingleResult();
-        AnswerDto answerDtoFromDB = answerConverter.answerToAnswerDTO(answer);
-
-        Assert.assertTrue(answerDtoFromResponse.getBody().equals(answerDtoFromDB.getBody()));
-    }
-
-    @Test
-    void shouldAddAnswerToQuestionResponseBadRequestQuestionNotFound() throws Exception {
-
-        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
-        createAnswerDto.setHtmlBody("test answer");
-
-        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
-
-        this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/2222/answer")
-                .contentType("application/json;charset=UTF-8")
-                .content(jsonRequest))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Question not found"));
-    }
-
-    @Test
-    void shouldGetAnswersListFromQuestionStatusOk() throws Exception {
-
-        this.mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/question/10/answer")
-                .contentType("application/json;charset=UTF-8")
-                .param("page", "1")
-                .param("size", "10"))
-                .andExpect(status().isOk());
-    }
+//    @Test
+//    void shouldGetAnswersListFromQuestionStatusOk() throws Exception {
+//
+//        this.mockMvc.perform(MockMvcRequestBuilders
+//                .get("/api/question/10/answer")
+//                .contentType("application/json;charset=UTF-8")
+//                .param("page", "1")
+//                .param("size", "10"))
+//                .andExpect(status().isOk());
+//    }
 
     @Test
     void shouldGetAnswersListFromQuestionResponseStatusOk() throws Exception {
