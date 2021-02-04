@@ -247,21 +247,21 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().string("addQuestion.questionCreateDto.tags: Значение tags должно быть заполнено"));
     }
 
-    @Test
-    void shouldAddAnswerToQuestionStatusOk() throws Exception {
-
-        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
-        createAnswerDto.setHtmlBody("test answer");
-
-        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
-
-        this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/14/answer")
-                .contentType("application/json;charset=UTF-8")
-                .content(jsonRequest))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
+//    @Test
+//    void shouldAddAnswerToQuestionStatusOk() throws Exception {
+//
+//        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
+//        createAnswerDto.setHtmlBody("test answer");
+//
+//        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
+//
+//        this.mockMvc.perform(MockMvcRequestBuilders
+//                .post("/api/question/14/answer")
+//                .contentType("application/json;charset=UTF-8")
+//                .content(jsonRequest))
+//                .andDo(print())
+//                .andExpect(status().isOk());
+//    }
 
     @Test
     public void shouldAddAnswerToQuestionResponseStatusOk() throws Exception {
