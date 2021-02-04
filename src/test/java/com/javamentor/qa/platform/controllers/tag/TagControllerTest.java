@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/tag/tracked_tag.yml",
         "dataset/tag/ignored_tag.yml"}
         , cleanBefore = true, cleanAfter = true)
-@WithMockUser(username = "principal@mail.ru", roles = {"ADMIN", "USER"})
+@WithMockUser(username = "principal@mail.ru", roles={"ADMIN", "USER"})
 @ActiveProfiles("local")
 public class TagControllerTest extends AbstractIntegrationTest {
 
