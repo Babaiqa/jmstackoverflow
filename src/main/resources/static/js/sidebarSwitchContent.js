@@ -6,6 +6,7 @@ $( document ).ready(function() {
     new PaginationQuestion(1,10,'normal').setQuestions()
     new PaginationQuestionForMainPage(1,10, 'new').setQuestions()
     new PaginationQuestionWithoutAnswer(1,10).writeQuestionWithoutAnswer()
+    new PaginationQuestionWithoutAnswer(1,10).totalResultCountView()
 
     switch (location.pathname) {
         case "/users": openContent("areaUsersLink", "areaUsers")

@@ -46,7 +46,7 @@ public class PaginationQuestionWithoutAnswersDaoImpl implements PaginationDao<Qu
                         "from Question question  " +
                         "INNER JOIN  question.user u" +
                         "  join question.tags tag" +
-                        " where question_id IN :ids order by question.viewCount desc")
+                        " where question_id IN :ids")
                 .setParameter("ids", questionIds)
                 .unwrap(Query.class)
                 .setResultTransformer(new QuestionResultTransformer())

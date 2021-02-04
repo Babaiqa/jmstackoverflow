@@ -7,7 +7,11 @@ class PaginationQuestionWithoutAnswer {
         this.questionWithoutAnswers = this.questionService.getQuestionWithoutAnswers(this.page, this.size);
     }
 
+
+
+
     writeQuestionWithoutAnswer() {
+
         $('.questionWithoutAnswers').children().remove();
 
         this.questionWithoutAnswers.then(function (response) {
@@ -38,7 +42,7 @@ class PaginationQuestionWithoutAnswer {
                     "       </div>" +
                     "</div>" +
                     "<div class=\"question-details\">" +
-                    "   <div class=\"question-title\"><a href=\"#\">" + response.items[i].title + "</a></div>" +
+                    "   <div class=\"question-title\"><a href=\"api/question/" + response.items[i].id + "\">" + response.items[i].title + "</a></div>" +
                     "   <div class=\"question-text\">" + response.items[i].description +
                     "</div>" +
                     "<div class=\"d-flex item-between\">" +
@@ -61,7 +65,7 @@ class PaginationQuestionWithoutAnswer {
                     "           <img src=\"" + response.items[i].authorImage + "\" alt=\"\" width=\"32\" height=\"32\" class=\"user-info-img\"></div>" +
                     "   </a>" +
                     "<div class=\"user-info-details-wrapper\">" +
-                    "   <a class=\"user-info-details-name\" href=\"#\">" + response.items[i].authorName + "</a>" +
+                    "   <a class=\"user-info-details-name\" href=\"api/user/" + response.items[i].authorId + "\">" + response.items[i].authorName + "</a>" +
                     "   <div class=\"user-info-stats\">" +
                     "       <span class=\"user-reputation\">" + "!!!" + "</span>" +
                     "       <span class=\"user-gold active-stats\">" + "###" + "</span>" +
@@ -75,11 +79,27 @@ class PaginationQuestionWithoutAnswer {
         this.questWithoutAnswerPagesNavigation()
     }
 
+    totalResultCountView() {
+
+        this.questionWithoutAnswers.then(function (response) {
+            var totalResultCount = response.totalResultCount;
+
+            $("#totalResultCountView").empty()
+            $("#totalResultCountView").append(
+                "               <div class=\"totalResultCountView\">" +
+                "                   <div class=\"totalResultCountView-count\">" + totalResultCount + "</div>" +
+                "                   <div class=\"totalResultCountView-text\">вопросов без принятого ответа или без ответа, за который были отданы голоса</div>" +
+                "               </div>"
+
+            );
+
+        })
+    }
+
     questWithoutAnswerPagesNavigation() {
         var size = this.size;
 
-        this.questionWithoutAnswers.then(
-            function (response) {
+        this.questionWithoutAnswers.then(function (response) {
                 var currentPageNumber = response.currentPageNumber;
                 var nextPage = response.currentPageNumber + 1;
                 var secondNextPage = response.currentPageNumber + 2;
