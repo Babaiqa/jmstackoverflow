@@ -7,6 +7,7 @@ import com.javamentor.qa.platform.models.entity.question.TrackedTag;
 import com.javamentor.qa.platform.models.entity.user.User;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -47,13 +48,13 @@ public class IgnoredTagDaoImpl  extends ReadWriteDaoImpl<IgnoredTag, Long>  impl
     }
 
     @Override
+    @Transactional
     public void deleteIgnoredTagByIdTagIdUser(Long id, Long tagId) {
-         entityManager.unwrap(Session.class)
-                .createQuery("DELETE IgnoredTag tr " +
-                                "WHERE user.id=:id and ignoredTag.id=:tagId"
+         entityManager.createQuery("DELETE FROM IgnoredTag ig " +
+                                "WHERE ig.user.id=:id and ig.ignoredTag.id=:tagId"
                 )
                 .setParameter("id", id)
                 .setParameter("tagId", tagId)
-                .executeUpdate();
+                 .executeUpdate();
     }
 }
