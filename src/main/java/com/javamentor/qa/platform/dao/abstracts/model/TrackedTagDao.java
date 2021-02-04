@@ -9,8 +9,7 @@ import java.util.Optional;
 
 public interface TrackedTagDao extends ReadWriteDao<TrackedTag, Long>{
     List<TrackedTag> getTrackedTagsByUser(String name);
-
     void addTrackedTag(TrackedTag trackedTag);
-
     Optional<TrackedTag> getTrackedTagDtoByName(Long id, String name);
+    void deleteTrackedTagByIdTagIdUser(Long id, Long tagId);
 }
