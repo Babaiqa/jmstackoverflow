@@ -43,6 +43,25 @@ class PaginationTag {
         this.tagsPageNavigation()
     }
 
+    writeTopTenTags(){
+        $("#topTenTagsBar").empty();
+        let topTenTags
+        this.tags.then(function (response) {
+            topTenTags="<div class=\"nav-col btn-group  btn-block mr-0\">"
+            for (var i = 0; i < 5; i++) {
+                topTenTags=topTenTags + '<button type=\"button\"  class=\"btn  btn-sm mr-2 mt-2  active \" ' +
+                    'tag_id=' + response.items[i].id + '>' + response.items[i].name + '</button>'
+            }
+            topTenTags = topTenTags + "</div><div class=\"nav-col btn-group  btn-block mr-0\">"
+            for (var i = 5; i < 10; i++) {
+                topTenTags = topTenTags + '<button type=\"button\"  class=\"btn  btn-sm mr-2 mb-2  active \" ' +
+                    'tag_id=' + response.items[i].id + '>' + response.items[i].name + '</button>'
+            }
+            topTenTags = topTenTags + "</div>"
+            $("#topTenTagsBar").append(topTenTags)
+        })
+    }
+
     tagsPageNavigation() {
         const size = this.size;
         const sort = this.sort;
