@@ -29,6 +29,8 @@ class PaginationQuestionForMainPage {
     setQuestions() {
         $('#questionsAll').children().remove()
         $('#buttonToQuestionArea').children().remove()
+        let url = '/question/123'
+        console.log(/^\/question\//.test(url))
 
         this.questions.then(function (response) {
             for (var i = 0; i < response.items.length; i++) {
@@ -36,43 +38,47 @@ class PaginationQuestionForMainPage {
                 const stringDate = ('0' + date.getDate()).slice(-2) + "."
                                  + ('0' + (date.getMonth() + 1)).slice(-2) + "."
                                  + date.getFullYear()
+
                 $('#questionsAll').append(
-                    "        <a href=\"api/question/" + response.items[i].id + "\" class=\"list-group-item list-group-item-action h-100\">\n" +
+                    "        <div class=\"list-group-item list-group-item-action h-100\">\n" +
                     "            <div class=\"row align-items-center h-100\">\n" +
-                    "                <div class=\"col-sm-2 mx-auto\">\n" +
-                    "                    <div class=\"row\">\n" +
-                    "                        <div class=\"col-sm-4\">\n" +
+                    "                <div style='width: 180px;' class='pl-3'>\n" +
+                    // "        <a id=\"questionLink"+ response.items[i].id +"\" class=\"list-group-item list-group-item-action h-100\" href=\"/question/"+ response.items[i].id +"\" onclick=\"openContent(id, 'question')\">\n" +
+
+                    "                    <a style='color: #6a737c; font-size:125%;' class=\"row\" id=\"questionLink"+ response.items[i].id +"\" href=\"/question/"+ response.items[i].id +"\" onclick=\"openContent(id, 'question')\">\n" +
+                    "                        <div class=\"col-sm-4 p-0\">\n" +
                     "                            <div style=\"text-align: center;\">\n" +
                     "                                <small style=\"display: inline-block;\">" + response.items[i].countValuable +"<br /> голосов</small>\n" +
                     "                            </div>\n" +
                     "                        </div>\n" +
-                    "                        <div class=\"col-sm-4\">\n" +
+                    "                        <div class=\"col-sm-4 p-0\">\n" +
                     "                            <div style=\"text-align: center;\">\n" +
                     "                                <small style=\"display: inline-block;\">" + response.items[i].countAnswer +"<br /> ответов</small>\n" +
                     "                            </div>\n" +
                     "                        </div>\n" +
-                    "                        <div class=\"col-sm-4\">\n" +
+                    "                        <div class=\"col-sm-4 p-0\">\n" +
                     "                            <div style=\"text-align: center;\">\n" +
                     "                                <small style=\"display: inline-block;\">" + response.items[i].viewCount +"<br /> показов</small>\n" +
                     "                            </div>\n" +
                     "                        </div>\n" +
-                    "                    </div>\n" +
+                    "                    </a>\n" +
                     "                </div>\n" +
-                    "                <div class=\"col-sm-10\">\n" +
-                    "                    <div class=\"d-flex w-100 justify-content-between\">\n" +
-                    "                        <h5 href=\"#\" class=\"mb-1\">" + response.items[i].title + "</h5>\n" +
-                    "                        <small> задан "+ stringDate + "</small>\n" +
-                    "                    </div>\n" +
+                    "                <div class=\"col-9\">\n" +
+                    // "        <a id=\"questionLink"+ response.items[i].id +"\" class=\"list-group-item list-group-item-action h-100\" href=\"/question/"+ response.items[i].id +"\" onclick=\"openContent(id, 'question')\">\n" +
+                    "                    <a style='color:cornflowerblue' class=\"d-flex w-100 justify-content-between\" id=\"questionLink"+ response.items[i].id +"\" href=\"/question/"+ response.items[i].id +"\" onclick=\"openContent(id, 'question')\" >\n" +
+                    "                        <p style=\"font-size: 125% \" >" + response.items[i].title + "</p>\n" +
+                    "                        <small style='color: #6a737c'> задан "+ stringDate + "</small>\n" +
+                    "                    </a>\n" +
                     "                    <div class=\"nav-col btn-group  btn-block mr-0   \">\n" +
-                    "                        <button type=\"button\" class=\"btn  btn-sm   active \">" + response.items[i].listTagDto[0].name + "</button>\n" +
-                    "                        <button type=\"button\" class=\"btn btn-sm\">" + response.items[i].listTagDto[1].name + "</button>\n" +
-                    "                        <button type=\"button\" class=\"btn btn-sm\">" + response.items[i].listTagDto[2].name + "</button>\n" +
-                    "                        <button type=\"button\" class=\"btn  btn-sm \">" + response.items[i].listTagDto[3].name + "</button>\n" +
-                    "                        <button type=\"button\" class=\"btn  btn-sm overflow-hidden\">" + response.items[i].listTagDto[4].name + "</button>\n" +
+                    "                        <button type=\"button\" class=\"mb-1\">" + response.items[i].listTagDto[0].name + "</button>\n" +
+                    "                        <button type=\"button\" class=\"mb-1\">" + response.items[i].listTagDto[1].name + "</button>\n" +
+                    "                        <button type=\"button\" class=\"mb-1\">" + response.items[i].listTagDto[2].name + "</button>\n" +
+                    "                        <button type=\"button\" class=\"mb-1\">" + response.items[i].listTagDto[3].name + "</button>\n" +
+                    "                        <button type=\"button\" class=\"mb-1\">" + response.items[i].listTagDto[4].name + "</button>\n" +
                     "                    </div>\n" +
                     "                </div>\n" +
                     "            </div>\n" +
-                    "        </a>"
+                    "        </div>"
                 )
             }
             $('#buttonToQuestionArea').append(

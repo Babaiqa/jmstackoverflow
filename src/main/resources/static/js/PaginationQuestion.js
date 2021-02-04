@@ -40,6 +40,7 @@ class PaginationQuestion {
 
                 let shuffledNames = response.items[i].listTagDto.map(i => i.name).sort(() => Math.random() - 0.5);
                 let text  = shuffledNames.map(i => `<a href="#" class="tag"> ${i} </a>`).join('');
+// <a id="questionLink" class="tablinks" href="/question/questionId" onclick="openContent(id, 'question')">Link</a>
 
                 $('.questionsTable').append(
                     "<a href=\"api/question/" + response.items[i].id + "\"</a>" +

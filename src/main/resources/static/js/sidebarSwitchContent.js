@@ -6,23 +6,28 @@ $( document ).ready(function() {
     new PaginationQuestion(1,10,'normal').setQuestions()
     new PaginationQuestionForMainPage(1,10, 'new').setQuestions()
     new PaginationQuestionWithoutAnswer(1,10).writeQuestionWithoutAnswer()
-
-    switch (location.pathname) {
-        case "/users": openContent("areaUsersLink", "areaUsers")
-            break;
-        case "/site": openContent("mainPageLink", "mainPage")
-            break;
-        case "/tagsAria": openContent("areaTagLink", "areaTag")
-            break;
-        case "/questionAria": openContent("areaQuestionLink", "areaQuestion")
-            break;
-        case "/unansweredAria": openContent("areaUnansweredLink", "areaUnanswered")
-            break;
-        case "/question/questionId": openContent("questionLink", "question")
-            break;
+    if(/^\/question\//.test(window.location.pathname)){
+        openContent("questionLink", "question")
+        let questionId = window.location.pathname.replace(/\D/g, '')
+        new QuestionPage(questionId).populateQuestionPage()
+    } else {
+        switch (location.pathname) {
+            case "/users": openContent("areaUsersLink", "areaUsers")
+                break;
+            case "/site": openContent("mainPageLink", "mainPage")
+                break;
+            case "/tagsAria": openContent("areaTagLink", "areaTag")
+                break;
+            case "/questionAria": openContent("areaQuestionLink", "areaQuestion")
+                break;
+            case "/unansweredAria": openContent("areaUnansweredLink", "areaUnanswered")
+                break;
+        }
     }
 
+
     function openContent(evt, contentName){
+        console.log("TEST  "+location.pathname.replace(/\D/g, ''))
         var i, tabcontent, tablinks;
 
         tabcontent = document.getElementsByClassName("tabcontent");
