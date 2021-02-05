@@ -1,10 +1,14 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.CommentDto;
+import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
+import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.CommentAnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.CommentService;
@@ -41,6 +45,9 @@ public class AnswerController {
     private final SecurityHelper securityHelper;
     private final CommentDtoService commentDtoService;
     private final QuestionService questionService;
+    private final UserDtoService userDtoService;
+    private final QuestionDtoService questionDtoService;
+    private final AnswerDtoService answerDtoService;
 
 
     @Autowired
@@ -49,13 +56,19 @@ public class AnswerController {
                             CommentConverter commentConverter,
                             SecurityHelper securityHelper,
                             CommentDtoService commentDtoService,
-                            QuestionService questionService) {
+                            QuestionService questionService,
+                            UserDtoService userDtoService,
+                            QuestionDtoService questionDtoService,
+                            AnswerDtoService answerDtoService) {
         this.answerService = answerService;
         this.commentAnswerService = commentAnswerService;
         this.commentConverter = commentConverter;
         this.securityHelper = securityHelper;
         this.commentDtoService = commentDtoService;
         this.questionService = questionService;
+        this.userDtoService = userDtoService;
+        this.questionDtoService = questionDtoService;
+        this.answerDtoService = answerDtoService;
     }
 
     @PostMapping("/{questionId}/answer/{answerId}/comment")
@@ -111,5 +124,49 @@ public class AnswerController {
 
         return ResponseEntity.ok(commentAnswerDtoList);
     }
+
+    /*@GetMapping("/{questionId}/isAnswer")
+    @ApiOperation(value = "Checks if user answered the question",
+            notes = "Provide an question ID, to check, if current user have already answered this question",
+            response = Boolean.class)
+    public ResponseEntity<Boolean> isUserAnsweredQuestion(@ApiParam(name = "questionId", value = "ID value, for the question you need to check", required = true)
+                                                          @PathVariable Long questionId) {
+
+
+
+        return ResponseEntity.ok(false); // delete this
+    }*/
+
+    @GetMapping("/{questionId}/isAnswerVoted/")
+    @ApiOperation(value = "Checks if user vote up answer to the question",
+            notes = "Provide an question ID, and answer ID, to check, if current user have already voted up this answer to this question",
+            response = Boolean.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "True, if user voted; False, if not", response = Boolean.class),
+            @ApiResponse(code = 400, message = "User/question have not found", response = String.class),
+    })
+    public ResponseEntity<?> isAnswerVotedByCurrentUser(@ApiParam(name = "questionId", value = "ID value, for the question, the answer to which needs to be check", required = true)
+                                                     @PathVariable Long questionId) {
+
+        Optional<QuestionDto> questionDto = questionDtoService.getQuestionDtoById(questionId);
+
+        if (!questionDto.isPresent()) {
+            return ResponseEntity.badRequest().body("Question not found");
+        }
+        // TODO: get userId, from principal/security (username == email)
+
+        /*Optional<UserDtoService> userDto = userDtoService.getUserDtoById(userId);
+
+        if (!userDto.isPresent()) {
+            return ResponseEntity.badRequest().body("User not found");
+        }*/
+
+        // TODO: 1) get all answers on this question(if present)  2) get all votes on answers(if present) 3) find crossing on user_id AND answer_id.
+        // OPTION #2 :: add question_id to votes_on_answers
+        // >>>>OPTION #3 :: add *this* logic to DaoDto, cuz with select/inner join its easier. And task, by itself, is regular, af
+
+        return ResponseEntity.ok(false); // delete this
+    }
+
 
 }
