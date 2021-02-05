@@ -44,18 +44,12 @@ class QuestionPage {
                     "                            </svg>\n" +
                     "                        </div>\n" +
                     "                        <div question-and-comments-area class=\"col-11\">\n" +
-                    "                            <div question-area>\n" +
+                    "                            <div question-area class=\"col\">\n" +
                     "                                <div id=\"question-describtion\" describlion class=\"s-prose js-post-body\" itemprop=\"text\">\n" +
                                                          "<p>" + response.description + "</p>" +
                     "                                </div>\n" +
-                    "                                <div class=\"tags\">\n")
-                response.listTagDto.forEach(tag => {
-                    $('#question-area').append(
-                        "                                    <div class=\"mb-1\">\n" +
-                                                                    tag.name +
-                        "                                    </div>")
-                    })
-                $('#question-area').append(
+                    "                                <div id='question-tags' class=\"tags\">\n" +
+
                     "                                </div>\n" +
                     "                                <div underquestion class=\"mb0 \">\n" +
                     "                                    <div class=\"row justify-content-between px-3\">\n" +
@@ -116,6 +110,12 @@ class QuestionPage {
                     "                    </div>"
 
                 )
+                response.listTagDto.forEach(tag => {
+                    $('#question-tags').append(
+                        "                                    <div class=\"mb-1\">\n" +
+                        tag.name +
+                        "                                    </div>")
+                })
             })
         this.answerService.getAnswerListByQuestionId(this.questionId)
             .then(response => {

@@ -43,9 +43,7 @@ class PaginationQuestionForMainPage {
                     "        <div class=\"list-group-item list-group-item-action h-100\">\n" +
                     "            <div class=\"row align-items-center h-100\">\n" +
                     "                <div style='width: 180px;' class='pl-3'>\n" +
-                    // "        <a id=\"questionLink"+ response.items[i].id +"\" class=\"list-group-item list-group-item-action h-100\" href=\"/question/"+ response.items[i].id +"\" onclick=\"openContent(id, 'question')\">\n" +
-
-                    "                    <a style='color: #6a737c; font-size:125%;' class=\"row\" id=\"questionLink"+ response.items[i].id +"\" href=\"/question/"+ response.items[i].id +"\" onclick=\"openContent(id, 'question')\">\n" +
+                    "                    <a style='color: #6a737c; font-size:115%;' class=\"row\" id=\"questionLink"+ response.items[i].id +"\" href=\"/question/"+ response.items[i].id +"\" onclick=\"openContent(id, 'question')\">\n" +
                     "                        <div class=\"col-sm-4 p-0\">\n" +
                     "                            <div style=\"text-align: center;\">\n" +
                     "                                <small style=\"display: inline-block;\">" + response.items[i].countValuable +"<br /> голосов</small>\n" +
@@ -64,9 +62,8 @@ class PaginationQuestionForMainPage {
                     "                    </a>\n" +
                     "                </div>\n" +
                     "                <div class=\"col-9\">\n" +
-                    // "        <a id=\"questionLink"+ response.items[i].id +"\" class=\"list-group-item list-group-item-action h-100\" href=\"/question/"+ response.items[i].id +"\" onclick=\"openContent(id, 'question')\">\n" +
-                    "                    <a style='color:cornflowerblue' class=\"d-flex w-100 justify-content-between\" id=\"questionLink"+ response.items[i].id +"\" href=\"/question/"+ response.items[i].id +"\" onclick=\"openContent(id, 'question')\" >\n" +
-                    "                        <p style=\"font-size: 125% \" >" + response.items[i].title + "</p>\n" +
+                    "                    <a class=\"d-flex w-100 justify-content-between\" id=\"questionLink"+ response.items[i].id +"\" href=\"/question/"+ response.items[i].id +"\" onclick=\"openContent(id, 'question')\" >\n" +
+                    "                        <p style=\"color:#0077cb; font-size: 125% \" >" + response.items[i].title + "</p>\n" +
                     "                        <small style='color: #6a737c'> задан "+ stringDate + "</small>\n" +
                     "                    </a>\n" +
                     "                    <div class=\"nav-col btn-group  btn-block mr-0   \">\n" +

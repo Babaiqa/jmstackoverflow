@@ -7,7 +7,12 @@ $( document ).ready(function() {
     new PaginationQuestionForMainPage(1,10, 'new').setQuestions()
     new PaginationQuestionWithoutAnswer(1,10).writeQuestionWithoutAnswer()
     if(/^\/question\//.test(window.location.pathname)){
-        openContent("questionLink", "question")
+        let tabcontent
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for(let i=0; i<tabcontent.length; i++){
+            tabcontent[i].style.display = "none";
+        }
+        document.getElementById("question").style.display = "block";
         let questionId = window.location.pathname.replace(/\D/g, '')
         new QuestionPage(questionId).populateQuestionPage()
     } else {
@@ -27,7 +32,6 @@ $( document ).ready(function() {
 
 
     function openContent(evt, contentName){
-        console.log("TEST  "+location.pathname.replace(/\D/g, ''))
         var i, tabcontent, tablinks;
 
         tabcontent = document.getElementsByClassName("tabcontent");
