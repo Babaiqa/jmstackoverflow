@@ -6,6 +6,8 @@ $( document ).ready(function() {
     new PaginationQuestion(1,10,'normal').setQuestions()
     new PaginationQuestionForMainPage(1,10, 'new').setQuestions()
     new PaginationQuestionWithoutAnswer(1,10).writeQuestionWithoutAnswer()
+    new PaginationQuestionWithoutAnswer(1,10).totalResultCountView()
+
     if(/^\/question\//.test(window.location.pathname)){
         let tabcontent
         tabcontent = document.getElementsByClassName("tabcontent");
@@ -29,7 +31,6 @@ $( document ).ready(function() {
                 break;
         }
     }
-
 
     function openContent(evt, contentName){
         var i, tabcontent, tablinks;
