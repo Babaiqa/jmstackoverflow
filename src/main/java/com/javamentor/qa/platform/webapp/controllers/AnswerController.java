@@ -137,15 +137,15 @@ public class AnswerController {
         return ResponseEntity.ok(false); // delete this
     }*/
 
-    @GetMapping("/{questionId}/isAnswerVoted/")
+    @GetMapping("/{questionId}/isAswerVoted/")
     @ApiOperation(value = "Checks if user vote up answer to the question",
-            notes = "Provide an question ID, and answer ID, to check, if current user have already voted up this answer to this question",
+            notes = "Provide an question ID, to check, if current user have already voted up ANY answer to this question",
             response = Boolean.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "True, if user voted; False, if not", response = Boolean.class),
             @ApiResponse(code = 400, message = "User/question have not found", response = String.class),
     })
-    public ResponseEntity<?> isAnswerVotedByCurrentUser(@ApiParam(name = "questionId", value = "ID value, for the question, the answer to which needs to be check", required = true)
+    public ResponseEntity<?> isAnyAnswerVotedByCurrentUser(@ApiParam(name = "questionId", value = "ID value, for the question, the answer to which needs to be check", required = true)
                                                      @PathVariable Long questionId) {
 
         Optional<QuestionDto> questionDto = questionDtoService.getQuestionDtoById(questionId);
