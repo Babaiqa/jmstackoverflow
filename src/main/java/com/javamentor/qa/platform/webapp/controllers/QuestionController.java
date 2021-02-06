@@ -1,11 +1,8 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.AnswerDtoDao;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.models.entity.question.answer.Answer;
-import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
@@ -35,15 +32,8 @@ import java.util.Optional;
 public class QuestionController {
 
     private final QuestionService questionService;
-    private final TagMapper tagMapper;
     private final TagService tagService;
-    private final UserDtoService userDtoService;
-    private final AnswerVoteService answerVoteService;
-    private final AnswerService answerService;
-    private final AnswerDtoService answerDtoService;
-    private final AnswerConverter answerConverter;
     private final SecurityHelper securityHelper;
-    private final AnswerVoteConverter answerVoteConverter;
     private final QuestionDtoService questionDtoService;
     private final CommentQuestionService commentQuestionService;
     private final CommentConverter commentConverter;
@@ -53,30 +43,21 @@ public class QuestionController {
 
     @Autowired
     public QuestionController(QuestionService questionService,
-                              TagMapper tagMapper,
                               TagService tagService,
                               QuestionDtoService questionDtoService,
-                              UserDtoService userDtoService,
-                              AnswerConverter answerConverter,
                               SecurityHelper securityHelper,
-                              AnswerVoteService answerVoteService,
-                              AnswerService answerService,
-                              AnswerDtoService answerDtoService,
-                              AnswerVoteConverter answerVoteConverter,
                               CommentQuestionService commentQuestionService,
                               CommentConverter commentConverter,
                               CommentDtoService commentDtoService) {
         this.questionService = questionService;
-        this.tagMapper = tagMapper;
+
         this.tagService = tagService;
         this.questionDtoService = questionDtoService;
-        this.userDtoService = userDtoService;
-        this.answerConverter = answerConverter;
+
+
         this.securityHelper = securityHelper;
-        this.answerVoteService = answerVoteService;
-        this.answerService = answerService;
-        this.answerDtoService = answerDtoService;
-        this.answerVoteConverter = answerVoteConverter;
+
+
         this.commentDtoService = commentDtoService;
         this.commentQuestionService = commentQuestionService;
         this.commentConverter = commentConverter;
@@ -328,7 +309,7 @@ public class QuestionController {
         return ResponseEntity.ok(resultPage);
     }
 
-    @GetMapping(value = "/withTags", params = {"page","size", "tagIds"})
+    @GetMapping(value = "/withTags", params = {"page", "size", "tagIds"})
     @ApiOperation(value = "Return questions that include all given tags")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Return the pagination PageDto", response = PageDto.class),
@@ -440,12 +421,12 @@ public class QuestionController {
     @GetMapping("/{questionId}/comments")
     @ApiOperation(value = "Return all Comments by questionID", notes = "Return all Comments by questionID")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Return all Comments by questionID", response = CommentDto.class,  responseContainer = "List"),
+            @ApiResponse(code = 200, message = "Return all Comments by questionID", response = CommentDto.class, responseContainer = "List"),
             @ApiResponse(code = 400, message = "Question not found", response = String.class)
     })
 
     public ResponseEntity<?> getCommentListByQuestionId(@ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
-                                                       @PathVariable Long questionId) {
+                                                        @PathVariable Long questionId) {
 
         Optional<Question> question = questionService.getById(questionId);
         if (!question.isPresent()) {
