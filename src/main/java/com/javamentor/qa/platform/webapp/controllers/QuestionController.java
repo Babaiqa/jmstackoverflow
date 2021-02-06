@@ -319,7 +319,6 @@ public class QuestionController {
                     example = "10")
             @RequestParam("size") int size) {
 
-        answerDtoService.getAllAnswersByQuestionId(3L);
 
         if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
             return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +

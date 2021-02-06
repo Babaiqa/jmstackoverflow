@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEnti
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -27,6 +28,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @AutoConfigureMockMvc
 @DBRider
 @DBUnit(caseSensitiveTableNames = true, allowEmptyFields = true, schema = "public")
+@ActiveProfiles("local")
 public abstract class AbstractIntegrationTest {
 
     protected ObjectMapper objectMapper = new ObjectMapper();

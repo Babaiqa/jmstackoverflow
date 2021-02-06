@@ -6,10 +6,10 @@
 </head>
 <body>
 <div th:fragment="questionAria" class="snippet-hidden align-self-start" id="questionAria">
-    <div class="row m-2" >
-        <div class="col-md-8 col-xl-9  col-lg-9 col-sm-8">
+    <div class="row p-4" >
+        <div class="col-xl-8 col-lg-8  col-md-12 col-sm-12">
             <div> <!-- переставил отсюда клас на объединит страницу    -->
-                <div class="row">
+                <div class="row justify-content-between">
                     <h2>Все вопросы</h2>
                     <a type="button" class="btn btn-primary float-right" href="/ask" id="askQuest">Задать вопрос</a>
                 </div>
@@ -48,46 +48,47 @@
             </div>
 
         </div>
-        <div class="row-md-4 col-xl-3  col-lg-3 col-sm-4">
+        <div class="row-md-4 col-sm-4">
             <div class="tag-tracked-ignore-container">
-
-                <div class="tag-tracked-container">
-                    <hr>
-                    <div align="center">
-                        <h5>
-                            <span>Отслеживаемые метки</span>
-                        </h5>
+                <div class="card tag-tracked-container">
+                    <div class="card-header" >
+                        <span style="font-size: 120%">Отслеживаемые метки</span>
                     </div>
-                    <hr>
-                    <ul id = "listTagTracked1">
-                    </ul>
-                    <onsubmit >
-                        <div align="center">
-                            <input type="text"  id="add-tag-tracked1"  size="20"  placeholder="добавить метку">
-                            <button class="btn btn-primary" id="buttonTagTracked1">+</button>
+                    <div class="card-body">
+                        <ul id = "list-tracked-tag-question-area">
+
+                        </ul>
+                        <div id="error-tracked-tag-question-area" class="alert alert-danger error" style="display: none">
+                            Вы попытались добавить тэг добавленный ранее, либо тэг с таким именем не существует
                         </div>
-                    </onsubmit >
+                        <onsubmit >
+                            <div align="center">
+                                <input type="text" id="add-tracked-tag-question-area"  size="20"  placeholder="добавить метку">
+                                <button class="btn btn-primary" id="button-add-tracked-tag-question-area">+</button>
+                            </div>
+                        </onsubmit >
+                    </div>
                 </div>
-
-                <div class="tag-ignore-container">
-                    <hr>
-                    <div align="center">
-                        <h5>
-                            <span>Игнорируемые метки </span>
-                        </h5>
+                <div class="card tag-ignore-container" >
+                    <div class = "card-header">
+                        <span style="font-size: 120%">Игнорируемые метки </span>
                     </div>
-                    <hr>
-                    <ul id = "listTagIgnore1">
-                    </ul>
-                    <onsubmit >
-                        <div align="center">
-                            <input type="text" id="add-tag-ignore1"  size="20"  placeholder="добавить метку">
-                            <button class="btn btn-primary" id="buttonTagIgnore1">+</button>
+                    <div class="card-body">
+                        <ul id = "list-ignored-tag-question-area">
+
+                        </ul>
+                        <div id="error-ignored-tag-question-area" class="alert alert-danger error" style="display: none">
+                            Вы попытались добавить тэг добавленный ранее, либо тэг с таким именем не существует
                         </div>
-                    </onsubmit >
+                        <onsubmit >
+                            <div align="center">
+                                <input type="text" id="add-ignored-tag-question-area"  size="20"  placeholder="добавить метку">
+                                <button class="btn btn-primary" id="button-add-ignored-tag-question-area">+</button>
+                            </div>
+                        </onsubmit >
+                    </div>
                 </div>
             </div>
-
             <table class="table" id="mainCountTag">
                 <thead>
                 <tr>
@@ -97,8 +98,14 @@
                 <tbody id="questionTag">
                 </tbody>
             </table>
-
         </div>
+    </div>
+    <div  class="list-group" id="search-list-tracked-tag-question-area" style="display: none">
+
+    </div>
+
+    <div  class="list-group" id="search-list-ignored-tag-question-area" style="display: none">
+
     </div>
     <div th:fragment="styleheader">
 
@@ -115,11 +122,9 @@
 
         <link rel="stylesheet" href="/static/css/sidebar.css">
     </div>
-    <script src="/static/js/tagTrackedIgnoreQuestionAria.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"
             integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/"
             crossorigin="anonymous"></script>
-
 </div>
 
 </body>
