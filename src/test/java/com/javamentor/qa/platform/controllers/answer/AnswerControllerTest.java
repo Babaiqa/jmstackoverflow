@@ -31,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/answer/answerApi.yml",
         "dataset/answer/roleApi.yml",
         "dataset/answer/questionApi.yml",
-
         "dataset/question/questionQuestionApi.yml"},
         cleanBefore = true, cleanAfter = false)
 @WithMockUser(username = "principal@mail.ru", roles={"ADMIN", "USER"})
