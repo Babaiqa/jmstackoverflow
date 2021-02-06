@@ -15,7 +15,7 @@
             </div>
 
             <div class="col-sm-2 d-flex align-items-end d-flex justify-content-end">
-                <button type="button" class="btn btn-primary" href="#" >Задать вопрос</button>
+                <a type="button" class="btn btn-primary float-right" href="/ask" id="askQuest">Задать вопрос</a>
             </div>
         </div>
 
@@ -23,9 +23,7 @@
             <div class="row">
 
                 <div class="col-sm-2">
-                    <div class="description-unanswered">
-                        <span class="description-unanswered-text">4,806</span>
-                        <span class="description-unanswered-text"> вопросов без принятого ответа или без ответа, за который были отданы голоса</span>
+                    <div id="totalResultCountView">
                     </div>
                 </div>
 
@@ -48,282 +46,7 @@
         <div class="question-container">
             <div class="row">
                 <div class="col-sm-6 questionWithoutAnswers">
-                    <!--First Card-->
-                    <div class="question-card d-flex">
-                        <div class="question-stats-container">
-                            <div class="stats">
-                                <div class="vote">
-                                    <div class="vote-count">
-                                        <strong>49</strong>
-                                    </div>
 
-                                    <div class="view-count-vote">голосов</div>
-
-                                    <div class="view-count-answer">
-                                        <div class="status-unanswered"><strong>2</strong></div>
-                                        <div class="view-count">ответов</div>
-                                    </div>
-
-                                    <div class="views warm d-flex">
-                                        <div class="views-number">1k</div>
-                                        <div class="views-text">показов</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="question-details">
-                            <div class="question-title"><a href="#">Драйвер для дешифрования устройства</a></div>
-                            <div class="question-text">
-                                Возникла задача создать минимальный образ,
-                                зашифровать его простейшим способом и написать драйвер, который будет дешифровать его
-                                «на лету».
-                                Создаю образ:
-                                dd if=/dev/zero of=myFS bs=1024 count=60
-                                mkfs.ext2 myFS Возникла задача создать минимальный образ,
-                            </div>
-
-                            <div class="d-flex item-between">
-                                <div class="question-tags-container">
-                                    <a href="#" class="tag">linux</a>
-                                    <a href="#" class="tag">c</a>
-                                    <a href="#" class="tag">криптография</a>
-                                    <a href="#" class="tag">драйвер</a>
-                                </div>
-
-                                <div class="user-info">
-                                    <div class="user-info-change">
-                                        <a href="#" class="user-info-change-link">изменён
-                                            <span class="user-info-change-time">15 сен в 11:19</span>
-                                        </a>
-                                    </div>
-
-                                    <div class="user-info-gravatar d-flex">
-                                        <a href="#" class="user-info-gravatar-link">
-                                            <div class="user-info-gravatar-wrapper">
-                                                <img src="#" alt="" width="32" height="32" class="user-info-img">
-                                            </div>
-                                        </a>
-
-                                        <div class="user-info-details-wrapper">
-                                            <a class="user-info-details-name" href="#">Barmaley</a>
-                                            <div class="user-info-stats">
-                                                <span class="user-reputation">77.4k</span>
-                                                <span class="user-gold active-stats">6</span>
-                                                <span class="user-silver active-stats">64</span>
-                                                <span class="user-bronze active-stats">145</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!--Second Card-->
-                    <div class="question-card d-flex">
-                        <div class="question-stats-container">
-                            <div class="stats">
-                                <div class="vote">
-                                    <div class="vote-count">
-                                        <strong>26</strong>
-                                    </div>
-
-                                    <div class="view-count-vote">голосов</div>
-
-                                    <div class="view-count-answer">
-                                        <div class="status-unanswered"><strong>2</strong></div>
-                                        <div class="view-count">ответов</div>
-                                    </div>
-
-                                    <div class="views">
-                                        <div class="views-number">742</div>
-                                        <div class="views-text">показа</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="question-details">
-                            <div class="question-title"><a href="#">Креш Visual Studio 2013 в WinForms</a></div>
-                            <div class="question-text">
-                                Итак, что имеем. Windows 8.1 x64 + Visual Studio 2013 Up4.
-                                Суть проблемы в том, что практический любой проект в WinForms при открытии -
-                                валит студию. Те, которые не валит - работать невозможно. Мышь
-                            </div>
-
-                            <div class="d-flex item-between">
-                                <div class="question-tags-container">
-                                    <a href="#" class="tag">winforms</a>
-                                    <a href="#" class="tag">visual-studio</a>
-                                </div>
-
-                                <div class="user-info">
-                                    <div class="user-info-change">
-                                        <a href="#" class="user-info-change-link">изменён
-                                            <span class="user-info-change-time">28 сен в 5:46</span>
-                                        </a>
-                                    </div>
-
-                                    <div class="user-info-gravatar d-flex">
-                                        <a href="#" class="user-info-gravatar-link">
-                                            <div class="user-info-gravatar-wrapper">
-                                                <img src="#" alt="" width="32" height="32" class="user-info-img">
-                                            </div>
-                                        </a>
-
-                                        <div class="user-info-details-wrapper">
-                                            <a class="user-info-details-name" href="#">GREAT DNG</a>
-                                            <div class="user-info-stats">
-                                                <span class="user-reputation">81</span>
-                                                <span class="user-gold">0</span>
-                                                <span class="user-silver">0</span>
-                                                <span class="user-bronze active-stats">145</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!--Third Card-->
-                    <div class="question-card d-flex">
-                        <div class="question-stats-container">
-                            <div class="stats">
-                                <div class="vote">
-                                    <div class="vote-count">
-                                        <strong>29</strong>
-                                    </div>
-
-                                    <div class="view-count-vote">голосов</div>
-
-                                    <div class="view-count-answer">
-                                        <div class="status-unanswered"><strong>2</strong></div>
-                                        <div class="view-count">ответов</div>
-                                    </div>
-
-                                    <div class="views d-flex">
-                                        <div class="views-number">305</div>
-                                        <div class="views-text">показов</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="question-details">
-                            <div class="question-title"><a href="#">Как правильнее сделать виртуальную машину для
-                                Lisp?</a></div>
-                            <div class="question-text">
-                                Сейчас пишу компилятор для маленького лиспа,
-                                все работает так, как нужно, но хочется узнать,
-                                как это реализовать правильнее. На данный момент,
-                                такой вот код: (defun (fact n) (if-else (> n 1)
-                            </div>
-
-                            <div class="d-flex item-between">
-                                <div class="question-tags-container">
-                                    <a href="#" class="tag">python</a>
-                                    <a href="#" class="tag">инспекция-кода</a>
-                                    <a href="#" class="tag">компиляция</a>
-                                    <a href="#" class="tag">lisp</a>
-                                    <a href="#" class="tag">виртуальная-машина</a>
-                                </div>
-
-                                <div class="user-info">
-                                    <div class="user-info-change">
-                                        <a href="#" class="user-info-change-link">изменён
-                                            <span class="user-info-change-time">9 ноя в 5:24</span>
-                                        </a>
-                                    </div>
-
-                                    <div class="user-info-gravatar d-flex">
-                                        <a href="#" class="user-info-gravatar-link">
-                                            <div class="user-info-gravatar-wrapper">
-                                                <img src="#" alt="" width="32" height="32" class="user-info-img">
-                                            </div>
-                                        </a>
-
-                                        <div class="user-info-details-wrapper">
-                                            <a class="user-info-details-name" href="#">D. Violet</a>
-                                            <div class="user-info-stats">
-                                                <span class="user-reputation">4,425</span>
-                                                <span class="user-gold active-stats">2</span>
-                                                <span class="user-silver active-stats">13</span>
-                                                <span class="user-bronze active-stats">40</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!--Four Card-->
-                    <div class="question-card d-flex">
-                        <div class="question-stats-container">
-                            <div class="stats">
-                                <div class="vote">
-                                    <div class="vote-count">
-                                        <strong>15</strong>
-                                    </div>
-
-                                    <div class="view-count-vote">голосов</div>
-
-                                    <div class="view-count-answer answer-active">
-                                        <div class="status-unanswered"><strong>2</strong></div>
-                                        <div class="view-count">ответов</div>
-                                    </div>
-
-                                    <div class="views d-flex">
-                                        <div class="views-number">874</div>
-                                        <div class="views-text">показа</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="question-details">
-                            <div class="question-title"><a href="#">Инвалидация итератора в std::map</a></div>
-                            <div class="question-text">
-                                Во многих источниках вроде http://www.amse.ru/courses/cpp1/2010.04.07.html
-                                ничего не сказано про инвалидацию итераторов в map. Является ли опасным
-                                и UB код ниже? std::map Word32, OnlineUser*>
-                            </div>
-
-                            <div class="d-flex item-between">
-                                <div class="question-tags-container">
-                                    <a href="#" class="tag">c++</a>
-                                    <a href="#" class="tag">map</a>
-                                    <a href="#" class="tag">итераторы</a>
-                                </div>
-
-                                <div class="user-info">
-                                    <div class="user-info-change">
-                                        <a href="#" class="user-info-change-link">изменён
-                                            <span class="user-info-change-time">5 авг в 14:01</span>
-                                        </a>
-                                    </div>
-
-                                    <div class="user-info-gravatar d-flex">
-                                        <a href="#" class="user-info-gravatar-link">
-                                            <div class="user-info-gravatar-wrapper">
-                                                <img src="#" alt="" width="32" height="32" class="user-info-img">
-                                            </div>
-                                        </a>
-
-                                        <div class="user-info-details-wrapper">
-                                            <a class="user-info-details-name" href="#">Дух сообщества</a>
-                                            <div class="user-info-stats">
-                                                <span class="user-reputation">1</span>
-                                                <span class="user-gold">0</span>
-                                                <span class="user-silver">0</span>
-                                                <span class="user-bronze">0</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -345,20 +68,20 @@
             </div>
         </div>
 
-        <div class="col-sm-3 d-flex justify-content-end">
-            <div class="pagination-page-count">
-                <nav>
-                    <ul class="pagination-element">
-                        <li class=" page-item-element active"><a class="page-element-link" href="#">10</a></li>
-                        <li class=" page-item-element"><a class="page-element-link" href="#">30</a></li>
-                        <li class=" page-item-element"><a class="page-element-link" href="#">50</a></li>
-                        <li class=" page-item-element"><a class="page-element-link" href="#">75</a></li>
-                        <li class=" page-item-element"><a class="page-element-link" href="#">100</a></li>
-                    </ul>
-                    <span class="page-number">на странице</span>
-                </nav>
-            </div>
-        </div>
+<!--        <div class="col-sm-3 d-flex justify-content-end">-->
+<!--            <div class="pagination-page-count">-->
+<!--                <nav>-->
+<!--                    <ul class="pagination-element">-->
+<!--                        <li class=" page-item-element active"><a class="page-element-link" href="#">10</a></li>-->
+<!--                        <li class=" page-item-element"><a class="page-element-link" href="#">30</a></li>-->
+<!--                        <li class=" page-item-element"><a class="page-element-link" href="#">50</a></li>-->
+<!--                        <li class=" page-item-element"><a class="page-element-link" href="#">75</a></li>-->
+<!--                        <li class=" page-item-element"><a class="page-element-link" href="#">100</a></li>-->
+<!--                    </ul>-->
+<!--                    <span class="page-number">на странице</span>-->
+<!--                </nav>-->
+<!--            </div>-->
+<!--        </div>-->
 
     </div>
 
