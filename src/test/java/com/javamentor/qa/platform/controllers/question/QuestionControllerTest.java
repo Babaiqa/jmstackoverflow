@@ -5,7 +5,6 @@ import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.webapp.converters.CommentConverter;
 import org.hamcrest.Matchers;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -535,7 +534,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         Assert.assertTrue(!commentQuestionDtoFromResponseList.isEmpty());
 
         //вытаскиваем из БД все id комментариев у указанного вопроса
-        //не смог вытащить CommentQuestion чтобы превратить ее в DTO
         Query queryToCommentQuestionTable = entityManager.createNativeQuery("select comment_id from comment_question where question_id = ?");
         queryToCommentQuestionTable.setParameter(1, 10);
         List<BigInteger> commentsIdList = queryToCommentQuestionTable.getResultList();
