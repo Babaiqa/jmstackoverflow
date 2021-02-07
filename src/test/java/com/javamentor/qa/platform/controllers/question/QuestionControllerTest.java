@@ -563,31 +563,4 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         Assert.assertTrue(question == null);
     }
 
-//    @Test
-//    public void shouldAddAnswerToQuestionResponseStatusOk() throws Exception {
-//        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
-//        createAnswerDto.setHtmlBody("test answer");
-//
-//        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
-//
-//        String resultContext = mockMvc.perform(MockMvcRequestBuilders
-//                .post("/api/question/15/answer")
-//                .contentType("application/json;charset=UTF-8")
-//                .content(jsonRequest))
-//                .andDo(print())
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.body").value(createAnswerDto.getHtmlBody()))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.questionId").value(15))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(1))
-//                .andReturn().getResponse().getContentAsString();
-//
-//        AnswerDto answerDtoFromResponse = objectMapper.readValue(resultContext, AnswerDto.class);
-//        Answer answer = entityManager
-//                .createQuery("from Answer where id = :id", Answer.class)
-//                .setParameter("id", answerDtoFromResponse.getId())
-//                .getSingleResult();
-//        AnswerDto answerDtoFromDB = answerConverter.answerToAnswerDTO(answer);
-//
-//        Assert.assertTrue(answerDtoFromResponse.getBody().equals(answerDtoFromDB.getBody()));
-//    }
 }
