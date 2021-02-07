@@ -7,6 +7,7 @@ import com.javamentor.qa.platform.models.entity.question.TrackedTag;
 import org.hibernate.Session;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -44,5 +45,15 @@ public class TrackedTagDaoImpl extends ReadWriteDaoImpl<TrackedTag, Long>  imple
                 .setParameter("id", id)
                 .setParameter("name", name)
                 .uniqueResultOptional();
+    }
+
+    @Override
+    @Transactional
+    public void deleteTrackedTagByIdTagIdUser(Long id, Long tagId) {
+        entityManager.createQuery("DELETE FROM TrackedTag tr " +
+                "WHERE tr.user.id=:id and tr.trackedTag.id=:tagId")
+                .setParameter("id", id)
+                .setParameter("tagId", tagId)
+                .executeUpdate();
     }
 }

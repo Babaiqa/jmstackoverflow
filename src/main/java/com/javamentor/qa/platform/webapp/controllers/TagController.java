@@ -285,6 +285,19 @@ public class TagController {
         return ResponseEntity.ok(creatTagDtoNew);
     }
 
+    @DeleteMapping(value = "tracked/delete")
+    @ApiOperation(value = "Delete Tracked tag by id", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Tracked tag was deleted.", response = TrackedTagDto.class),
+    })
+    public ResponseEntity<?> deleteTrackedTag(@Valid @RequestParam Long tagId) {
+
+        trackedTagService.deleteTrackedTagByIdTagIdUser(securityHelper.getPrincipal().getId(),tagId);
+        return ResponseEntity.ok("Tracked Tag with ID = " + tagId + " was deleted");
+    }
+
+
+
     @DeleteMapping(value = "ignored/delete")
     @ApiOperation(value = "Delete Ignored tag by id", response = String.class)
     @ApiResponses({

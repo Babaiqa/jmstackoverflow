@@ -12,4 +12,5 @@ public interface TrackedTagService extends ReadWriteService<TrackedTag, Long>{
     List<User> getUsersByTrackedTag(Tag tag);
     void addTrackedTagsToUser(List<Tag> tagList, User user);
     Optional<TrackedTag> getTrackedTagDtoByName(Long id, String name);
+    void deleteTrackedTagByIdTagIdUser(Long id, Long tagId);
 }
