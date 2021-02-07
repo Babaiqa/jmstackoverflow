@@ -4,6 +4,7 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
+import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import org.hamcrest.Matchers;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -20,6 +21,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -40,7 +43,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/question/questionQuestionApi.yml",
         "dataset/question/tagQuestionApi.yml",
         "dataset/question/question_has_tagQuestionApi.yml",
-        "dataset/question/votes_on_question.yml"},
+        "dataset/question/votes_on_question.yml",
+        "dataset/comment/comment.yml",
+        "dataset/comment/comment_question.yml"},
         useSequenceFiltering = true, cleanBefore = true, cleanAfter = false)
 @WithMockUser(username = "principal@mail.ru", roles = {"ADMIN", "USER"})
 @ActiveProfiles("local")
@@ -514,4 +519,57 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         List<CommentQuestion> resultList = entityManager.createNativeQuery("select * from comment_question where comment_id = " + dto.get("id")).getResultList();
         Assert.assertFalse(resultList.isEmpty());
     }
+
+    @Test
+    public void getCommentListByQuestionIdWithStatusOk() throws Exception {
+
+        String resultContext = this.mockMvc.perform(get("/api/question/10/comments"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        List<CommentQuestionDto> commentQuestionDtoList = objectMapper.readValue(resultContext, List.class);
+
+        System.out.println(commentQuestionDtoList);
+
+        TypedQuery<Long> q =
+                entityManager
+                        .createQuery("select from comment_question where question_id = :id", Long.class)
+                        .setParameter("id", 10);
+
+        List<Long> listOfIds = q.getResultList();
+        for (Long id : listOfIds) {
+            System.out.println(id);
+        }
+
+    }
+
+
+
+//    @Test
+//    public void shouldAddAnswerToQuestionResponseStatusOk() throws Exception {
+//        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
+//        createAnswerDto.setHtmlBody("test answer");
+//
+//        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
+//
+//        String resultContext = mockMvc.perform(MockMvcRequestBuilders
+//                .post("/api/question/15/answer")
+//                .contentType("application/json;charset=UTF-8")
+//                .content(jsonRequest))
+//                .andDo(print())
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.body").value(createAnswerDto.getHtmlBody()))
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.questionId").value(15))
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(1))
+//                .andReturn().getResponse().getContentAsString();
+//
+//        AnswerDto answerDtoFromResponse = objectMapper.readValue(resultContext, AnswerDto.class);
+//        Answer answer = entityManager
+//                .createQuery("from Answer where id = :id", Answer.class)
+//                .setParameter("id", answerDtoFromResponse.getId())
+//                .getSingleResult();
+//        AnswerDto answerDtoFromDB = answerConverter.answerToAnswerDTO(answer);
+//
+//        Assert.assertTrue(answerDtoFromResponse.getBody().equals(answerDtoFromDB.getBody()));
+//    }
 }
