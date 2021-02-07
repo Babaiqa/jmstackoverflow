@@ -1,10 +1,14 @@
 package com.javamentor.qa.platform.controllers.question;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.entity.Comment;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
+import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.webapp.converters.CommentConverter;
 import org.hamcrest.Matchers;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -19,9 +23,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,6 +35,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -53,6 +56,9 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private CommentConverter commentConverter;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -523,27 +529,43 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     @Test
     public void getCommentListByQuestionIdWithStatusOk() throws Exception {
 
+        //тестируем контроллер, получаем лист CommentQuestionDto
         String resultContext = this.mockMvc.perform(get("/api/question/10/comments"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        List<CommentQuestionDto> commentQuestionDtoList = objectMapper.readValue(resultContext, List.class);
+        List<CommentQuestionDto> commentQuestionDtoFromResponseList = objectMapper.readValue(resultContext, List.class);
 
-        System.out.println(commentQuestionDtoList);
+        Assert.assertTrue(!commentQuestionDtoFromResponseList.isEmpty());
 
-        TypedQuery<Long> q =
-                entityManager
-                        .createQuery("select from comment_question where question_id = :id", Long.class)
-                        .setParameter("id", 10);
+        //вытаскиваем из БД все id комментариев у указанного вопроса
+        //не смог вытащить CommentQuestion чтобы превратить ее в DTO
+        Query queryToCommentQuestionTable = entityManager.createNativeQuery("select comment_id from comment_question where question_id = ?");
+        queryToCommentQuestionTable.setParameter(1, 10);
+        List<BigInteger> commentsIdList = queryToCommentQuestionTable.getResultList();
 
-        List<Long> listOfIds = q.getResultList();
-        for (Long id : listOfIds) {
-            System.out.println(id);
-        }
-
+        Assert.assertTrue(!commentsIdList.isEmpty());
     }
 
+    @Test
+    public void getCommentListByQuestionIdWithStatusQuestionNotFound() throws Exception {
 
+        Question question = null;
+        try {
+            question = entityManager
+                    .createQuery("from Question where id = :id", Question.class)
+                    .setParameter("id", 130L)
+                    .getSingleResult();
+        } catch (NoResultException nre) {
+            //ignore
+        }
+
+        this.mockMvc.perform(get("/api/question/130/comments"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Question not found"));
+
+        Assert.assertTrue(question == null);
+    }
 
 //    @Test
 //    public void shouldAddAnswerToQuestionResponseStatusOk() throws Exception {
