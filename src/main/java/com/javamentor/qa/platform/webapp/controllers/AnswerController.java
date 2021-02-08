@@ -123,7 +123,7 @@ public class AnswerController {
         return ResponseEntity.ok(commentAnswerDtoList);
     }
 
-    @GetMapping("/{questionId}/isAnswerVoted/")
+    @GetMapping("/{questionId}/isAnswerVoted")
     @ApiOperation(value = "Checks if user vote up answer to the question",
             notes = "Provide an question ID, to check, if current user have already voted up ANY answer to this question",
             response = Boolean.class)
@@ -143,7 +143,7 @@ public class AnswerController {
         Optional<User> user = userService.getUserByEmail(principal.getName()); // username == email
 
         if (!user.isPresent()) {
-            return ResponseEntity.badRequest().body("User not found"); // should be unreachable
+            return ResponseEntity.badRequest().body("User not found"); // should be unreachable, if security is ok
         }
 
         List<AnswerDto> answersToCurrentQuestion = answerDtoService.getAllAnswersByQuestionId(questionId);

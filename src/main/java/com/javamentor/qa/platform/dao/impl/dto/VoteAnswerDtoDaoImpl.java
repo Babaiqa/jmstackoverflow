@@ -18,18 +18,11 @@ public class VoteAnswerDtoDaoImpl implements VoteAnswerDtoDao {
 
     @Override
     public Optional<VoteAnswerDto> getVoteByQuestionIdAndUserId(Long questionId, Long userId) {
-        TypedQuery<VoteAnswerDto> query = entityManager.createQuery("""
-                SELECT new com.javamentor.qa.platform.models.dto.VoteAnswerDto(v.id,
-                                                                               v.user.id, 
-                                                                               v.answer.id, 
-                                                                               v.persistDateTime, 
-                                                                               v.vote) 
-                FROM VoteAnswer v
-                 
-                INNER JOIN Answer a ON v.answer.id = a.id 
+        TypedQuery<VoteAnswerDto> query = entityManager.createQuery(
+                "SELECT new com.javamentor.qa.platform.models.dto.VoteAnswerDto(v.id, v.user.id, v.answer.id, v.persistDateTime, v.vote)" +
+                "FROM VoteAnswer v INNER JOIN Answer a ON v.answer.id = a.id " +
                 
-                WHERE v.user.id =: userId 
-                      AND a.question.id =: questionId""", VoteAnswerDto.class)
+                "WHERE v.user.id =: userId AND a.question.id =: questionId", VoteAnswerDto.class)
 
                 .setParameter("questionId", questionId)
                 .setParameter("userId", userId);
