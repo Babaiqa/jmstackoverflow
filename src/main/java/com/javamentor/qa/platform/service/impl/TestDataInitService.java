@@ -5,8 +5,8 @@ import com.javamentor.qa.platform.models.entity.Comment;
 import com.javamentor.qa.platform.models.entity.CommentType;
 import com.javamentor.qa.platform.models.entity.question.*;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
-import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.*;
 import com.javamentor.qa.platform.service.abstracts.model.*;
 import lombok.Data;
@@ -179,11 +179,11 @@ public class  TestDataInitService {
             userBadges.setBadge(badge);
             userBadgesService.persist(userBadges);
 
-            AnswerVote answerVote = new AnswerVote();
-            answerVote.setUser(user);
-            answerVote.setAnswer(answer);
-            answerVote.setVote(1);
-            answerVoteService.persist(answerVote);
+            VoteAnswer voteAnswer = new VoteAnswer();
+            voteAnswer.setUser(user);
+            voteAnswer.setAnswer(answer);
+            voteAnswer.setVote(1);
+            answerVoteService.persist(voteAnswer);
 
             IgnoredTag ignoredTag = new IgnoredTag();
             ignoredTag.setUser(user);
