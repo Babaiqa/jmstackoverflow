@@ -8,9 +8,8 @@
 
 <div th:fragment="question" class="snippet-hidden align-self-start" id="question-single">
     <div class="col m-2 p-4" style="border-left: 1px solid #D6D9DC;" >
-        <div header class="row justify-content-between" >
-            <div class = "col">
-                <h2>Парсинг сайта myip.ms</h2>
+        <div id="question-header" class="row justify-content-between" >
+            <div id="question-title" class = "col" style="font-size: 200%">
             </div>
             <div class = "col">
                 <a type="button" class="btn btn-primary float-right" href="/ask"  id="askQuest">Задать вопрос</a>
@@ -18,7 +17,7 @@
 
         </div>
 
-        <div underheader class="row">
+        <div id="question-underheader" class="row">
             <div class="col">
                 <p>
                     <span style="color: #6a737c">Вопрос задан:</span> сегодня&nbsp;&nbsp;&nbsp;&nbsp;
@@ -31,7 +30,7 @@
 
         <div main-area class="row">
             <div question-and-answers class="col-md-12 col-xl-9  col-lg-9 col-sm-12" aria-label="question and answers">
-                <div question >
+                <div id = "question-area" >
                     <div class="row">
                         <div vote-area-question class="col-1">
                             <svg width="36" height="36" >
@@ -44,13 +43,8 @@
                         </div>
                         <div question-and-comments-area class="col-11">
                             <div question-area>
-                                <div describlion class="s-prose js-post-body" itemprop="text">
+                                <div id="question-describtion" describlion class="s-prose js-post-body" itemprop="text">
 
-                                    <p>Пишу парсер для сайта <a href="https://myip.ms/" rel="nofollow noreferrer">https://myip.ms/</a>
-                                        И вот для этой страницы <a href="https://myip.ms/browse/sites/1/ipID/23.227.38.0/ipIDii/23.227.38.255/own/376714" rel="nofollow noreferrer">https://myip.ms/browse/sites/1/ipID/23.227.38.0/ipIDii/23.227.38.255/own/376714</a>
-                                        С этой ссылкой всё работает отлично, но если перейти на другую страницу <a href="https://myip.ms/browse/sites/2/ipID/23.227.38.0/ipIDii/23.227.38.255/own/376714" rel="nofollow noreferrer">https://myip.ms/browse/sites/2/ipID/23.227.38.0/ipIDii/23.227.38.255/own/376714</a>
-                                        То никаких данных не выводит, хотя структура сайта такая же. Я думаю что это может быть связанно с тем что на сайте стоит лимит на просмотры, или из-за того что надо зарегистрироваться, но я не могу найти какой запрос надо отправить для входа в аккаунт.
-                                        Подскажите что сделать?</p>
                                 </div>
                                 <div class="tags">
                                     <div class="mb-1">
@@ -122,7 +116,7 @@
                     </div>
                 </div>
                 <hr/>
-                <div answers>
+                <div id = "answer-area">
                     <div info class="row justify-content-between m-2 py-5">
                         <div style="font-size: 200%">
                             2 Ответа

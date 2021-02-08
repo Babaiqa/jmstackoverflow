@@ -49,12 +49,12 @@ class PaginationTag {
         this.tags.then(function (response) {
             topTenTags="<div class=\"nav-col btn-group  btn-block mr-0\">"
             for (var i = 0; i < 5; i++) {
-                topTenTags=topTenTags + '<button type=\"button\"  class=\"btn  btn-sm mr-2 mt-2  active \" ' +
+                topTenTags=topTenTags + '<button type=\"button\"  class=\"mb-1\" ' +
                     'tag_id=' + response.items[i].id + '>' + response.items[i].name + '</button>'
             }
-            topTenTags = topTenTags + "</div><div class=\"nav-col btn-group  btn-block mr-0\">"
+            topTenTags = topTenTags + "</div><div class=\"nav-col btn-group  btn-block mt-0\">"
             for (var i = 5; i < 10; i++) {
-                topTenTags = topTenTags + '<button type=\"button\"  class=\"btn  btn-sm mr-2 mb-2  active \" ' +
+                topTenTags = topTenTags + '<button type=\"button\"  class=\"mb-1\" ' +
                     'tag_id=' + response.items[i].id + '>' + response.items[i].name + '</button>'
             }
             topTenTags = topTenTags + "</div>"
