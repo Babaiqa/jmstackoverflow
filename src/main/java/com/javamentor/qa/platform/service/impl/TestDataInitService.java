@@ -150,7 +150,7 @@ public class  TestDataInitService {
             Answer answer = new Answer();
             answer.setUser(user);
             answer.setQuestion(question);
-            answer.setHtmlBody("<HtmlBody>" + i);
+            answer.setHtmlBody("Answer" + i + ":  Hello! There you can find an answer on your question: www.google.com.");
             answer.setIsHelpful(true);
             answer.setIsDeleted(false);
             answerService.persist(answer);

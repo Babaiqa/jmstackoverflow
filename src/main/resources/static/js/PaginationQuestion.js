@@ -39,10 +39,9 @@ class PaginationQuestion {
                     + ('0' + date.getMinutes()).slice(-2)
 
                 let shuffledNames = response.items[i].listTagDto.map(i => i.name).sort(() => Math.random() - 0.5);
-                let text  = shuffledNames.map(i => `<a href="#" class="tag"> ${i} </a>`).join('');
+                let text  = shuffledNames.map(i => `<a href="#" class="mb-1"> ${i} </a>`).join('');
 
                 $('.questionsTable').append(
-                    "<a href=\"api/question/" + response.items[i].id + "\"</a>" +
                     "<div class=\"question-card d-flex\">" +
                     "   <div class=\"question-stats-container\">" +
                     "       <div class=\"stats\">" +
@@ -63,13 +62,15 @@ class PaginationQuestion {
                     "       </div>" +
                     "</div>" +
                     "<div class=\"question-details\">" +
-                    "   <div class=\"question-title\"><a href=\"#\">" + response.items[i].title + "</a>" +
-                    "<a href=\"api/question/" + response.items[i].id + "\"</a>" +
+                    "   <div class=\"question-title\">" +
+                    "       <a style='color: #0077cb; font-size: 125%' id=\"questionLink"+ response.items[i].id +"\" href=\"/question/"+ response.items[i].id +"\" onclick=\"openContent(id, 'question')\" >" +
+                                response.items[i].title +
+                    "       </a>" +
                     "</div>" +
                     "   <div class=\"question-text\">" + response.items[i].description +
                     "</div>" +
                     "<div class=\"d-flex item-between\">" +
-                    "   <div class=\"w-50 card-body question-tags-container\">" +
+                    "   <div>" +
                     text +
                     "   </div>" +
                     "<div class=\"user-info\">" +
