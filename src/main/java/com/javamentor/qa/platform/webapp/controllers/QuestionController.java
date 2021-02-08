@@ -37,12 +37,12 @@ public class QuestionController {
     private final TagMapper tagMapper;
     private final TagService tagService;
     private final UserDtoService userDtoService;
-    private final AnswerVoteService answerVoteService;
+    private final VoteAnswerService voteAnswerService;
     private final AnswerService answerService;
     private final AnswerDtoService answerDtoService;
     private final AnswerConverter answerConverter;
     private final SecurityHelper securityHelper;
-    private final AnswerVoteConverter answerVoteConverter;
+    private final VoteAnswerConverter voteAnswerConverter;
     private final QuestionDtoService questionDtoService;
     private final CommentQuestionService commentQuestionService;
     private final CommentConverter commentConverter;
@@ -58,10 +58,10 @@ public class QuestionController {
                               UserDtoService userDtoService,
                               AnswerConverter answerConverter,
                               SecurityHelper securityHelper,
-                              AnswerVoteService answerVoteService,
+                              VoteAnswerService voteAnswerService,
                               AnswerService answerService,
                               AnswerDtoService answerDtoService,
-                              AnswerVoteConverter answerVoteConverter,
+                              VoteAnswerConverter voteAnswerConverter,
                               CommentQuestionService commentQuestionService,
                               CommentConverter commentConverter,
                               CommentDtoService commentDtoService) {
@@ -72,10 +72,10 @@ public class QuestionController {
         this.userDtoService = userDtoService;
         this.answerConverter = answerConverter;
         this.securityHelper = securityHelper;
-        this.answerVoteService = answerVoteService;
+        this.voteAnswerService = voteAnswerService;
         this.answerService = answerService;
         this.answerDtoService = answerDtoService;
-        this.answerVoteConverter = answerVoteConverter;
+        this.voteAnswerConverter = voteAnswerConverter;
         this.commentDtoService = commentDtoService;
         this.commentQuestionService = commentQuestionService;
         this.commentConverter = commentConverter;
@@ -480,9 +480,9 @@ public class QuestionController {
         }
 
         VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), 1);
-        answerVoteService.persist(voteAnswer);
+        voteAnswerService.persist(voteAnswer);
 
-        return ResponseEntity.ok(answerVoteConverter.answerVoteToAnswerVoteDto(voteAnswer));
+        return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
     }
 
     @PatchMapping("/{questionId}/answer/{answerId}/downVote")
@@ -509,9 +509,9 @@ public class QuestionController {
         }
 
         VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
-        answerVoteService.persist(voteAnswer);
+        voteAnswerService.persist(voteAnswer);
 
-        return ResponseEntity.ok(answerVoteConverter.answerVoteToAnswerVoteDto(voteAnswer));
+        return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
     }
 
     @PostMapping("{questionId}/comment")

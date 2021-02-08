@@ -33,7 +33,7 @@ public class  TestDataInitService {
     final CommentQuestionService commentQuestionService;
     final CommentAnswerService commentAnswerService;
     final AnswerService answerService;
-    final AnswerVoteService answerVoteService;
+    final VoteAnswerService voteAnswerService;
     final VoteQuestionService voteQuestionService;
     final RoleService roleService;
     final IgnoredTagService ignoredTagService;
@@ -50,7 +50,7 @@ public class  TestDataInitService {
                                TagService tagService, UserFavoriteQuestionService userFavoriteQuestionService,
                                RelatedTagService relatedTagService, CommentQuestionService commentQuestionService,
                                CommentAnswerService commentAnswerService, AnswerService answerService,
-                               AnswerVoteService answerVoteService, VoteQuestionService voteQuestionService, RoleService roleService,
+                               VoteAnswerService voteAnswerService, VoteQuestionService voteQuestionService, RoleService roleService,
                                IgnoredTagService ignoredTagService, TrackedTagService trackedTagService) {
         this.userService = userService;
         this.badgeService = badgeService;
@@ -64,7 +64,7 @@ public class  TestDataInitService {
         this.commentQuestionService = commentQuestionService;
         this.commentAnswerService = commentAnswerService;
         this.answerService = answerService;
-        this.answerVoteService = answerVoteService;
+        this.voteAnswerService = voteAnswerService;
         this.voteQuestionService = voteQuestionService;
         this.roleService = roleService;
         this.ignoredTagService = ignoredTagService;
@@ -183,7 +183,7 @@ public class  TestDataInitService {
             voteAnswer.setUser(user);
             voteAnswer.setAnswer(answer);
             voteAnswer.setVote(1);
-            answerVoteService.persist(voteAnswer);
+            voteAnswerService.persist(voteAnswer);
 
             IgnoredTag ignoredTag = new IgnoredTag();
             ignoredTag.setUser(user);
