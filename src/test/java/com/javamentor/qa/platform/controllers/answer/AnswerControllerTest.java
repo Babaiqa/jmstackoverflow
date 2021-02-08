@@ -4,6 +4,7 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.CommentDto;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -78,6 +79,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
         Assert.assertFalse(resultList.isEmpty());
     }
 
+
     @Test
     void userVotedForAnswerStatusOk() throws Exception{
         this.mockMvc.perform(MockMvcRequestBuilders
@@ -106,5 +108,30 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("text/plain;charset=UTF-8"))
                 .andExpect(content().string("Question not found"));
+    }
+    @Test
+    public void shouldGetAllCommentsByAnswer() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/9/answer/3/comment")
+                .content("This is very good answer!")
+                .accept(MediaType.APPLICATION_JSON));
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/9/answer/4/comment")
+                .content("Hi! I know better than you :-) !")
+                .accept(MediaType.APPLICATION_JSON));
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/9/answer/3/comment")
+                .content("The bad answer!")
+                .accept(MediaType.APPLICATION_JSON));
+
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/9/answer/3/comments")
+                .accept(MediaType.APPLICATION_JSON)).andReturn();
+
+        JSONArray array = new JSONArray(result.getResponse().getContentAsString());
+
+        Assert.assertEquals(array.length(),2);
     }
 }

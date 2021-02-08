@@ -132,7 +132,7 @@ public class AnswerController {
             @ApiResponse(code = 400, message = "User/question have not found", response = String.class),
     })
     public ResponseEntity<?> isAnyAnswerVotedByCurrentUser(@ApiParam(name = "questionId", value = "ID value, for the question, the answer to which needs to be check", required = true, example = "1")
-                                                     @PathVariable Long questionId, Principal principal) {
+                                                     @PathVariable Long questionId) {
 
         Optional<Question> question = questionService.getById(questionId);
 
@@ -140,23 +140,11 @@ public class AnswerController {
             return ResponseEntity.badRequest().body("Question not found");
         }
 
-        Optional<User> user = userService.getUserByEmail(principal.getName()); // username == email
+        User user = securityHelper.getPrincipal();
 
-        if (!user.isPresent()) {
-            return ResponseEntity.badRequest().body("User not found"); // should be unreachable, if security is ok
-        }
+        Optional<VoteAnswerDto> vote = voteAnswerDtoService.getVoteByQuestionIdAndUserId(questionId, user.getId());
 
-        List<AnswerDto> answersToCurrentQuestion = answerDtoService.getAllAnswersByQuestionId(questionId);
-
-        if (answersToCurrentQuestion.isEmpty()) {
-            return ResponseEntity.ok(false); // no answers == no possible votes :)
-        }
-
-        Optional<VoteAnswerDto> vote = voteAnswerDtoService.getVoteByQuestionIdAndUserId(questionId, user.get().getId());
-
-        if (vote.isPresent()) {
-            return ResponseEntity.ok(true);
-        }
+        if (vote.isPresent()) { return ResponseEntity.ok(true); }
 
         return ResponseEntity.ok(false);
     }
