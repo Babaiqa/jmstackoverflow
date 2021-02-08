@@ -5,14 +5,11 @@ import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
-import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.VoteAnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converters.CommentConverter;
 import com.javamentor.qa.platform.models.dto.CommentDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import io.swagger.annotations.*;
@@ -26,7 +23,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,8 +37,6 @@ public class AnswerController {
     private final SecurityHelper securityHelper;
     private final CommentDtoService commentDtoService;
     private final QuestionService questionService;
-    private final UserService userService;
-    private final AnswerDtoService answerDtoService;
     private final VoteAnswerDtoService voteAnswerDtoService;
 
 
@@ -54,9 +48,6 @@ public class AnswerController {
                             SecurityHelper securityHelper,
                             CommentDtoService commentDtoService,
                             QuestionService questionService,
-                            UserService userService,
-                            QuestionDtoService questionDtoService,
-                            AnswerDtoService answerDtoService,
                             VoteAnswerDtoService voteAnswerDtoService) {
         this.answerService = answerService;
         this.commentAnswerService = commentAnswerService;
@@ -64,8 +55,6 @@ public class AnswerController {
         this.securityHelper = securityHelper;
         this.commentDtoService = commentDtoService;
         this.questionService = questionService;
-        this.userService = userService;
-        this.answerDtoService = answerDtoService;
         this.voteAnswerDtoService = voteAnswerDtoService;
     }
 
