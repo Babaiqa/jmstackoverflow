@@ -84,7 +84,6 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     void userVotedForAnswerStatusOk() throws Exception{
         this.mockMvc.perform(MockMvcRequestBuilders
                 .get("/api/question/1/isAnswerVoted"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().string("true"));
@@ -94,7 +93,6 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     void userNotVotedForAnswerStatusOk() throws Exception{
         this.mockMvc.perform(MockMvcRequestBuilders
                 .get("/api/question/2/isAnswerVoted"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().string("false"));
@@ -104,7 +102,6 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     void userNotVotedForAnswerCuzQuestionNotFound() throws Exception{
         this.mockMvc.perform(MockMvcRequestBuilders
                 .get("/api/question/0/isAnswerVoted"))
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("text/plain;charset=UTF-8"))
                 .andExpect(content().string("Question not found"));
