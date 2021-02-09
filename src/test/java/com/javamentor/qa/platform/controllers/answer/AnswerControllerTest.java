@@ -22,6 +22,7 @@ import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,8 +30,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/answer/usersApi.yml",
         "dataset/answer/answerApi.yml",
         "dataset/answer/roleApi.yml",
-        "dataset/answer/questionApi.yml"},
-        cleanBefore = true, cleanAfter = false)
+        "dataset/answer/questionApi.yml",
+        "dataset/answer/votes_on_answers.yml"},
+        cleanBefore = true)
 @WithMockUser(username = "principal@mail.ru", roles={"ADMIN", "USER"})
 @ActiveProfiles("local")
 class AnswerControllerTest extends AbstractIntegrationTest {
@@ -77,6 +79,33 @@ class AnswerControllerTest extends AbstractIntegrationTest {
         Assert.assertFalse(resultList.isEmpty());
     }
 
+
+    @Test
+    void userVotedForAnswerStatusOk() throws Exception{
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/1/isAnswerVoted"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(content().string("true"));
+    }
+
+    @Test
+    void userNotVotedForAnswerStatusOk() throws Exception{
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/2/isAnswerVoted"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(content().string("false"));
+    }
+
+    @Test
+    void userNotVotedForAnswerCuzQuestionNotFound() throws Exception{
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/0/isAnswerVoted"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Question not found"));
+    }
     @Test
     public void shouldGetAllCommentsByAnswer() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders

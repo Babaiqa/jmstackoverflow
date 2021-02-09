@@ -5,8 +5,8 @@ import com.javamentor.qa.platform.models.entity.Comment;
 import com.javamentor.qa.platform.models.entity.CommentType;
 import com.javamentor.qa.platform.models.entity.question.*;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
-import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.*;
 import com.javamentor.qa.platform.service.abstracts.model.*;
 import lombok.Data;
@@ -33,7 +33,7 @@ public class  TestDataInitService {
     final CommentQuestionService commentQuestionService;
     final CommentAnswerService commentAnswerService;
     final AnswerService answerService;
-    final AnswerVoteService answerVoteService;
+    final VoteAnswerService voteAnswerService;
     final VoteQuestionService voteQuestionService;
     final RoleService roleService;
     final IgnoredTagService ignoredTagService;
@@ -50,7 +50,7 @@ public class  TestDataInitService {
                                TagService tagService, UserFavoriteQuestionService userFavoriteQuestionService,
                                RelatedTagService relatedTagService, CommentQuestionService commentQuestionService,
                                CommentAnswerService commentAnswerService, AnswerService answerService,
-                               AnswerVoteService answerVoteService, VoteQuestionService voteQuestionService, RoleService roleService,
+                               VoteAnswerService voteAnswerService, VoteQuestionService voteQuestionService, RoleService roleService,
                                IgnoredTagService ignoredTagService, TrackedTagService trackedTagService) {
         this.userService = userService;
         this.badgeService = badgeService;
@@ -64,7 +64,7 @@ public class  TestDataInitService {
         this.commentQuestionService = commentQuestionService;
         this.commentAnswerService = commentAnswerService;
         this.answerService = answerService;
-        this.answerVoteService = answerVoteService;
+        this.voteAnswerService = voteAnswerService;
         this.voteQuestionService = voteQuestionService;
         this.roleService = roleService;
         this.ignoredTagService = ignoredTagService;
@@ -179,11 +179,11 @@ public class  TestDataInitService {
             userBadges.setBadge(badge);
             userBadgesService.persist(userBadges);
 
-            AnswerVote answerVote = new AnswerVote();
-            answerVote.setUser(user);
-            answerVote.setAnswer(answer);
-            answerVote.setVote(1);
-            answerVoteService.persist(answerVote);
+            VoteAnswer voteAnswer = new VoteAnswer();
+            voteAnswer.setUser(user);
+            voteAnswer.setAnswer(answer);
+            voteAnswer.setVote(1);
+            voteAnswerService.persist(voteAnswer);
 
             IgnoredTag ignoredTag = new IgnoredTag();
             ignoredTag.setUser(user);

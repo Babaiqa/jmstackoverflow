@@ -1,11 +1,10 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.AnswerDtoDao;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
-import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
@@ -38,12 +37,12 @@ public class QuestionController {
     private final TagMapper tagMapper;
     private final TagService tagService;
     private final UserDtoService userDtoService;
-    private final AnswerVoteService answerVoteService;
+    private final VoteAnswerService voteAnswerService;
     private final AnswerService answerService;
     private final AnswerDtoService answerDtoService;
     private final AnswerConverter answerConverter;
     private final SecurityHelper securityHelper;
-    private final AnswerVoteConverter answerVoteConverter;
+    private final VoteAnswerConverter voteAnswerConverter;
     private final QuestionDtoService questionDtoService;
     private final CommentQuestionService commentQuestionService;
     private final CommentConverter commentConverter;
@@ -59,10 +58,10 @@ public class QuestionController {
                               UserDtoService userDtoService,
                               AnswerConverter answerConverter,
                               SecurityHelper securityHelper,
-                              AnswerVoteService answerVoteService,
+                              VoteAnswerService voteAnswerService,
                               AnswerService answerService,
                               AnswerDtoService answerDtoService,
-                              AnswerVoteConverter answerVoteConverter,
+                              VoteAnswerConverter voteAnswerConverter,
                               CommentQuestionService commentQuestionService,
                               CommentConverter commentConverter,
                               CommentDtoService commentDtoService) {
@@ -73,10 +72,10 @@ public class QuestionController {
         this.userDtoService = userDtoService;
         this.answerConverter = answerConverter;
         this.securityHelper = securityHelper;
-        this.answerVoteService = answerVoteService;
+        this.voteAnswerService = voteAnswerService;
         this.answerService = answerService;
         this.answerDtoService = answerDtoService;
-        this.answerVoteConverter = answerVoteConverter;
+        this.voteAnswerConverter = voteAnswerConverter;
         this.commentDtoService = commentDtoService;
         this.commentQuestionService = commentQuestionService;
         this.commentConverter = commentConverter;
@@ -460,7 +459,7 @@ public class QuestionController {
     @PatchMapping("/{questionId}/answer/{answerId}/upVote")
     @ResponseBody
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Answer was up voted", response = AnswerVoteDto.class),
+            @ApiResponse(code = 200, message = "Answer was up voted", response = VoteAnswerDto.class),
             @ApiResponse(code = 400, message = "Question not found", response = String.class)
     })
     public ResponseEntity<?> answerUpVote(
@@ -480,16 +479,16 @@ public class QuestionController {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
 
-        AnswerVote answerVote = new AnswerVote(securityHelper.getPrincipal(), answer.get(), 1);
-        answerVoteService.persist(answerVote);
+        VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), 1);
+        voteAnswerService.persist(voteAnswer);
 
-        return ResponseEntity.ok(answerVoteConverter.answerVoteToAnswerVoteDto(answerVote));
+        return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
     }
 
     @PatchMapping("/{questionId}/answer/{answerId}/downVote")
     @ResponseBody
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Answer was up voted", response = AnswerVoteDto.class),
+            @ApiResponse(code = 200, message = "Answer was up voted", response = VoteAnswerDto.class),
             @ApiResponse(code = 400, message = "Question not found", response = String.class)
     })
     public ResponseEntity<?> answerDownVote(
@@ -509,10 +508,10 @@ public class QuestionController {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
 
-        AnswerVote answerVote = new AnswerVote(securityHelper.getPrincipal(), answer.get(), -1);
-        answerVoteService.persist(answerVote);
+        VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
+        voteAnswerService.persist(voteAnswer);
 
-        return ResponseEntity.ok(answerVoteConverter.answerVoteToAnswerVoteDto(answerVote));
+        return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
     }
 
     @PostMapping("{questionId}/comment")
