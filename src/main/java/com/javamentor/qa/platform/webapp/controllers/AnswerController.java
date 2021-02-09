@@ -2,14 +2,11 @@ package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
-import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
-import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.VoteAnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.*;
-import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
-import com.javamentor.qa.platform.webapp.converters.AnswerVoteConverter;
 import com.javamentor.qa.platform.webapp.converters.CommentConverter;
 import com.javamentor.qa.platform.models.dto.CommentDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
@@ -41,6 +38,8 @@ public class AnswerController {
     private final SecurityHelper securityHelper;
     private final CommentDtoService commentDtoService;
     private final QuestionService questionService;
+    private final VoteAnswerDtoService voteAnswerDtoService;
+
     private final AnswerConverter answerConverter;
     private final AnswerVoteService answerVoteService;
     private final AnswerVoteConverter answerVoteConverter;
@@ -53,6 +52,8 @@ public class AnswerController {
                             CommentConverter commentConverter,
                             SecurityHelper securityHelper,
                             CommentDtoService commentDtoService,
+                            QuestionService questionService,
+                            VoteAnswerDtoService voteAnswerDtoService) {
                             QuestionService questionService, AnswerConverter answerConverter, AnswerVoteService answerVoteService, AnswerVoteConverter answerVoteConverter, AnswerDtoService answerDtoService) {
         this.answerService = answerService;
         this.commentAnswerService = commentAnswerService;
@@ -60,6 +61,7 @@ public class AnswerController {
         this.securityHelper = securityHelper;
         this.commentDtoService = commentDtoService;
         this.questionService = questionService;
+        this.voteAnswerDtoService = voteAnswerDtoService;
         this.answerConverter = answerConverter;
         this.answerVoteService = answerVoteService;
         this.answerVoteConverter = answerVoteConverter;
@@ -223,6 +225,32 @@ public class AnswerController {
         answerVoteService.persist(answerVote);
 
         return ResponseEntity.ok(answerVoteConverter.answerVoteToAnswerVoteDto(answerVote));
+    }
+
+    @GetMapping("/{questionId}/isAnswerVoted")
+    @ApiOperation(value = "Checks if user vote up answer to the question",
+            notes = "Provide an question ID, to check, if current user have already voted up ANY answer to this question",
+            response = Boolean.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "True, if user voted; False, if not", response = Boolean.class),
+            @ApiResponse(code = 400, message = "Question not found", response = String.class),
+    })
+    public ResponseEntity<?> isAnyAnswerVotedByCurrentUser(@ApiParam(name = "questionId", value = "ID value, for the question, the answer to which needs to be check", required = true, example = "1")
+                                                     @PathVariable Long questionId) {
+
+        Optional<Question> question = questionService.getById(questionId);
+
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question not found");
+        }
+
+        User user = securityHelper.getPrincipal();
+
+        Optional<VoteAnswerDto> vote = voteAnswerDtoService.getVoteByQuestionIdAndUserId(questionId, user.getId());
+
+        if (vote.isPresent()) { return ResponseEntity.ok(true); }
+
+        return ResponseEntity.ok(false);
     }
 
 }

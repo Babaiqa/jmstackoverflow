@@ -7,11 +7,7 @@ class PaginationQuestionWithoutAnswer {
         this.questionWithoutAnswers = this.questionService.getQuestionWithoutAnswers(this.page, this.size);
     }
 
-
-
-
     writeQuestionWithoutAnswer() {
-
         $('.questionWithoutAnswers').children().remove();
 
         this.questionWithoutAnswers.then(function (response) {
@@ -19,7 +15,7 @@ class PaginationQuestionWithoutAnswer {
             for (var i = 0; i < response.items.length; i++) {
 
                     let shuffledNames = response.items[i].listTagDto.map(i => i.name).sort(() => Math.random() - 0.5);
-                    let text  = shuffledNames.map(i => `<a href="#" class="tag"> ${i} </a>`).join('');
+                    let text  = shuffledNames.map(i => `<a href="#" class="mb-1"> ${i} </a>`).join('');
 
                 $('.questionWithoutAnswers').append(
                     "<div class=\"question-card d-flex\">" +
@@ -42,7 +38,10 @@ class PaginationQuestionWithoutAnswer {
                     "       </div>" +
                     "</div>" +
                     "<div class=\"question-details\">" +
-                    "   <div class=\"question-title\"><a href=\"api/question/" + response.items[i].id + "\">" + response.items[i].title + "</a></div>" +
+                    "   <div class=\"question-title\">" +
+                    "       <a style='color:#0077cb; font-size: 125%' id=\"questionLink"+ response.items[i].id +"\" href=\"/question/"+ response.items[i].id +"\" onclick=\"openContent(id, 'question')\" >" +
+                                response.items[i].title +
+                    "       </a></div>" +
                     "   <div class=\"question-text\">" + response.items[i].description +
                     "</div>" +
                     "<div class=\"d-flex item-between\">" +

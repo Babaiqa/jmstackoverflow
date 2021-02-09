@@ -4,6 +4,9 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
+import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
+import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import org.hamcrest.Matchers;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -232,6 +235,115 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("addQuestion.questionCreateDto.tags: Значение tags должно быть заполнено"));
+    }
+
+    @Test
+    void shouldAddAnswerToQuestionStatusOk() throws Exception {
+
+        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
+        createAnswerDto.setHtmlBody("test answer");
+
+        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/14/answer")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequest))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldAddAnswerToQuestionResponseStatusOk() throws Exception {
+        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
+        createAnswerDto.setHtmlBody("test answer");
+
+        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
+
+        String resultContext = mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/14/answer")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequest))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.body").value(createAnswerDto.getHtmlBody()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.questionId").value(14))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(153))
+                .andReturn().getResponse().getContentAsString();
+
+        AnswerDto answerDtoFromResponse = objectMapper.readValue(resultContext, AnswerDto.class);
+        Answer answer = entityManager
+                .createQuery("from Answer where id = :id", Answer.class)
+                .setParameter("id", answerDtoFromResponse.getId())
+                .getSingleResult();
+        AnswerDto answerDtoFromDB = answerConverter.answerToAnswerDTO(answer);
+
+        Assert.assertTrue(answerDtoFromResponse.getBody().equals(answerDtoFromDB.getBody()));
+    }
+
+    @Test
+    void shouldAddAnswerToQuestionResponseBadRequestQuestionNotFound() throws Exception {
+
+        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
+        createAnswerDto.setHtmlBody("test answer");
+
+        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/2222/answer")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequest))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Question not found"));
+    }
+
+    @Test
+    void shouldGetAnswersListFromQuestionStatusOk() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/10/answer")
+                .contentType("application/json;charset=UTF-8")
+                .param("page", "1")
+                .param("size", "10"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldGetAnswersListFromQuestionResponseStatusOk() throws Exception {
+
+        String resultContext = mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/10/answer")
+                .param("page", "1")
+                .param("size", "10"))
+                .andReturn().getResponse().getContentAsString();
+
+        List<AnswerDto> answerDtoListFromResponse = objectMapper.readValue(resultContext, new TypeReference<List<AnswerDto>>(){});
+        List<AnswerDto> answerList = (List<AnswerDto>) entityManager
+                .createQuery("SELECT new com.javamentor.qa.platform.models.dto.AnswerDto(a.id, u.id, q.id, " +
+                        "a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime, " +
+                        "(SELECT COUNT(av.answer.id) FROM VoteAnswer AS av WHERE av.answer.id = a.id), " +
+                        "u.imageLink, u.fullName) " +
+                        "FROM Answer as a " +
+                        "INNER JOIN a.user as u " +
+                        "JOIN a.question as q " +
+                        "WHERE q.id = :questionId")
+                .setParameter("questionId", 10L)
+                .getResultList();
+
+        Assert.assertTrue(answerDtoListFromResponse.equals(answerList));
+    }
+
+    @Test
+    void shouldGetAnswersListFromQuestionResponseBadRequestQuestionNotFound() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/2222/answer")
+                .contentType("application/json;charset=UTF-8")
+                .param("page", "1")
+                .param("size", "10"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Question not found"));
     }
 
     @Test
@@ -479,6 +591,103 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.totalResultCount").value(0))
                 .andExpect(jsonPath("$.items").isEmpty())
                 .andExpect(jsonPath("$.itemsOnPage").value(10));
+    }
+
+
+    @Test
+    void voteUpStatusOk() throws Exception {
+
+        List<VoteAnswer> before = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
+        int first = before.size();
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/10/answer/51/upVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.userId").isNumber())
+                .andExpect(jsonPath("$.answerId").isNumber())
+                .andExpect(jsonPath("$.persistDateTime").isNotEmpty())
+                .andExpect(jsonPath("$.vote").isNumber());
+
+        List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
+        int second = after.size();
+        Assert.assertEquals(first + 1, second);
+    }
+
+    @Test
+    void voteUpQuestionIsNotExist() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/1/answer/1/upVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Question was not found"));
+
+    }
+
+    @Test
+    void voteUpAnswerIsNotExist() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/10/answer/4/upVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Answer was not found"));
+    }
+
+    @Test
+    void voteDownStatusOk() throws Exception {
+
+        List<VoteAnswer> before = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
+        int first = before.size();
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/10/answer/51/downVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.userId").isNumber())
+                .andExpect(jsonPath("$.answerId").isNumber())
+                .andExpect(jsonPath("$.persistDateTime").isNotEmpty())
+                .andExpect(jsonPath("$.vote").isNumber());
+
+        List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
+        int second = after.size();
+        Assert.assertEquals(first + 1, second);
+    }
+
+    @Test
+    void voteDownQuestionIsNotExist() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/1/answer/1/downVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Question was not found"));
+
+    }
+
+    @Test
+    void voteDownAnswerIsNotExist() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/10/answer/4/downVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Answer was not found"));
     }
 
     @Test

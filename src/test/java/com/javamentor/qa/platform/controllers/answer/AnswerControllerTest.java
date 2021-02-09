@@ -9,7 +9,7 @@ import com.javamentor.qa.platform.models.dto.CreateAnswerDto;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
-import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -28,8 +28,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DataSet(value = {"" +
         "dataset/answer/usersApi.yml",
@@ -68,7 +68,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     public void shouldAddCommentToAnswerResponseCommentDto() throws Exception {
 
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/4/answer/14/comment")
+                .post("/api/question/1/answer/1/comment")
                 .content("This is very good answer!")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
@@ -293,4 +293,57 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().string("Answer was not found"));
     }
 
+
+
+    @Test
+    void userVotedForAnswerStatusOk() throws Exception{
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/1/isAnswerVoted"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(content().string("true"));
+    }
+
+    @Test
+    void userNotVotedForAnswerStatusOk() throws Exception{
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/2/isAnswerVoted"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(content().string("false"));
+    }
+
+    @Test
+    void userNotVotedForAnswerCuzQuestionNotFound() throws Exception{
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/0/isAnswerVoted"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Question not found"));
+    }
+    @Test
+    public void shouldGetAllCommentsByAnswer() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/9/answer/3/comment")
+                .content("This is very good answer!")
+                .accept(MediaType.APPLICATION_JSON));
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/9/answer/4/comment")
+                .content("Hi! I know better than you :-) !")
+                .accept(MediaType.APPLICATION_JSON));
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/9/answer/3/comment")
+                .content("The bad answer!")
+                .accept(MediaType.APPLICATION_JSON));
+
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/9/answer/3/comments")
+                .accept(MediaType.APPLICATION_JSON)).andReturn();
+
+        JSONArray array = new JSONArray(result.getResponse().getContentAsString());
+
+        Assert.assertEquals(array.length(),2);
+    }
 }
