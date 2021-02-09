@@ -118,7 +118,7 @@ public class AnswerController {
             response = Boolean.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "True, if user voted; False, if not", response = Boolean.class),
-            @ApiResponse(code = 400, message = "User/question have not found", response = String.class),
+            @ApiResponse(code = 400, message = "Question not found", response = String.class),
     })
     public ResponseEntity<?> isAnyAnswerVotedByCurrentUser(@ApiParam(name = "questionId", value = "ID value, for the question, the answer to which needs to be check", required = true, example = "1")
                                                      @PathVariable Long questionId) {
