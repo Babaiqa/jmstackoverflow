@@ -5,5 +5,8 @@ import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.User;
 
 public interface AnswerService extends ReadWriteService<Answer, Long> {
+    boolean isQuestionBelongUser(Question question);
+
+    void markAnswerAsHelpful(Answer answer);
 
 }

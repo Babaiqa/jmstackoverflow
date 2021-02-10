@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AnswerVoteDto implements Serializable {
+public class VoteAnswerDto implements Serializable {
 
     private Long id;
     private Long userId;

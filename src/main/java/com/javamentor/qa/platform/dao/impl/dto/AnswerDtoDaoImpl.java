@@ -20,7 +20,7 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
         return (List<AnswerDto>) entityManager.unwrap(Session.class)
                 .createQuery("SELECT new com.javamentor.qa.platform.models.dto.AnswerDto(a.id, u.id, q.id, " +
                         "a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime, " +
-                        "(SELECT COUNT(av.answer.id) FROM AnswerVote AS av WHERE av.answer.id = a.id), " +
+                        "(SELECT COUNT(av.answer.id) FROM VoteAnswer AS av WHERE av.answer.id = a.id), " +
                         "u.imageLink, u.fullName) " +
                         "FROM Answer as a " +
                         "INNER JOIN a.user as u " +

@@ -33,7 +33,13 @@ public class QuestionController {
 
     private final QuestionService questionService;
     private final TagService tagService;
+    private final UserDtoService userDtoService;
+    private final VoteAnswerService voteAnswerService;
+    private final AnswerService answerService;
+    private final AnswerDtoService answerDtoService;
+    private final AnswerConverter answerConverter;
     private final SecurityHelper securityHelper;
+    private final VoteAnswerConverter voteAnswerConverter;
     private final QuestionDtoService questionDtoService;
     private final CommentQuestionService commentQuestionService;
     private final CommentConverter commentConverter;
@@ -44,20 +50,27 @@ public class QuestionController {
     @Autowired
     public QuestionController(QuestionService questionService,
                               TagService tagService,
+                              UserDtoService userDtoService,
                               QuestionDtoService questionDtoService,
                               SecurityHelper securityHelper,
+                              VoteAnswerService voteAnswerService,
+                              AnswerService answerService,
+                              AnswerDtoService answerDtoService,
+                              AnswerConverter answerConverter,
+                              VoteAnswerConverter voteAnswerConverter,
                               CommentQuestionService commentQuestionService,
                               CommentConverter commentConverter,
                               CommentDtoService commentDtoService) {
         this.questionService = questionService;
-
         this.tagService = tagService;
+        this.userDtoService = userDtoService;
         this.questionDtoService = questionDtoService;
-
-
         this.securityHelper = securityHelper;
-
-
+        this.voteAnswerService = voteAnswerService;
+        this.answerService = answerService;
+        this.answerDtoService = answerDtoService;
+        this.answerConverter = answerConverter;
+        this.voteAnswerConverter = voteAnswerConverter;
         this.commentDtoService = commentDtoService;
         this.commentQuestionService = commentQuestionService;
         this.commentConverter = commentConverter;

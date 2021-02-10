@@ -31,3 +31,16 @@ user_entity:
     persist_date: "2020-05-28 13:58:56"
     role_id: 1
     id: 3
+
+
+  # Attention! Do not change this block(-id:4).
+  - email: "admin@tut.by"
+    reputation_count: 10
+    password: "admin"
+    about: "description 2"
+    full_name: "Admin Admin"
+    is_enabled: 1
+    last_redaction_date: "2021-02-24 22:44:3"
+    persist_date: "2020-05-28 13:58:56"
+    role_id: 2
+    id: 4

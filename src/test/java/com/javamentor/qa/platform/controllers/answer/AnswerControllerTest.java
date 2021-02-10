@@ -7,9 +7,10 @@ import com.javamentor.qa.platform.models.dto.AnswerDto;
 import com.javamentor.qa.platform.models.dto.CommentDto;
 import com.javamentor.qa.platform.models.dto.CreateAnswerDto;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
-import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -87,6 +88,62 @@ class AnswerControllerTest extends AbstractIntegrationTest {
         List<CommentAnswer> resultList = entityManager.createNativeQuery("select * from comment_answer where comment_id = " + dto.get("id")).getResultList();
         Assert.assertFalse(resultList.isEmpty());
     }
+
+
+    @Test
+    void userVotedForAnswerStatusOk() throws Exception{
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/1/isAnswerVoted"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(content().string("true"));
+    }
+
+    @Test
+    void userNotVotedForAnswerStatusOk() throws Exception{
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/2/isAnswerVoted"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(content().string("false"));
+    }
+
+    @Test
+    void userNotVotedForAnswerCuzQuestionNotFound() throws Exception{
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/0/isAnswerVoted"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Question not found"));
+    }
+
+
+    @Test
+    public void shouldGetAllCommentsByAnswer() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/9/answer/3/comment")
+                .content("This is very good answer!")
+                .accept(MediaType.APPLICATION_JSON));
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/9/answer/4/comment")
+                .content("Hi! I know better than you :-) !")
+                .accept(MediaType.APPLICATION_JSON));
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/9/answer/3/comment")
+                .content("The bad answer!")
+                .accept(MediaType.APPLICATION_JSON));
+
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/question/9/answer/3/comments")
+                .accept(MediaType.APPLICATION_JSON)).andReturn();
+
+        JSONArray array = new JSONArray(result.getResponse().getContentAsString());
+
+        Assert.assertEquals(array.length(),2);
+    }
+
 
     @Test
     void shouldGetAnswersListFromQuestionStatusOk() throws Exception {
@@ -200,7 +257,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     @Test
     void voteUpStatusOk() throws Exception {
 
-        List<AnswerVote> before = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
+        List<VoteAnswer> before = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int first = before.size();
 
         this.mockMvc.perform(MockMvcRequestBuilders
@@ -215,7 +272,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.persistDateTime").isNotEmpty())
                 .andExpect(jsonPath("$.vote").isNumber());
 
-        List<AnswerVote> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
+        List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int second = after.size();
         Assert.assertEquals(first + 1, second);
     }
@@ -248,7 +305,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     @Test
     void voteDownStatusOk() throws Exception {
 
-        List<AnswerVote> before = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
+        List<VoteAnswer> before = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int first = before.size();
 
         this.mockMvc.perform(MockMvcRequestBuilders
@@ -263,7 +320,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.persistDateTime").isNotEmpty())
                 .andExpect(jsonPath("$.vote").isNumber());
 
-        List<AnswerVote> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
+        List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int second = after.size();
         Assert.assertEquals(first + 1, second);
     }
@@ -291,6 +348,26 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
                 .andExpect(content().string("Answer was not found"));
+    }
+
+    @Test
+    @WithMockUser(username = "admin@tut.by", roles = {"ADMIN"})
+    public void shouldMarkAnswerAsHelpful() throws Exception {
+
+        Answer beforeAnswer = (Answer) entityManager.createQuery("From Answer Where id=4").getSingleResult();
+
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/10/answer/44/upVote"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
+                .andReturn();
+
+        JSONObject object = new JSONObject(result.getResponse().getContentAsString());
+
+        Answer afterAnswer = (Answer) entityManager.createQuery("From Answer Where id=44").getSingleResult();
+
+        Assert.assertFalse(beforeAnswer.getIsHelpful());
+        Assert.assertEquals(object.get("userId"),4);
+        Assert.assertTrue(afterAnswer.getIsHelpful());
     }
 
 }

@@ -1,4 +1,23 @@
 class QuestionService {
+    getQuestionById(questionId) {
+        let query = '/api/question/'+questionId;
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        }).then(response =>{
+            if (response.ok) {
+                return response.json()
+            } else {
+                let error = new Error();
+                error.response = response.text();
+                throw error;
+            }
+        }).catch(error => console.log(error.message))
+    }
+
     deleteQuestionById(id) {
         fetch('/api/question/' + id + '/delete', {
             method: 'DELETE',
@@ -15,8 +34,6 @@ class QuestionService {
             return response.json();
         }).catch(error => error.response.then(message => console.log(message)));
     }
-
-
 
     setTagForQuestion(id, tagDto) {
         fetch('/api/question/' + id + '/tag/add', {
@@ -35,11 +52,6 @@ class QuestionService {
             }
             return response.json();
         }).catch(error => error.response.then(message => console.log(message)));
-    }
-
-    getQuestionById(id) {
-        let query = '/api/question/' + id;
-        return this.getResponseQuestion(query);
     }
 
     findPagination(page, size) {
