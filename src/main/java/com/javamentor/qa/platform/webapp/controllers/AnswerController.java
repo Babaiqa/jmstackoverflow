@@ -131,7 +131,7 @@ public class AnswerController {
             @ApiResponse(code = 200, message = "Return answers for question", response = AnswerDto.class,  responseContainer = "List"),
             @ApiResponse(code = 400, message = "Question not found", response = String.class)
     })
-    public ResponseEntity<?> isAnyAnswerVotedByCurrentUser(@ApiParam(name = "questionId", value = "ID value, for the question, the answer to which needs to be check", required = true, example = "1")
+    public ResponseEntity<?> getAnswerListByQuestionId(@ApiParam(name = "questionId", value = "ID value, for the question, the answer to which needs to be check", required = true, example = "1")
                                                      @PathVariable Long questionId) {
 
         Optional<Question> question = questionService.getById(questionId);
