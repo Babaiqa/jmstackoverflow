@@ -42,5 +42,5 @@ user_entity:
     is_enabled: 1
     last_redaction_date: "2021-02-24 22:44:3"
     persist_date: "2020-05-28 13:58:56"
-    role_id: 2
+    role_id: 1
     id: 4

@@ -91,8 +91,8 @@ question:
 
 
 
-  # Attention! Do not change this block(-id: 10).
-  - id: 10
+  # Attention! Do not change this block(-id: 77).
+  - id: 77
     description: "This question use for test _shouldMarkAnswerAsHelpful()_"
     persist_date: "2020-04-04"
     title: "Question number ten"

@@ -354,10 +354,10 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     @WithMockUser(username = "admin@tut.by", roles = {"ADMIN"})
     public void shouldMarkAnswerAsHelpful() throws Exception {
 
-        Answer beforeAnswer = (Answer) entityManager.createQuery("From Answer Where id=4").getSingleResult();
+        Answer beforeAnswer = (Answer) entityManager.createQuery("From Answer Where id=44").getSingleResult();
 
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
-                .patch("/api/question/10/answer/44/upVote"))
+                .patch("/api/question/77/answer/44/upVote"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
                 .andReturn();
 
