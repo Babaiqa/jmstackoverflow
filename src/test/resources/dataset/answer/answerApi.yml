@@ -1,5 +1,5 @@
 answer:
-  - id: 14
+  - id: 1
     html_body: "This is first answer for question number one"
     is_helpful: 0
     question_id: 1
@@ -8,7 +8,7 @@ answer:
     is_deleted: 0
     update_date: "2020-01-01 13:58:56"
 
-  - id: 12
+  - id: 2
     html_body: "This is second answer for question number one"
     is_helpful: 1
     question_id: 2
@@ -17,20 +17,19 @@ answer:
     is_deleted: 0
     update_date: "2020-01-01 13:58:56"
 
-  - id: 13
-    html_body: "This is first answer for question number one"
+  - id: 3
+    html_body: "This is first answer for question number nine"
     is_helpful: 0
-    question_id: 2
+    question_id: 9
     user_id: 3
     persist_date: "2020-01-11 13:58:56"
     is_deleted: 0
     update_date: "2020-01-01 13:58:56"
 
-  # Attention! Do not change this block(-id:4).
-  - id: 44
-    html_body: "This is my answer for question number two"
+  - id: 4
+    html_body: "This is second answer for question number nine"
     is_helpful: 0
-    question_id: 10
+    question_id: 9
     user_id: 2
     persist_date: "2020-01-11 13:58:56"
     is_deleted: 0
