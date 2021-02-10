@@ -571,5 +571,41 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().string(BAD_REQUEST_MESSAGE_ALREADY_DELETED));
     }
 
+    @Test
+    @DataSet(value = "dataset/user/roleUserApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
+    void userPersistedWithoutConfirmStatusOk() throws Exception {
+        UserRegistrationDto user = new UserRegistrationDto();
+        user.setEmail("some@with.email");
+        user.setPassword("100500");
+        user.setFullName("Samuel Smith");
+
+        String jsonRequest = objectMapper.writeValueAsString(user);
+
+        this.mockMvc.perform(post("/api/auth/reg/persistWithoutConfirm")
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("email").value(user.email))
+                .andExpect(jsonPath("fullName").value(user.fullName))
+                .andExpect(jsonPath("linkImage").isEmpty())
+                .andExpect(jsonPath("reputation").value(0));
+    }
+
+    @Test
+    @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, disableConstraints = true, cleanBefore = true, cleanAfter = true)
+    void userNotPersistedWithoutConfirmCuzAlreadyExist() throws Exception {
+        UserRegistrationDto user = new UserRegistrationDto();
+        user.setEmail("ivanov@mail.ru");
+        user.setPassword("1234");
+        user.setFullName("Peter Parker");
+        String jsonRequest = objectMapper.writeValueAsString(user);
+        this.mockMvc.perform(post("/api/auth/reg/persistWithoutConfirm")
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andExpect(content().string(String.format("User with email %s already exist", user.getEmail())));
+    }
 
 }

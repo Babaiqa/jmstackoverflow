@@ -1,6 +1,5 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
-import com.javamentor.qa.platform.models.dto.CommentDto;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserRegistrationDto;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -45,11 +44,12 @@ public class RegistrationController {
     }
 
     @PostMapping("/registration")
-    @ApiOperation(value = "User registration", notes = "Provide valid UserRegistrationDto object, to register user, with email confirmation",
+    @ApiOperation(value = "User registration",
+            notes = "Provide valid UserRegistrationDto object, to register user, with email confirmation",
             response = UserDto.class)
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Registration successful", response = UserDto.class),
-            @ApiResponse(code = 400, message = "Registration is not completed", response = String.class)
+            @ApiResponse(code = 200, message = "Registration successful, need confirmation", response = UserDto.class),
+            @ApiResponse(code = 400, message = "Registration failed", response = String.class)
     })
     @Validated(OnCreate.class)
     public ResponseEntity<?> createUser(@Valid @RequestBody UserRegistrationDto userRegistrationDto ) {
@@ -62,7 +62,7 @@ public class RegistrationController {
             if (user.get().isEnabled()) {
                 return ResponseEntity.badRequest().body(String.format("User with email %s already exist", email));
             } else {
-                return ResponseEntity.badRequest().body("Registration is not completed"); // TODO: why its even here? + change message
+                return ResponseEntity.badRequest().body(String.format("User with email %s already exist, but not confirmed", email));
             }
 
         } else {
@@ -80,16 +80,57 @@ public class RegistrationController {
         }
     }
 
-    @GetMapping("/confirm")
-    public ResponseEntity<?> confirmUser(@ApiParam String token){
-        try {
-            User user = userService.getUserByEmail(jwtUtils.getUsernameFromToken(token)).get();
-            user.setIsEnabled(true);
-            userService.update(user);
-            return ResponseEntity.ok().body(userConverter.userToDto(user));
-        } catch (Exception e){
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
+    @PostMapping("/persistWithoutConfirm")
+    @ApiOperation(value = "User creation",
+            notes = "Provide valid UserRegistrationDto object, to persist user, WITHOUT email confirmation",
+            response = UserDto.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "User persisted successful", response = UserDto.class),
+            @ApiResponse(code = 400, message = "Persist failed", response = String.class)
+    })
+    @Validated(OnCreate.class)
+    public ResponseEntity<?> createUserWithoutConfirm(@Valid @RequestBody UserRegistrationDto userRegistrationDto ) {
+
+        String email = userRegistrationDto.getEmail();
+        Optional<User> user = userService.getUserByEmail(email);
+
+        if (user.isPresent()) {
+
+            return ResponseEntity.badRequest().body(String.format("User with email %s already exist", email));
+
+        } else {
+
+            User newUser = userConverter.userDtoToUser(userRegistrationDto);
+            userService.persist(newUser);
+            return ResponseEntity.ok(userConverter.userToDto(newUser));
         }
     }
+
+    @GetMapping("/confirm")
+    @ApiOperation(value = "User registration confirmation",
+            notes = "Provide String jwt, of prepared, disabled new user, to complete registration",
+            response = UserDto.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "User confirmed, and enabled", response = UserDto.class),
+            @ApiResponse(code = 400, message = "User not confirmed", response = String.class)
+    })
+    public ResponseEntity<?> confirmUser(@ApiParam(name = "token",
+                                            value = "Valid jwt needed, to check user, and confirm registration",
+                                            required = true) String token){
+
+        Optional<User> user = userService.getUserByEmail(jwtUtils.getUsernameFromToken(token));
+
+        if (user.isPresent()){
+            User newUser = user.get();
+            newUser.setIsEnabled(true);
+            userService.update(newUser);
+
+            return ResponseEntity.ok().body(userConverter.userToDto(newUser));
+
+        } else {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+    }
+
+
 }
