@@ -191,6 +191,10 @@ public class AnswerController {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
 
+        if (answerService.isQuestionBelongUser(question.get())) {
+            answerService.markAnswerAsHelpful(answer.get());
+        }
+
         VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), 1);
         voteAnswerService.persist(voteAnswer);
 
