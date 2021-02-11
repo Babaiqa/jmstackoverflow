@@ -7,7 +7,7 @@ import com.javamentor.qa.platform.models.dto.AnswerDto;
 import com.javamentor.qa.platform.models.dto.CommentDto;
 import com.javamentor.qa.platform.models.dto.CreateAnswerDto;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
-import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import org.json.JSONArray;
@@ -41,11 +41,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/answer/roleApi.yml",
         "dataset/answer/questionApi.yml",
         "dataset/question/questionQuestionApi.yml",
-        "dataset/question/answerQuestionApi.yml"},
-        cleanBefore = true, cleanAfter = false)
-        "dataset/answer/questionApi.yml",
+        "dataset/question/answerQuestionApi.yml",
         "dataset/answer/votes_on_answers.yml"},
-        cleanBefore = true)
+        cleanBefore = true, cleanAfter = false)
 @WithMockUser(username = "principal@mail.ru", roles={"ADMIN", "USER"})
 @ActiveProfiles("local")
 class AnswerControllerTest extends AbstractIntegrationTest {
@@ -207,7 +205,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     @Test
     void voteUpStatusOk() throws Exception {
 
-        List<AnswerVote> before = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
+        List<VoteAnswer> before = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int first = before.size();
 
         this.mockMvc.perform(MockMvcRequestBuilders
@@ -222,7 +220,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.persistDateTime").isNotEmpty())
                 .andExpect(jsonPath("$.vote").isNumber());
 
-        List<AnswerVote> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
+        List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int second = after.size();
         Assert.assertEquals(first + 1, second);
     }
@@ -255,7 +253,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     @Test
     void voteDownStatusOk() throws Exception {
 
-        List<AnswerVote> before = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
+        List<VoteAnswer> before = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int first = before.size();
 
         this.mockMvc.perform(MockMvcRequestBuilders
@@ -270,7 +268,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.persistDateTime").isNotEmpty())
                 .andExpect(jsonPath("$.vote").isNumber());
 
-        List<AnswerVote> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
+        List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int second = after.size();
         Assert.assertEquals(first + 1, second);
     }
