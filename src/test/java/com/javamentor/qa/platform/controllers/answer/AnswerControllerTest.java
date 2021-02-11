@@ -1,9 +1,16 @@
 package com.javamentor.qa.platform.controllers.answer;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.CreateAnswerDto;
+import com.javamentor.qa.platform.models.dto.AnswerDto;
+import com.javamentor.qa.platform.models.dto.CommentDto;
+import com.javamentor.qa.platform.models.dto.CreateAnswerDto;
+import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
+import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -23,8 +30,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DataSet(value = {"" +
         "dataset/answer/usersApi.yml",
@@ -40,6 +46,9 @@ class AnswerControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private AnswerConverter answerConverter;
 
     @PersistenceContext
     private EntityManager entityManager;

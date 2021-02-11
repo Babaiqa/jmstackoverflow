@@ -12,11 +12,16 @@ import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.CommentAnswerService;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import com.javamentor.qa.platform.webapp.converters.VoteAnswerConverter;
+import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.VoteAnswerDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
+import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import com.javamentor.qa.platform.webapp.converters.CommentConverter;
 import com.javamentor.qa.platform.models.dto.CommentDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.webapp.converters.VoteAnswerConverter;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +55,11 @@ public class AnswerController {
     private final VoteAnswerService voteAnswerService;
     private final VoteAnswerConverter voteAnswerConverter;
 
+    private final AnswerConverter answerConverter;
+    private final VoteAnswerService voteAnswerService;
+    private final VoteAnswerConverter voteAnswerConverter;
+    private final AnswerDtoService answerDtoService;
+
     @Autowired
     public AnswerController(AnswerService answerService,
                             CommentAnswerService commentAnswerService,
@@ -61,6 +71,11 @@ public class AnswerController {
                             AnswerDtoService answerDtoService,
                             AnswerConverter answerConverter,
                             VoteAnswerService voteAnswerService, VoteAnswerConverter voteAnswerConverter) {
+                            VoteAnswerDtoService voteAnswerDtoService,
+                            AnswerConverter answerConverter,
+                            VoteAnswerService voteAnswerService,
+                            VoteAnswerConverter voteAnswerConverter,
+                            AnswerDtoService answerDtoService) {
         this.answerService = answerService;
         this.commentAnswerService = commentAnswerService;
         this.commentConverter = commentConverter;
@@ -72,7 +87,12 @@ public class AnswerController {
         this.answerConverter = answerConverter;
         this.voteAnswerService = voteAnswerService;
         this.voteAnswerConverter = voteAnswerConverter;
+        this.answerConverter = answerConverter;
+        this.voteAnswerService = voteAnswerService;
+        this.voteAnswerConverter = voteAnswerConverter;
+        this.answerDtoService = answerDtoService;
     }
+
 
     @PostMapping("/{questionId}/answer/{answerId}/comment")
     @ApiOperation(value = "Add comment", notes = "This method Add comment to answer and return CommentDto")

@@ -34,7 +34,6 @@ import java.util.Optional;
 public class QuestionController {
 
     private final QuestionService questionService;
-    private final TagMapper tagMapper;
     private final TagService tagService;
     private final UserDtoService userDtoService;
     private final VoteAnswerService voteAnswerService;
@@ -52,29 +51,25 @@ public class QuestionController {
 
     @Autowired
     public QuestionController(QuestionService questionService,
-                              TagMapper tagMapper,
                               TagService tagService,
-                              QuestionDtoService questionDtoService,
-                              UserDtoService userDtoService,
-                              AnswerConverter answerConverter,
+                              UserDtoService userDtoService, QuestionDtoService questionDtoService,
                               SecurityHelper securityHelper,
                               VoteAnswerService voteAnswerService,
                               AnswerService answerService,
                               AnswerDtoService answerDtoService,
-                              VoteAnswerConverter voteAnswerConverter,
+                              AnswerConverter answerConverter, VoteAnswerConverter voteAnswerConverter,
                               CommentQuestionService commentQuestionService,
                               CommentConverter commentConverter,
                               CommentDtoService commentDtoService) {
         this.questionService = questionService;
-        this.tagMapper = tagMapper;
         this.tagService = tagService;
-        this.questionDtoService = questionDtoService;
         this.userDtoService = userDtoService;
-        this.answerConverter = answerConverter;
+        this.questionDtoService = questionDtoService;
         this.securityHelper = securityHelper;
         this.voteAnswerService = voteAnswerService;
         this.answerService = answerService;
         this.answerDtoService = answerDtoService;
+        this.answerConverter = answerConverter;
         this.voteAnswerConverter = voteAnswerConverter;
         this.commentDtoService = commentDtoService;
         this.commentQuestionService = commentQuestionService;
@@ -327,7 +322,7 @@ public class QuestionController {
         return ResponseEntity.ok(resultPage);
     }
 
-    @GetMapping(value = "/withTags", params = {"page","size", "tagIds"})
+    @GetMapping(value = "/withTags", params = {"page", "size", "tagIds"})
     @ApiOperation(value = "Return questions that include all given tags")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Return the pagination PageDto", response = PageDto.class),
@@ -439,12 +434,12 @@ public class QuestionController {
     @GetMapping("/{questionId}/comments")
     @ApiOperation(value = "Return all Comments by questionID", notes = "Return all Comments by questionID")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Return all Comments by questionID", response = CommentDto.class,  responseContainer = "List"),
+            @ApiResponse(code = 200, message = "Return all Comments by questionID", response = CommentDto.class, responseContainer = "List"),
             @ApiResponse(code = 400, message = "Question not found", response = String.class)
     })
 
     public ResponseEntity<?> getCommentListByQuestionId(@ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
-                                                       @PathVariable Long questionId) {
+                                                        @PathVariable Long questionId) {
 
         Optional<Question> question = questionService.getById(questionId);
         if (!question.isPresent()) {
