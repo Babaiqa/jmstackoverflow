@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.controllers.question;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.*;
@@ -51,6 +52,9 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private AnswerConverter answerConverter;
 
     @PersistenceContext
     private EntityManager entityManager;

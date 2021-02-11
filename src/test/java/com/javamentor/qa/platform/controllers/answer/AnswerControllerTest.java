@@ -7,8 +7,9 @@ import com.javamentor.qa.platform.models.dto.AnswerDto;
 import com.javamentor.qa.platform.models.dto.CommentDto;
 import com.javamentor.qa.platform.models.dto.CreateAnswerDto;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
-import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
+import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -28,8 +29,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DataSet(value = {"" +
         "dataset/answer/usersApi.yml",
@@ -37,7 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/answer/roleApi.yml",
         "dataset/answer/questionApi.yml",
         "dataset/question/questionQuestionApi.yml",
-        "dataset/question/answerQuestionApi.yml"},
+        "dataset/question/answerQuestionApi.yml",
+        "dataset/question/votes_on_question.yml"},
         cleanBefore = true, cleanAfter = false)
 @WithMockUser(username = "principal@mail.ru", roles={"ADMIN", "USER"})
 @ActiveProfiles("local")
@@ -68,18 +69,18 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     public void shouldAddCommentToAnswerResponseCommentDto() throws Exception {
 
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/1/answer/1/comment")
+                .post("/api/question/10/answer/14/comment")
                 .content("This is very good answer!")
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.text").value("This is very good answer!"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.persistDate", org.hamcrest.Matchers.containsString(LocalDate.now().toString())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.lastRedactionDate", org.hamcrest.Matchers.containsString(LocalDate.now().toString())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.commentType").value("ANSWER"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("Teat"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.reputation").value(2))
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.id").isNotEmpty())
+                .andExpect(jsonPath("$.text").value("This is very good answer!"))
+                .andExpect(jsonPath("$.persistDate", org.hamcrest.Matchers.containsString(LocalDate.now().toString())))
+                .andExpect(jsonPath("$.lastRedactionDate", org.hamcrest.Matchers.containsString(LocalDate.now().toString())))
+                .andExpect(jsonPath("$.commentType").value("ANSWER"))
+                .andExpect(jsonPath("$.userId").value(1))
+                .andExpect(jsonPath("$.username").value("Teat"))
+                .andExpect(jsonPath("$.reputation").value(2))
                 .andReturn();
 
         JSONObject dto = new JSONObject(result.getResponse().getContentAsString());
@@ -112,7 +113,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
         List<AnswerDto> answerList = (List<AnswerDto>) entityManager
                 .createQuery("SELECT new com.javamentor.qa.platform.models.dto.AnswerDto(a.id, u.id, q.id, " +
                         "a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime, " +
-                        "(SELECT COUNT(av.answer.id) FROM AnswerVote AS av WHERE av.answer.id = a.id), " +
+                        "(SELECT COUNT(av.answer.id) FROM VoteAnswer AS av WHERE av.answer.id = a.id), " +
                         "u.imageLink, u.fullName) " +
                         "FROM Answer as a " +
                         "INNER JOIN a.user as u " +
@@ -164,10 +165,10 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .contentType("application/json;charset=UTF-8")
                 .content(jsonRequest))
                 .andDo(print())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.body").value(createAnswerDto.getHtmlBody()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.questionId").value(15))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(1))
+                .andExpect(jsonPath("$.id").isNotEmpty())
+                .andExpect(jsonPath("$.body").value(createAnswerDto.getHtmlBody()))
+                .andExpect(jsonPath("$.questionId").value(15))
+                .andExpect(jsonPath("$.userId").value(1))
                 .andReturn().getResponse().getContentAsString();
 
         AnswerDto answerDtoFromResponse = objectMapper.readValue(resultContext, AnswerDto.class);
@@ -200,7 +201,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     @Test
     void voteUpStatusOk() throws Exception {
 
-        List<AnswerVote> before = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
+        List<VoteAnswer> before = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int first = before.size();
 
         this.mockMvc.perform(MockMvcRequestBuilders
@@ -215,7 +216,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.persistDateTime").isNotEmpty())
                 .andExpect(jsonPath("$.vote").isNumber());
 
-        List<AnswerVote> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
+        List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int second = after.size();
         Assert.assertEquals(first + 1, second);
     }
@@ -248,7 +249,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     @Test
     void voteDownStatusOk() throws Exception {
 
-        List<AnswerVote> before = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
+        List<VoteAnswer> before = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int first = before.size();
 
         this.mockMvc.perform(MockMvcRequestBuilders
@@ -263,7 +264,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.persistDateTime").isNotEmpty())
                 .andExpect(jsonPath("$.vote").isNumber());
 
-        List<AnswerVote> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
+        List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int second = after.size();
         Assert.assertEquals(first + 1, second);
     }
@@ -293,12 +294,10 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().string("Answer was not found"));
     }
 
-
-
     @Test
     void userVotedForAnswerStatusOk() throws Exception{
         this.mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/question/1/isAnswerVoted"))
+                .get("/api/question/10/isAnswerVoted"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().string("true"));
@@ -324,22 +323,22 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     @Test
     public void shouldGetAllCommentsByAnswer() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/9/answer/3/comment")
+                .post("/api/question/9/answer/13/comment")
                 .content("This is very good answer!")
                 .accept(MediaType.APPLICATION_JSON));
 
         this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/9/answer/4/comment")
+                .post("/api/question/9/answer/14/comment")
                 .content("Hi! I know better than you :-) !")
                 .accept(MediaType.APPLICATION_JSON));
 
         this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/9/answer/3/comment")
+                .post("/api/question/9/answer/13/comment")
                 .content("The bad answer!")
                 .accept(MediaType.APPLICATION_JSON));
 
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/question/9/answer/3/comments")
+                .get("/api/question/9/answer/13/comments")
                 .accept(MediaType.APPLICATION_JSON)).andReturn();
 
         JSONArray array = new JSONArray(result.getResponse().getContentAsString());
