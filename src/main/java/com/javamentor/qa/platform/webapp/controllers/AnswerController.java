@@ -233,6 +233,7 @@ public class AnswerController {
         return ResponseEntity.ok(answerVoteConverter.voteAnswerToVoteAnswerDto(answerVote));
     }
 
+
     @PatchMapping("/{questionId}/answer/{answerId}/downVote")
     @ResponseBody
     @ApiResponses({
