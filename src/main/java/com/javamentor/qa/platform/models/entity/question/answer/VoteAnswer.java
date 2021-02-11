@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AnswerVote {
+public class VoteAnswer {
 
     @Id
     @GeneratedValue(generator = "AnswerVote_seq")
@@ -47,7 +47,7 @@ public class AnswerVote {
     @Column
     private Integer vote;
 
-    public AnswerVote(User user, Answer answer, int vote) {
+    public VoteAnswer(User user, Answer answer, int vote) {
         this.user = user;
         this.answer = answer;
         this.vote = vote;

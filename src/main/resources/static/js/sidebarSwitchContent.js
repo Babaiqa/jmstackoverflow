@@ -8,19 +8,28 @@ $( document ).ready(function() {
     new PaginationQuestionWithoutAnswer(1,10).writeQuestionWithoutAnswer()
     new PaginationQuestionWithoutAnswer(1,10).totalResultCountView()
 
-    switch (location.pathname) {
-        case "/users": openContent("areaUsersLink", "areaUsers")
-            break;
-        case "/site": openContent("mainPageLink", "mainPage")
-            break;
-        case "/tagsAria": openContent("areaTagLink", "areaTag")
-            break;
-        case "/questionAria": openContent("areaQuestionLink", "areaQuestion")
-            break;
-        case "/unansweredAria": openContent("areaUnansweredLink", "areaUnanswered")
-            break;
-        case "/question/questionId": openContent("questionLink", "question")
-            break;
+    if(/^\/question\//.test(window.location.pathname)){
+        let tabcontent
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for(let i=0; i<tabcontent.length; i++){
+            tabcontent[i].style.display = "none";
+        }
+        document.getElementById("question").style.display = "block";
+        let questionId = window.location.pathname.replace(/\D/g, '')
+        new QuestionPage(questionId).populateQuestionPage()
+    } else {
+        switch (location.pathname) {
+            case "/users": openContent("areaUsersLink", "areaUsers")
+                break;
+            case "/site": openContent("mainPageLink", "mainPage")
+                break;
+            case "/tagsAria": openContent("areaTagLink", "areaTag")
+                break;
+            case "/questionAria": openContent("areaQuestionLink", "areaQuestion")
+                break;
+            case "/unansweredAria": openContent("areaUnansweredLink", "areaUnanswered")
+                break;
+        }
     }
 
     function openContent(evt, contentName){

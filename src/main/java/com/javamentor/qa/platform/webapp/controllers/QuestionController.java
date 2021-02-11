@@ -1,11 +1,10 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.AnswerDtoDao;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
-import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
@@ -38,12 +37,12 @@ public class QuestionController {
     private final TagMapper tagMapper;
     private final TagService tagService;
     private final UserDtoService userDtoService;
-    private final AnswerVoteService answerVoteService;
+    private final VoteAnswerService voteAnswerService;
     private final AnswerService answerService;
     private final AnswerDtoService answerDtoService;
     private final AnswerConverter answerConverter;
     private final SecurityHelper securityHelper;
-    private final AnswerVoteConverter answerVoteConverter;
+    private final VoteAnswerConverter voteAnswerConverter;
     private final QuestionDtoService questionDtoService;
     private final CommentQuestionService commentQuestionService;
     private final CommentConverter commentConverter;
@@ -59,10 +58,10 @@ public class QuestionController {
                               UserDtoService userDtoService,
                               AnswerConverter answerConverter,
                               SecurityHelper securityHelper,
-                              AnswerVoteService answerVoteService,
+                              VoteAnswerService voteAnswerService,
                               AnswerService answerService,
                               AnswerDtoService answerDtoService,
-                              AnswerVoteConverter answerVoteConverter,
+                              VoteAnswerConverter voteAnswerConverter,
                               CommentQuestionService commentQuestionService,
                               CommentConverter commentConverter,
                               CommentDtoService commentDtoService) {
@@ -73,10 +72,10 @@ public class QuestionController {
         this.userDtoService = userDtoService;
         this.answerConverter = answerConverter;
         this.securityHelper = securityHelper;
-        this.answerVoteService = answerVoteService;
+        this.voteAnswerService = voteAnswerService;
         this.answerService = answerService;
         this.answerDtoService = answerDtoService;
-        this.answerVoteConverter = answerVoteConverter;
+        this.voteAnswerConverter = voteAnswerConverter;
         this.commentDtoService = commentDtoService;
         this.commentQuestionService = commentQuestionService;
         this.commentConverter = commentConverter;
@@ -409,6 +408,112 @@ public class QuestionController {
         return ResponseEntity.ok(resultPage);
     }
 
+
+    @GetMapping("/{questionId}/answer")
+    @ApiOperation(value = "Return List<AnswerDto> with answers for question", notes = "This method return List<AnswerDto> with answers with has presented questionId")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Return answers for question", response = AnswerDto.class,  responseContainer = "List"),
+            @ApiResponse(code = 400, message = "Question not found", response = String.class)
+    })
+
+    public ResponseEntity<?> getAnswerListByQuestionId(@ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
+                                                 @PathVariable Long questionId) {
+
+        Optional<Question> question = questionService.getById(questionId);
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question not found");
+        }
+
+        List<AnswerDto> answerDtoList = answerDtoService.getAllAnswersByQuestionId(questionId);
+
+        return ResponseEntity.ok(answerDtoList);
+    }
+
+    @PostMapping("/{questionId}/answer")
+    @ApiOperation(value = "Add answer", notes = "This method Add answer to question and return AnswerDto")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Answer was added", response = AnswerDto.class),
+            @ApiResponse(code = 400, message = "Question or user not found", response = String.class)
+    })
+
+    public ResponseEntity<?> addAnswerToQuestion(@Valid @RequestBody CreateAnswerDto createAnswerDto,
+                                                 @ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
+                                                 @PathVariable Long questionId) {
+
+
+        User user = securityHelper.getPrincipal();
+
+        Optional<Question> question = questionService.getById(questionId);
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question not found");
+        }
+
+        Answer answer = new Answer(question.get(), user, createAnswerDto.getHtmlBody(), false, false);
+        answer.setQuestion(question.get());
+
+        answerService.persist(answer);
+
+        return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
+    }
+
+    @PatchMapping("/{questionId}/answer/{answerId}/upVote")
+    @ResponseBody
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Answer was up voted", response = VoteAnswerDto.class),
+            @ApiResponse(code = 400, message = "Question not found", response = String.class)
+    })
+    public ResponseEntity<?> answerUpVote(
+            @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
+            @PathVariable Long questionId,
+            @ApiParam(name = "answerId", value = "type Long", required = true, example = "0")
+            @PathVariable Long answerId) {
+
+
+        Optional<Question> question = questionService.getById(questionId);
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question was not found");
+        }
+
+        Optional<Answer> answer = answerService.getById(answerId);
+        if (!answer.isPresent()) {
+            return ResponseEntity.badRequest().body("Answer was not found");
+        }
+
+        VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), 1);
+        voteAnswerService.persist(voteAnswer);
+
+        return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
+    }
+
+    @PatchMapping("/{questionId}/answer/{answerId}/downVote")
+    @ResponseBody
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Answer was up voted", response = VoteAnswerDto.class),
+            @ApiResponse(code = 400, message = "Question not found", response = String.class)
+    })
+    public ResponseEntity<?> answerDownVote(
+            @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
+            @PathVariable Long questionId,
+            @ApiParam(name = "answerId", value = "type Long", required = true, example = "0")
+            @PathVariable Long answerId) {
+
+
+        Optional<Question> question = questionService.getById(questionId);
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question was not found");
+        }
+
+        Optional<Answer> answer = answerService.getById(answerId);
+        if (!answer.isPresent()) {
+            return ResponseEntity.badRequest().body("Answer was not found");
+        }
+
+        VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
+        voteAnswerService.persist(voteAnswer);
+
+        return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
+    }
+
     @PostMapping("{questionId}/comment")
     @ApiOperation(value = "Add comment", notes = "This method Add comment to question and return CommentDto")
     @ApiResponses({
@@ -456,5 +561,7 @@ public class QuestionController {
 
         return ResponseEntity.ok(commentQuestionDtoList);
     }
+
+
 
 }

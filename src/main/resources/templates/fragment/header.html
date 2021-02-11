@@ -10,12 +10,11 @@
 <div th:fragment="header">
     <nav class="navbar navbar-expand-sm  navbar-dark bg-dark text-white">
         <div class="collapse navbar-collapse " id=upNavBar>
-            <a href="/" class="logo mr22">LOGO</a>
+            <a href="/" onclick="$.cookie('token',null)" class="btn btn-primary">LOGOUT</a>
         </div>
 
         <input class="form-control mr-sm-2 w-25 p-3" type="search" placeholder="Search" aria-label="Search">
-        <input type="button" class="btn btn-primary" value="Log in"/>
-        <input type="button" class="btn btn-primary ml-2" value="Sign up"/>
+        <input type="button" class="btn btn-primary" value="Мой профиль"/>
     </nav>
 </div>
 
