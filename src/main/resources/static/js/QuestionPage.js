@@ -147,13 +147,17 @@ class QuestionPage {
                     $('#answer-area').append(
                             "<div answer1 class=\"row\">\n" +
                         "    <div vote-area-answer class=\"col-1\">\n" +
+                        '<a href=" " onclick="this.answerService.getUpVoteAnswer('+ this.questionId+','+elem.id+'\')">' +
                         "        <svg width=\"36\" height=\"36\" >\n" +
                         "              <path d=\"M2 26h32L18 10 2 26z\"></path>\n" +
                         "        </svg>\n" +
+                        '</a>' +
                         "             <div style=\"font-size: 200%\"> &nbsp;" + elem.countValuable + "</div>\n" +
+                        '<a href=" " onclick="this.answerService.getDownVoteAnswer('+ this.questionId+','+elem.id+'\')"> '+
                         "                 <svg  width=\"36\" height=\"36\" >\n" +
                         "                     <path d=\"M2 10h32L18 26 2 10z\"></path>\n" +
                         "                 </svg>\n" +
+                        '</a>' +
                         "             </div>\n" +
                         "                        <div answer-and-comments-area class=\"col-11\">\n" +
                         "                            <div>" +
