@@ -19,6 +19,7 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +50,7 @@ public class AnswerController {
     private final VoteAnswerService voteAnswerService;
     private final VoteAnswerConverter voteAnswerConverter;
 
-
+    @Autowired
     public AnswerController(AnswerService answerService,
                             CommentAnswerService commentAnswerService,
                             CommentConverter commentConverter,
@@ -102,7 +103,7 @@ public class AnswerController {
     @GetMapping("/{questionId}/answer/{answerId}/comments")
     @ApiOperation(value = "Return all Comments by answerID", notes = "Return all Comments by answerID")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Return all Comments by answerID", response = CommentDto.class,  responseContainer = "List"),
+            @ApiResponse(code = 200, message = "Return all Comments by answerID", response = CommentDto.class, responseContainer = "List"),
             @ApiResponse(code = 400, message = "Answer not found", response = String.class)
     })
 
@@ -130,7 +131,7 @@ public class AnswerController {
     @GetMapping("/{questionId}/answer")
     @ApiOperation(value = "Return List<AnswerDto> with answers for question", notes = "This method return List<AnswerDto> with answers with has presented questionId")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Return answers for question", response = AnswerDto.class,  responseContainer = "List"),
+            @ApiResponse(code = 200, message = "Return answers for question", response = AnswerDto.class, responseContainer = "List"),
             @ApiResponse(code = 400, message = "Question not found", response = String.class)
     })
 
@@ -241,7 +242,7 @@ public class AnswerController {
             @ApiResponse(code = 400, message = "Question not found", response = String.class),
     })
     public ResponseEntity<?> isAnyAnswerVotedByCurrentUser(@ApiParam(name = "questionId", value = "ID value, for the question, the answer to which needs to be check", required = true, example = "1")
-                                                     @PathVariable Long questionId) {
+                                                           @PathVariable Long questionId) {
 
         Optional<Question> question = questionService.getById(questionId);
 
@@ -253,7 +254,9 @@ public class AnswerController {
 
         Optional<VoteAnswerDto> vote = voteAnswerDtoService.getVoteByQuestionIdAndUserId(questionId, user.getId());
 
-        if (vote.isPresent()) { return ResponseEntity.ok(true); }
+        if (vote.isPresent()) {
+            return ResponseEntity.ok(true);
+        }
 
         return ResponseEntity.ok(false);
     }
