@@ -2,5 +2,5 @@ tag_ignore:
 
   - id: 111
     persist_date:
-    ignored_tag_id: 111
+    ignored_tag_id: 6
     user_id: 111

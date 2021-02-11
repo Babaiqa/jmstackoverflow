@@ -11,17 +11,9 @@ user_entity:
     role_id: 1
     id: 111
 
-tag:
-
-  - id: 111
-    description: "Tag Description 111"
-    name: "Tag Name111"
-    persist_date:
-
-
 tag_tracked:
 
-  - id: 111
+  - id: 12
     persist_date:
-    tracked_tag_id: 111
+    tracked_tag_id: 6
     user_id: 111

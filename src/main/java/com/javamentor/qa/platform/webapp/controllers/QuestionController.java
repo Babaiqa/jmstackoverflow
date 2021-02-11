@@ -3,8 +3,6 @@ package com.javamentor.qa.platform.webapp.controllers;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.models.entity.question.answer.Answer;
-import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
@@ -36,22 +34,22 @@ public class QuestionController {
     private final QuestionService questionService;
     private final TagMapper tagMapper;
     private final TagService tagService;
-    private final UserDtoService userDtoService;
-    private final VoteAnswerService voteAnswerService;
-    private final AnswerService answerService;
-    private final AnswerDtoService answerDtoService;
-    private final AnswerConverter answerConverter;
     private final SecurityHelper securityHelper;
-    private final VoteAnswerConverter voteAnswerConverter;
     private final QuestionDtoService questionDtoService;
     private final CommentQuestionService commentQuestionService;
     private final CommentConverter commentConverter;
     private final CommentDtoService commentDtoService;
+    private final QuestionConverter questionConverter;
+    private final UserConverter userConverter;
+    private final UserService userService;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
     public QuestionController(QuestionService questionService,
+                              TagService tagService,
+                              SecurityHelper securityHelper,
+                              QuestionDtoService questionDtoService,
                               TagMapper tagMapper, TagService tagService,
                               UserDtoService userDtoService, QuestionDtoService questionDtoService,
                               SecurityHelper securityHelper,
@@ -61,7 +59,10 @@ public class QuestionController {
                               AnswerConverter answerConverter, VoteAnswerConverter voteAnswerConverter,
                               CommentQuestionService commentQuestionService,
                               CommentConverter commentConverter,
-                              CommentDtoService commentDtoService) {
+                              CommentDtoService commentDtoService,
+                              QuestionConverter questionConverter,
+                              UserConverter userConverter,
+                              UserService userService) {
         this.questionService = questionService;
         this.tagMapper = tagMapper;
         this.tagService = tagService;
@@ -74,20 +75,14 @@ public class QuestionController {
         this.answerConverter = answerConverter;
         this.voteAnswerConverter = voteAnswerConverter;
         this.commentDtoService = commentDtoService;
+        this.questionDtoService = questionDtoService;
         this.commentQuestionService = commentQuestionService;
         this.commentConverter = commentConverter;
-
+        this.commentDtoService = commentDtoService;
+        this.questionConverter = questionConverter;
+        this.userConverter = userConverter;
+        this.userService = userService;
     }
-
-    @Autowired
-    public QuestionConverter questionConverter;
-
-    @Autowired
-    public UserConverter userConverter;
-
-    @Autowired
-    public UserService userService;
-
 
     @DeleteMapping("/{id}/delete")
     @ApiOperation(value = "Delete question", response = String.class)

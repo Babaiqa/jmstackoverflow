@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.controllers.answer;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
+import com.javamentor.qa.platform.models.dto.CreateAnswerDto;
 import com.javamentor.qa.platform.models.dto.AnswerDto;
 import com.javamentor.qa.platform.models.dto.CommentDto;
 import com.javamentor.qa.platform.models.dto.CreateAnswerDto;
@@ -29,19 +30,14 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @DataSet(value = {"" +
         "dataset/answer/usersApi.yml",
         "dataset/answer/answerApi.yml",
         "dataset/answer/roleApi.yml",
-        "dataset/answer/questionApi.yml",
         "dataset/question/questionQuestionApi.yml",
-        "dataset/question/answerQuestionApi.yml",
+        "dataset/answer/questionApi.yml",
         "dataset/answer/votes_on_answers.yml"},
         cleanBefore = true, cleanAfter = false)
 @WithMockUser(username = "principal@mail.ru", roles={"ADMIN", "USER"})
@@ -60,7 +56,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     @Test
     public void shouldAddCommentToAnswerResponseBadRequestAnswerNotFound() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/1/answer/99999/comment")
+                .post("/api/question/10/answer/99999/comment")
                 .content("This is very good answer!")
                 .accept(MediaType.TEXT_PLAIN_VALUE))
                 .andExpect(status().isBadRequest())
@@ -73,7 +69,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     public void shouldAddCommentToAnswerResponseCommentDto() throws Exception {
 
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/4/answer/14/comment")
+                .post("/api/question/14/answer/20/comment")
                 .content("This is very good answer!")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
@@ -91,54 +87,6 @@ class AnswerControllerTest extends AbstractIntegrationTest {
 
         List<CommentAnswer> resultList = entityManager.createNativeQuery("select * from comment_answer where comment_id = " + dto.get("id")).getResultList();
         Assert.assertFalse(resultList.isEmpty());
-    }
-
-    @Test
-    void shouldGetAnswersListFromQuestionStatusOk() throws Exception {
-
-        this.mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/question/10/answer")
-                .contentType("application/json;charset=UTF-8")
-                .param("page", "1")
-                .param("size", "10"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void shouldGetAnswersListFromQuestionResponseStatusOk() throws Exception {
-
-        String resultContext = mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/question/10/answer")
-                .param("page", "1")
-                .param("size", "10"))
-                .andReturn().getResponse().getContentAsString();
-
-        List<AnswerDto> answerDtoListFromResponse = objectMapper.readValue(resultContext, new TypeReference<List<AnswerDto>>(){});
-        List<AnswerDto> answerList = (List<AnswerDto>) entityManager
-                .createQuery("SELECT new com.javamentor.qa.platform.models.dto.AnswerDto(a.id, u.id, q.id, " +
-                        "a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime, " +
-                        "(SELECT COUNT(av.answer.id) FROM AnswerVote AS av WHERE av.answer.id = a.id), " +
-                        "u.imageLink, u.fullName) " +
-                        "FROM Answer as a " +
-                        "INNER JOIN a.user as u " +
-                        "JOIN a.question as q " +
-                        "WHERE q.id = :questionId")
-                .setParameter("questionId", 10L)
-                .getResultList();
-
-        Assert.assertTrue(answerDtoListFromResponse.equals(answerList));
-    }
-
-    @Test
-    void shouldGetAnswersListFromQuestionResponseBadRequestQuestionNotFound() throws Exception {
-
-        this.mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/question/2222/answer")
-                .contentType("application/json;charset=UTF-8")
-                .param("page", "1")
-                .param("size", "10"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Question not found"));
     }
 
     @Test
@@ -329,22 +277,22 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     @Test
     public void shouldGetAllCommentsByAnswer() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/9/answer/3/comment")
+                .post("/api/question/9/answer/30/comment")
                 .content("This is very good answer!")
                 .accept(MediaType.APPLICATION_JSON));
 
         this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/9/answer/4/comment")
+                .post("/api/question/9/answer/20/comment")
                 .content("Hi! I know better than you :-) !")
                 .accept(MediaType.APPLICATION_JSON));
 
         this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/9/answer/3/comment")
+                .post("/api/question/9/answer/30/comment")
                 .content("The bad answer!")
                 .accept(MediaType.APPLICATION_JSON));
 
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/question/9/answer/3/comments")
+                .get("/api/question/9/answer/30/comments")
                 .accept(MediaType.APPLICATION_JSON)).andReturn();
 
         JSONArray array = new JSONArray(result.getResponse().getContentAsString());
