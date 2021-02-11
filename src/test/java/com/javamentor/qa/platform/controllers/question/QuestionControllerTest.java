@@ -3,10 +3,7 @@ package com.javamentor.qa.platform.controllers.question;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
-import com.javamentor.qa.platform.models.dto.PageDto;
-import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
-import com.javamentor.qa.platform.models.dto.QuestionDto;
-import com.javamentor.qa.platform.models.dto.TagDto;
+import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
@@ -14,7 +11,6 @@ import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import org.hamcrest.Matchers;
 import org.json.JSONObject;
 import org.junit.Assert;
-import com.javamentor.qa.platform.models.dto.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -32,13 +28,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-
-import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -58,11 +53,11 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @Autowired
     private AnswerConverter answerConverter;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Test
     void getAllDto() throws Exception {
@@ -244,22 +239,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("addQuestion.questionCreateDto.tags: Значение tags должно быть заполнено"));
-    }
-
-    @Test
-    void shouldAddAnswerToQuestionStatusOk() throws Exception {
-
-        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
-        createAnswerDto.setHtmlBody("test answer");
-
-        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
-
-        this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/14/answer")
-                .contentType("application/json;charset=UTF-8")
-                .content(jsonRequest))
-                .andDo(print())
-                .andExpect(status().isOk());
     }
 
     @Test

@@ -2,10 +2,11 @@ package com.javamentor.qa.platform.controllers.tag;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
-import com.javamentor.qa.platform.models.dto.PageDto;
-import com.javamentor.qa.platform.models.dto.TagDto;
-import com.javamentor.qa.platform.models.dto.TagListDto;
-import com.javamentor.qa.platform.models.dto.TagRecentDto;
+import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.entity.question.Tag;
+import com.javamentor.qa.platform.models.entity.question.TrackedTag;
+import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.webapp.converters.TagTrackedConverter;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,11 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,12 +37,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/tag/tracked_tag.yml",
         "dataset/tag/ignored_tag.yml"}
         , cleanBefore = true, cleanAfter = true)
-@WithMockUser(username = "principal@mail.ru", roles={"ADMIN", "USER"})
+@WithMockUser(username = "principal@mail.ru", roles = {"ADMIN", "USER"})
 @ActiveProfiles("local")
 public class TagControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private TagTrackedConverter tagTrackedConverter;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     private static final String POPULAR = "/api/tag/popular";
     private static final String RECENT = "/api/tag/recent";
@@ -640,4 +652,193 @@ public class TagControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.items").isEmpty());
     }
 
+    @Test
+    public void addTagTrackedStatusOk() throws Exception {
+
+        final String TAG_NAME = "java";
+
+        //достаем тэг из бд
+        Tag tag = entityManager
+                .createQuery("from Tag where name = :name", Tag.class)
+                .setParameter("name", TAG_NAME)
+                .getSingleResult();
+
+        this.mockMvc.perform(post("/api/tag/tracked/add").param(REQUEST_PARAM_FOR_ADD_TAGS, TAG_NAME))
+                .andExpect(status().isOk());
+
+        //проверяем что этот тэг добавлен в отслеживаемые
+        BigInteger trackedTagId = null;
+        try {
+            Query query = entityManager.createNativeQuery("select id from tag_tracked where tracked_tag_id = ?");
+            query.setParameter(1, tag.getId());
+            trackedTagId = (BigInteger) query.getSingleResult();
+        } catch (NoResultException nre) {
+            throw nre;
+        }
+    }
+
+    @Test
+    public void addTagTrackedStatusNotExistOnThisSite() throws Exception {
+
+        final String TAG_NAME = "Tag Name11";
+
+        Tag tag = null;
+        try {
+            //достаем тэг из бд
+            tag = entityManager
+                    .createQuery("from Tag where name = :name", Tag.class)
+                    .setParameter("name", TAG_NAME)
+                    .getSingleResult();
+        } catch (NoResultException nre) {
+            //ignore
+        }
+
+        if (tag == null) {
+            this.mockMvc.perform(post("/api/tag/tracked/add").param(REQUEST_PARAM_FOR_ADD_TAGS, TAG_NAME))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().string("The Tag Name11 does not exist on this site"));
+        }
+
+    }
+
+    @Test
+    public void addTagTrackedStatusHasAlreadyBeenAdded() throws Exception {
+
+        final String TAG_NAME = "java";
+
+        //достаем тэг из бд
+        Tag tag = entityManager
+                .createQuery("from Tag where name = :name", Tag.class)
+                .setParameter("name", TAG_NAME)
+                .getSingleResult();
+
+        //проверяем что этот тэг не добавлен в отслеживаемые
+        BigInteger trackedTagId = null;
+        try {
+            Query query = entityManager.createNativeQuery("select id from tag_tracked where tracked_tag_id = ?");
+            query.setParameter(1, tag.getId());
+            trackedTagId = (BigInteger) query.getSingleResult();
+        } catch (NoResultException nre) {
+            //ignore
+        }
+
+        //добавляем тэг в отслеживаемые
+        if (trackedTagId == null) {
+            this.mockMvc.perform(post("/api/tag/tracked/add").param(REQUEST_PARAM_FOR_ADD_TAGS, TAG_NAME))
+                    .andExpect(status().isOk());
+        } else {
+            this.mockMvc.perform(post("/api/tag/tracked/add").param(REQUEST_PARAM_FOR_ADD_TAGS, TAG_NAME))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().string("The tracked tag has already been added"));
+        }
+
+        //проверяем что этот тэг добавлен в отслеживаемые
+        try {
+            Query query = entityManager.createNativeQuery("select id from tag_tracked where tracked_tag_id = ?");
+            query.setParameter(1, tag.getId());
+            trackedTagId = (BigInteger) query.getSingleResult();
+        } catch (NoResultException nre) {
+            throw nre;
+        }
+
+        //тестируем ответ "The tracked tag has already been added"
+        this.mockMvc.perform(post("/api/tag/tracked/add").param(REQUEST_PARAM_FOR_ADD_TAGS, TAG_NAME))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("The tracked tag has already been added"));
+
+    }
+
+    @Test
+    public void addTagIgnoredStatusOk() throws Exception {
+
+        final String TAG_NAME = "java";
+
+        //достаем тэг из бд
+        Tag tag = entityManager
+                .createQuery("from Tag where name = :name", Tag.class)
+                .setParameter("name", TAG_NAME)
+                .getSingleResult();
+
+        this.mockMvc.perform(post("/api/tag/ignored/add").param(REQUEST_PARAM_FOR_ADD_TAGS, TAG_NAME))
+                .andExpect(status().isOk());
+
+        //проверяем что этот тэг добавлен в отслеживаемые
+        BigInteger ignoredTagId = null;
+        try {
+            Query query = entityManager.createNativeQuery("select id from tag_ignore where ignored_tag_id = ?");
+            query.setParameter(1, tag.getId());
+            ignoredTagId = (BigInteger) query.getSingleResult();
+        } catch (NoResultException nre) {
+            throw nre;
+        }
+    }
+
+    @Test
+    public void addTagIgnoredStatusNotExistOnThisSite() throws Exception {
+
+        final String TAG_NAME = "Tag Name11";
+
+        Tag tag = null;
+        try {
+            //достаем тэг из бд
+            tag = entityManager
+                    .createQuery("from Tag where name = :name", Tag.class)
+                    .setParameter("name", TAG_NAME)
+                    .getSingleResult();
+        } catch (NoResultException nre) {
+            //ignore
+        }
+
+        if (tag == null) {
+            this.mockMvc.perform(post("/api/tag/ignored/add").param(REQUEST_PARAM_FOR_ADD_TAGS, TAG_NAME))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().string("The Tag Name11 does not exist on this site"));
+        }
+    }
+
+    @Test
+    public void addTagIgnoredStatusHasAlreadyBeenAdded() throws Exception {
+
+        final String TAG_NAME = "java";
+
+        //достаем тэг из бд
+        Tag tag = entityManager
+                .createQuery("from Tag where name = :name", Tag.class)
+                .setParameter("name", TAG_NAME)
+                .getSingleResult();
+
+        //проверяем что этот тэг не добавлен в отслеживаемые
+        BigInteger ignoredTagId = null;
+        try {
+            Query query = entityManager.createNativeQuery("select id from tag_ignore where ignored_tag_id = ?");
+            query.setParameter(1, tag.getId());
+            ignoredTagId = (BigInteger) query.getSingleResult();
+        } catch (NoResultException nre) {
+            //ignore
+        }
+
+        //добавляем тэг в отслеживаемые
+        if (ignoredTagId == null) {
+            this.mockMvc.perform(post("/api/tag/ignored/add").param(REQUEST_PARAM_FOR_ADD_TAGS, TAG_NAME))
+                    .andExpect(status().isOk());
+        } else {
+            this.mockMvc.perform(post("/api/tag/ignored/add").param(REQUEST_PARAM_FOR_ADD_TAGS, TAG_NAME))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().string("The ignored tag has already been added"));
+        }
+
+        //проверяем что этот тэг добавлен в отслеживаемые
+        try {
+            Query query = entityManager.createNativeQuery("select id from tag_ignore where ignored_tag_id = ?");
+            query.setParameter(1, tag.getId());
+            ignoredTagId = (BigInteger) query.getSingleResult();
+        } catch (NoResultException nre) {
+            throw nre;
+        }
+
+        //тестируем ответ "The tracked tag has already been added"
+        this.mockMvc.perform(post("/api/tag/ignored/add").param(REQUEST_PARAM_FOR_ADD_TAGS, TAG_NAME))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("The ignored tag has already been added"));
+    }
 }

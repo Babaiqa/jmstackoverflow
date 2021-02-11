@@ -33,59 +33,39 @@ public class QuestionController {
 
     private final QuestionService questionService;
     private final TagService tagService;
-    private final UserDtoService userDtoService;
-    private final VoteAnswerService voteAnswerService;
-    private final AnswerService answerService;
-    private final AnswerDtoService answerDtoService;
-    private final AnswerConverter answerConverter;
     private final SecurityHelper securityHelper;
-    private final VoteAnswerConverter voteAnswerConverter;
     private final QuestionDtoService questionDtoService;
     private final CommentQuestionService commentQuestionService;
     private final CommentConverter commentConverter;
     private final CommentDtoService commentDtoService;
+    private final QuestionConverter questionConverter;
+    private final UserConverter userConverter;
+    private final UserService userService;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
     public QuestionController(QuestionService questionService,
                               TagService tagService,
-                              UserDtoService userDtoService,
-                              QuestionDtoService questionDtoService,
                               SecurityHelper securityHelper,
-                              VoteAnswerService voteAnswerService,
-                              AnswerService answerService,
-                              AnswerDtoService answerDtoService,
-                              AnswerConverter answerConverter,
-                              VoteAnswerConverter voteAnswerConverter,
+                              QuestionDtoService questionDtoService,
                               CommentQuestionService commentQuestionService,
                               CommentConverter commentConverter,
-                              CommentDtoService commentDtoService) {
+                              CommentDtoService commentDtoService,
+                              QuestionConverter questionConverter,
+                              UserConverter userConverter,
+                              UserService userService) {
         this.questionService = questionService;
         this.tagService = tagService;
-        this.userDtoService = userDtoService;
-        this.questionDtoService = questionDtoService;
         this.securityHelper = securityHelper;
-        this.voteAnswerService = voteAnswerService;
-        this.answerService = answerService;
-        this.answerDtoService = answerDtoService;
-        this.answerConverter = answerConverter;
-        this.voteAnswerConverter = voteAnswerConverter;
-        this.commentDtoService = commentDtoService;
+        this.questionDtoService = questionDtoService;
         this.commentQuestionService = commentQuestionService;
         this.commentConverter = commentConverter;
-
+        this.commentDtoService = commentDtoService;
+        this.questionConverter = questionConverter;
+        this.userConverter = userConverter;
+        this.userService = userService;
     }
-
-    @Autowired
-    public QuestionConverter questionConverter;
-
-    @Autowired
-    public UserConverter userConverter;
-
-    @Autowired
-    public UserService userService;
-
 
     @DeleteMapping("/{id}/delete")
     @ApiOperation(value = "Delete question", response = String.class)
