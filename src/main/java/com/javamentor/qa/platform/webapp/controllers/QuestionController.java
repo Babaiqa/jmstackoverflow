@@ -34,7 +34,6 @@ import java.util.Optional;
 public class QuestionController {
 
     private final QuestionService questionService;
-    private final TagMapper tagMapper;
     private final TagService tagService;
     private final UserDtoService userDtoService;
     private final VoteAnswerService voteAnswerService;
@@ -52,29 +51,25 @@ public class QuestionController {
 
     @Autowired
     public QuestionController(QuestionService questionService,
-                              TagMapper tagMapper,
                               TagService tagService,
-                              QuestionDtoService questionDtoService,
-                              UserDtoService userDtoService,
-                              AnswerConverter answerConverter,
+                              UserDtoService userDtoService, QuestionDtoService questionDtoService,
                               SecurityHelper securityHelper,
                               VoteAnswerService voteAnswerService,
                               AnswerService answerService,
                               AnswerDtoService answerDtoService,
-                              VoteAnswerConverter voteAnswerConverter,
+                              AnswerConverter answerConverter, VoteAnswerConverter voteAnswerConverter,
                               CommentQuestionService commentQuestionService,
                               CommentConverter commentConverter,
                               CommentDtoService commentDtoService) {
         this.questionService = questionService;
-        this.tagMapper = tagMapper;
         this.tagService = tagService;
-        this.questionDtoService = questionDtoService;
         this.userDtoService = userDtoService;
-        this.answerConverter = answerConverter;
+        this.questionDtoService = questionDtoService;
         this.securityHelper = securityHelper;
         this.voteAnswerService = voteAnswerService;
         this.answerService = answerService;
         this.answerDtoService = answerDtoService;
+        this.answerConverter = answerConverter;
         this.voteAnswerConverter = voteAnswerConverter;
         this.commentDtoService = commentDtoService;
         this.commentQuestionService = commentQuestionService;
@@ -327,7 +322,7 @@ public class QuestionController {
         return ResponseEntity.ok(resultPage);
     }
 
-    @GetMapping(value = "/withTags", params = {"page","size", "tagIds"})
+    @GetMapping(value = "/withTags", params = {"page", "size", "tagIds"})
     @ApiOperation(value = "Return questions that include all given tags")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Return the pagination PageDto", response = PageDto.class),
@@ -408,112 +403,6 @@ public class QuestionController {
         return ResponseEntity.ok(resultPage);
     }
 
-
-    @GetMapping("/{questionId}/answer")
-    @ApiOperation(value = "Return List<AnswerDto> with answers for question", notes = "This method return List<AnswerDto> with answers with has presented questionId")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Return answers for question", response = AnswerDto.class,  responseContainer = "List"),
-            @ApiResponse(code = 400, message = "Question not found", response = String.class)
-    })
-
-    public ResponseEntity<?> getAnswerListByQuestionId(@ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
-                                                 @PathVariable Long questionId) {
-
-        Optional<Question> question = questionService.getById(questionId);
-        if (!question.isPresent()) {
-            return ResponseEntity.badRequest().body("Question not found");
-        }
-
-        List<AnswerDto> answerDtoList = answerDtoService.getAllAnswersByQuestionId(questionId);
-
-        return ResponseEntity.ok(answerDtoList);
-    }
-
-    @PostMapping("/{questionId}/answer")
-    @ApiOperation(value = "Add answer", notes = "This method Add answer to question and return AnswerDto")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Answer was added", response = AnswerDto.class),
-            @ApiResponse(code = 400, message = "Question or user not found", response = String.class)
-    })
-
-    public ResponseEntity<?> addAnswerToQuestion(@Valid @RequestBody CreateAnswerDto createAnswerDto,
-                                                 @ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
-                                                 @PathVariable Long questionId) {
-
-
-        User user = securityHelper.getPrincipal();
-
-        Optional<Question> question = questionService.getById(questionId);
-        if (!question.isPresent()) {
-            return ResponseEntity.badRequest().body("Question not found");
-        }
-
-        Answer answer = new Answer(question.get(), user, createAnswerDto.getHtmlBody(), false, false);
-        answer.setQuestion(question.get());
-
-        answerService.persist(answer);
-
-        return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
-    }
-
-    @PatchMapping("/{questionId}/answer/{answerId}/upVote")
-    @ResponseBody
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Answer was up voted", response = VoteAnswerDto.class),
-            @ApiResponse(code = 400, message = "Question not found", response = String.class)
-    })
-    public ResponseEntity<?> answerUpVote(
-            @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
-            @PathVariable Long questionId,
-            @ApiParam(name = "answerId", value = "type Long", required = true, example = "0")
-            @PathVariable Long answerId) {
-
-
-        Optional<Question> question = questionService.getById(questionId);
-        if (!question.isPresent()) {
-            return ResponseEntity.badRequest().body("Question was not found");
-        }
-
-        Optional<Answer> answer = answerService.getById(answerId);
-        if (!answer.isPresent()) {
-            return ResponseEntity.badRequest().body("Answer was not found");
-        }
-
-        VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), 1);
-        voteAnswerService.persist(voteAnswer);
-
-        return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
-    }
-
-    @PatchMapping("/{questionId}/answer/{answerId}/downVote")
-    @ResponseBody
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Answer was up voted", response = VoteAnswerDto.class),
-            @ApiResponse(code = 400, message = "Question not found", response = String.class)
-    })
-    public ResponseEntity<?> answerDownVote(
-            @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
-            @PathVariable Long questionId,
-            @ApiParam(name = "answerId", value = "type Long", required = true, example = "0")
-            @PathVariable Long answerId) {
-
-
-        Optional<Question> question = questionService.getById(questionId);
-        if (!question.isPresent()) {
-            return ResponseEntity.badRequest().body("Question was not found");
-        }
-
-        Optional<Answer> answer = answerService.getById(answerId);
-        if (!answer.isPresent()) {
-            return ResponseEntity.badRequest().body("Answer was not found");
-        }
-
-        VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
-        voteAnswerService.persist(voteAnswer);
-
-        return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
-    }
-
     @PostMapping("{questionId}/comment")
     @ApiOperation(value = "Add comment", notes = "This method Add comment to question and return CommentDto")
     @ApiResponses({
@@ -545,12 +434,12 @@ public class QuestionController {
     @GetMapping("/{questionId}/comments")
     @ApiOperation(value = "Return all Comments by questionID", notes = "Return all Comments by questionID")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Return all Comments by questionID", response = CommentDto.class,  responseContainer = "List"),
+            @ApiResponse(code = 200, message = "Return all Comments by questionID", response = CommentDto.class, responseContainer = "List"),
             @ApiResponse(code = 400, message = "Question not found", response = String.class)
     })
 
     public ResponseEntity<?> getCommentListByQuestionId(@ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
-                                                       @PathVariable Long questionId) {
+                                                        @PathVariable Long questionId) {
 
         Optional<Question> question = questionService.getById(questionId);
         if (!question.isPresent()) {
