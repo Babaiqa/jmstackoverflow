@@ -6,6 +6,8 @@ import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
+import com.javamentor.qa.platform.service.abstracts.dto.VoteAnswerDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
@@ -45,6 +47,8 @@ public class AnswerController {
     private final AnswerVoteService answerVoteService;
     private final AnswerVoteConverter answerVoteConverter;
     private final AnswerDtoService answerDtoService;
+    private final VoteAnswerDtoService voteAnswerDtoService;
+
 
 
     @Autowired
@@ -54,6 +58,8 @@ public class AnswerController {
                             SecurityHelper securityHelper,
                             CommentDtoService commentDtoService,
                             QuestionService questionService, AnswerConverter answerConverter, AnswerVoteService answerVoteService, AnswerVoteConverter answerVoteConverter, AnswerDtoService answerDtoService) {
+                            QuestionService questionService,
+                            VoteAnswerDtoService voteAnswerDtoService) {
         this.answerService = answerService;
         this.commentAnswerService = commentAnswerService;
         this.commentConverter = commentConverter;
@@ -64,6 +70,7 @@ public class AnswerController {
         this.answerVoteService = answerVoteService;
         this.answerVoteConverter = answerVoteConverter;
         this.answerDtoService = answerDtoService;
+        this.voteAnswerDtoService = voteAnswerDtoService;
     }
 
     @PostMapping("/{questionId}/answer/{answerId}/comment")
@@ -223,6 +230,32 @@ public class AnswerController {
         answerVoteService.persist(answerVote);
 
         return ResponseEntity.ok(answerVoteConverter.answerVoteToAnswerVoteDto(answerVote));
+    }
+
+    @GetMapping("/{questionId}/isAnswerVoted")
+    @ApiOperation(value = "Checks if user vote up answer to the question",
+            notes = "Provide an question ID, to check, if current user have already voted up ANY answer to this question",
+            response = Boolean.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "True, if user voted; False, if not", response = Boolean.class),
+            @ApiResponse(code = 400, message = "Question not found", response = String.class),
+    })
+    public ResponseEntity<?> isAnyAnswerVotedByCurrentUser(@ApiParam(name = "questionId", value = "ID value, for the question, the answer to which needs to be check", required = true, example = "1")
+                                                     @PathVariable Long questionId) {
+
+        Optional<Question> question = questionService.getById(questionId);
+
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question not found");
+        }
+
+        User user = securityHelper.getPrincipal();
+
+        Optional<VoteAnswerDto> vote = voteAnswerDtoService.getVoteByQuestionIdAndUserId(questionId, user.getId());
+
+        if (vote.isPresent()) { return ResponseEntity.ok(true); }
+
+        return ResponseEntity.ok(false);
     }
 
 }
