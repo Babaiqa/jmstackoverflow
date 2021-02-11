@@ -32,7 +32,6 @@ import java.util.Optional;
 public class QuestionController {
 
     private final QuestionService questionService;
-    private final TagMapper tagMapper;
     private final TagService tagService;
     private final SecurityHelper securityHelper;
     private final QuestionDtoService questionDtoService;
@@ -40,47 +39,27 @@ public class QuestionController {
     private final CommentConverter commentConverter;
     private final CommentDtoService commentDtoService;
     private final QuestionConverter questionConverter;
-    private final UserConverter userConverter;
     private final UserService userService;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
-    @Autowired
     public QuestionController(QuestionService questionService,
                               TagService tagService,
                               SecurityHelper securityHelper,
                               QuestionDtoService questionDtoService,
-                              TagMapper tagMapper, TagService tagService,
-                              UserDtoService userDtoService, QuestionDtoService questionDtoService,
-                              SecurityHelper securityHelper,
-                              VoteAnswerService voteAnswerService,
-                              AnswerService answerService,
-                              AnswerDtoService answerDtoService,
-                              AnswerConverter answerConverter, VoteAnswerConverter voteAnswerConverter,
                               CommentQuestionService commentQuestionService,
                               CommentConverter commentConverter,
                               CommentDtoService commentDtoService,
                               QuestionConverter questionConverter,
-                              UserConverter userConverter,
                               UserService userService) {
         this.questionService = questionService;
-        this.tagMapper = tagMapper;
         this.tagService = tagService;
-        this.userDtoService = userDtoService;
-        this.questionDtoService = questionDtoService;
         this.securityHelper = securityHelper;
-        this.voteAnswerService = voteAnswerService;
-        this.answerService = answerService;
-        this.answerDtoService = answerDtoService;
-        this.answerConverter = answerConverter;
-        this.voteAnswerConverter = voteAnswerConverter;
-        this.commentDtoService = commentDtoService;
         this.questionDtoService = questionDtoService;
         this.commentQuestionService = commentQuestionService;
         this.commentConverter = commentConverter;
         this.commentDtoService = commentDtoService;
         this.questionConverter = questionConverter;
-        this.userConverter = userConverter;
         this.userService = userService;
     }
 

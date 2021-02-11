@@ -45,7 +45,15 @@ public class AnswerController {
     private final VoteAnswerConverter voteAnswerConverter;
 
     @Autowired
-    public AnswerController(AnswerService answerService, CommentAnswerService commentAnswerService, CommentConverter commentConverter, SecurityHelper securityHelper, CommentDtoService commentDtoService, QuestionService questionService, VoteAnswerDtoService voteAnswerDtoService, AnswerDtoService answerDtoService, AnswerConverter answerConverter, VoteAnswerService voteAnswerService, VoteAnswerConverter voteAnswerConverter, AnswerConverter answerConverter1, VoteAnswerService voteAnswerService1, VoteAnswerConverter voteAnswerConverter1, AnswerDtoService answerDtoService1) {
+    public AnswerController(AnswerService answerService,
+                            CommentAnswerService commentAnswerService,
+                            CommentConverter commentConverter,
+                            SecurityHelper securityHelper,
+                            CommentDtoService commentDtoService,
+                            QuestionService questionService,
+                            VoteAnswerDtoService voteAnswerDtoService,
+                            AnswerDtoService answerDtoService,
+                            AnswerConverter answerConverter, VoteAnswerService voteAnswerService, VoteAnswerConverter voteAnswerConverter) {
         this.answerService = answerService;
         this.commentAnswerService = commentAnswerService;
         this.commentConverter = commentConverter;
