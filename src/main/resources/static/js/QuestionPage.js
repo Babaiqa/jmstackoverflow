@@ -143,6 +143,7 @@ class QuestionPage {
                         + ('0' + (date.getMonth() + 1)).slice(-2) + "."
                         + date.getFullYear()
 
+
                     $('#answer-area').append(
                             "<div answer1 class=\"row\">\n" +
                         "    <div vote-area-answer class=\"col-1\">\n" +
