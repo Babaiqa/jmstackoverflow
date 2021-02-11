@@ -2,26 +2,23 @@ package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
-import com.javamentor.qa.platform.models.entity.question.answer.AnswerVote;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
-import com.javamentor.qa.platform.service.abstracts.model.AnswerVoteService;
+import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.CommentAnswerService;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
-import com.javamentor.qa.platform.webapp.converters.AnswerVoteConverter;
+import com.javamentor.qa.platform.webapp.converters.VoteAnswerConverter;
 import com.javamentor.qa.platform.service.abstracts.dto.VoteAnswerDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converters.CommentConverter;
 import com.javamentor.qa.platform.models.dto.CommentDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import io.swagger.annotations.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -47,34 +44,33 @@ public class AnswerController {
     private final CommentDtoService commentDtoService;
     private final QuestionService questionService;
     private final VoteAnswerDtoService voteAnswerDtoService;
-
     private final AnswerDtoService answerDtoService;
     private final AnswerConverter answerConverter;
-    private final AnswerVoteService answerVoteService;
-    private final AnswerVoteConverter answerVoteConverter;
+    private final VoteAnswerService voteAnswerService;
+    private final VoteAnswerConverter voteAnswerConverter;
 
 
-    @Autowired
     public AnswerController(AnswerService answerService,
                             CommentAnswerService commentAnswerService,
                             CommentConverter commentConverter,
                             SecurityHelper securityHelper,
                             CommentDtoService commentDtoService,
                             QuestionService questionService,
-                            AnswerDtoService answerDtoService, AnswerConverter answerConverter, AnswerVoteService answerVoteService, AnswerVoteConverter answerVoteConverter) {
-                            QuestionService questionService,
-                            VoteAnswerDtoService voteAnswerDtoService) {
+                            VoteAnswerDtoService voteAnswerDtoService,
+                            AnswerDtoService answerDtoService,
+                            AnswerConverter answerConverter,
+                            VoteAnswerService voteAnswerService, VoteAnswerConverter voteAnswerConverter) {
         this.answerService = answerService;
         this.commentAnswerService = commentAnswerService;
         this.commentConverter = commentConverter;
         this.securityHelper = securityHelper;
         this.commentDtoService = commentDtoService;
         this.questionService = questionService;
+        this.voteAnswerDtoService = voteAnswerDtoService;
         this.answerDtoService = answerDtoService;
         this.answerConverter = answerConverter;
-        this.answerVoteService = answerVoteService;
-        this.answerVoteConverter = answerVoteConverter;
-        this.voteAnswerDtoService = voteAnswerDtoService;
+        this.voteAnswerService = voteAnswerService;
+        this.voteAnswerConverter = voteAnswerConverter;
     }
 
     @PostMapping("/{questionId}/answer/{answerId}/comment")
@@ -181,7 +177,7 @@ public class AnswerController {
     @PatchMapping("/{questionId}/answer/{answerId}/upVote")
     @ResponseBody
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Answer was up voted", response = AnswerVoteDto.class),
+            @ApiResponse(code = 200, message = "Answer was up voted", response = VoteAnswerDto.class),
             @ApiResponse(code = 400, message = "Question not found", response = String.class)
     })
     public ResponseEntity<?> answerUpVote(
@@ -201,16 +197,16 @@ public class AnswerController {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
 
-        AnswerVote answerVote = new AnswerVote(securityHelper.getPrincipal(), answer.get(), 1);
-        answerVoteService.persist(answerVote);
+        VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), 1);
+        voteAnswerService.persist(voteAnswer);
 
-        return ResponseEntity.ok(answerVoteConverter.answerVoteToAnswerVoteDto(answerVote));
+        return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
     }
 
     @PatchMapping("/{questionId}/answer/{answerId}/downVote")
     @ResponseBody
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Answer was up voted", response = AnswerVoteDto.class),
+            @ApiResponse(code = 200, message = "Answer was up voted", response = VoteAnswerDto.class),
             @ApiResponse(code = 400, message = "Question not found", response = String.class)
     })
     public ResponseEntity<?> answerDownVote(
@@ -230,10 +226,10 @@ public class AnswerController {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
 
-        AnswerVote answerVote = new AnswerVote(securityHelper.getPrincipal(), answer.get(), -1);
-        answerVoteService.persist(answerVote);
+        VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
+        voteAnswerService.persist(voteAnswer);
 
-        return ResponseEntity.ok(answerVoteConverter.answerVoteToAnswerVoteDto(answerVote));
+        return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
     }
 
     @GetMapping("/{questionId}/isAnswerVoted")

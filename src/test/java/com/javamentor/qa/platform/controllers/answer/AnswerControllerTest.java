@@ -31,12 +31,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/answer/usersApi.yml",
         "dataset/answer/answerApi.yml",
         "dataset/answer/roleApi.yml",
-        "dataset/answer/questionApi.yml",
-        "dataset/question/questionQuestionApi.yml"},
-        cleanBefore = true, cleanAfter = false)
+        "dataset/question/questionQuestionApi.yml",
         "dataset/answer/questionApi.yml",
         "dataset/answer/votes_on_answers.yml"},
-        cleanBefore = true)
+        cleanBefore = true, cleanAfter = false)
 @WithMockUser(username = "principal@mail.ru", roles={"ADMIN", "USER"})
 @ActiveProfiles("local")
 class AnswerControllerTest extends AbstractIntegrationTest {

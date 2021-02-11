@@ -655,7 +655,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     @Test
     public void addTagTrackedStatusOk() throws Exception {
 
-        final String TAG_NAME = "Tag Name111";
+        final String TAG_NAME = "java";
 
         //достаем тэг из бд
         Tag tag = entityManager
@@ -704,7 +704,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     @Test
     public void addTagTrackedStatusHasAlreadyBeenAdded() throws Exception {
 
-        final String TAG_NAME = "Tag Name111";
+        final String TAG_NAME = "java";
 
         //достаем тэг из бд
         Tag tag = entityManager
@@ -751,7 +751,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     @Test
     public void addTagIgnoredStatusOk() throws Exception {
 
-        final String TAG_NAME = "Tag Name111";
+        final String TAG_NAME = "java";
 
         //достаем тэг из бд
         Tag tag = entityManager
@@ -799,7 +799,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     @Test
     public void addTagIgnoredStatusHasAlreadyBeenAdded() throws Exception {
 
-        final String TAG_NAME = "Tag Name111";
+        final String TAG_NAME = "java";
 
         //достаем тэг из бд
         Tag tag = entityManager
