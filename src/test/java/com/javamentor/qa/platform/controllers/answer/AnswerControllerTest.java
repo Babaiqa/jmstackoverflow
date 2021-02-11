@@ -2,7 +2,6 @@ package com.javamentor.qa.platform.controllers.answer;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
-import com.javamentor.qa.platform.models.dto.CommentDto;
 import com.javamentor.qa.platform.models.dto.CreateAnswerDto;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import org.json.JSONArray;
@@ -48,7 +47,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     @Test
     public void shouldAddCommentToAnswerResponseBadRequestAnswerNotFound() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/1/answer/99999/comment")
+                .post("/api/question/10/answer/99999/comment")
                 .content("This is very good answer!")
                 .accept(MediaType.TEXT_PLAIN_VALUE))
                 .andExpect(status().isBadRequest())
@@ -61,7 +60,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     public void shouldAddCommentToAnswerResponseCommentDto() throws Exception {
 
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/1/answer/1/comment")
+                .post("/api/question/14/answer/20/comment")
                 .content("This is very good answer!")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
@@ -127,22 +126,22 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     @Test
     public void shouldGetAllCommentsByAnswer() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/9/answer/3/comment")
+                .post("/api/question/9/answer/30/comment")
                 .content("This is very good answer!")
                 .accept(MediaType.APPLICATION_JSON));
 
         this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/9/answer/4/comment")
+                .post("/api/question/9/answer/20/comment")
                 .content("Hi! I know better than you :-) !")
                 .accept(MediaType.APPLICATION_JSON));
 
         this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/9/answer/3/comment")
+                .post("/api/question/9/answer/30/comment")
                 .content("The bad answer!")
                 .accept(MediaType.APPLICATION_JSON));
 
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/question/9/answer/3/comments")
+                .get("/api/question/9/answer/30/comments")
                 .accept(MediaType.APPLICATION_JSON)).andReturn();
 
         JSONArray array = new JSONArray(result.getResponse().getContentAsString());
