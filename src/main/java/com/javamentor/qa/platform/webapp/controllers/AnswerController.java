@@ -228,10 +228,10 @@ public class AnswerController {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
 
-        VoteAnswer answerVote = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
-        voteAnswerService.persist(answerVote);
+        VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
+        voteAnswerService.persist(voteAnswer);
 
-        return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(answerVote));
+        return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
     }
 
     @GetMapping("/{questionId}/isAnswerVoted")

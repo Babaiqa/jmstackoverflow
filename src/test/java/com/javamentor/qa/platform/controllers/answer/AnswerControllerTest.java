@@ -36,9 +36,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/answer/answerApi.yml",
         "dataset/answer/roleApi.yml",
         "dataset/answer/questionApi.yml",
+
         "dataset/question/questionQuestionApi.yml",
         "dataset/question/answerQuestionApi.yml",
-        "dataset/question/votes_on_question.yml"},
+
+        "dataset/answer/votes_on_answers.yml"
+        },
         cleanBefore = true, cleanAfter = false)
 @WithMockUser(username = "principal@mail.ru", roles={"ADMIN", "USER"})
 @ActiveProfiles("local")
@@ -69,7 +72,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     public void shouldAddCommentToAnswerResponseCommentDto() throws Exception {
 
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/10/answer/14/comment")
+                .post("/api/question/10/answer/20/comment")
                 .content("This is very good answer!")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").exists())
@@ -253,7 +256,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
         int first = before.size();
 
         this.mockMvc.perform(MockMvcRequestBuilders
-                .patch("/api/question/1/answer/14/downVote")
+                .patch("/api/question/1/answer/30/downVote")
                 .contentType("application/json;charset=UTF-8"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -297,7 +300,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     @Test
     void userVotedForAnswerStatusOk() throws Exception{
         this.mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/question/10/isAnswerVoted"))
+                .get("/api/question/1/isAnswerVoted"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().string("true"));
@@ -323,22 +326,22 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     @Test
     public void shouldGetAllCommentsByAnswer() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/9/answer/13/comment")
+                .post("/api/question/9/answer/20/comment")
                 .content("This is very good answer!")
                 .accept(MediaType.APPLICATION_JSON));
 
         this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/9/answer/14/comment")
+                .post("/api/question/9/answer/30/comment")
                 .content("Hi! I know better than you :-) !")
                 .accept(MediaType.APPLICATION_JSON));
 
         this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/9/answer/13/comment")
+                .post("/api/question/9/answer/20/comment")
                 .content("The bad answer!")
                 .accept(MediaType.APPLICATION_JSON));
 
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/question/9/answer/13/comments")
+                .get("/api/question/9/answer/20/comments")
                 .accept(MediaType.APPLICATION_JSON)).andReturn();
 
         JSONArray array = new JSONArray(result.getResponse().getContentAsString());
