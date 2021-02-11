@@ -46,6 +46,7 @@ public class AnswerController {
     private final VoteAnswerService answerVoteService;
     private final VoteAnswerConverter answerVoteConverter;
     private final AnswerDtoService answerDtoService;
+    private final VoteAnswerDtoService voteAnswerDtoService;
 
 
     @Autowired
@@ -58,7 +59,8 @@ public class AnswerController {
                             AnswerConverter answerConverter,
                             VoteAnswerService answerVoteService,
                             VoteAnswerConverter answerVoteConverter,
-                            AnswerDtoService answerDtoService) {
+                            AnswerDtoService answerDtoService,
+                            VoteAnswerDtoService voteAnswerDtoService) {
         this.answerService = answerService;
         this.commentAnswerService = commentAnswerService;
         this.commentConverter = commentConverter;
@@ -69,6 +71,7 @@ public class AnswerController {
         this.answerVoteService = answerVoteService;
         this.answerVoteConverter = answerVoteConverter;
         this.answerDtoService = answerDtoService;
+        this.voteAnswerDtoService = voteAnswerDtoService;
     }
 
     @PostMapping("/{questionId}/answer/{answerId}/comment")
@@ -123,6 +126,32 @@ public class AnswerController {
         List<CommentAnswerDto> commentAnswerDtoList = commentDtoService.getAllCommentsByAnswerId(answerId);
 
         return ResponseEntity.ok(commentAnswerDtoList);
+    }
+
+    @GetMapping("/{questionId}/isAnswerVoted")
+    @ApiOperation(value = "Checks if user vote up answer to the question",
+            notes = "Provide an question ID, to check, if current user have already voted up ANY answer to this question",
+            response = Boolean.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "True, if user voted; False, if not", response = Boolean.class),
+            @ApiResponse(code = 400, message = "Question not found", response = String.class),
+    })
+    public ResponseEntity<?> isAnyAnswerVotedByCurrentUser(@ApiParam(name = "questionId", value = "ID value, for the question, the answer to which needs to be check", required = true, example = "1")
+                                                           @PathVariable Long questionId) {
+
+        Optional<Question> question = questionService.getById(questionId);
+
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question not found");
+        }
+
+        User user = securityHelper.getPrincipal();
+
+        Optional<VoteAnswerDto> vote = voteAnswerDtoService.getVoteByQuestionIdAndUserId(questionId, user.getId());
+
+        if (vote.isPresent()) { return ResponseEntity.ok(true); }
+
+        return ResponseEntity.ok(false);
     }
 
     @GetMapping("/{questionId}/answer")
