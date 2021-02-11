@@ -28,6 +28,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.math.BigInteger;
+import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -328,7 +329,8 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .param("size", "10"))
                 .andReturn().getResponse().getContentAsString();
 
-        List<AnswerDto> answerDtoListFromResponse = objectMapper.readValue(resultContext, new TypeReference<List<AnswerDto>>(){});
+        List<AnswerDto> answerDtoListFromResponse = objectMapper.readValue(resultContext, new TypeReference<List<AnswerDto>>() {
+        });
         List<AnswerDto> answerList = (List<AnswerDto>) entityManager
                 .createQuery("SELECT new com.javamentor.qa.platform.models.dto.AnswerDto(a.id, u.id, q.id, " +
                         "a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime, " +
@@ -746,12 +748,12 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
         Assert.assertTrue(!commentQuestionDtoFromResponseList.isEmpty());
 
-        //вытаскиваем из БД все id комментариев у указанного вопроса
-        Query queryToCommentQuestionTable = entityManager.createNativeQuery("select comment_id from comment_question where question_id = ?");
+        //вытаскиваем из БД количество комментариев у указанного вопроса
+        Query queryToCommentQuestionTable = entityManager.createNativeQuery("select count(*) from comment_question where question_id = ?");
         queryToCommentQuestionTable.setParameter(1, 10);
-        List<BigInteger> commentsIdList = queryToCommentQuestionTable.getResultList();
+        BigInteger count = (BigInteger) queryToCommentQuestionTable.getSingleResult();
 
-        Assert.assertTrue(!commentsIdList.isEmpty());
+        Assert.assertTrue(commentQuestionDtoFromResponseList.size() == count.intValue());
     }
 
     @Test
