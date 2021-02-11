@@ -105,6 +105,148 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    public void shouldAddAnswerToQuestionResponseStatusOk() throws Exception {
+        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
+        createAnswerDto.setHtmlBody("test answer");
+
+        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
+
+        String resultContext = mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/15/answer")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequest))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.body").value(createAnswerDto.getHtmlBody()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.questionId").value(15))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(1))
+                .andReturn().getResponse().getContentAsString();
+
+        AnswerDto answerDtoFromResponse = objectMapper.readValue(resultContext, AnswerDto.class);
+        Answer answer = entityManager
+                .createQuery("from Answer where id = :id", Answer.class)
+                .setParameter("id", answerDtoFromResponse.getId())
+                .getSingleResult();
+        AnswerDto answerDtoFromDB = answerConverter.answerToAnswerDTO(answer);
+
+        Assert.assertTrue(answerDtoFromResponse.getBody().equals(answerDtoFromDB.getBody()));
+    }
+
+    @Test
+    void shouldAddAnswerToQuestionResponseBadRequestQuestionNotFound() throws Exception {
+
+        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
+        createAnswerDto.setHtmlBody("test answer");
+
+        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/2222/answer")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequest))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Question not found"));
+    }
+
+    @Test
+    void voteUpStatusOk() throws Exception {
+
+        List<VoteAnswer> before = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
+        int first = before.size();
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/10/answer/51/upVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.userId").isNumber())
+                .andExpect(jsonPath("$.answerId").isNumber())
+                .andExpect(jsonPath("$.persistDateTime").isNotEmpty())
+                .andExpect(jsonPath("$.vote").isNumber());
+
+        List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
+        int second = after.size();
+        Assert.assertEquals(first + 1, second);
+    }
+
+    @Test
+    void voteUpQuestionIsNotExist() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/100/answer/13/upVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Question was not found"));
+
+    }
+
+    @Test
+    void voteUpAnswerIsNotExist() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/1/answer/4/upVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Answer was not found"));
+    }
+
+    @Test
+    void voteDownStatusOk() throws Exception {
+
+        List<VoteAnswer> before = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
+        int first = before.size();
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/1/answer/14/downVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.userId").isNumber())
+                .andExpect(jsonPath("$.answerId").isNumber())
+                .andExpect(jsonPath("$.persistDateTime").isNotEmpty())
+                .andExpect(jsonPath("$.vote").isNumber());
+
+        List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
+        int second = after.size();
+        Assert.assertEquals(first + 1, second);
+    }
+
+    @Test
+    void voteDownQuestionIsNotExist() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/100/answer/14/downVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Question was not found"));
+
+    }
+
+    @Test
+    void voteDownAnswerIsNotExist() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/1/answer/4/downVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Answer was not found"));
+    }
+
+
 
     @Test
     void userVotedForAnswerStatusOk() throws Exception{

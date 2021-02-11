@@ -5,6 +5,7 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
+import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
@@ -23,7 +24,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.math.BigInteger;
+import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -44,7 +49,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/question/questionQuestionApi.yml",
         "dataset/question/tagQuestionApi.yml",
         "dataset/question/question_has_tagQuestionApi.yml",
-        "dataset/question/votes_on_question.yml"},
+        "dataset/question/votes_on_question.yml",
+        "dataset/comment/comment.yml",
+        "dataset/comment/comment_question.yml"},
         useSequenceFiltering = true, cleanBefore = true, cleanAfter = false)
 @WithMockUser(username = "principal@mail.ru", roles = {"ADMIN", "USER"})
 @ActiveProfiles("local")
@@ -242,6 +249,22 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    void shouldAddAnswerToQuestionStatusOk() throws Exception {
+
+        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
+        createAnswerDto.setHtmlBody("test answer");
+
+        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/14/answer")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequest))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
     public void shouldAddAnswerToQuestionResponseStatusOk() throws Exception {
         CreateAnswerDto createAnswerDto = new CreateAnswerDto();
         createAnswerDto.setHtmlBody("test answer");
@@ -306,7 +329,8 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .param("size", "10"))
                 .andReturn().getResponse().getContentAsString();
 
-        List<AnswerDto> answerDtoListFromResponse = objectMapper.readValue(resultContext, new TypeReference<List<AnswerDto>>(){});
+        List<AnswerDto> answerDtoListFromResponse = objectMapper.readValue(resultContext, new TypeReference<List<AnswerDto>>() {
+        });
         List<AnswerDto> answerList = (List<AnswerDto>) entityManager
                 .createQuery("SELECT new com.javamentor.qa.platform.models.dto.AnswerDto(a.id, u.id, q.id, " +
                         "a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime, " +
@@ -711,4 +735,45 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         List<CommentQuestion> resultList = entityManager.createNativeQuery("select * from comment_question where comment_id = " + dto.get("id")).getResultList();
         Assert.assertFalse(resultList.isEmpty());
     }
+
+    @Test
+    public void getCommentListByQuestionIdWithStatusOk() throws Exception {
+
+        //тестируем контроллер, получаем лист CommentQuestionDto
+        String resultContext = this.mockMvc.perform(get("/api/question/10/comments"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        List<CommentQuestionDto> commentQuestionDtoFromResponseList = objectMapper.readValue(resultContext, List.class);
+
+        Assert.assertTrue(!commentQuestionDtoFromResponseList.isEmpty());
+
+        //вытаскиваем из БД количество комментариев у указанного вопроса
+        Query queryToCommentQuestionTable = entityManager.createNativeQuery("select count(*) from comment_question where question_id = ?");
+        queryToCommentQuestionTable.setParameter(1, 10);
+        BigInteger count = (BigInteger) queryToCommentQuestionTable.getSingleResult();
+
+        Assert.assertTrue(commentQuestionDtoFromResponseList.size() == count.intValue());
+    }
+
+    @Test
+    public void getCommentListByQuestionIdWithStatusQuestionNotFound() throws Exception {
+
+        Question question = null;
+        try {
+            question = entityManager
+                    .createQuery("from Question where id = :id", Question.class)
+                    .setParameter("id", 130L)
+                    .getSingleResult();
+        } catch (NoResultException nre) {
+            //ignore
+        }
+
+        this.mockMvc.perform(get("/api/question/130/comments"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Question not found"));
+
+        Assert.assertTrue(question == null);
+    }
+
 }
