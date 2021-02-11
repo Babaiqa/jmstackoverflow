@@ -3,12 +3,12 @@ class QuestionPage {
     constructor(questionId) {
         this.questionId = questionId;
         this.questionService = new QuestionService();
-        this.answerService =  new AnswerService();
+        this.answerService = new AnswerService();
     }
 
     populateQuestionPage() {
         this.questionService.getQuestionById(this.questionId)
-            .then(response=>{
+            .then(response => {
                 const date = new Date(response.persistDateTime)
                 const stringDate = ('0' + date.getDate()).slice(-2) + "."
                     + ('0' + (date.getMonth() + 1)).slice(-2) + "."
@@ -24,9 +24,9 @@ class QuestionPage {
                 $('#question-underheader').append(
                     "            <div class=\"col\">\n" +
                     "                <p>\n" +
-                    "                    <span style=\"color: #6a737c\">Вопрос задан:</span> " + stringDate +"&nbsp;&nbsp;&nbsp;&nbsp;\n" +
-                    "                    <span style=\"color: #6a737c\">Последняя активность:</span> " + stringDateLastUpdate +"&nbsp;&nbsp;&nbsp;&nbsp;\n" +
-                    "                    <span style=\"color: #6a737c\">Просмотрен:</span> " + response.viewCount +" раза\n" +
+                    "                    <span style=\"color: #6a737c\">Вопрос задан:</span> " + stringDate + "&nbsp;&nbsp;&nbsp;&nbsp;\n" +
+                    "                    <span style=\"color: #6a737c\">Последняя активность:</span> " + stringDateLastUpdate + "&nbsp;&nbsp;&nbsp;&nbsp;\n" +
+                    "                    <span style=\"color: #6a737c\">Просмотрен:</span> " + response.viewCount + " раза\n" +
                     "                </p>\n" +
                     "            </div>\n"
                 )
@@ -38,7 +38,7 @@ class QuestionPage {
                     "                            <svg width=\"36\" height=\"36\" >\n" +
                     "                                <path d=\"M2 26h32L18 10 2 26z\"></path>\n" +
                     "                            </svg>\n" +
-                    "                            <div style=\"font-size: 200%\"> &nbsp;" + response.countValuable +"</div>\n" +
+                    "                            <div style=\"font-size: 200%\"> &nbsp;" + response.countValuable + "</div>\n" +
                     "                            <svg  width=\"36\" height=\"36\" >\n" +
                     "                                <path d=\"M2 10h32L18 26 2 10z\"></path>\n" +
                     "                            </svg>\n" +
@@ -46,7 +46,7 @@ class QuestionPage {
                     "                        <div question-and-comments-area class=\"col-11\">\n" +
                     "                            <div question-area class=\"col\">\n" +
                     "                                <div id=\"question-describtion\" describlion class=\"s-prose js-post-body\" itemprop=\"text\">\n" +
-                                                         "<p>" + response.description + "</p>" +
+                    "<p>" + response.description + "</p>" +
                     "                                </div>\n" +
                     "                                <div id='question-tags' class=\"tags\">\n" +
 
@@ -66,7 +66,7 @@ class QuestionPage {
                     "                                                    </div>\n" +
                     "                                                    <div class=\"row\">\n" +
                     "                                                        <div class=\"col-3\">\n" +
-                    "                                                            <img width=\"48\" height=\"48\" src=\"" + response.authorImage +"\" alt=\"...\">\n" +
+                    "                                                            <img width=\"48\" height=\"48\" src=\"" + response.authorImage + "\" alt=\"...\">\n" +
                     "                                                        </div>\n" +
                     "                                                        <div class=\"col-8\">\n" +
                     "                                                            <div>" + response.authorName + "</div>\n" +
@@ -108,7 +108,6 @@ class QuestionPage {
                     "                            </div>\n" +
                     "                        </div>\n" +
                     "                    </div>"
-
                 )
                 response.listTagDto.forEach(tag => {
                     $('#question-tags').append(
@@ -119,7 +118,6 @@ class QuestionPage {
             })
         this.answerService.getAnswerListByQuestionId(this.questionId)
             .then(response => {
-
 
                 $('#answer-area').children().remove()
                 $('#answer-area').append(
@@ -137,31 +135,33 @@ class QuestionPage {
                     "                    </div>"
                 )
 
-                response.forEach(elem =>{
+
+                response.forEach(elem => {
                     const date = new Date(elem.persistDate)
                     const stringDate = ('0' + date.getDate()).slice(-2) + "."
                         + ('0' + (date.getMonth() + 1)).slice(-2) + "."
                         + date.getFullYear()
 
-
                     $('#answer-area').append(
-                            "<div answer1 class=\"row\">\n" +
+                        "<div answer1 class=\"row\">\n" +
                         "    <div vote-area-answer class=\"col-1\">\n" +
-                        '<a href=" " onclick="this.answerService.getUpVoteAnswer('+ this.questionId+','+elem.id+'\')">' +
+                        '<a  onclick="new AnswerService().getUpVoteAnswer(' + this.questionId + ',\'' + elem.id + '\')">' +
                         "        <svg width=\"36\" height=\"36\" >\n" +
                         "              <path d=\"M2 26h32L18 10 2 26z\"></path>\n" +
                         "        </svg>\n" +
                         '</a>' +
                         "             <div style=\"font-size: 200%\"> &nbsp;" + elem.countValuable + "</div>\n" +
-                        '<a href=" " onclick="this.answerService.getDownVoteAnswer('+ this.questionId+','+elem.id+'\')"> '+
+                        '<a  onclick="new AnswerService().getDownVoteAnswer(' + this.questionId + ',\'' + elem.id + '\')"> ' +
                         "                 <svg  width=\"36\" height=\"36\" >\n" +
                         "                     <path d=\"M2 10h32L18 26 2 10z\"></path>\n" +
                         "                 </svg>\n" +
-                        '</a>' +
+                        '</a>     ' + (elem.isHelpful == true ? '<svg width="36" height="36">\n' +
+                        '                                               <path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n' +
+                        '                                        </svg>' : '') +
                         "             </div>\n" +
                         "                        <div answer-and-comments-area class=\"col-11\">\n" +
                         "                            <div>" +
-                                                      "<p>" + elem.body + "</p>"+
+                        "                                  <p>" + elem.body + "</p>" +
                         "                            </div>\n" +
                         "                            <div usderanswer class=\"mb0 \">\n" +
                         "                                <div class=\"row justify-content-between px-3\">\n" +
@@ -181,7 +181,7 @@ class QuestionPage {
                         "                                                        <img width=\"48\" height=\"48\" src=\"" + elem.image + "\" alt=\"...\">\n" +
                         "                                                    </div>\n" +
                         "                                                    <div class=\"col\">\n" +
-                        "                                                        <div>"+ elem.nickName +"</div>\n" +
+                        "                                                        <div>" + elem.nickName + "</div>\n" +
                         "                                                        <div><b>25</b>&nbsp;&nbsp;&nbsp;1</div>\n" +
                         "                                                    </div>\n" +
                         "                                                </div>\n" +
@@ -221,4 +221,5 @@ class QuestionPage {
                 })
             })
     }
+
 }
