@@ -310,7 +310,6 @@ class AnswerControllerTest extends AbstractIntegrationTest {
 
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
                 .patch("/api/question/77/answer/40/upVote"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
                 .andReturn();
 
         JSONObject object = new JSONObject(result.getResponse().getContentAsString());

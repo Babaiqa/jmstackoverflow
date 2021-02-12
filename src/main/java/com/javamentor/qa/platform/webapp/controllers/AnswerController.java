@@ -24,6 +24,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -191,8 +192,8 @@ public class AnswerController {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
 
-        if (answerService.isQuestionBelongUser(question.get())) {
-            answerService.markAnswerAsHelpful(answer.get());
+        if (question.get().getUser().getId().equals(securityHelper.getPrincipal().getId())) {
+            answerService.update(answer.get());
         }
 
         VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), 1);
