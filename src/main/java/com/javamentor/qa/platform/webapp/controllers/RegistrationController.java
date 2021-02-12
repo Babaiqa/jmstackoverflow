@@ -61,10 +61,9 @@ public class RegistrationController {
 
             if (user.get().isEnabled()) {
                 return ResponseEntity.badRequest().body(String.format("User with email %s already exist", email));
-            } else {
-                return ResponseEntity.badRequest().body(String.format("User with email %s already exist, but not confirmed", email));
             }
 
+            return ResponseEntity.badRequest().body(String.format("User with email %s already exist, but not confirmed", email));
         }
 
         User newUser = userConverter.userDtoToUser(userRegistrationDto);
