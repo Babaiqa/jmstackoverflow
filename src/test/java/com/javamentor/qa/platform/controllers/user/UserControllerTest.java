@@ -2,10 +2,12 @@ package com.javamentor.qa.platform.controllers.user;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
+import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -17,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -75,7 +78,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @Test
     @DataSet(value = "dataset/user/roleUserApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
-    public void shouldCreateUser() throws Exception {
+    void shouldCreateUser() throws Exception {
         UserRegistrationDto user = new UserRegistrationDto();
         user.setEmail("11@22.ru");
         user.setPassword("100");
@@ -86,18 +89,22 @@ public class UserControllerTest extends AbstractIntegrationTest {
         this.mockMvc.perform(post("/api/auth/reg/registration")
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(jsonPath("id").exists())
                 .andExpect(jsonPath("email").value(user.email))
                 .andExpect(jsonPath("fullName").value(user.fullName))
                 .andExpect(jsonPath("linkImage").isEmpty())
                 .andExpect(jsonPath("reputation").value(0))
                 .andExpect(status().isOk());
+
+        TypedQuery<User> query = entityManager.createQuery("FROM User WHERE email =: email", User.class)
+                .setParameter("email","11@22.ru");
+
+        Assertions.assertNotNull(SingleResultUtil.getSingleResultOrNull(query));
     }
 
     @Test
     @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, disableConstraints = true, cleanBefore = true, cleanAfter = true)
-    public void shouldCreateUserIsNot() throws Exception {
+    void shouldNotCreateUser() throws Exception {
         UserRegistrationDto user = new UserRegistrationDto();
         user.setEmail("ivanov@mail.ru");
         user.setPassword("100");
@@ -106,9 +113,9 @@ public class UserControllerTest extends AbstractIntegrationTest {
         this.mockMvc.perform(post("/api/auth/reg/registration")
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(content().string("User with email " + user.getEmail() + " already exist"))
+                .andExpect(content().string(String.format("User with email %s already exist", user.getEmail())))
                 .andExpect(status().isBadRequest());
+
     }
 
     @Test
@@ -590,6 +597,11 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("fullName").value(user.fullName))
                 .andExpect(jsonPath("linkImage").isEmpty())
                 .andExpect(jsonPath("reputation").value(0));
+
+        TypedQuery<User> query = entityManager.createQuery("FROM User WHERE email =: email", User.class)
+                                        .setParameter("email","some@with.email");
+
+        Assertions.assertNotNull(SingleResultUtil.getSingleResultOrNull(query));
     }
 
     @Test

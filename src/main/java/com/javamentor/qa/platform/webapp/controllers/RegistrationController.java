@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @RestController
 @Validated
-@RequestMapping("api/auth/reg/")
+@RequestMapping("api/auth/reg")
 @Api(value = "RegApi")
 public class RegistrationController {
     private final UserService userService;
@@ -65,19 +65,18 @@ public class RegistrationController {
                 return ResponseEntity.badRequest().body(String.format("User with email %s already exist, but not confirmed", email));
             }
 
-        } else {
+        }
 
-            User newUser = userConverter.userDtoToUser(userRegistrationDto);
-            newUser.setIsEnabled(false);
-            userService.persist(newUser);
-            String token = jwtUtils.generateRegJwtToken(email);
+        User newUser = userConverter.userDtoToUser(userRegistrationDto);
+        newUser.setIsEnabled(false);
+        userService.persist(newUser);
+        String token = jwtUtils.generateRegJwtToken(email);
 
-            mailService.sendSimpleMessage(newUser.getEmail(),
+        mailService.sendSimpleMessage(newUser.getEmail(),
                                 "Registration confirm",
                                 String.format("For finish registration, follow to link %sregistration/confirm?token=%s", address, token));
 
-            return ResponseEntity.ok(userConverter.userToDto(newUser));
-        }
+        return ResponseEntity.ok(userConverter.userToDto(newUser));
     }
 
     @PostMapping("/persistWithoutConfirm")
@@ -98,12 +97,11 @@ public class RegistrationController {
 
             return ResponseEntity.badRequest().body(String.format("User with email %s already exist", email));
 
-        } else {
-
-            User newUser = userConverter.userDtoToUser(userRegistrationDto);
-            userService.persist(newUser);
-            return ResponseEntity.ok(userConverter.userToDto(newUser));
         }
+
+        User newUser = userConverter.userDtoToUser(userRegistrationDto);
+        userService.persist(newUser);
+        return ResponseEntity.ok(userConverter.userToDto(newUser));
     }
 
     @GetMapping("/confirm")
@@ -127,9 +125,9 @@ public class RegistrationController {
 
             return ResponseEntity.ok().body(userConverter.userToDto(newUser));
 
-        } else {
-            return ResponseEntity.badRequest().body("User not found");
         }
+
+        return ResponseEntity.badRequest().body("User not found");
     }
 
 
