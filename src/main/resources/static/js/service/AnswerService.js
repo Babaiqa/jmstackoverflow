@@ -20,9 +20,9 @@ class AnswerService {
     }
 
     getUpVoteAnswer(questionId, answerId) {
-        fetch('/api/question/'+ questionId +'/answer/'+ answerId+'upVote',
+        fetch('/api/question/'+ questionId +'/answer/'+ answerId+'/upVote',
             {
-                method: 'GET',
+                method: 'PATCH',
                 headers: new Headers({
                     'Content-Type': 'application/json',
                     'Authorization': $.cookie("token")
@@ -31,9 +31,9 @@ class AnswerService {
     }
 
     getDownVoteAnswer(questionId, answerId) {
-         fetch('/api/question/'+ questionId +'/answer/'+ answerId+'downVote',
+         fetch('/api/question/'+ questionId +'/answer/'+ answerId+'/downVote',
             {
-                method: 'GET',
+                method: 'PATCH',
                 headers: new Headers({
                     'Content-Type': 'application/json',
                     'Authorization': $.cookie("token")
