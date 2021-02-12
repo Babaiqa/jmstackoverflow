@@ -40,4 +40,8 @@ class AnswerService {
                 })
             }).catch(error => console.log(error.message));
     }
+
+    getSumVote(answer) {
+      return answer.countValuable;
+    }
 }
