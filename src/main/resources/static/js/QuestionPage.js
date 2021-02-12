@@ -137,30 +137,32 @@ class QuestionPage {
 
 
                 response.forEach(elem => {
-                    let result = this.answerService.getSumVote(elem);
                     const date = new Date(elem.persistDate)
                     const stringDate = ('0' + date.getDate()).slice(-2) + "."
                         + ('0' + (date.getMonth() + 1)).slice(-2) + "."
                         + date.getFullYear()
-
+                    let count = elem.countValuable;
+                    let isHelpful = elem.isHelpful;
                     $('#answer-area').append(
                         "<div answer1 class=\"row\">\n" +
                         "    <div vote-area-answer class=\"col-1\">\n" +
-                        '<a  onclick=\"new AnswerService().getUpVoteAnswer(' + this.questionId + ',\'' + elem.id + '\')">' +
-                        '       <svg  width=\"36\" height=\"36\" >\n' +
-                        "              <path d=\"M2 26h32L18 10 2 26z\"></path>\n" +
-                        "        </svg>\n" +
-                        '</a>' +
-                        "             <div style=\"font-size: 200%\"> &nbsp;" + result + "</div>\n" +
-                        '<a onclick="new AnswerService().getDownVoteAnswer(' + this.questionId + ',\'' + elem.id + '\')"> ' +
-                        "                 <svg  width=\"36\" height=\"36\" >\n" +
-                        "                     <path d=\"M2 10h32L18 26 2 10z\"></path>\n" +
-                        "                 </svg>\n" +
-                        '</a>     ' + (elem.isHelpful == true ? '<svg width="36" height="36">\n' +
-                        '                                               <path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n' +
-                        '                                        </svg>' : '') +
-                        "      </div>\n" +
-                        "                        <div answer-and-comments-area class=\"col-11\">\n" +
+                        '        <a  onclick="new AnswerService().getUpVoteAnswer(' + this.questionId + ',' + elem.id + ',' + count +')">' +
+                        '             <svg  width=\"36\" height=\"36\" >\n' +
+                        "                  <path d=\"M2 26h32L18 10 2 26z\"></path>\n" +
+                        "              </svg>\n" +
+                        '        </a>' +
+                        "             <div id='countValuable' style=\"font-size: 200%\"> &nbsp;" + count + "</div>\n" +
+                        '         <a onclick="new AnswerService().getDownVoteAnswer(' + this.questionId + ',' + elem.id
+                                               + ',' + count + ','+ isHelpful + ')"> ' +
+                        "              <svg  width=\"36\" height=\"36\" >\n" +
+                        "                   <path d=\"M2 10h32L18 26 2 10z\"></path>\n" +
+                        "               </svg>\n" +
+                        '         </a>     ' +
+                        '              <div id="isHelpful">'+(isHelpful == true ? '<svg width="36" height="36">\n' +
+                        '          <path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n' +
+                        '       </svg>': "")+'</div>' +
+                        "     </div>\n" +
+                        "                      <div answer-and-comments-area class=\"col-11\">\n" +
                         "                            <div>" +
                         "                                  <p>" + elem.body + "</p>" +
                         "                            </div>\n" +

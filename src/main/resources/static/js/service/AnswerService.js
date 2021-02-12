@@ -1,3 +1,4 @@
+
 class AnswerService {
 
     getAnswerListByQuestionId(questionId) {
@@ -16,10 +17,10 @@ class AnswerService {
                 error.response = response.text();
                 throw error;
             }
-        }).catch(error => console.log(error.message))
+        }).catch(error => console.log(error.message));
     }
 
-    getUpVoteAnswer(questionId, answerId) {
+    getUpVoteAnswer(questionId, answerId, count, isHelpful) {
         fetch('/api/question/'+ questionId +'/answer/'+ answerId+'/upVote',
             {
                 method: 'PATCH',
@@ -27,10 +28,20 @@ class AnswerService {
                     'Content-Type': 'application/json',
                     'Authorization': $.cookie("token")
                 })
-            }).catch(error => console.log(error.message));
+            }).then(response => {
+            document.getElementById('countValuable').innerHTML = "&nbsp;" + (count + 1);
+            document.reload();
+        }).catch(error => console.log(error.message));
+
+        if(isHelpful == true) {
+            let html = '<svg width="36" height="36">\n' +
+                '          <path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n' +
+                '       </svg>';
+            document.getElementById('isHelpful').innerHTML = html;
+        }
     }
 
-    getDownVoteAnswer(questionId, answerId) {
+    getDownVoteAnswer(questionId, answerId, count) {
          fetch('/api/question/'+ questionId +'/answer/'+ answerId+'/downVote',
             {
                 method: 'PATCH',
@@ -38,10 +49,10 @@ class AnswerService {
                     'Content-Type': 'application/json',
                     'Authorization': $.cookie("token")
                 })
-            }).catch(error => console.log(error.message));
+            }).then(response =>{
+             document.getElementById('countValuable').innerHTML ="&nbsp;"+ (count - 1);
+         }).catch(error => console.log(error.message));
     }
 
-    getSumVote(answer) {
-      return answer.countValuable;
-    }
+
 }
