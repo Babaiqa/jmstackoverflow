@@ -146,18 +146,17 @@ class QuestionPage {
                     $('#answer-area').append(
                         "<div answer1 class=\"row\">\n" +
                         "    <div vote-area-answer class=\"col-1\">\n" +
-                        '        <a  onclick="new AnswerService().getUpVoteAnswer(' + this.questionId + ',' + elem.id + ',' + count +')">' +
+                        '        <a  onclick="new AnswerService().getUpVoteAnswer(' + this.questionId + ',' + elem.id + ')">' +
                         '             <svg  width=\"36\" height=\"36\" >\n' +
                         "                  <path d=\"M2 26h32L18 10 2 26z\"></path>\n" +
                         "              </svg>\n" +
                         '        </a>' +
                         "             <div id='countValuable' style=\"font-size: 200%\"> &nbsp;" + count + "</div>\n" +
-                        '         <a onclick="new AnswerService().getDownVoteAnswer(' + this.questionId + ',' + elem.id
-                                               + ',' + count + ','+ isHelpful + ')"> ' +
+                        '        <a onclick="new AnswerService().getDownVoteAnswer(' + this.questionId + ',' + elem.id + ')"> ' +
                         "              <svg  width=\"36\" height=\"36\" >\n" +
                         "                   <path d=\"M2 10h32L18 26 2 10z\"></path>\n" +
                         "               </svg>\n" +
-                        '         </a>     ' +
+                        '        </a>     ' +
                         '              <div id="isHelpful">'+(isHelpful == true ? '<svg width="36" height="36">\n' +
                         '          <path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n' +
                         '       </svg>': "")+'</div>' +
