@@ -20,11 +20,11 @@ public class AnswerServiceImpl extends ReadWriteServiceImpl<Answer, Long> implem
         super(readWriteDao);
      }
 
-    @Override
-    public void update(Answer answer) {
+
+   @Override
+    public void markAnswerIsHelpfulTrue(Answer answer) {
         answer.setIsHelpful(true);
         answer.setDateAcceptTime(LocalDateTime.now());
-        super.update(answer);
     }
 }
 

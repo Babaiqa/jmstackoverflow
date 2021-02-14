@@ -193,6 +193,7 @@ public class AnswerController {
         }
 
         if (question.get().getUser().getId().equals(securityHelper.getPrincipal().getId())) {
+            answerService.markAnswerIsHelpfulTrue(answer.get());
             answerService.update(answer.get());
         }
 
