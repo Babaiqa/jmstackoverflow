@@ -16,33 +16,11 @@ public class AnswerServiceImpl extends ReadWriteServiceImpl<Answer, Long> implem
         super(readWriteDao);
     }
 
-    private SecurityHelper securityHelper;
-
-    private AnswerService answerService;
-
-
-    @Autowired
-    public void setSecurityHelper(SecurityHelper securityHelper) {
-        this.securityHelper = securityHelper;
-    }
-
-    @Autowired
-    public void setAnswerService(AnswerService answerService) {
-        this.answerService = answerService;
-    }
 
     @Override
-    public boolean isQuestionBelongUser(Question question) {
-        return question.getUser().getId().equals(securityHelper.getPrincipal().getId());
-    }
-
-    @Override
-    public void markAnswerAsHelpful(Answer answer) {
+    public void markAnswerIsHelpfulTrue(Answer answer) {
         answer.setIsHelpful(true);
         answer.setDateAcceptTime(LocalDateTime.now());
-        answerService.update(answer);
     }
-
-
 }
 
