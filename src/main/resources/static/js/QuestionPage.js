@@ -1,6 +1,5 @@
 class QuestionPage {
 
-
     constructor(questionId) {
         this.questionId = questionId;
         this.questionService = new QuestionService();
@@ -47,7 +46,7 @@ class QuestionPage {
                     "                        <div question-and-comments-area class=\"col-11\">\n" +
                     "                            <div question-area class=\"col\">\n" +
                     "                                <div id=\"question-describtion\" describlion class=\"s-prose js-post-body\" itemprop=\"text\">\n" +
-                                                         "<p>" + response.description + "</p>" +
+                    "<p>" + response.description + "</p>" +
                     "                                </div>\n" +
                     "                                <div id='question-tags' class=\"tags\">\n" +
 
@@ -142,31 +141,28 @@ class QuestionPage {
                     const date = new Date(elem.persistDate)
                     const stringDate = ('0' + date.getDate()).slice(-2) + "."
                         + ('0' + (date.getMonth() + 1)).slice(-2) + "."
-                        + date.getFullYear();
+                        + date.getFullYear()
 
-                    let html = '<div answer1 class=\"row\">\n' +
-                        '    <div vote-area-answer class=\"col-1\">\n' +
-                        ' <span onclick="this.answerService.getUpVoteByAnswer('+ this.questionId +')">'+
-                        '        <svg width=\"36\" height=\"36\" >\n' +
-                        '              <path d=\"M2 26h32L18 10 2 26z\"></path>\n' +
-                        '        </svg>\n' +
-                        '</span>'+
-                        '             <div style=\"font-size: 200%\"> &nbsp;' + elem.countValuable + '</div>\n' +
-                        '<span onclick="this.answerService.getDownVoteByAnswer('+this.questionId+','+ elem.id+')">' +
-                        ' <svg  width=\"36\" height=\"36\" >\n' +
-                        '                     <path d=\"M2 10h32L18 26 2 10z\"></path>\n' +
-                        '                 </svg>\n'+
-                        '</span>'+
-                        '             </div>\n' +
-                        '                        <div answer-and-comments-area class=\"col-11\">\n' +
-                        '                            <div>' +
-                        '<p>' + elem.body + '</p>'+
-                        '                            </div>\n' +
-                        '                            <div usderanswer class=\"mb0 \">\n' +
-                        '                                <div class=\"row justify-content-between px-3">\n' +
-                        '                                    <div>\n' +
-                        '                                        <a href=\"#\">Поделиться</a>\n' +
-                        '                                        <a href=\"#\">Править</a>\n' +
+                    $('#answer-area').append(
+                        "<div answer1 class=\"row\">\n" +
+                        "    <div vote-area-answer class=\"col-1\">\n" +
+                        "        <svg width=\"36\" height=\"36\" >\n" +
+                        "              <path d=\"M2 26h32L18 10 2 26z\"></path>\n" +
+                        "        </svg>\n" +
+                        "             <div style=\"font-size: 200%\"> &nbsp;" + elem.countValuable + "</div>\n" +
+                        "                 <svg  width=\"36\" height=\"36\" >\n" +
+                        "                     <path d=\"M2 10h32L18 26 2 10z\"></path>\n" +
+                        "                 </svg>\n" +
+                        "             </div>\n" +
+                        "                        <div answer-and-comments-area class=\"col-11\">\n" +
+                        "                            <div>" +
+                        "<p>" + elem.body + "</p>"+
+                        "                            </div>\n" +
+                        "                            <div usderanswer class=\"mb0 \">\n" +
+                        "                                <div class=\"row justify-content-between px-3\">\n" +
+                        "                                    <div>\n" +
+                        "                                        <a href=\"#\">Поделиться</a>\n" +
+                        "                                        <a href=\"#\">Править</a>\n" +
                         "                                        <a href=\"#\">Отслеживать</a>\n" +
                         "                                    </div>\n" +
                         "                                    <div>\n" +
@@ -216,9 +212,7 @@ class QuestionPage {
                         "                            </div>\n" +
                         "                        </div>\n" +
                         "                    </div>\n" +
-                        "                    <hr/>"
-                    document.getElementById('answer-area').innerHTML = html;
-
+                        "                    <hr/>")
                 })
             })
     }
