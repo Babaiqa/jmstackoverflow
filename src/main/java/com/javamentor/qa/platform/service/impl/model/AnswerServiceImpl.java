@@ -15,9 +15,8 @@ import java.time.LocalDateTime;
 @Service
 public class AnswerServiceImpl extends ReadWriteServiceImpl<Answer, Long> implements AnswerService {
 
-
-     public AnswerServiceImpl(ReadWriteDao<Answer, Long> readWriteDao) {
-        super(readWriteDao);
+     public AnswerServiceImpl(AnswerDao answerDao) {
+         super(answerDao);
      }
 
 }
