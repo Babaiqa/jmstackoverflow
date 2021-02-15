@@ -179,11 +179,11 @@ public class  TestDataInitService {
             userBadges.setBadge(badge);
             userBadgesService.persist(userBadges);
 
-//            VoteAnswer voteAnswer = new VoteAnswer();
-//            voteAnswer.setUser(user);
-//            voteAnswer.setAnswer(answer);
-//            voteAnswer.setVote(1);
-//            voteAnswerService.persist(voteAnswer);
+            VoteAnswer voteAnswer = new VoteAnswer();
+            voteAnswer.setUser(user);
+            voteAnswer.setAnswer(answer);
+            voteAnswer.setVote(1);
+            voteAnswerService.persist(voteAnswer);
 
             IgnoredTag ignoredTag = new IgnoredTag();
             ignoredTag.setUser(user);
