@@ -38,7 +38,7 @@ class PaginationQuestion {
                     + date.getFullYear() + " " + ('0' + date.getHours()).slice(-2) + ":"
                     + ('0' + date.getMinutes()).slice(-2)
 
-                let shuffledNames = response.items[i].listTagDto.map(i => i.name).sort(() => Math.random() - 0.5);
+                let shuffledNames = response.items[i].listTagDto.map(i => i.name);
                 let text  = shuffledNames.map(i => `<a href="#" class="mb-1"> ${i} </a>`).join('');
 
                 $('.questionsTable').append(

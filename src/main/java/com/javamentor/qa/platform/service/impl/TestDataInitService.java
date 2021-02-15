@@ -10,6 +10,7 @@ import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.*;
 import com.javamentor.qa.platform.service.abstracts.model.*;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Data
 @Service
 public class  TestDataInitService {
 
@@ -44,7 +44,7 @@ public class  TestDataInitService {
     Role USER_ROLE = Role.builder().name("USER").build();
     Role ADMIN_ROLE = Role.builder().name("ADMIN").build();
 
-
+    @Autowired
     public TestDataInitService(UserService userService, BadgeService badgeService, QuestionService questionService,
                                CommentService commentService, ReputationService reputationService, UserBadgesService userBadgesService,
                                TagService tagService, UserFavoriteQuestionService userFavoriteQuestionService,
@@ -95,6 +95,7 @@ public class  TestDataInitService {
         createTagEntity();
         roleService.persist(USER_ROLE);
         roleService.persist(ADMIN_ROLE);
+
         for (int i = 0; i < numberOfUsers; i++) {
             User user = new User();
             user.setEmail("ivanov@mail.com" + i);
@@ -119,20 +120,42 @@ public class  TestDataInitService {
             reputationService.persist(reputation);
 
             Question question = new Question();
+            List<Tag> randomQuestionTagList = new ArrayList<>();
+
+            int questionTagsNumber = 1 + (int) (Math.random() * 5);
+            int j = 0;
+            while (j != questionTagsNumber) {
+                j++;
+                int tagIndex = 1 + (int ) (Math.random() * 49);
+                randomQuestionTagList.add(tagList.get(tagIndex));
+            }
+
+            Integer viewCountQuestion = 1 +(int) (Math.random() * 1000);
             question.setTitle("Question Title" + i);
-            question.setViewCount(i*5);
+            question.setViewCount(viewCountQuestion);
             question.setDescription("Question Description" + i);
             question.setUser(user);
-            question.setTags(tagList.stream().limit(5).collect(Collectors.toList()));
+            question.setTags(randomQuestionTagList.stream().limit(5).collect(Collectors.toList()));
             question.setIsDeleted(false);
             questionService.persist(question);
 
             Question questionNoAnswer = new Question();
+            List<Tag> randomQuestionNoAnsTagList = new ArrayList<>();
+
+            int questionNoAnsTagsNumber = 1 + (int) (Math.random() * 5);
+            int k = 0;
+            while (k != questionNoAnsTagsNumber) {
+                k++;
+                int tagIndex = 1 + (int ) (Math.random() * 49);
+                randomQuestionNoAnsTagList.add(tagList.get(tagIndex));
+            }
+
+            Integer viewCountQuestionNoAnswer = 1 +(int) (Math.random() * 1000);
             questionNoAnswer.setTitle("Question NoAnswer " + i);
-            questionNoAnswer.setViewCount(i*2);
+            questionNoAnswer.setViewCount(viewCountQuestionNoAnswer);
             questionNoAnswer.setDescription("Question NoAnswer Description" + i);
             questionNoAnswer.setUser(user);
-            questionNoAnswer.setTags(tagList.stream().limit(5).collect(Collectors.toList()));
+            questionNoAnswer.setTags(randomQuestionNoAnsTagList.stream().limit(5).collect(Collectors.toList()));
             questionNoAnswer.setIsDeleted(false);
             questionService.persist(questionNoAnswer);
 
@@ -186,14 +209,20 @@ public class  TestDataInitService {
             voteAnswerService.persist(voteAnswer);
 
             IgnoredTag ignoredTag = new IgnoredTag();
+            int randomIgnoredTagNum = (int) (Math.random() * 7);
             ignoredTag.setUser(user);
-            ignoredTag.setIgnoredTag(tagList.get(1));
-            ignoredTagService.persist(ignoredTag);
+            if (randomIgnoredTagNum > 0) {
+                ignoredTag.setIgnoredTag(tagList.get(randomIgnoredTagNum));
+                ignoredTagService.persist(ignoredTag);
+            }
 
             TrackedTag trackedTag = new TrackedTag();
+            int randomTrackedTagNum = (int) (Math.random() * 7);
             trackedTag.setUser(user);
-            trackedTag.setTrackedTag(tagList.get(2));
-            trackedTagService.persist(trackedTag);
+            if (randomTrackedTagNum > 0) {
+                trackedTag.setTrackedTag(tagList.get(randomTrackedTagNum));
+                trackedTagService.persist(trackedTag);
+            }
         }
     }
 }
