@@ -39,11 +39,9 @@ class AnswerService {
                     }
                 })
             }).then(response => {
-                document.getElementById('countValuable').innerHTML = "&nbsp;" + count;
+                document.getElementById('countValuable').innerHTML ="&nbsp;" + count;
                 if (isHelpful == true) {
-                    let html = '<svg width="36" height="36">\n' +
-                        '          <path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n' +
-                        '       </svg>';
+                    let html = '<path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n';
                     document.getElementById('isHelpful').innerHTML = html;
                 }
             })
@@ -70,7 +68,7 @@ class AnswerService {
                     }
                 })
             }).then(response => {
-                document.getElementById('countValuable').innerHTML = "&nbsp;" + count;
+                document.getElementById('countValuable').innerHTML ="&nbsp;" + count;
                 if (isHelpful == false) {
                     let html = '';
                     document.getElementById('isHelpful').innerHTML = html;

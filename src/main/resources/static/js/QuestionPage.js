@@ -35,13 +35,17 @@ class QuestionPage {
                 $('#question-area').append(
                     "                    <div class=\"row\">\n" +
                     "                        <div vote-area-question class=\"col-1\">\n" +
-                    "                            <svg width=\"36\" height=\"36\" >\n" +
-                    "                                <path d=\"M2 26h32L18 10 2 26z\"></path>\n" +
-                    "                            </svg>\n" +
+                    '                            <a class="btn  btn-sm m-0 p-0">' +
+                    "                               <svg width=\"36\" height=\"36\" >\n" +
+                    "                                  <path d=\"M2 26h32L18 10 2 26z\"></path>\n" +
+                    "                               </svg>\n" +
+                    '                             </a>' +
                     "                            <div style=\"font-size: 200%\"> &nbsp;" + response.countValuable + "</div>\n" +
-                    "                            <svg  width=\"36\" height=\"36\" >\n" +
-                    "                                <path d=\"M2 10h32L18 26 2 10z\"></path>\n" +
-                    "                            </svg>\n" +
+                    '                              <a class="btn  btn-sm m-0 p-0">' +
+                    "                                 <svg  width=\"36\" height=\"36\" >\n" +
+                    "                                    <path d=\"M2 10h32L18 26 2 10z\"></path>\n" +
+                    "                                  </svg>\n" +
+                    '                               </a>' +
                     "                        </div>\n" +
                     "                        <div question-and-comments-area class=\"col-11\">\n" +
                     "                            <div question-area class=\"col\">\n" +
@@ -146,20 +150,20 @@ class QuestionPage {
                     $('#answer-area').append(
                         "<div answer1 class=\"row\">\n" +
                         "    <div vote-area-answer class=\"col-1\">\n" +
-                        '        <a  onclick="new AnswerService().getUpVoteAnswer(' + this.questionId + ',' + elem.id + ')">' +
-                        '             <svg  width=\"36\" height=\"36\" >\n' +
+                        '        <a  class="btn  btn-sm m-0 p-0" onclick="new AnswerService().getUpVoteAnswer(' + this.questionId + ',' + elem.id + ')">' +
+                        '             <svg   width=\"36\" height=\"36\" >\n' +
                         "                  <path d=\"M2 26h32L18 10 2 26z\"></path>\n" +
                         "              </svg>\n" +
                         '        </a>' +
-                        "             <div id='countValuable' style=\"font-size: 200%\"> &nbsp;" + count + "</div>\n" +
-                        '        <a onclick="new AnswerService().getDownVoteAnswer(' + this.questionId + ',' + elem.id + ')"> ' +
+                        "             <div class='text-center' id='countValuable' style=\"font-size: 200%\">&nbsp;" + count + "</div>\n" +
+                        '        <a  class="btn  btn-sm m-0 p-0" onclick="new AnswerService().getDownVoteAnswer(' + this.questionId + ',' + elem.id + ')"> ' +
                         "              <svg  width=\"36\" height=\"36\" >\n" +
                         "                   <path d=\"M2 10h32L18 26 2 10z\"></path>\n" +
                         "               </svg>\n" +
                         '        </a>     ' +
-                        '              <div id="isHelpful">'+(isHelpful == true ? '<svg width="36" height="36">\n' +
+                        '              <svg id="isHelpful" width="36" height="36">\n' + ( isHelpful == true ?
                         '          <path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n' +
-                        '       </svg>': "")+'</div>' +
+                        '       </svg>': "") +
                         "     </div>\n" +
                         "                      <div answer-and-comments-area class=\"col-11\">\n" +
                         "                            <div>" +
