@@ -6,7 +6,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.Optional;
+
 
 public abstract class ReadWriteServiceImpl<E, K> extends ReadOnlyServiceImpl<E, K> {
 
