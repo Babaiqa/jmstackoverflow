@@ -193,7 +193,8 @@ public class AnswerController {
         }
 
         if (question.get().getUser().getId().equals(securityHelper.getPrincipal().getId())) {
-            answerService.markAnswerIsHelpfulTrue(answer.get());
+            answer.get().setIsHelpful(true);
+            answer.get().setDateAcceptTime(LocalDateTime.now());
             answerService.update(answer.get());
         }
 

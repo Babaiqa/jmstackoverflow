@@ -21,7 +21,6 @@ class AnswerService {
 
 
     getUpVoteByAnswer(questionId) {
-        alert('Hello 1');
         return fetch("/api/question/" + questionId + "/answer/" + 1 + "/upVote",
             {
                 method: 'GET',
@@ -42,7 +41,6 @@ class AnswerService {
 
 
     getDownVoteByAnswer(questionId, answerId) {
-        alert('Hello 2');
         return fetch("/api/question/" + questionId + "/answer/" + answerId + "/downVote",
             {
                 method: 'GET',
