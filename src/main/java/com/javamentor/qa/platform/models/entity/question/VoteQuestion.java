@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.models.entity.question;
 
 import com.javamentor.qa.platform.exception.ConstrainException;
+import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,6 +41,11 @@ public class VoteQuestion implements Serializable {
 
     private int vote;
 
+    public VoteQuestion(User user, Question question, int vote) {
+        this.user = user;
+        this.question = question;
+        this.vote = vote;
+    }
     @PrePersist
     private void prePersistFunction() {
         checkConstraints();

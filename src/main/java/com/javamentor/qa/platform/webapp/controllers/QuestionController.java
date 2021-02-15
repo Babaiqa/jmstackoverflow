@@ -3,6 +3,9 @@ package com.javamentor.qa.platform.webapp.controllers;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
+import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
@@ -40,6 +43,8 @@ public class QuestionController {
     private final CommentDtoService commentDtoService;
     private final QuestionConverter questionConverter;
     private final UserService userService;
+    private final VoteQuestionService voteQuestionService;
+    private final VoteQuestionConverter voteQuestionConverter;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
@@ -51,7 +56,9 @@ public class QuestionController {
                               CommentConverter commentConverter,
                               CommentDtoService commentDtoService,
                               QuestionConverter questionConverter,
-                              UserService userService) {
+                              UserService userService,
+                              VoteQuestionService voteQuestionService,
+                              VoteQuestionConverter voteQuestionConverter) {
         this.questionService = questionService;
         this.tagService = tagService;
         this.securityHelper = securityHelper;
@@ -61,6 +68,8 @@ public class QuestionController {
         this.commentDtoService = commentDtoService;
         this.questionConverter = questionConverter;
         this.userService = userService;
+        this.voteQuestionService = voteQuestionService;
+        this.voteQuestionConverter = voteQuestionConverter;
     }
 
     @DeleteMapping("/{id}/delete")
@@ -427,6 +436,51 @@ public class QuestionController {
         return ResponseEntity.ok(commentQuestionDtoList);
     }
 
+    @PostMapping("/{questionId}/upVote")
+    @ResponseBody
+    @ApiOperation(value ="Up vote for question")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Question was up voted", response = VoteQuestionDto.class),
+            @ApiResponse(code = 400, message = "Question not found", response = String.class)
+    })
+    public ResponseEntity<?> questionUpVote(
+            @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
+            @PathVariable Long questionId) {
 
+
+        Optional<Question> question = questionService.getById(questionId);
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question was not found");
+        }
+
+
+        VoteQuestion voteQuestion = new VoteQuestion(securityHelper.getPrincipal(), question.get(), 1);
+        voteQuestionService.persist(voteQuestion);
+
+        return ResponseEntity.ok(voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion));
+    }
+
+
+    @PostMapping("/{questionId}/downVote")
+    @ResponseBody
+    @ApiOperation(value = "Down vote of question")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Question was udown voted", response = VoteQuestionDto.class),
+            @ApiResponse(code = 400, message = "Question not found", response = String.class)
+    })
+    public ResponseEntity<?> questionDownVote(
+            @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
+            @PathVariable Long questionId) {
+
+        Optional<Question> question = questionService.getById(questionId);
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question was not found");
+        }
+
+        VoteQuestion voteQuestion = new VoteQuestion(securityHelper.getPrincipal(), question.get(), -1);
+        voteQuestionService.persist(voteQuestion);
+
+        return ResponseEntity.ok(voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion));
+    }
 
 }
