@@ -1,14 +1,14 @@
 class AnswerService {
 
     getAnswerListByQuestionId(questionId) {
-        let query = '/api/question/'+questionId+'/answer';
+        let query = '/api/question/' + questionId + '/answer';
         return fetch(query, {
             method: 'GET',
             headers: new Headers({
                 'Content-Type': 'application/json',
                 'Authorization': $.cookie("token")
             })
-        }).then(response =>{
+        }).then(response => {
             if (response.ok) {
                 return response.json()
             } else {
@@ -18,4 +18,5 @@ class AnswerService {
             }
         }).catch(error => console.log(error.message))
     }
+
 }
