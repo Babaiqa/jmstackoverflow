@@ -436,14 +436,15 @@ public class QuestionController {
         return ResponseEntity.ok(commentQuestionDtoList);
     }
 
-    @PostMapping("/{questionId}/upVote")
+
+    @PostMapping("/{questionId}/downVote")
     @ResponseBody
     @ApiOperation(value ="Up vote for question")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Question was up voted", response = VoteQuestionDto.class),
             @ApiResponse(code = 400, message = "Question not found", response = String.class)
     })
-    public ResponseEntity<?> questionUpVote(
+    public ResponseEntity<?> questionDownVote(
             @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
             @PathVariable Long questionId) {
 
@@ -454,10 +455,9 @@ public class QuestionController {
         }
 
 
-        VoteQuestion voteQuestion = new VoteQuestion(securityHelper.getPrincipal(), question.get(), 1);
+        VoteQuestion voteQuestion = new VoteQuestion(securityHelper.getPrincipal(), question.get(), -1);
         voteQuestionService.persist(voteQuestion);
 
         return ResponseEntity.ok(voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion));
     }
-
 }
