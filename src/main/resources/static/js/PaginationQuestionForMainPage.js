@@ -38,6 +38,8 @@ class PaginationQuestionForMainPage {
                 const stringDate = ('0' + date.getDate()).slice(-2) + "."
                                  + ('0' + (date.getMonth() + 1)).slice(-2) + "."
                                  + date.getFullYear()
+                let tagsView = response.items[i].listTagDto.map(i => i.name);
+                let allTagsView  = tagsView.map(i => `<a href="#" class="mb-1"> ${i} </a>`).join('');
 
                 $('#questionsAll').append(
                     "        <div class=\"list-group-item list-group-item-action h-100\">\n" +
@@ -67,11 +69,7 @@ class PaginationQuestionForMainPage {
                     "                        <small style='color: #6a737c'> задан "+ stringDate + "</small>\n" +
                     "                    </a>\n" +
                     "                    <div class=\"nav-col btn-group  btn-block mr-0   \">\n" +
-                    "                        <button type=\"button\" class=\"mb-1\">" + response.items[i].listTagDto[0].name + "</button>\n" +
-                    "                        <button type=\"button\" class=\"mb-1\">" + response.items[i].listTagDto[1].name + "</button>\n" +
-                    "                        <button type=\"button\" class=\"mb-1\">" + response.items[i].listTagDto[2].name + "</button>\n" +
-                    "                        <button type=\"button\" class=\"mb-1\">" + response.items[i].listTagDto[3].name + "</button>\n" +
-                    "                        <button type=\"button\" class=\"mb-1\">" + response.items[i].listTagDto[4].name + "</button>\n" +
+                                            allTagsView +
                     "                    </div>\n" +
                     "                </div>\n" +
                     "            </div>\n" +
