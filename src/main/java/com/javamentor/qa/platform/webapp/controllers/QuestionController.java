@@ -460,27 +460,4 @@ public class QuestionController {
         return ResponseEntity.ok(voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion));
     }
 
-
-    @PostMapping("/{questionId}/downVote")
-    @ResponseBody
-    @ApiOperation(value = "Down vote of question")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Question was udown voted", response = VoteQuestionDto.class),
-            @ApiResponse(code = 400, message = "Question not found", response = String.class)
-    })
-    public ResponseEntity<?> questionDownVote(
-            @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
-            @PathVariable Long questionId) {
-
-        Optional<Question> question = questionService.getById(questionId);
-        if (!question.isPresent()) {
-            return ResponseEntity.badRequest().body("Question was not found");
-        }
-
-        VoteQuestion voteQuestion = new VoteQuestion(securityHelper.getPrincipal(), question.get(), -1);
-        voteQuestionService.persist(voteQuestion);
-
-        return ResponseEntity.ok(voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion));
-    }
-
 }
