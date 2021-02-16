@@ -588,7 +588,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
         String jsonRequest = objectMapper.writeValueAsString(user);
 
-        this.mockMvc.perform(post("/api/auth/reg/persistWithoutConfirm")
+        this.mockMvc.perform(post("/api/user/persistWithoutConfirm")
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -612,7 +612,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
         user.setPassword("1234");
         user.setFullName("Peter Parker");
         String jsonRequest = objectMapper.writeValueAsString(user);
-        this.mockMvc.perform(post("/api/auth/reg/persistWithoutConfirm")
+        this.mockMvc.perform(post("/api/user/persistWithoutConfirm")
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())

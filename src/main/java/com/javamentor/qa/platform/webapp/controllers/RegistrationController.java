@@ -78,31 +78,6 @@ public class RegistrationController {
         return ResponseEntity.ok(userConverter.userToDto(newUser));
     }
 
-    @PostMapping("/persistWithoutConfirm")
-    @ApiOperation(value = "User creation",
-            notes = "Provide valid UserRegistrationDto object, to persist user, WITHOUT email confirmation",
-            response = UserDto.class)
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "User persisted successful", response = UserDto.class),
-            @ApiResponse(code = 400, message = "Persist failed", response = String.class)
-    })
-    @Validated(OnCreate.class)
-    public ResponseEntity<?> createUserWithoutConfirm(@Valid @RequestBody UserRegistrationDto userRegistrationDto ) {
-
-        String email = userRegistrationDto.getEmail();
-        Optional<User> user = userService.getUserByEmail(email);
-
-        if (user.isPresent()) {
-
-            return ResponseEntity.badRequest().body(String.format("User with email %s already exist", email));
-
-        }
-
-        User newUser = userConverter.userDtoToUser(userRegistrationDto);
-        userService.persist(newUser);
-        return ResponseEntity.ok(userConverter.userToDto(newUser));
-    }
-
     @GetMapping("/confirm")
     @ApiOperation(value = "User registration confirmation",
             notes = "Provide String jwt, of prepared, disabled new user, to complete registration",
