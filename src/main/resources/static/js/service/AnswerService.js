@@ -33,8 +33,8 @@ class AnswerService {
             let isHelpful = false;
             this.getAnswerListByQuestionId(questionId).then(response => {
                 response.forEach(elem => {
-                    console.log(elem);
                     if (elem.id == answerId) {
+                        console.log(elem);
                         count = elem.countValuable;
                         isHelpful = elem.isHelpful;
                     }
@@ -63,8 +63,8 @@ class AnswerService {
             let isHelpful = false;
             this.getAnswerListByQuestionId(questionId).then(response => {
                 response.forEach(elem => {
-                    console.log(elem);
                     if (elem.id == answerId) {
+                        console.log(elem);
                         count = elem.countValuable;
                         isHelpful = elem.isHelpful;
                     }
