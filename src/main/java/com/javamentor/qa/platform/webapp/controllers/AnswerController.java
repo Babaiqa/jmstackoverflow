@@ -24,6 +24,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -189,6 +190,12 @@ public class AnswerController {
         Optional<Answer> answer = answerService.getById(answerId);
         if (!answer.isPresent()) {
             return ResponseEntity.badRequest().body("Answer was not found");
+        }
+
+        if (question.get().getUser().getId().equals(securityHelper.getPrincipal().getId())) {
+            answer.get().setIsHelpful(true);
+            answer.get().setDateAcceptTime(LocalDateTime.now());
+            answerService.update(answer.get());
         }
 
         VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), 1);

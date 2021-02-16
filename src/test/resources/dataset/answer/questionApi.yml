@@ -88,3 +88,16 @@ question:
     user_id: 2
     is_deleted: 0
     last_redaction_date: "2020-05-04 13:58:56"
+
+
+
+  # Attention! Do not change this block(-id: 77).
+  - id: 77
+    description: "This question use for test _shouldMarkAnswerAsHelpful()_"
+    persist_date: "2020-04-04"
+    title: "Question number ten"
+    view_count: 1
+    user_id: 4
+    is_deleted: 0
+    last_redaction_date: "2020-05-04 13:58:56"
+

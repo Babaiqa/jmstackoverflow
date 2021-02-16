@@ -25,3 +25,23 @@ answer:
     persist_date: "2020-01-11 13:58:56"
     is_deleted: 0
     update_date: "2020-01-01 13:58:56"
+
+  - id: 51
+    html_body: "This is first answer for question number one"
+    is_helpful: 0
+    question_id: 2
+    user_id: 3
+    persist_date: "2020-01-11 13:58:56"
+    is_deleted: 0
+    update_date: "2020-01-01 13:58:56"
+
+
+  # Attention! Do not change this block(-id:40).
+  - id: 40
+    html_body: "This is my answer for question number two"
+    is_helpful: 0
+    question_id: 10
+    user_id: 2
+    persist_date: "2020-01-11 13:58:56"
+    is_deleted: 0
+    update_date: "2020-01-01 13:58:56"

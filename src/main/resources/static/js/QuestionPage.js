@@ -46,7 +46,7 @@ class QuestionPage {
                     "                        <div question-and-comments-area class=\"col-11\">\n" +
                     "                            <div question-area class=\"col\">\n" +
                     "                                <div id=\"question-describtion\" describlion class=\"s-prose js-post-body\" itemprop=\"text\">\n" +
-                                                         "<p>" + response.description + "</p>" +
+                    "<p>" + response.description + "</p>" +
                     "                                </div>\n" +
                     "                                <div id='question-tags' class=\"tags\">\n" +
 
@@ -144,7 +144,7 @@ class QuestionPage {
                         + date.getFullYear()
 
                     $('#answer-area').append(
-                            "<div answer1 class=\"row\">\n" +
+                        "<div answer1 class=\"row\">\n" +
                         "    <div vote-area-answer class=\"col-1\">\n" +
                         "        <svg width=\"36\" height=\"36\" >\n" +
                         "              <path d=\"M2 26h32L18 10 2 26z\"></path>\n" +
@@ -156,7 +156,7 @@ class QuestionPage {
                         "             </div>\n" +
                         "                        <div answer-and-comments-area class=\"col-11\">\n" +
                         "                            <div>" +
-                                                      "<p>" + elem.body + "</p>"+
+                        "<p>" + elem.body + "</p>"+
                         "                            </div>\n" +
                         "                            <div usderanswer class=\"mb0 \">\n" +
                         "                                <div class=\"row justify-content-between px-3\">\n" +
