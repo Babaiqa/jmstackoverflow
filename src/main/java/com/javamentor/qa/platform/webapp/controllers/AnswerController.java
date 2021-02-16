@@ -166,6 +166,7 @@ public class AnswerController {
 
         answerService.persist(answer);
 
+
         return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
     }
 
@@ -191,6 +192,9 @@ public class AnswerController {
         if (!answer.isPresent()) {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
+        if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {
+            return ResponseEntity.ok("User already voted");
+        }
 
         if (question.get().getUser().getId().equals(securityHelper.getPrincipal().getId())) {
             answer.get().setIsHelpful(true);
@@ -203,6 +207,7 @@ public class AnswerController {
         
         return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
     }
+
 
     @PatchMapping("/{questionId}/answer/{answerId}/downVote")
     @ResponseBody
@@ -225,6 +230,10 @@ public class AnswerController {
         Optional<Answer> answer = answerService.getById(answerId);
         if (!answer.isPresent()) {
             return ResponseEntity.badRequest().body("Answer was not found");
+        }
+
+        if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {
+            return ResponseEntity.ok("User already voted");
         }
 
         VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
