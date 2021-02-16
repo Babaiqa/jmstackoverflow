@@ -200,7 +200,7 @@ public class AnswerController {
 
         VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), 1);
         voteAnswerService.persist(voteAnswer);
-
+        
         return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
     }
 
