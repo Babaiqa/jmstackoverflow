@@ -5,7 +5,7 @@ import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-
+import org.mapstruct.Named;
 
 
 @Mapper(componentModel = "spring")
@@ -24,6 +24,11 @@ public abstract class CommentConverter {
     @Mapping(source = "comment.lastUpdateDateTime", target = "lastRedactionDate")
     @Mapping(source = "comment.user.id", target = "userId")
     @Mapping(source = "comment.user.fullName", target = "username")
-    @Mapping(source = "comment.user.reputationCount", target = "reputation")
+    @Mapping(source = "reputation", target = "reputation", qualifiedByName = "getReputationCount")
     public abstract CommentDto commentToCommentDTO(CommentAnswer commentAnswer);
+
+    @Named("getReputationCounter")
+    public Integer getReputationCountByUserId(Long userId) {
+        return 0; // TODO: replace with method, from ReputationDao
+    }
 }

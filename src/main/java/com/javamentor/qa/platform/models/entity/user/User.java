@@ -60,8 +60,8 @@ public class User implements UserDetails {
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;
 
-    @Column(name = "reputation_count")
-    private Integer reputationCount = 0;
+    //@Column(name = "reputation_count")
+    //private Integer reputationCount = 0;
 
     @Column
     private String city;
