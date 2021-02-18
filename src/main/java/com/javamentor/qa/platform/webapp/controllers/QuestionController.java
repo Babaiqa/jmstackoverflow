@@ -454,6 +454,9 @@ public class QuestionController {
             return ResponseEntity.badRequest().body("Question was not found");
         }
 
+        if (voteQuestionService.isUserAlreadyVoted(question.get(), securityHelper.getPrincipal())) {
+            return ResponseEntity.ok("User already voted");
+        }
 
         VoteQuestion voteQuestion = new VoteQuestion(securityHelper.getPrincipal(), question.get(), 1);
         voteQuestionService.persist(voteQuestion);
@@ -479,6 +482,9 @@ public class QuestionController {
             return ResponseEntity.badRequest().body("Question was not found");
         }
 
+        if (voteQuestionService.isUserAlreadyVoted(question.get(), securityHelper.getPrincipal())) {
+            return ResponseEntity.ok("User already voted");
+        }
 
         VoteQuestion voteQuestion = new VoteQuestion(securityHelper.getPrincipal(), question.get(), -1);
         voteQuestionService.persist(voteQuestion);

@@ -34,7 +34,6 @@ class AnswerService {
             this.getAnswerListByQuestionId(questionId).then(response => {
                 response.forEach(elem => {
                     if (elem.id == answerId) {
-                        console.log(elem);
                         count = elem.countValuable;
                         isHelpful = elem.isHelpful;
                     }
@@ -64,17 +63,12 @@ class AnswerService {
             this.getAnswerListByQuestionId(questionId).then(response => {
                 response.forEach(elem => {
                     if (elem.id == answerId) {
-                        console.log(elem);
                         count = elem.countValuable;
                         isHelpful = elem.isHelpful;
                     }
                 })
             }).then(response => {
                 document.getElementById('countValuable').innerHTML ="&nbsp;" + count;
-                if (isHelpful == false) {
-                    let html = '';
-                    document.getElementById('isHelpful').innerHTML = html;
-                }
             })
         }).catch(error => console.log(error.message));
     }

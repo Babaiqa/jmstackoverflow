@@ -228,4 +228,42 @@ class QuestionService {
                 }
             }).catch(error => error.response.then(message => console.log(message)));
     }
+
+
+    makeUpVoteQuestion(questionId) {
+        fetch('/api/question/' + questionId + '/upVote',
+            {
+                method: 'POST',
+                headers: new Headers({
+                    'Content-Type': 'application/json',
+                    'Authorization': $.cookie("token")
+                })
+            }).then(data => {
+            let count = 0;
+            this.getQuestionById(questionId).then(response => {
+                count = response.countValuable;
+            }).then(data => {
+                document.getElementById('count_question').innerHTML ="&nbsp;" + count;
+            })
+        }).catch(error => console.log(error.message));
+    }
+
+
+    makeDownVoteQuestion(questionId) {
+        fetch('/api/question/' + questionId + '/downVote',
+            {
+                method: 'POST',
+                headers: new Headers({
+                    'Content-Type': 'application/json',
+                    'Authorization': $.cookie("token")
+                })
+            }).then(data => {
+            let count = 0;
+            this.getQuestionById(questionId).then(response => {
+               count = response.countValuable;
+            }).then(data => {
+                document.getElementById('count_question').innerHTML ="&nbsp;" + count;
+            })
+        }).catch(error => console.log(error.message));
+    }
 }
