@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
@@ -776,4 +777,14 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         Assert.assertTrue(question == null);
     }
 
+    @Test
+    public void shouldCreateVoteQuestionDown() throws Exception {
+
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/19/downVote")).andReturn();
+
+        JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
+
+        Assert.assertEquals(jsonObject.get("vote"), -1);
+    }
 }
