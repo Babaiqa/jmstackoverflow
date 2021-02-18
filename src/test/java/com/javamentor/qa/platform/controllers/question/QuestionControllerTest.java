@@ -778,6 +778,17 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void shouldCreateVoteQuestionUp() throws Exception {
+
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/19/upVote")).andReturn();
+
+        JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
+
+        Assert.assertEquals(jsonObject.get("vote"), 1);
+    }
+
+    @Test
     public void shouldCreateVoteQuestionDown() throws Exception {
 
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
