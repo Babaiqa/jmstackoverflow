@@ -40,7 +40,8 @@ class PaginationQuestion {
 
                 let shuffledNames = response.items[i].listTagDto.map(i => i.name);
                 let text  = shuffledNames.map(i => `<a href="#" class="mb-1"> ${i} </a>`).join('');
-
+                console.log(response);
+                console.log(response.items[i].countValuable);
                 $('.questionsTable').append(
                     "<div class=\"question-card d-flex\">" +
                     "   <div class=\"question-stats-container\">" +
