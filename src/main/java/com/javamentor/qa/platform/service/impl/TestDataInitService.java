@@ -165,6 +165,12 @@ public class  TestDataInitService {
             userFavoriteQuestionService.persist(userFavoriteQuestion);
 
 
+            VoteQuestion voteQuestion = new VoteQuestion();
+            voteQuestion.setUser(user);
+            voteQuestion.setQuestion(question);
+            voteQuestion.setVote(1);
+            voteQuestionService.persist(voteQuestion);
+
             Answer answer = new Answer();
             answer.setUser(user);
             answer.setQuestion(question);
