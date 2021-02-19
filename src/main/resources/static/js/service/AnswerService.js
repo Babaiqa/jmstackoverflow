@@ -20,7 +20,7 @@ class AnswerService {
     }
 
 
-   getUpVoteAnswer(questionId, answerId) {
+    getUpVoteAnswer(questionId, answerId, index) {
         fetch('/api/question/' + questionId + '/answer/' + answerId + '/upVote',
             {
                 method: 'PATCH',
@@ -31,27 +31,26 @@ class AnswerService {
             }).then(data => {
             let count = 0;
             let isHelpful = false;
-            let id = '';
             this.getAnswerListByQuestionId(questionId).then(response => {
                 response.forEach(elem => {
                     if (elem.id == answerId) {
                         count = elem.countValuable;
                         isHelpful = elem.isHelpful;
-                        id = elem.id;
                     }
                 })
-            }).then(function (){
-                document.getElementById(id).innerHTML = '&nbsp;' + count;
+            }).then(function () {
+                document.querySelectorAll('div.countAnswer')[index].innerHTML = '&nbsp;' + count;
+
+                let html = '<path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n';
                 if (isHelpful == true) {
-                    let html = '<path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n';
-                    document.getElementById('isHelpful').innerHTML = html;
+                    document.querySelectorAll('svg.isHelpful')[index].innerHTML = html;
                 }
             })
         }).catch(error => console.log(error.message));
     }
 
 
-    getDownVoteAnswer(questionId, answerId) {
+    getDownVoteAnswer(questionId, answerId, index) {
         fetch('/api/question/' + questionId + '/answer/' + answerId + '/downVote',
             {
                 method: 'PATCH',
@@ -67,8 +66,8 @@ class AnswerService {
                         count = elem.countValuable;
                     }
                 })
-            }).then(function (){
-                document.getElementById('countValuable').innerHTML ="&nbsp;" + count;
+            }).then(function () {
+                document.querySelectorAll('div.countAnswer')[index].innerHTML = '&nbsp;' + count;
             })
         }).catch(error => console.log(error.message));
     }

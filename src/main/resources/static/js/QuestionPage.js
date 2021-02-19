@@ -9,7 +9,6 @@ class QuestionPage {
     populateQuestionPage() {
         this.questionService.getQuestionById(this.questionId)
             .then(response => {
-                console.log(response);
                 const date = new Date(response.persistDateTime)
                 const stringDate = ('0' + date.getDate()).slice(-2) + "."
                     + ('0' + (date.getMonth() + 1)).slice(-2) + "."
@@ -31,7 +30,6 @@ class QuestionPage {
                     "                </p>\n" +
                     "            </div>\n"
                 )
-                console.log(response);
                 $('#question-area').children().remove()
                 $('#question-area').append(
                     "                    <div class=\"row\">\n" +
@@ -140,6 +138,7 @@ class QuestionPage {
                 )
 
 
+                let index = 0;
                 response.forEach(elem => {
                     const date = new Date(elem.persistDate)
                     const stringDate = ('0' + date.getDate()).slice(-2) + "."
@@ -155,20 +154,20 @@ class QuestionPage {
                     $('#answer-area').append(
                         "<div answer1 class=\"row\">\n" +
                         "    <div vote-area-answer class=\"col-1\">\n" +
-                        '        <a  class="btn  btn-sm m-0 p-0" onclick="new AnswerService().getUpVoteAnswer(' + this.questionId + ',' + elem.id + ')">' +
+                        '        <a  class="btn  btn-sm m-0 p-0" onclick="new AnswerService().getUpVoteAnswer(' + this.questionId + ',' + elem.id +','+ index +')">' +
                         '             <svg   width=\"36\" height=\"36\" >\n' +
                         "                  <path d=\"M2 26h32L18 10 2 26z\"></path>\n" +
                         "              </svg>\n" +
                         '        </a>' +
-                        '             <div  style=\"font-size: 200%\">&nbsp;' + count + '</div>\n' +
-                        '        <a  class="btn  btn-sm m-0 p-0" onclick="new AnswerService().getDownVoteAnswer(' + this.questionId + ',' + elem.id + ')"> ' +
+                        '             <div class="countAnswer" style=\"font-size: 200%\">&nbsp;' + count + '</div>\n' +
+                        '        <a  class="btn  btn-sm m-0 p-0" onclick="new AnswerService().getDownVoteAnswer(' + this.questionId + ',' + elem.id +','+ index +')"> ' +
                         "              <svg  width=\"36\" height=\"36\" >\n" +
                         "                   <path d=\"M2 10h32L18 26 2 10z\"></path>\n" +
                         "               </svg>\n" +
                         '        </a>     ' +
                         '              <svg class="isHelpful" width="36" height="36">\n' + ( isHelpful == true ?
-                        '          <path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n' +
-                        '       </svg>': "") +
+                        '          <path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n': " ") +
+                        '       </svg>' +
                         "     </div>\n" +
                         "                      <div answer-and-comments-area class=\"col-11\">\n" +
                         "                            <div>" +
@@ -229,6 +228,7 @@ class QuestionPage {
                         "                        </div>\n" +
                         "                    </div>\n" +
                         "                    <hr/>")
+                    index++;
                 })
             })
     }
