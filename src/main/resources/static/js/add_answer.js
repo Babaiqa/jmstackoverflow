@@ -1,0 +1,32 @@
+async function addAnswerToQuestion() {
+
+    let questionId = window.location.pathname.replace(/\D/g, '')
+
+    let answerText = $('#textsummernote').summernote('code')
+
+    let createAnswerDto = {
+        htmlBody: answerText
+    };
+
+    const url = 'http://localhost:5557/api/question/' + questionId + '/answer';
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json;charset=utf-8', 'Authorization': $.cookie("token")
+            },
+            body: JSON.stringify(createAnswerDto)
+        });
+        const json = await response.json();
+
+        //отрисовка страницы
+        new QuestionPage(questionId).populateQuestionPage();
+
+        $('#textsummernote').summernote('reset')
+
+    } catch (error) {
+        console.error('Ошибка:', error);
+    }
+}
+
+document.getElementById('buttonAddAnswer').addEventListener('click', addAnswerToQuestion);
