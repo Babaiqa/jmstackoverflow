@@ -29,8 +29,6 @@ public abstract class QuestionConverter {
     @Mapping(source = "question.persistDateTime", target = "persistDateTime")
     @Mapping(source = "question.lastUpdateDateTime", target = "lastUpdateDateTime")
     @Mapping(source = "question.answers", target = "countAnswer", qualifiedByName = "answersToCountAnswer")
-    @Mapping(source = "question.voteQuestions", target = "countAnswer", qualifiedByName = "answersToCountAnswer")
-
     public abstract QuestionDto questionToQuestionDto(Question question);
 
 

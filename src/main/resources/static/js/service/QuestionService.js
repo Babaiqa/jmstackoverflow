@@ -1,4 +1,5 @@
 class QuestionService {
+
     getQuestionById(questionId) {
         let query = '/api/question/'+questionId;
         return fetch(query, {
@@ -226,6 +227,21 @@ class QuestionService {
                     error.response = response.text();
                     throw error;
                 }
+            }).catch(error => error.response.then(message => console.log(message)));
+    }
+
+
+    getCountAnswer(questionId) {
+            return  Promise.resolve(fetch('/api/question/' + questionId + '/answer',{
+            method:'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        })).then(function (response) {
+            response.json();
+            }).then(function (answers) {
+                return answers.length;
             }).catch(error => error.response.then(message => console.log(message)));
     }
 }
