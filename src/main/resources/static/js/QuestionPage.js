@@ -9,6 +9,7 @@ class QuestionPage {
     populateQuestionPage() {
         this.questionService.getQuestionById(this.questionId)
             .then(response => {
+                console.log(response);
                 const date = new Date(response.persistDateTime)
                 const stringDate = ('0' + date.getDate()).slice(-2) + "."
                     + ('0' + (date.getMonth() + 1)).slice(-2) + "."
@@ -30,7 +31,7 @@ class QuestionPage {
                     "                </p>\n" +
                     "            </div>\n"
                 )
-
+                console.log(response);
                 $('#question-area').children().remove()
                 $('#question-area').append(
                     "                    <div class=\"row\">\n" +
@@ -122,7 +123,6 @@ class QuestionPage {
             })
         this.answerService.getAnswerListByQuestionId(this.questionId)
             .then(response => {
-
                 $('#answer-area').children().remove()
                 $('#answer-area').append(
                     "                    <div info class=\"row justify-content-between m-2 py-5\">\n" +
@@ -141,13 +141,17 @@ class QuestionPage {
 
 
                 response.forEach(elem => {
-                    console.log(elem);
                     const date = new Date(elem.persistDate)
                     const stringDate = ('0' + date.getDate()).slice(-2) + "."
                         + ('0' + (date.getMonth() + 1)).slice(-2) + "."
-                        + date.getFullYear()
+                        + date.getFullYear();
+
                     let count = elem.countValuable;
+                    if(count == null) {
+                        count = 0;
+                    }
                     let isHelpful = elem.isHelpful;
+
                     $('#answer-area').append(
                         "<div answer1 class=\"row\">\n" +
                         "    <div vote-area-answer class=\"col-1\">\n" +
@@ -156,13 +160,13 @@ class QuestionPage {
                         "                  <path d=\"M2 26h32L18 10 2 26z\"></path>\n" +
                         "              </svg>\n" +
                         '        </a>' +
-                        "             <div class='text-center' id='countValuable' style=\"font-size: 200%\">&nbsp;" + count + "</div>\n" +
+                        '             <div  style=\"font-size: 200%\">&nbsp;' + count + '</div>\n' +
                         '        <a  class="btn  btn-sm m-0 p-0" onclick="new AnswerService().getDownVoteAnswer(' + this.questionId + ',' + elem.id + ')"> ' +
                         "              <svg  width=\"36\" height=\"36\" >\n" +
                         "                   <path d=\"M2 10h32L18 26 2 10z\"></path>\n" +
                         "               </svg>\n" +
                         '        </a>     ' +
-                        '              <svg id="isHelpful" width="36" height="36">\n' + ( isHelpful == true ?
+                        '              <svg class="isHelpful" width="36" height="36">\n' + ( isHelpful == true ?
                         '          <path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n' +
                         '       </svg>': "") +
                         "     </div>\n" +

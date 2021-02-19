@@ -29,7 +29,7 @@ public abstract class QuestionConverter {
     @Mapping(source = "question.tags", target = "listTagDto")
     @Mapping(source = "question.persistDateTime", target = "persistDateTime")
     @Mapping(source = "question.lastUpdateDateTime", target = "lastUpdateDateTime")
-    @Mapping(source = "question.voteQuestions", target = "countValuable", qualifiedByName = "voteQuestionsToCountValuable")
+    @Mapping(target = "countValuable", constant = "0")
     public abstract QuestionDto questionToQuestionDto(Question question);
 
 
@@ -41,13 +41,4 @@ public abstract class QuestionConverter {
         return userService.getById(id).get();
     }
 
-
-    @Named(value = "voteQuestionsToCountValuable")
-    public Long voteQuestionsToCountValuable(List<VoteQuestion> list) {
-        long countValuable = 0L;
-        for (VoteQuestion voteQuestion : list) {
-            countValuable = countValuable + voteQuestion.getVote();
-        }
-        return countValuable;
-    }
 }

@@ -20,7 +20,7 @@ class AnswerService {
     }
 
 
-    getUpVoteAnswer(questionId, answerId) {
+   getUpVoteAnswer(questionId, answerId) {
         fetch('/api/question/' + questionId + '/answer/' + answerId + '/upVote',
             {
                 method: 'PATCH',
@@ -31,15 +31,17 @@ class AnswerService {
             }).then(data => {
             let count = 0;
             let isHelpful = false;
+            let id = '';
             this.getAnswerListByQuestionId(questionId).then(response => {
                 response.forEach(elem => {
                     if (elem.id == answerId) {
                         count = elem.countValuable;
                         isHelpful = elem.isHelpful;
+                        id = elem.id;
                     }
                 })
-            }).then(response => {
-                document.getElementById('countValuable').innerHTML ="&nbsp;" + count;
+            }).then(function (){
+                document.getElementById(id).innerHTML = '&nbsp;' + count;
                 if (isHelpful == true) {
                     let html = '<path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n';
                     document.getElementById('isHelpful').innerHTML = html;
@@ -59,15 +61,13 @@ class AnswerService {
                 })
             }).then(data => {
             let count = 0;
-            let isHelpful = false;
             this.getAnswerListByQuestionId(questionId).then(response => {
                 response.forEach(elem => {
                     if (elem.id == answerId) {
                         count = elem.countValuable;
-                        isHelpful = elem.isHelpful;
                     }
                 })
-            }).then(response => {
+            }).then(function (){
                 document.getElementById('countValuable').innerHTML ="&nbsp;" + count;
             })
         }).catch(error => console.log(error.message));

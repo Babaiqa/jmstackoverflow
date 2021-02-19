@@ -19,23 +19,21 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
 
     @PersistenceContext
     private EntityManager entityManager;
-    private AnswerConverter answerConverter;
-
-    @Autowired
-    public AnswerDtoDaoImpl(AnswerConverter answerConverter) {
-        this.answerConverter = answerConverter;
-    }
 
     @Override
     public List<AnswerDto> getAllAnswersByQuestionId(Long questionId) {
 
-        Question question = (Question) entityManager.createQuery("FROM Question Q WHERE Q.id = ?1")
-                .setParameter(1,questionId).getSingleResult();
-        List<Answer> answers = question.getAnswers();
-        List<AnswerDto> answerDtos = new ArrayList<>();
-        for (Answer answer : answers) {
-            answerDtos.add(answerConverter.answerToAnswerDTO(answer));
-        }
-        return answerDtos;
+        return (List<AnswerDto>) entityManager.unwrap(Session.class)
+                .createQuery("SELECT new com.javamentor.qa.platform.models.dto.AnswerDto(a.id, u.id, q.id, " +
+                        "a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime, " +
+                        "(SELECT SUM (av.vote ) FROM VoteAnswer AS av WHERE av.answer.id = a.id), " +
+                        "u.imageLink, u.fullName) " +
+                        "FROM Answer as a " +
+                        "INNER JOIN a.user as u " +
+                        "JOIN a.question as q " +
+                        "WHERE q.id = :questionId")
+                .setParameter("questionId", questionId)
+                .unwrap(org.hibernate.query.Query.class)
+                .getResultList();
     }
 }

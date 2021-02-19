@@ -164,11 +164,6 @@ public class  TestDataInitService {
             userFavoriteQuestion.setQuestion(question);
             userFavoriteQuestionService.persist(userFavoriteQuestion);
 
-//            VoteQuestion voteQuestion = new VoteQuestion();
-//            voteQuestion.setUser(user);
-//            voteQuestion.setQuestion(question);
-//            voteQuestion.setVote(1);
-//            voteQuestionService.persist(voteQuestion);
 
             Answer answer = new Answer();
             answer.setUser(user);
@@ -202,11 +197,6 @@ public class  TestDataInitService {
             userBadges.setBadge(badge);
             userBadgesService.persist(userBadges);
 
-//            VoteAnswer voteAnswer = new VoteAnswer();
-//            voteAnswer.setUser(user);
-//            voteAnswer.setAnswer(answer);
-//            voteAnswer.setVote(1);
-//            voteAnswerService.persist(voteAnswer);
 
             IgnoredTag ignoredTag = new IgnoredTag();
             int randomIgnoredTagNum = (int) (Math.random() * 7);
