@@ -329,15 +329,17 @@
                 <div your-answer>
                     <div class="card-body">
                         <h6 class="card-title">Ваш ответ</h6>
-                        <div id="summernote"></div>
-                        <script>
-                            $('#summernote').summernote({
-                                tabsize: 2,
-                                height: 200
-                            });
-                        </script>
+
+                        <div class="summernote" id="textsummernote" placeholder="Введите данные"></div>
+
                     </div>
+
                 </div>
+
+                <form>
+                    <button type="button" class="btn btn-primary" id="buttonAddAnswer">Добавить ответ</button>
+                </form>
+
             </div>
             <div lest sidebar class="row-md-4 col-xl-3  col-lg-3 col-sm-4" aria-label="боковая панель">
                 <div style="width: 350px">
@@ -400,6 +402,9 @@
             </div>
         </div>
     </div>
+
+
+
     <div th:fragment="styleheader">
 
         <!-- Required meta tags -->
@@ -418,6 +423,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"
             integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/"
             crossorigin="anonymous"></script>
+
 </div>
 
 
