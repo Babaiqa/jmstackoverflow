@@ -42,6 +42,7 @@ class PaginationQuestion {
 
                 $('.questionsTable').append(
 
+                    "<div class=\"question-card d-flex\">" +
 
                     "<div class=\"container\">"+
                     "   <div class=\"row\">"+
@@ -109,6 +110,8 @@ class PaginationQuestion {
                     "       </div>"+
 
                     "   </div>"+
+                    "</div>" +
+                    
                     "</div>"
 
                 )
