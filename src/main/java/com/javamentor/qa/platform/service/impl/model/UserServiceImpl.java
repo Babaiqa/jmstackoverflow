@@ -16,13 +16,13 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
 
     private final UserDao userDao;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao) {
+    public UserServiceImpl(UserDao userDao,PasswordEncoder passwordEncoder) {
         super(userDao);
         this.userDao = userDao;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -37,7 +37,6 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
 
     @Override
     public void persist(User user) {
-        user.setReputationCount((int) (Math.random() * 100));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         super.persist(user);
     }
