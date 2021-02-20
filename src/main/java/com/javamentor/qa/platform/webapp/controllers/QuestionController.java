@@ -40,7 +40,7 @@ public class QuestionController {
     private final CommentDtoService commentDtoService;
     private final QuestionConverter questionConverter;
     private final UserService userService;
-    private final QuestionViewedService questionViewedService;
+
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     public QuestionController(QuestionService questionService,
@@ -51,8 +51,7 @@ public class QuestionController {
                               CommentConverter commentConverter,
                               CommentDtoService commentDtoService,
                               QuestionConverter questionConverter,
-                              UserService userService,
-                              QuestionViewedService questionViewedService) {
+                              UserService userService) {
         this.questionService = questionService;
         this.tagService = tagService;
         this.securityHelper = securityHelper;
@@ -62,7 +61,6 @@ public class QuestionController {
         this.commentDtoService = commentDtoService;
         this.questionConverter = questionConverter;
         this.userService = userService;
-        this.questionViewedService = questionViewedService;
     }
 
     @DeleteMapping("/{id}/delete")
@@ -429,33 +427,6 @@ public class QuestionController {
         return ResponseEntity.ok(commentQuestionDtoList);
     }
 
-
-    @PostMapping("{questionId}/view")
-    @ApiOperation(value = "Mark as viewed", notes = "Аdd notes at the table 'question_viewed' ")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Question was marked as viewed", response = QuestionDto.class),
-            @ApiResponse(code = 400, message = "Question or user not found", response = String.class)
-    })
-    public ResponseEntity<?> markQuestionAsViewed(
-
-            @ApiParam(name = "QuestionId", value = "QuestionId. Type long", required = true, example = "1")
-            @PathVariable Long questionId) {
-
-        User user = securityHelper.getPrincipal();
-
-        if (questionId == null) {
-            return ResponseEntity.badRequest().body("Question id is null");
-        }
-
-        Optional<Question> question = questionService.getById(questionId);
-        if (!question.isPresent()) {
-            return ResponseEntity.badRequest().body("Question not found");
-        }
-
-        questionViewedService.markQuestionAsViewed(question, user);
-        return ResponseEntity.ok().body("Question was marked");
-
-    }
 
 
 }

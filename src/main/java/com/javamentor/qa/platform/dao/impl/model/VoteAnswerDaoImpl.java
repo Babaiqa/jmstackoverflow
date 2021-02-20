@@ -13,4 +13,5 @@ import java.util.Optional;
 
 @Repository
 public class VoteAnswerDaoImpl extends ReadWriteDaoImpl<VoteAnswer, Long> implements VoteAnswerDao {
+
 }
