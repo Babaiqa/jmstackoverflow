@@ -6,9 +6,14 @@ import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
+import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.security.util.SecurityHelper;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
+import org.checkerframework.dataflow.qual.TerminatesExecution;
 import org.hamcrest.Matchers;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -51,7 +56,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/question/question_has_tagQuestionApi.yml",
         "dataset/question/votes_on_question.yml",
         "dataset/comment/comment.yml",
-        "dataset/comment/comment_question.yml"},
+        "dataset/comment/comment_question.yml",
+        "dataset/question/question_viewed.yml"},
         useSequenceFiltering = true, cleanBefore = true, cleanAfter = false)
 @WithMockUser(username = "principal@mail.ru", roles = {"ADMIN", "USER"})
 @ActiveProfiles("local")
@@ -77,6 +83,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         List<Long> tagId = new ArrayList<>();
         tagId.add(new Long(1L));
         String jsonRequest = objectMapper.writeValueAsString(tagId);
+
         this.mockMvc.perform(MockMvcRequestBuilders
                 .patch("/api/question/13/tag/add")
                 .content(jsonRequest)
@@ -775,5 +782,90 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
         Assert.assertTrue(question == null);
     }
+
+
+
+
+
+    @Test
+    public void AddQuestionAsViewedStatusOk() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/14/view"))
+                .andExpect(status().isOk());
+    }
+    
+
+    @Test
+    public void AddQuestionAsViewedIfSecondRequest() throws Exception {
+
+        //считаем имеющиеся записи в БД
+        Query queryBefore = entityManager.createNativeQuery("select * from question_viewed where user_id = 153");
+        List<QuestionViewed> before = queryBefore.getResultList();
+        int countBefore = before.size();
+
+        //добавляем еще одну уникальную
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/14/view"))
+                .andExpect(status().isOk());
+
+        //считаем повторно и сравниваем количество записей
+        Query queryAfter = entityManager.createNativeQuery("select * from question_viewed where user_id = 153");
+        Assert.assertEquals(countBefore + 1, queryAfter.getResultList().size());
+
+
+    }
+    @Test
+    public void AddQuestionAsViewedIfSecondEqualRequest() throws Exception {
+
+        //вносим первую уникальную запись
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/15/view"))
+                .andExpect(status().isOk());
+        Query query = entityManager.createNativeQuery("select * from question_viewed where user_id = 153 and " +
+                "question_id = ?", QuestionViewed.class);
+        query.setParameter(1, 15L);
+        //считываем внесенную запись
+        QuestionViewed questionViewedFirst = (QuestionViewed) query.getSingleResult();
+
+        //считаем количество записей в БД
+        Query queryBefore = entityManager.createNativeQuery("select * from question_viewed where user_id = 153",
+                QuestionViewed.class);
+        List<QuestionViewed> before = queryBefore.getResultList();
+        int countBefore = before.size();
+
+        //вносим запись повторно
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/10/view"))
+                .andExpect(status().isOk());
+        //считаем количество записей повторно и сравниваем
+        Query queryDoubleRequestAfter = entityManager.createNativeQuery("select * from question_viewed where " +
+                "user_id = 153",QuestionViewed.class );
+        int countAfter = queryDoubleRequestAfter.getResultList().size();
+        Assert.assertEquals(countBefore,countAfter);
+
+        //проверяем изменилась ли запись после попытки ее повторного внесения?
+        Query query2 = entityManager.createNativeQuery("select * from question_viewed where user_id = 153 and " +
+                "question_id = ?", QuestionViewed.class);
+        query2.setParameter (1, 15L);
+        QuestionViewed questionViewedSecond = (QuestionViewed) query2.getSingleResult();
+        Assert.assertEquals(questionViewedFirst.getId(), questionViewedSecond.getId());
+        Assert.assertEquals(questionViewedFirst.getLocalDateTime(), questionViewedSecond.getLocalDateTime());
+        Assert.assertEquals(questionViewedFirst.getUser().getId(), questionViewedSecond.getUser().getId());
+        Assert.assertEquals(questionViewedFirst.getQuestion().getId(), questionViewedSecond.getQuestion().getId());
+
+    }
+
+
+
+    @Test
+    public void AddQuestionAsViewedIsNotExist() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/21/view"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Question not found"));
+    }
+
 
 }
