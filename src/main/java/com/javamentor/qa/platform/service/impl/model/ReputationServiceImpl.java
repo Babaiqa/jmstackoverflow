@@ -29,7 +29,7 @@ public class ReputationServiceImpl extends ReadWriteServiceImpl<Reputation, Long
 
     @Override
     public void persist(Reputation reputation) {
-        reputation.setCount(r.nextInt(101)); // [0 ; 100]
+        reputation.setCount(r.nextInt(100)); // [0 ; 99]
         super.persist(reputation);
     }
 }

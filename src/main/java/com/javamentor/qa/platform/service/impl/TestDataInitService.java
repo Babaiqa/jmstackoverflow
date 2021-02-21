@@ -9,13 +9,13 @@ import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.*;
 import com.javamentor.qa.platform.service.abstracts.model.*;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,6 +38,7 @@ public class  TestDataInitService {
     final RoleService roleService;
     final IgnoredTagService ignoredTagService;
     final TrackedTagService trackedTagService;
+    final Random random;
 
     int numberOfUsers = 50;
     List<Tag> tagList = new ArrayList<>();
@@ -69,6 +70,7 @@ public class  TestDataInitService {
         this.roleService = roleService;
         this.ignoredTagService = ignoredTagService;
         this.trackedTagService = trackedTagService;
+        random = new Random();
     }
 
 
@@ -102,35 +104,35 @@ public class  TestDataInitService {
             user.setPassword("password" + i);
             user.setFullName("Ivanov Ivan" + i);
             user.setIsEnabled(true);
-            user.setReputationCount(0);
+            //user.setReputationCount(0);
             user.setCity("Moscow" + i);
             user.setLinkSite("http://google.com" + i);
             user.setLinkGitHub("http://github.com");
             user.setLinkVk("http://vk.com");
             user.setAbout("very good man");
             user.setImageLink("https://pbs.twimg.com/profile_images/1182694005408186375/i5xT6juJ_400x400.jpg");
-            user.setReputationCount(1);
+            //user.setReputationCount(1);
             if (i == 0) user.setRole(ADMIN_ROLE);
             else user.setRole(USER_ROLE);
             userService.persist(user);
 
             Reputation reputation = new Reputation();
             reputation.setUser(user);
-            reputation.setCount(1);
+            reputation.setCount(random.nextInt(100) + 1);
             reputationService.persist(reputation);
 
             Question question = new Question();
             List<Tag> randomQuestionTagList = new ArrayList<>();
 
-            int questionTagsNumber = 1 + (int) (Math.random() * 5);
+            int questionTagsNumber = random.nextInt(5) + 1;
             int j = 0;
             while (j != questionTagsNumber) {
                 j++;
-                int tagIndex = 1 + (int ) (Math.random() * 49);
+                int tagIndex = random.nextInt(49) + 1;
                 randomQuestionTagList.add(tagList.get(tagIndex));
             }
 
-            Integer viewCountQuestion = 1 +(int) (Math.random() * 1000);
+            Integer viewCountQuestion = random.nextInt(1000) + 1;
             question.setTitle("Question Title" + i);
             question.setViewCount(viewCountQuestion);
             question.setDescription("Question Description" + i);
@@ -142,15 +144,15 @@ public class  TestDataInitService {
             Question questionNoAnswer = new Question();
             List<Tag> randomQuestionNoAnsTagList = new ArrayList<>();
 
-            int questionNoAnsTagsNumber = 1 + (int) (Math.random() * 5);
+            int questionNoAnsTagsNumber = random.nextInt(5) + 1;
             int k = 0;
             while (k != questionNoAnsTagsNumber) {
                 k++;
-                int tagIndex = 1 + (int ) (Math.random() * 49);
+                int tagIndex = random.nextInt(49) + 1;
                 randomQuestionNoAnsTagList.add(tagList.get(tagIndex));
             }
 
-            Integer viewCountQuestionNoAnswer = 1 +(int) (Math.random() * 1000);
+            Integer viewCountQuestionNoAnswer = random.nextInt(1000) + 1;
             questionNoAnswer.setTitle("Question NoAnswer " + i);
             questionNoAnswer.setViewCount(viewCountQuestionNoAnswer);
             questionNoAnswer.setDescription("Question NoAnswer Description" + i);
@@ -209,7 +211,7 @@ public class  TestDataInitService {
             voteAnswerService.persist(voteAnswer);
 
             IgnoredTag ignoredTag = new IgnoredTag();
-            int randomIgnoredTagNum = (int) (Math.random() * 7);
+            int randomIgnoredTagNum = random.nextInt(7);
             ignoredTag.setUser(user);
             if (randomIgnoredTagNum > 0) {
                 ignoredTag.setIgnoredTag(tagList.get(randomIgnoredTagNum));
@@ -217,7 +219,7 @@ public class  TestDataInitService {
             }
 
             TrackedTag trackedTag = new TrackedTag();
-            int randomTrackedTagNum = (int) (Math.random() * 7);
+            int randomTrackedTagNum = (int) (Math.random() * 7); //TODO: double check randoms
             trackedTag.setUser(user);
             if (randomTrackedTagNum > 0) {
                 trackedTag.setTrackedTag(tagList.get(randomTrackedTagNum));

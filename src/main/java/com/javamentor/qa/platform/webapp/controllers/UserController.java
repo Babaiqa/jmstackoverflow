@@ -1,11 +1,13 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.entity.user.Reputation;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.models.util.OnUpdate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.converters.UserConverter;
 import io.swagger.annotations.*;
@@ -31,18 +33,22 @@ public class UserController {
     private final SecurityHelper securityHelper;
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
+    private final ReputationService reputationService;
+
     @Autowired
     public UserController(UserService userService,
                           UserConverter userConverter,
                           UserDtoService userDtoService,
                           PasswordEncoder passwordEncoder,
-                          SecurityHelper securityHelper) {
+                          SecurityHelper securityHelper,
+                          ReputationService reputationService) {
 
         this.userService = userService;
         this.userConverter = userConverter;
         this.userDtoService = userDtoService;
         this.passwordEncoder = passwordEncoder;
         this.securityHelper = securityHelper;
+        this.reputationService = reputationService;
     }
 
     // Examples for Swagger
@@ -247,7 +253,7 @@ public class UserController {
         if (Boolean.TRUE.equals(user.getIsDeleted())) {
             return ResponseEntity.badRequest().body("The user has already been deleted!");
         }
-        userService.deleteUserByFlag(user);
+        userService.deleteUserByFlag(user); // TODO: find out, if reputation needs to be cleared/deleted, as user get deleted
         return ResponseEntity.ok().body("User deleted successfully");
 
     }
@@ -273,7 +279,19 @@ public class UserController {
         }
 
         User newUser = userConverter.userDtoToUser(userRegistrationDto);
-        userService.persist(newUser);
+        userService.persist(newUser); // TODO: extract method from duplicdte code,  maybe
+
+        Optional<Reputation> reputation = reputationService.getReputationByUserId(newUser.getId());
+
+        if (reputation.isPresent()) {
+
+            return ResponseEntity.badRequest().body(String.format("Reputation for user, with id %d already exist", newUser.getId()));
+        }
+
+        Reputation userReputation = new Reputation();
+        userReputation.setUser(newUser);
+        reputationService.persist(userReputation);
+
         return ResponseEntity.ok(userConverter.userToDto(newUser));
     }
 }

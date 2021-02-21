@@ -17,10 +17,10 @@ import java.util.Optional;
 @Mapper(componentModel = "spring")
 public abstract class CommentConverter {
 
-    private final ReputationService reputationService;
+    private ReputationService reputationService;
 
     @Autowired
-    protected CommentConverter(ReputationService reputationService) {
+    public void setReputationService(ReputationService reputationService) {
         this.reputationService = reputationService;
     }
 
