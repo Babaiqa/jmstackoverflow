@@ -1,6 +1,5 @@
 user_entity:
   - email: "principal@mail.ru"
-    reputation_count: 2
     password: "2020-04-04"
     about: "description 1"
     full_name: "Teat"
@@ -11,7 +10,6 @@ user_entity:
     id: 1
 
   - email: "2020-04-04"
-    reputation_count: 1
     password: "2020-04-04"
     about: "description 2"
     full_name: "Tot"
@@ -22,7 +20,6 @@ user_entity:
     id: 2
 
   - email: "2020-04-04"
-    reputation_count: 0
     password: "2020-04-04"
     about: "description 2"
     full_name: "Tot"
@@ -35,7 +32,6 @@ user_entity:
 
   # Attention! Do not change this block(-id:4).
   - email: "admin@tut.by"
-    reputation_count: 10
     password: "admin"
     about: "description 2"
     full_name: "Admin Admin"

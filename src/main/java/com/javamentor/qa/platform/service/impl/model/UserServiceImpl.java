@@ -16,13 +16,14 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
 
     private final UserDao userDao;
 
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao,PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserDao userDao) {
         super(userDao);
         this.userDao = userDao;
-        this.passwordEncoder = passwordEncoder;
+        //this.passwordEncoder = passwordEncoder;
     }
 
     @Override

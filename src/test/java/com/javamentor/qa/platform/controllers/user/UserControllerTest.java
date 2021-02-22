@@ -50,10 +50,10 @@ public class UserControllerTest extends AbstractIntegrationTest {
     public void shouldGetUserById() throws Exception {
         UserDto user = new UserDto();
         user.setId(1L);
+        user.setReputation(2);
         user.setEmail("ivanov@mail.ru");
         user.setFullName("Teat");
         user.setLinkImage("https://www.google.com/search?q=D0");
-        user.setReputation(2);
 
         this.mockMvc.perform(get("/api/user/" + user.getId()))
                 .andDo(print())

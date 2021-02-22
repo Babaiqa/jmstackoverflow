@@ -1,6 +1,5 @@
 user_entity:
   - email: "principal@mail.ru"
-    reputation_count: 2
     password: "$2a$10$G.l/LUSaCNeNK3d5Bhm2KOJLF8aFynLFxiKirvrcJHwveXmcAXQcy"
     about: "description 1"
     full_name: "Test"

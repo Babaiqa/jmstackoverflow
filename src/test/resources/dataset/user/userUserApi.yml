@@ -3,7 +3,7 @@ user_entity:
     full_name: "Teat"
     about: "description 1"
     email: "ivanov@mail.ru"
-    reputation_count: 2
+
     password: "2020-04-04"
     image_link: "linkImage1"
     is_enabled: 1
@@ -14,7 +14,6 @@ user_entity:
   - id: 2
     full_name: "Teat"
     email: "2020-04-04"
-    reputation_count: 1
     password: "2020-04-05"
     about: "description 2"
     image_link: "linkImage2"
@@ -27,7 +26,6 @@ user_entity:
   - id: 3
     full_name: "Bob"
     email: "2020-04-04"
-    reputation_count: 0
     password: "2020-04-04"
     about: "description 2"
     image_link: "linkImage3"
@@ -40,7 +38,6 @@ user_entity:
   - id: 4
     full_name: "Tob"
     email: "2020-04-04"
-    reputation_count: 4
     password: "2020-04-04"
     about: "description 2"
     image_link: "linkImage4"
