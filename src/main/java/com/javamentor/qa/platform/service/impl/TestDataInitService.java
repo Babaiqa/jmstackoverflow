@@ -164,6 +164,7 @@ public class  TestDataInitService {
             userFavoriteQuestion.setQuestion(question);
             userFavoriteQuestionService.persist(userFavoriteQuestion);
 
+
             VoteQuestion voteQuestion = new VoteQuestion();
             voteQuestion.setUser(user);
             voteQuestion.setQuestion(question);
@@ -174,7 +175,7 @@ public class  TestDataInitService {
             answer.setUser(user);
             answer.setQuestion(question);
             answer.setHtmlBody("Answer" + i + ":  Hello! There you can find an answer on your question: www.google.com.");
-            answer.setIsHelpful(true);
+            answer.setIsHelpful(false);
             answer.setIsDeleted(false);
             answerService.persist(answer);
 
@@ -202,11 +203,6 @@ public class  TestDataInitService {
             userBadges.setBadge(badge);
             userBadgesService.persist(userBadges);
 
-            VoteAnswer voteAnswer = new VoteAnswer();
-            voteAnswer.setUser(user);
-            voteAnswer.setAnswer(answer);
-            voteAnswer.setVote(1);
-            voteAnswerService.persist(voteAnswer);
 
             IgnoredTag ignoredTag = new IgnoredTag();
             int randomIgnoredTagNum = (int) (Math.random() * 7);

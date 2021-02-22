@@ -1,9 +1,9 @@
 package com.javamentor.qa.platform.models.dto;
 
 import lombok.*;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
 
 @Getter
 @Setter
