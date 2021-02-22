@@ -13,7 +13,7 @@ class PaginationQuestion {
         } else if (this.type === 'popular') {
             this.questions = this.questionService.findPaginationPopular(this.page, this.size);
         } else if (this.type === 'withTags') {
-                this.questions = this.questionService.getQuestionsWithGivenTags(this.page, this.size, this.id);
+            this.questions = this.questionService.getQuestionsWithGivenTags(this.page, this.size, this.id);
         } else if (this.type === 'withoutAnswers') {
             this.questions = this.questionService.getQuestionsWithoutAnswers(this.page, this.size)
         } else if (this.type === 'new') {
@@ -28,7 +28,6 @@ class PaginationQuestion {
         $('#questionsPagesNavigation').children().remove();
 
 
-
         this.questions.then(function (response) {
 
             for (var i = 0; i < response.items.length; i++) {
@@ -39,59 +38,82 @@ class PaginationQuestion {
                     + ('0' + date.getMinutes()).slice(-2)
 
                 let shuffledNames = response.items[i].listTagDto.map(i => i.name);
-                let text  = shuffledNames.map(i => `<a href="#" class="mb-1"> ${i} </a>`).join('');
+                let text = shuffledNames.map(i => `<a href="#" class="mb-1"> ${i} </a>`).join('');
 
                 $('.questionsTable').append(
+
                     "<div class=\"question-card d-flex\">" +
-                    "   <div class=\"question-stats-container\">" +
-                    "       <div class=\"stats\">" +
-                    "           <div class=\"vote\">" +
-                    "               <div class=\"vote-count\">" +
-                    "                   <strong>" + response.items[i].countValuable + "</strong>" +
-                    "               </div>" +
-                    "               <div class=\"view-count-vote\">голосов</div>" +
-                    "               <div class=\"view-count-answer\">" +
-                    "                   <div class=\"status-unanswered\"><strong>" + response.items[i].countAnswer + "</strong></div>" +
-                    "                   <div class=\"view-count\">ответов</div>" +
-                    "               </div>" +
-                    "               <div class=\"views warm d-flex\">" +
-                    "                   <div class=\"views-number\">" + response.items[i].viewCount + "</div>" +
-                    "                   <div class=\"views-text\">показов</div>" +
+
+                    "<div class=\"container\">"+
+                    "   <div class=\"row\">"+
+
+                    "       <div class=\"col-sm-2\">"+
+                                // дивы с счетчиками
+                    "           <div class=\"question-stats-container\">" +
+                    "               <div class=\"stats\">" +
+                    "                   <div class=\"vote\">" +
+                    "                       <div class=\"vote-count\">" +
+                    "                           <strong>" + response.items[i].countValuable + "</strong>" +
+                    "                       </div>" +
+                    "                       <div class=\"view-count-vote\">голосов</div>" +
+                    "                       <div class=\"view-count-answer\">" +
+                    "                           <div class=\"status-unanswered\"><strong>" + response.items[i].countAnswer + "</strong></div>" +
+                    "                           <div class=\"view-count\">ответов</div>" +
+                    "                       </div>" +
+                    "                       <div class=\"views warm d-flex\">" +
+                    "                           <div class=\"views-number\">" + response.items[i].viewCount + "</div>" +
+                    "                           <div class=\"views-text\">показов</div>" +
+                    "                       </div>" +
+                    "                   </div>" +
                     "               </div>" +
                     "           </div>" +
-                    "       </div>" +
+
+                    "       </div>"+
+
+                    "       <div class=\"col-sm-6\">"+
+                                //див с вопросом
+                    "           <div class=\"question-title\">" +
+                    "               <a style='color: #0077cb; font-size: 125%' id=\"questionLink" + response.items[i].id + "\" href=\"/question/" + response.items[i].id + "\" onclick=\"openContent(id, 'question')\" >" + response.items[i].title +
+                    "               </a>" +
+                    "           </div>" +
+                                //див с описанием
+                    "           <div class=\"question-text\">" + response.items[i].description + "</div>" +
+                                //див с тегами
+                    "           <div>" + text + "</div>" +
+
+                    "       </div>"+
+
+                    "       <div class=\"col-sm-4\">"+
+
+                                //див с датой
+                    "           <div class=\"user-info-change\">" +
+                    "               <a href=\"#\" class=\"user-info-change-link\">задан " + stringDate + " " + "</a>" +
+                    "           </div>" +
+                                //дивы с инфой юзера
+                    "           <div class=\"user-info-gravatar d-flex\">" +
+                    "               <a href=\"#\" class=\"user-info-gravatar-link\">" +
+                    "                   <div class=\"user-info-gravatar-wrapper\">" +
+                    "                       <img src=\"" + response.items[i].authorImage + "\" alt=\"\" width=\"32\" height=\"32\" class=\"user-info-img\">" +
+                    "                   </div>" +
+                    "               </a>" +
+                    "               <div class=\"user-info-details-wrapper\">" +
+                    "                   <a class=\"user-info-details-name\" href=\"#\">" + response.items[i].authorName + "</a>" +
+                    "                   <div class=\"user-info-stats\">" +
+                    "                       <span class=\"user-reputation\">" + "!!!" + "</span>" +
+                    "                       <span class=\"user-gold active-stats\">" + "###" + "</span>" +
+                    "                       <span class=\"user-silver active-stats\">" + "###" + "</span>" +
+                    "                       <span class=\"user-bronze active-stats\">" + "###" + "</span>" +
+                    "                   </div>" +
+                    "               </div>" +
+                    "           </div>" +
+
+                    "       </div>"+
+
+                    "   </div>"+
                     "</div>" +
-                    "<div class=\"question-details\">" +
-                    "   <div class=\"question-title\">" +
-                    "       <a style='color: #0077cb; font-size: 125%' id=\"questionLink"+ response.items[i].id +"\" href=\"/question/"+ response.items[i].id +"\" onclick=\"openContent(id, 'question')\" >" +
-                                response.items[i].title +
-                    "       </a>" +
-                    "</div>" +
-                    "   <div class=\"question-text\">" + response.items[i].description +
-                    "</div>" +
-                    "<div class=\"d-flex item-between\">" +
-                    "   <div>" +
-                    text +
-                    "   </div>" +
-                    "<div class=\"user-info\">" +
-                    "   <div class=\"user-info-change\">" +
-                    "       <a href=\"#\" class=\"user-info-change-link\">задан "+ stringDate + " " +
-                    "       </a>" +
-                    "   </div>" +
-                    "<div class=\"user-info-gravatar d-flex\">" +
-                    "   <a href=\"#\" class=\"user-info-gravatar-link\">" +
-                    "       <div class=\"user-info-gravatar-wrapper\">" +
-                    "           <img src=\"" + response.items[i].authorImage + "\" alt=\"\" width=\"32\" height=\"32\" class=\"user-info-img\"></div>" +
-                    "   </a>" +
-                    "<div class=\"user-info-details-wrapper\">" +
-                    "   <a class=\"user-info-details-name\" href=\"#\">" + response.items[i].authorName + "</a>" +
-                    "   <div class=\"user-info-stats\">" +
-                    "       <span class=\"user-reputation\">" + "!!!" + "</span>" +
-                    "       <span class=\"user-gold active-stats\">" + "###" + "</span>" +
-                    "       <span class=\"user-silver active-stats\">" + "###" + "</span>" +
-                    "       <span class=\"user-bronze active-stats\">" + "###" + "</span>" +
-                    "   </div>" +
+                    
                     "</div>"
+
                 )
             }
         })
