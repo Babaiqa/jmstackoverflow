@@ -37,11 +37,8 @@ class PaginationQuestion {
                     + ('0' + (date.getMonth() + 1)).slice(-2) + "."
                     + date.getFullYear() + " " + ('0' + date.getHours()).slice(-2) + ":"
                     + ('0' + date.getMinutes()).slice(-2)
-                console.log(response.items[i]);
                 let shuffledNames = response.items[i].listTagDto.map(i => i.name);
                 let text  = shuffledNames.map(i => `<a href="#" class="mb-1"> ${i} </a>`).join('');
-
-                let countAnswer = new QuestionService().getCountAnswer(response.items[i].id);
 
                 $('.questionsTable').append(
                     "<div class=\"question-card d-flex\">" +
@@ -53,7 +50,7 @@ class PaginationQuestion {
                     "               </div>" +
                     "               <div class=\"view-count-vote\">голосов</div>" +
                     "               <div class=\"view-count-answer\">" +
-                    '                   <div class=\"status-unanswered\"><strong>' + countAnswer + '</strong></div>' +
+                    '                   <div class=\"status-unanswered\"><strong>' + response.items[i].countAnswer + '</strong></div>' +
                     "                   <div class=\"view-count\">ответов</div>" +
                     "               </div>" +
                     "               <div class=\"views warm d-flex\">" +
