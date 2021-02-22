@@ -31,6 +31,8 @@ class PaginationQuestion {
         this.questions.then(function (response) {
 
             for (var i = 0; i < response.items.length; i++) {
+                console.log(response.items[i]);
+
                 const date = new Date(response.items[i].persistDateTime)
                 const stringDate = ('0' + date.getDate()).slice(-2) + "."
                     + ('0' + (date.getMonth() + 1)).slice(-2) + "."
