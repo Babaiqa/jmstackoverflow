@@ -16,6 +16,7 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
         super(voteQuestionDao);
     }
 
+
     @Override
     public boolean isUserAlreadyVoted(Question question, User user) {
         List<VoteQuestion> list = question.getVoteQuestions();
