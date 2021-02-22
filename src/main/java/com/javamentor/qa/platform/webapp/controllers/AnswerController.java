@@ -2,7 +2,6 @@ package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
@@ -55,7 +54,8 @@ public class AnswerController {
                             QuestionService questionService,
                             VoteAnswerDtoService voteAnswerDtoService,
                             AnswerDtoService answerDtoService,
-                            AnswerConverter answerConverter, VoteAnswerService voteAnswerService, VoteAnswerConverter voteAnswerConverter) {
+                            AnswerConverter answerConverter,
+                            VoteAnswerService voteAnswerService, VoteAnswerConverter voteAnswerConverter) {
         this.answerService = answerService;
         this.commentAnswerService = commentAnswerService;
         this.commentConverter = commentConverter;
@@ -143,6 +143,7 @@ public class AnswerController {
         return ResponseEntity.ok(answerDtoList);
     }
 
+
     @PostMapping("/{questionId}/answer")
     @ApiOperation(value = "Add answer", notes = "This method Add answer to question and return AnswerDto")
     @ApiResponses({
@@ -170,6 +171,7 @@ public class AnswerController {
         return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
     }
 
+
     @PatchMapping("/{questionId}/answer/{answerId}/upVote")
     @ResponseBody
     @ApiResponses({
@@ -192,6 +194,9 @@ public class AnswerController {
         if (!answer.isPresent()) {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
+        if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {
+            return ResponseEntity.ok("User already voted");
+        }
 
         if (question.get().getUser().getId().equals(securityHelper.getPrincipal().getId())) {
             answer.get().setIsHelpful(true);
@@ -204,6 +209,7 @@ public class AnswerController {
 
         return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
     }
+
 
     @PatchMapping("/{questionId}/answer/{answerId}/downVote")
     @ResponseBody
@@ -228,11 +234,18 @@ public class AnswerController {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
 
+
+        if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {
+            return ResponseEntity.ok("User already voted");
+        }
+
         VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
         voteAnswerService.persist(voteAnswer);
 
         return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
     }
+
+
 
     @GetMapping("/{questionId}/isAnswerVoted")
     @ApiOperation(value = "Checks if user vote up answer to the question",

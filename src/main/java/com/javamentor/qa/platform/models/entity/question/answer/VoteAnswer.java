@@ -52,5 +52,4 @@ public class VoteAnswer {
         this.answer = answer;
         this.vote = vote;
     }
-
 }

@@ -3,7 +3,8 @@ package com.javamentor.qa.platform.webapp.converters;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.mapstruct.*;
@@ -28,9 +29,8 @@ public abstract class QuestionConverter {
     @Mapping(source = "question.tags", target = "listTagDto")
     @Mapping(source = "question.persistDateTime", target = "persistDateTime")
     @Mapping(source = "question.lastUpdateDateTime", target = "lastUpdateDateTime")
-    @Mapping(source = "question.answers", target = "countAnswer", qualifiedByName = "answersToCountAnswer")
+    @Mapping(target = "countValuable", constant = "0")
     public abstract QuestionDto questionToQuestionDto(Question question);
-
 
 
     @Mapping(target = "user", source = "userId",qualifiedByName = "mapUser")
@@ -39,11 +39,6 @@ public abstract class QuestionConverter {
     @Named("mapUser")
     public User mapUser(Long id) {
         return userService.getById(id).get();
-    }
-
-    @Named("answersToCountAnswer")
-    public int answersToCountAnswer(List<Answer> answerList) {
-        return answerList.size();
     }
 
 }

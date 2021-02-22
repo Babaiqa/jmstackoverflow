@@ -7,12 +7,12 @@
 <body>
 
 <div th:fragment="question" class="snippet-hidden align-self-start" id="question-single">
-    <div class="col m-2 p-4" style="border-left: 1px solid #D6D9DC;" >
-        <div id="question-header" class="row justify-content-between" >
-            <div id="question-title" class = "col" style="font-size: 200%">
+    <div class="col m-2 p-4" style="border-left: 1px solid #D6D9DC;">
+        <div id="question-header" class="row justify-content-between">
+            <div id="question-title" class="col" style="font-size: 200%">
             </div>
-            <div class = "col">
-                <a type="button" class="btn btn-primary float-right" href="/ask"  id="askQuest">Задать вопрос</a>
+            <div class="col">
+                <a type="button" class="btn btn-primary float-right" href="/ask" id="askQuest">Задать вопрос</a>
             </div>
 
         </div>
@@ -30,14 +30,14 @@
 
         <div main-area class="row">
             <div question-and-answers class="col-md-12 col-xl-9  col-lg-9 col-sm-12" aria-label="question and answers">
-                <div id = "question-area" >
+                <div id="question-area">
                     <div class="row">
                         <div vote-area-question class="col-1">
-                            <svg width="36" height="36" >
+                            <svg width="36" height="36">
                                 <path d="M2 26h32L18 10 2 26z"></path>
                             </svg>
                             <div style="font-size: 200%"> &nbsp;0</div>
-                            <svg  width="36" height="36" >
+                            <svg width="36" height="36">
                                 <path d="M2 10h32L18 26 2 10z"></path>
                             </svg>
                         </div>
@@ -72,7 +72,9 @@
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-3">
-                                                            <img width="48" height="48" src="https://pbs.twimg.com/profile_images/1182694005408186375/i5xT6juJ_400x400.jpg" alt="...">
+                                                            <img width="48" height="48"
+                                                                 src="https://pbs.twimg.com/profile_images/1182694005408186375/i5xT6juJ_400x400.jpg"
+                                                                 alt="...">
                                                         </div>
                                                         <div class="col-8">
                                                             <div>Коля Нарушев</div>
@@ -87,8 +89,12 @@
                                 </div>
                             </div>
                             <div comments class="post-layout--right">
-                                <div id="comments-1237608" class="comments js-comments-container bt bc-black-075 mt12  dno" data-post-id="1237608" data-min-length="15">
-                                    <ul class="comments-list js-comments-list" data-remaining-comments-count="0" data-canpost="false" data-cansee="true" data-comments-unavailable="false" data-addlink-disabled="true">
+                                <div id="comments-1237608"
+                                     class="comments js-comments-container bt bc-black-075 mt12  dno"
+                                     data-post-id="1237608" data-min-length="15">
+                                    <ul class="comments-list js-comments-list" data-remaining-comments-count="0"
+                                        data-canpost="false" data-cansee="true" data-comments-unavailable="false"
+                                        data-addlink-disabled="true">
                                         <hr/>
                                         <li>
                                             <span>Что такое var_with_long_name ?</span>
@@ -109,14 +115,14 @@
 
                                 <div id="comments-link-1237608" data-rep="50" data-reg="true">
                                     <a href="#">добавить комментарий</a>
-                                    <span >&nbsp;|&nbsp;</span>
+                                    <span>&nbsp;|&nbsp;</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <hr/>
-                <div id = "answer-area">
+                <div id="answer-area">
                     <div info class="row justify-content-between m-2 py-5">
                         <div style="font-size: 200%">
                             2 Ответа
@@ -132,30 +138,32 @@
                     </div>
                     <div answer1 class="row">
                         <div vote-area-answer class="col-1">
-                            <svg width="36" height="36" >
+                            <svg width="36" height="36">
                                 <path d="M2 26h32L18 10 2 26z"></path>
                             </svg>
                             <div style="font-size: 200%"> &nbsp;3</div>
-                            <svg  width="36" height="36" >
+                            <svg width="36" height="36">
                                 <path d="M2 10h32L18 26 2 10z"></path>
                             </svg>
-                            <svg width="36" height="36">
+                              <svg width="36" height="36">
                                 <path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>
                             </svg>
                         </div>
                         <div answer-and-comments-area class="col-11">
                             <div answer-area>
-                                <p>Можно проще, без явного применения SQL запроса(если вы можете подключиться к базе):</p>
+                                <p>Можно проще, без явного применения SQL запроса(если вы можете подключиться к
+                                    базе):</p>
                                 в phpMyAdmin:
-                                <p>   нажать на ссылку "На главную"<p>
-                                <p>    затем выбрать "Учетные записи пользователя" а там уже</p>
-                                <p>   выбрать строку с необходимым пользователем и в столбце действия</p>
-                                <p>   выбрать "редактировать привилегии" в появившемся окне будет ссылка</p>
-                                <p>   "Изменить пароль" дальше интуитивно и так понятно</p>
-                                <p>   в HeidiSQL:</p>
-                                <p>   Инструменты</p>
-                                <p>   Управление пользователями</p>
-                                <p>   далее интуитивно понятно</p>
+                                <p> нажать на ссылку "На главную"
+                                <p>
+                                <p> затем выбрать "Учетные записи пользователя" а там уже</p>
+                                <p> выбрать строку с необходимым пользователем и в столбце действия</p>
+                                <p> выбрать "редактировать привилегии" в появившемся окне будет ссылка</p>
+                                <p> "Изменить пароль" дальше интуитивно и так понятно</p>
+                                <p> в HeidiSQL:</p>
+                                <p> Инструменты</p>
+                                <p> Управление пользователями</p>
+                                <p> далее интуитивно понятно</p>
                             </div>
                             <div usderanswer class="mb0 ">
                                 <div class="row justify-content-between px-3">
@@ -172,7 +180,9 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-3">
-                                                        <img width="48" height="48" src="https://pbs.twimg.com/profile_images/1182694005408186375/i5xT6juJ_400x400.jpg" alt="...">
+                                                        <img width="48" height="48"
+                                                             src="https://pbs.twimg.com/profile_images/1182694005408186375/i5xT6juJ_400x400.jpg"
+                                                             alt="...">
                                                     </div>
                                                     <div class="col">
                                                         <div>Вася Пупкин</div>
@@ -205,7 +215,7 @@
                                     </ul>
                                 </div>
                                 <div id="comments-link-1237602" data-rep="50" data-reg="true">
-                                    <a href="#" >добавить комментарий</a>
+                                    <a href="#">добавить комментарий</a>
                                     <span>&nbsp;|&nbsp;</span>
                                 </div>
                             </div>
@@ -214,31 +224,34 @@
                     <hr/>
                     <div answer2 class="row">
                         <div vote-area-answer class="col-1">
-                            <div class="js-voting-container grid jc-center fd-column ai-stretch gs4 fc-black-200" data-post-id="1237608" data-suppress-vote-requests="false">
-                                <svg width="36" height="36" >
+                            <div class="js-voting-container grid jc-center fd-column ai-stretch gs4 fc-black-200"
+                                 data-post-id="1237608" data-suppress-vote-requests="false">
+                                <svg width="36" height="36">
                                     <path d="M2 26h32L18 10 2 26z"></path>
                                 </svg>
                                 <div style="font-size: 200%"> &nbsp;1</div>
-                                <svg  width="36" height="36" >
+                                <svg width="36" height="36">
                                     <path d="M2 10h32L18 26 2 10z"></path>
                                 </svg>
                             </div>
                         </div>
                         <div answer-and-comments-area class="col-11">
                             <div answer-area>
-                                <p>Можно проще, без явного применения SQL запроса(если вы можете подключиться к базе):</p>
+                                <p>Можно проще, без явного применения SQL запроса(если вы можете подключиться к
+                                    базе):</p>
                                 в phpMyAdmin:
 
-                                <p>   нажать на ссылку "На главную"<p>
-                                <p>    затем выбрать "Учетные записи пользователя" а там уже</p>
-                                <p>   выбрать строку с необходимым пользователем и в столбце действия</p>
-                                <p>   выбрать "редактировать привилегии" в появившемся окне будет ссылка</p>
-                                <p>   "Изменить пароль" дальше интуитивно и так понятно</p>
-                                <p>   в HeidiSQL:</p>
+                                <p> нажать на ссылку "На главную"
+                                <p>
+                                <p> затем выбрать "Учетные записи пользователя" а там уже</p>
+                                <p> выбрать строку с необходимым пользователем и в столбце действия</p>
+                                <p> выбрать "редактировать привилегии" в появившемся окне будет ссылка</p>
+                                <p> "Изменить пароль" дальше интуитивно и так понятно</p>
+                                <p> в HeidiSQL:</p>
 
-                                <p>   Инструменты</p>
-                                <p>   Управление пользователями</p>
-                                <p>   далее интуитивно понятно</p>
+                                <p> Инструменты</p>
+                                <p> Управление пользователями</p>
+                                <p> далее интуитивно понятно</p>
 
                             </div>
                             <div usderanswer class="mb0 ">
@@ -257,7 +270,9 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-3 ">
-                                                        <img width="48" height="48" src="https://pbs.twimg.com/profile_images/1182694005408186375/i5xT6juJ_400x400.jpg" alt="...">
+                                                        <img width="48" height="48"
+                                                             src="https://pbs.twimg.com/profile_images/1182694005408186375/i5xT6juJ_400x400.jpg"
+                                                             alt="...">
                                                     </div>
                                                     <div class="col-8 ">
                                                         <div>Толя Губкин</div>
@@ -271,8 +286,12 @@
                                 </div>
                             </div>
                             <div comments class="post-layout--right">
-                                <div id="comments-1337601" class="comments js-comments-container bt bc-black-075 mt12  dno" data-post-id="1237608" data-min-length="15">
-                                    <ul class="comments-list js-comments-list" data-remaining-comments-count="0" data-canpost="false" data-cansee="true" data-comments-unavailable="false" data-addlink-disabled="true">
+                                <div id="comments-1337601"
+                                     class="comments js-comments-container bt bc-black-075 mt12  dno"
+                                     data-post-id="1237608" data-min-length="15">
+                                    <ul class="comments-list js-comments-list" data-remaining-comments-count="0"
+                                        data-canpost="false" data-cansee="true" data-comments-unavailable="false"
+                                        data-addlink-disabled="true">
                                         <hr/>
                                         <li>
                                             <span>Что такое var_with_long_name ?</span>
@@ -292,9 +311,15 @@
                                 </div>
 
                                 <div id="comments-link-1337602" data-rep="50" data-reg="true">
-                                    <a class="js-add-link comments-link disabled-link" title="Используйте комментарии для запроса дополнительной информации или предложения улучшений. Избегайте публикации ответа на вопросы в комментариях." href="https://ru.stackoverflow.com/questions/1237608/%d0%9f%d0%b0%d1%80%d1%81%d0%b8%d0%bd%d0%b3-%d1%81%d0%b0%d0%b9%d1%82%d0%b0-myip-ms#" role="button">добавить комментарий</a>
+                                    <a class="js-add-link comments-link disabled-link"
+                                       title="Используйте комментарии для запроса дополнительной информации или предложения улучшений. Избегайте публикации ответа на вопросы в комментариях."
+                                       href="https://ru.stackoverflow.com/questions/1237608/%d0%9f%d0%b0%d1%80%d1%81%d0%b8%d0%bd%d0%b3-%d1%81%d0%b0%d0%b9%d1%82%d0%b0-myip-ms#"
+                                       role="button">добавить комментарий</a>
                                     <span class="js-link-separator dno">&nbsp;|&nbsp;</span>
-                                    <a class="js-show-link comments-link dno" title="разверните, чтобы увидеть все комментарии к сообщению" href="https://ru.stackoverflow.com/questions/1237608/%d0%9f%d0%b0%d1%80%d1%81%d0%b8%d0%bd%d0%b3-%d1%81%d0%b0%d0%b9%d1%82%d0%b0-myip-ms#" onclick="" role="button"></a>
+                                    <a class="js-show-link comments-link dno"
+                                       title="разверните, чтобы увидеть все комментарии к сообщению"
+                                       href="https://ru.stackoverflow.com/questions/1237608/%d0%9f%d0%b0%d1%80%d1%81%d0%b8%d0%bd%d0%b3-%d1%81%d0%b0%d0%b9%d1%82%d0%b0-myip-ms#"
+                                       onclick="" role="button"></a>
                                 </div>
                             </div>
                         </div>
@@ -316,7 +341,7 @@
                 </form>
 
             </div>
-            <div lest sidebar  class="row-md-4 col-xl-3  col-lg-3 col-sm-4" aria-label="боковая панель">
+            <div lest sidebar class="row-md-4 col-xl-3  col-lg-3 col-sm-4" aria-label="боковая панель">
                 <div style="width: 350px">
                     <div info-block class="card">
                         <div class="card-footer" style="background: #faf1d3">
@@ -340,7 +365,7 @@
                         <h4>Похожие</h4>
                         <div>
                             <div class="py-3">
-                                <div class="btn btn-success">&nbsp; 1 &nbsp; </div>
+                                <div class="btn btn-success">&nbsp; 1 &nbsp;</div>
                                 <a href="#">python парсинг сайта</a>
                             </div>
                             <div class="py-3">
@@ -400,7 +425,6 @@
             crossorigin="anonymous"></script>
 
 </div>
-
 
 
 </body>

@@ -125,7 +125,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
 
         AnswerDto answerDtoFromResponse = objectMapper.readValue(resultContext, AnswerDto.class);
         Answer answer = entityManager
-                .createQuery("from Answer where id = :id", Answer.class)
+                .createQuery("From Answer where id = :id", Answer.class)
                 .setParameter("id", answerDtoFromResponse.getId())
                 .getSingleResult();
         AnswerDto answerDtoFromDB = answerConverter.answerToAnswerDTO(answer);
@@ -314,7 +314,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
 
         JSONObject object = new JSONObject(result.getResponse().getContentAsString());
 
-        Answer afterAnswer = (Answer) entityManager.createQuery("From Answer Where id=40").getSingleResult();
+        Answer afterAnswer = (Answer) entityManager.createQuery("From Answer  Where id=40").getSingleResult();
 
         Assert.assertFalse(beforeAnswer.getIsHelpful());
         Assert.assertEquals(object.get("userId"),4);
