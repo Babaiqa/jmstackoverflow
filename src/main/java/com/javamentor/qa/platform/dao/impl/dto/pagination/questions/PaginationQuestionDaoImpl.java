@@ -7,6 +7,7 @@ import com.javamentor.qa.platform.models.dto.TagDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import com.javamentor.qa.platform.webapp.converters.TagMapper;
+import org.apache.poi.ss.formula.functions.T;
 import org.aspectj.weaver.patterns.TypePatternQuestions;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -14,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository(value = "paginationQuestion")
 @SuppressWarnings(value = "unchecked")
@@ -29,7 +27,7 @@ public class PaginationQuestionDaoImpl implements PaginationDao<QuestionDto> {
     @Override
     public List<QuestionDto> getItems(Map<String, Object> parameters) {
 
-        return (List<QuestionDto>) em.unwrap(Session.class)
+        return  (List<QuestionDto>) em.unwrap(Session.class)
                 .createQuery("select question.id as question_id, " +
                         "question.title as question_title," +
                         "u.fullName as question_authorName," +
