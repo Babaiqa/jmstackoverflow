@@ -279,7 +279,7 @@ public class UserController {
         }
 
         User newUser = userConverter.userDtoToUser(userRegistrationDto);
-        userService.persist(newUser); // TODO: extract method from duplicdte code,  maybe
+        userService.persist(newUser);
 
         Optional<Reputation> reputation = reputationService.getReputationByUserId(newUser.getId());
 

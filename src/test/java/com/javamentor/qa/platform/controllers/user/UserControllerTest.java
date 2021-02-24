@@ -4,6 +4,7 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.entity.user.Reputation;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.junit.Assert;
@@ -20,9 +21,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -96,10 +99,14 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("reputation").value(0))
                 .andExpect(status().isOk());
 
-        TypedQuery<User> query = entityManager.createQuery("FROM User WHERE email =: email", User.class)
+        TypedQuery<User> userQuery = entityManager.createQuery("FROM User WHERE email =: email", User.class)
                 .setParameter("email","11@22.ru");
 
-        Assertions.assertNotNull(SingleResultUtil.getSingleResultOrNull(query));
+        Optional<User> newUser = SingleResultUtil.getSingleResultOrNull(userQuery);
+        Assertions.assertNotNull(newUser);
+        TypedQuery<Reputation> reputationQuery = entityManager.createQuery("FROM Reputation WHERE user.id =: userId", Reputation.class)
+                .setParameter("userId", newUser.get().getId());
+        Assertions.assertNotNull(SingleResultUtil.getSingleResultOrNull(reputationQuery));
     }
 
     @Test
@@ -598,10 +605,14 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("linkImage").isEmpty())
                 .andExpect(jsonPath("reputation").value(0));
 
-        TypedQuery<User> query = entityManager.createQuery("FROM User WHERE email =: email", User.class)
+        TypedQuery<User> userQuery = entityManager.createQuery("FROM User WHERE email =: email", User.class)
                                         .setParameter("email","some@with.email");
 
-        Assertions.assertNotNull(SingleResultUtil.getSingleResultOrNull(query));
+        Optional<User> newUser = SingleResultUtil.getSingleResultOrNull(userQuery);
+        Assertions.assertNotNull(newUser);
+        TypedQuery<Reputation> reputationQuery = entityManager.createQuery("FROM Reputation WHERE user.id =: userId", Reputation.class)
+                .setParameter("userId", newUser.get().getId());
+        Assertions.assertNotNull(SingleResultUtil.getSingleResultOrNull(reputationQuery));
     }
 
     @Test
