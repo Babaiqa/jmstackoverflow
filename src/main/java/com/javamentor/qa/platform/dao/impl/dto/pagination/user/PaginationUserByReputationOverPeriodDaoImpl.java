@@ -48,7 +48,6 @@ public class PaginationUserByReputationOverPeriodDaoImpl implements PaginationDa
                         "left join Answer answer on answer.question.id=question.id " +
                         "where question.user.id in (:ids) " +
                         "or answer.user.id in (:ids) " +
-                        //"order by user.reputationCount desc"
                         "order by r.count desc"
                 )
                 .setParameter("ids", usersIds)

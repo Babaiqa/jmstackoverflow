@@ -18,7 +18,7 @@ public class ReputationServiceImpl extends ReadWriteServiceImpl<Reputation, Long
 
     public ReputationServiceImpl(ReputationDao reputationDao) {
         super(reputationDao);
-        r = new Random(); // создать для этого отдельный @Bean?
+        r = new Random();
         this.reputationDao = reputationDao;
     }
 
@@ -29,7 +29,7 @@ public class ReputationServiceImpl extends ReadWriteServiceImpl<Reputation, Long
 
     @Override
     public void persist(Reputation reputation) {
-        reputation.setCount(r.nextInt(100)); // [0 ; 99]
+        reputation.setCount(r.nextInt(100));
         super.persist(reputation);
     }
 }

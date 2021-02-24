@@ -46,6 +46,7 @@ public abstract class CommentConverter {
         if (rep.isPresent()) {
             return rep.get().getCount();
         }
-        throw new IllegalArgumentException(String.format("Tuple in reputation table, that must be connected, with user ID %d not found", userId));
+
+        return 0;//Tuple in reputation table, that must be connected with this user not found
     }
 }

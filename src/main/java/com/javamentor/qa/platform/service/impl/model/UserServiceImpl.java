@@ -23,7 +23,6 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
     public UserServiceImpl(UserDao userDao) {
         super(userDao);
         this.userDao = userDao;
-        //this.passwordEncoder = passwordEncoder;
     }
 
     @Override

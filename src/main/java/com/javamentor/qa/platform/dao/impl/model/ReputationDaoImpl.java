@@ -22,7 +22,7 @@ public class ReputationDaoImpl extends ReadWriteDaoImpl<Reputation, Long> implem
 
     @Override
     public Optional<Reputation> getReputationByUserId(Long userId) { // transfer to dtodao?
-        TypedQuery<Reputation> query = entityManager.createQuery("FROM Reputation WHERE user.id =: userId", Reputation.class) // TODO: verify hql, or remake as sql
+        TypedQuery<Reputation> query = entityManager.createQuery("FROM Reputation WHERE user.id =: userId", Reputation.class)
                                                     .setParameter("userId", userId);
         return SingleResultUtil.getSingleResultOrNull(query);
     }
