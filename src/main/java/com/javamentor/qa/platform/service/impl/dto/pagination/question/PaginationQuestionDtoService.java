@@ -13,7 +13,7 @@ import java.util.Map;
 public class PaginationQuestionDtoService implements PaginationService<QuestionDto, Object> {
 
     @Autowired
-    private  Map<String, PaginationDao<QuestionDto>> pageBean;
+    private Map<String, PaginationDao<QuestionDto>> pageBean;
 
     @Autowired
     private QuestionDao questionDao;
@@ -21,8 +21,8 @@ public class PaginationQuestionDtoService implements PaginationService<QuestionD
     @Override
     public PageDto<QuestionDto, Object> getPageDto(String methodName, Map<String, Object> parameters) {
 
-        int page = (int)parameters.get("page");
-        int size = (int)parameters.get("size");
+        int page = (int) parameters.get("page");
+        int size = (int) parameters.get("size");
 
         List<Long> questionIds = questionDao.getPaginationQuestionIds(page, size);
         parameters.put("questionIds", questionIds);

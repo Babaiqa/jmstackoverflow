@@ -465,6 +465,7 @@ public class QuestionController {
     }
 
 
+
     @PostMapping("/{questionId}/downVote")
     @ResponseBody
     @ApiOperation(value ="Down vote for question")

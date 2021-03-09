@@ -24,12 +24,10 @@ class PaginationQuestion {
     }
 
     setQuestions() {
-        $('#questionsTable').children().remove()
-        $('#questionsPagesNavigation').children().remove();
 
+        document.querySelector('.questionsTable').innerHTML = '';
 
         this.questions.then(function (response) {
-
             for (var i = 0; i < response.items.length; i++) {
                 const date = new Date(response.items[i].persistDateTime)
                 const stringDate = ('0' + date.getDate()).slice(-2) + "."
@@ -41,14 +39,13 @@ class PaginationQuestion {
                 let text = shuffledNames.map(i => `<a href="#" class="mb-1"> ${i} </a>`).join('');
 
                 $('.questionsTable').append(
-
                     "<div class=\"question-card d-flex\">" +
 
-                    "<div class=\"container\">"+
-                    "   <div class=\"row\">"+
+                    "<div class=\"container\">" +
+                    "   <div class=\"row\">" +
 
-                    "       <div class=\"col-sm-2\">"+
-                                // дивы с счетчиками
+                    "       <div class=\"col-sm-2\">" +
+                    // дивы с счетчиками
                     "           <div class=\"question-stats-container\">" +
                     "               <div class=\"stats\">" +
                     "                   <div class=\"vote\">" +
@@ -68,28 +65,28 @@ class PaginationQuestion {
                     "               </div>" +
                     "           </div>" +
 
-                    "       </div>"+
+                    "       </div>" +
 
-                    "       <div class=\"col-sm-6\">"+
-                                //див с вопросом
+                    "       <div class=\"col-sm-6\">" +
+                    //див с вопросом
                     "           <div class=\"question-title\">" +
                     "               <a style='color: #0077cb; font-size: 125%' id=\"questionLink" + response.items[i].id + "\" href=\"/question/" + response.items[i].id + "\" onclick=\"openContent(id, 'question')\" >" + response.items[i].title +
                     "               </a>" +
                     "           </div>" +
-                                //див с описанием
+                    //див с описанием
                     "           <div class=\"question-text\">" + response.items[i].description + "</div>" +
-                                //див с тегами
+                    //див с тегами
                     "           <div>" + text + "</div>" +
 
-                    "       </div>"+
+                    "       </div>" +
 
-                    "       <div class=\"col-sm-4\">"+
+                    "       <div class=\"col-sm-4\">" +
 
-                                //див с датой
+                    //див с датой
                     "           <div class=\"user-info-change\">" +
                     "               <a href=\"#\" class=\"user-info-change-link\">задан " + stringDate + " " + "</a>" +
                     "           </div>" +
-                                //дивы с инфой юзера
+                    //дивы с инфой юзера
                     "           <div class=\"user-info-gravatar d-flex\">" +
                     "               <a href=\"#\" class=\"user-info-gravatar-link\">" +
                     "                   <div class=\"user-info-gravatar-wrapper\">" +
@@ -107,17 +104,18 @@ class PaginationQuestion {
                     "               </div>" +
                     "           </div>" +
 
-                    "       </div>"+
+                    "       </div>" +
 
-                    "   </div>"+
+                    "   </div>" +
                     "</div>" +
-                    
-                    "</div>"
 
+                    "</div>"
                 )
             }
+
         })
         this.questionsPagesNavigation()
+
     }
 
     questionsPagesNavigation() {
@@ -131,8 +129,8 @@ class PaginationQuestion {
             var totalPageCount = response.totalPageCount;
             var previousPage = response.currentPageNumber - 1;
 
-
             $('#questionsPagesNavigation').children().remove();
+
             if (currentPageNumber != 1) {
                 $('#questionsPagesNavigation').append(
                     "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationQuestion(" + previousPage + "," + size + "," + "\"" + type + "\"" + ").setQuestions()' >Назад</a></li>"
