@@ -32,7 +32,7 @@ formLogin.addEventListener('submit', (event) => {
     ).then(response => {
         if (response !== null && response !== {}) {
             token = response.jwtType + '_' + response.jwtToken
-            document.cookie = 'token=' + token + ';'
+            document.cookie = 'token=' + token + '; path=/;'
             window.location.href = '/site'
         } else {
             errorLogin.innerHTML = ''
