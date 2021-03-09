@@ -1,6 +1,5 @@
 user_entity:
   - email: "2020-04-04"
-    reputation_count: 4
     password: "2020-04-04"
     about: "description 2"
     full_name: "Tot"
@@ -11,7 +10,6 @@ user_entity:
     id: 5
 
   - email: "2020-04-04"
-    reputation_count: 2
     password: "2020-04-04"
     about: "description 1"
     full_name: "Teat"
@@ -22,7 +20,6 @@ user_entity:
     id: 1
 
   - email: "2020-04-04"
-    reputation_count: 1
     password: "2020-04-04"
     about: "description 2"
     full_name: "Tot"
@@ -33,7 +30,6 @@ user_entity:
     id: 2
 
   - email: "2020-04-04"
-    reputation_count: 0
     password: "2020-04-04"
     about: "description 2"
     full_name: "Tot"
@@ -45,7 +41,6 @@ user_entity:
 
 
   - email: "2020-04-04"
-    reputation_count: 3
     password: "2020-04-04"
     about: "description 2"
     full_name: "Tot"

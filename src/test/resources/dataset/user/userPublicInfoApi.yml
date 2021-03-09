@@ -1,7 +1,6 @@
 user_entity:
   - id: 153  # <-- User Principal
     email: "principal@mail.ru"
-    reputation_count: 2
     password: "$2a$10$G.l/LUSaCNeNK3d5Bhm2KOJLF8aFynLFxiKirvrcJHwveXmcAXQcy"
     is_enabled: 1
     last_redaction_date: "2020-05-28 13:58:56"
@@ -18,7 +17,6 @@ user_entity:
 
   - id: 10
     email: "ivanov@mail.com1"
-    reputation_count: 2
     password: "$2a$10$61FOrJLsPSU.8QMpBfPObux5mI8RhiwL5kLbNNdplBaRr18cLlyQO"
     is_enabled: 1
     last_redaction_date: "2020-05-28 13:58:56"
@@ -35,7 +33,6 @@ user_entity:
 
   - id: 42
     email: "notprincipal@mail.ru"
-    reputation_count: 2
     password: "$2a$10$G.l/LUSaCNeNK3d5Bhm2KOJLF8aFynLFxiKirvrcJHwveXmcAXQcx"
     is_enabled: 1
     last_redaction_date: "2020-05-28 13:58:00"

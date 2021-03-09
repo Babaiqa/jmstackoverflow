@@ -1,7 +1,6 @@
 user_entity:
 
   - email: "Test1@mail.ru"
-    reputation_count: 2
     password: "$2a$10$uLg5d6.WEJMLjeFsvlYcAeC6qT62hzNC/jPOYuf0BqnyuyPpGlNWm"
     about: "description 1"
     full_name: "Teat"
