@@ -70,6 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .userInfoEndpoint().userService(customOAuthUserService)
                 .and()
                 .successHandler(oAuth2LoginSuccessHandler);
+        http.logout().logoutSuccessUrl("/").deleteCookies("token", "JSESSIONID").invalidateHttpSession(true);
     }
 
     @Override
