@@ -8,19 +8,23 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
 
+    private static final String HEADER_SIDEBAR_FOOTER = "headerSidebarFooter";
+
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("login");
         registry.addViewController("/index").setViewName("index");
+        registry.addViewController("/login").setViewName("login");
         registry.addViewController("/ask").setViewName("askQuestion");
-        registry.addViewController("/site").setViewName("headerSidebarFooter");
-        registry.addViewController("/users").setViewName("headerSidebarFooter");
-        registry.addViewController("/tagsAria").setViewName("headerSidebarFooter");
-        registry.addViewController("/questionAria").setViewName("headerSidebarFooter");
-        registry.addViewController("/question/{questionId}").setViewName("headerSidebarFooter");
-        registry.addViewController("/unansweredAria").setViewName("headerSidebarFooter");
         registry.addViewController("/registration").setViewName("registration");
         registry.addViewController("/registration/confirm").setViewName("registrationConfirm");
+        registry.addViewController("/test").setViewName(HEADER_SIDEBAR_FOOTER);
+        registry.addViewController("/site").setViewName(HEADER_SIDEBAR_FOOTER);
+        registry.addViewController("/users").setViewName(HEADER_SIDEBAR_FOOTER);
+        registry.addViewController("/tagsAria").setViewName(HEADER_SIDEBAR_FOOTER);
+        registry.addViewController("/questionAria").setViewName(HEADER_SIDEBAR_FOOTER);
+        registry.addViewController("/unansweredAria").setViewName(HEADER_SIDEBAR_FOOTER);
+        registry.addViewController("/question/{questionId}").setViewName(HEADER_SIDEBAR_FOOTER);
     }
 
     @Override
