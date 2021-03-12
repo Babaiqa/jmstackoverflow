@@ -13,6 +13,7 @@ import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import org.hamcrest.Matchers;
 import org.json.JSONObject;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -23,7 +24,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -333,7 +335,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         List<AnswerDto> answerList = (List<AnswerDto>) entityManager
                 .createQuery("SELECT new com.javamentor.qa.platform.models.dto.AnswerDto(a.id, u.id, q.id, " +
                         "a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime, " +
-                        "(SELECT COUNT(av.answer.id) FROM VoteAnswer AS av WHERE av.answer.id = a.id), " +
+                        "(SELECT COUNT(av.answer.id) FROM VoteAnswer AS av WHERE av.answer.id =a.id), " +
                         "u.imageLink, u.fullName) " +
                         "FROM Answer as a " +
                         "INNER JOIN a.user as u " +
@@ -342,7 +344,9 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .setParameter("questionId", 10L)
                 .getResultList();
 
-        Assert.assertTrue(answerDtoListFromResponse.size()==answerList.size());
+        Assert.assertEquals(answerDtoListFromResponse,answerList);
+
+
     }
 
     @Test
