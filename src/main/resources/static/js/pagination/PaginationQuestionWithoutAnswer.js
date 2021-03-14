@@ -104,12 +104,14 @@ class PaginationQuestionWithoutAnswer {
                 var secondNextPage = response.currentPageNumber + 2;
                 var totalPageCount = response.totalPageCount;
                 var previousPage = response.currentPageNumber - 1;
+                var startPageCount = 1;
 
                 $('.questionWithoutAnswerPagination').children().remove();
 
                 if (currentPageNumber != 1) {
                     $('.questionWithoutAnswerPagination').append(
                         "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + previousPage + "," + size + ").writeQuestionWithoutAnswer()'>Назад</a></li>"
+                        + "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + startPageCount + "," + size + ").writeQuestionWithoutAnswer()'>" + startPageCount + "</a></li>"
                     );
                 }
 
