@@ -74,12 +74,14 @@ class PaginationTag {
             const secondNextPage = response.currentPageNumber + 2;
             const totalPageCount = response.totalPageCount;
             const previousPage = response.currentPageNumber - 1;
+            const startPageCount = 1;
 
 
             $('#tagsPagesNavigation').children().remove();
             if (currentPageNumber !== 1) {
                 $('#tagsPagesNavigation').append(
                     "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + previousPage + "," + size + "," + "\"" + sort + "\"" + "," + "\""  + name  + "\"" + ").writeTags()' >Назад</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationTag(" + startPageCount + "," + size + "," + "\"" + sort + "\"" + "," + "\""  + name  + "\"" + ").writeTags()'>" + startPageCount + "</a></li>"
                 );
             }
 
