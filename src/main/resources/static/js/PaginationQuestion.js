@@ -134,8 +134,8 @@ class PaginationQuestion {
 
             if (currentPageNumber != 1) {
                 $('#questionsPagesNavigation').append(
-                    "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationQuestion(" + previousPage + "," + size + "," + "\"" + type + "\"" + ").setQuestions()' >Назад</a></li>" +
-                    "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationQuestion(" + startPageCount + "," + size + "," + "\"" + type + "\"" + ").setQuestions()'>" + startPageCount + "</a></li>"
+                    "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationQuestion(" + previousPage + "," + size + "," + "\"" + type + "\"" + ").setQuestions()' >Назад</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationQuestion(" + startPageCount + "," + size + "," + "\"" + type + "\"" + ").setQuestions()'>" + startPageCount + "</a></li>"
                 );
             }
 
