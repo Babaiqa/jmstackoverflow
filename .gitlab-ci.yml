@@ -1,8 +1,14 @@
-stages:
-  - test  
-test:
-  stage: test
-  script: mvn test
-  only:
-    - merge_requests
-  
+image: maven:latest 
+
+Clean project:
+    stage : test
+    script: mvn clean
+
+Test project:
+    stage : test
+    only:
+        refs:
+            - dev
+            - merge_requests
+    script: mvn test
+ 
