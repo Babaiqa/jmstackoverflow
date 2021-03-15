@@ -1,9 +1,5 @@
 image: maven:latest 
 
-Clean project:
-    stage : test
-    script: mvn clean
-
 Test project:
     stage : test
     only:
