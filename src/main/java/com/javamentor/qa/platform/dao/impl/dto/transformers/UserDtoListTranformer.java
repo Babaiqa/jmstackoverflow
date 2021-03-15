@@ -33,13 +33,14 @@ public class UserDtoListTranformer implements ResultTransformer {
                 }
         );
 
-        userDtoList.getTags().add(
-                new TagDto(
-                        ((Number) tuple[aliasToIndexMapTrans.get("tag_id")]).longValue(),
-                        ((String) tuple[aliasToIndexMapTrans.get("tag_name")])
-                )
-        );
-
+        if (tuple[aliasToIndexMapTrans.get("tag_id")] != null) {
+            userDtoList.getTags().add(
+                    new TagDto(
+                            ((Number) tuple[aliasToIndexMapTrans.get("tag_id")]).longValue(),
+                            ((String) tuple[aliasToIndexMapTrans.get("tag_name")])
+                    )
+            );
+        }
         return userDtoList;
     }
 

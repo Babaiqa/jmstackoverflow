@@ -39,16 +39,16 @@ public class PaginationUserByReputationOverPeriodDaoImpl implements PaginationDa
                 .createQuery("select user.id as user_id, " +
                         "user.fullName as full_name, " +
                         "user.imageLink as link_image, " +
-                        "(select coalesce(sum(ra.count), 0) from Reputation ra where ra.user.id = user_id) as reputation, " +
-                        "tag.id as tag_id, tag.name as tag_name " +
+                        "(select coalesce(sum(ra.count), 0) from Reputation ra where ra.user.id = user.id) as reputation, " +
+                        "tag.id as tag_id, " +
+                        "tag.name as tag_name " +
                         "from User user " +
-                        "left outer join Reputation r on user.id = r.user.id " +
+                        "left join Reputation r on user.id = r.user.id " +
                         "left join Question question on user.id=question.user.id " +
-                        "join question.tags tag " +
-                        "left join Answer answer on answer.question.id=question.id " +
-                        "where question.user.id in (:ids) " +
-                        "or answer.user.id in (:ids) " +
-                        "order by r.count desc"
+                        "left join question.tags tag " +
+                        "where user.id in (:ids) " +
+                        "group by user.id, user.fullName, user.imageLink, tag.id, tag.name " +
+                        "order by user.id, tag.id"
                 )
                 .setParameter("ids", usersIds)
                 .unwrap(org.hibernate.query.Query.class)
