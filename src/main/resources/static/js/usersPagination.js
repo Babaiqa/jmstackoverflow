@@ -53,12 +53,14 @@ class PaginationUser {
             var secondNextPage = response.currentPageNumber + 2;
             var totalPageCount = response.totalPageCount;
             var previousPage = response.currentPageNumber - 1;
+            var startPageCount = 1;
 
 
             $('#usersPageNavigation').children().remove();
             if (currentPageNumber != 1) {
                 $('#usersPageNavigation').append(
                     "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationUser(" + previousPage + "," + size + "," + "\"" + timeInterval + "\"" + "," + "\""  + name  + "\"" + ").writeUsers()' >Назад</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationUser(" + startPageCount + "," + size + "," + "\"" + timeInterval + "\"" + "," + "\""  + name  + "\"" + ").writeUsers()'>" + startPageCount + "</a></li>"
                 );
             }
 
