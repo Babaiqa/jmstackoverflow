@@ -7,6 +7,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -33,6 +34,9 @@ public class Reputation implements Serializable {
 
     @Column(name = "count")
     private Integer count;
+
+    @Column(name = "item")
+    private ItemToGetReputation item;
 
     @Override
     public boolean equals(Object o) {
