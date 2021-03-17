@@ -254,7 +254,7 @@ class UserControllerTest extends AbstractIntegrationTest {
 
         List<UserDtoList> expectedItems = new ArrayList<>();
         expectedItems.add(new UserDtoList(1L, "Teat", null, 0, Arrays.asList(new TagDto[]{new TagDto(1L, "java"), new TagDto(3L, "html")})));
-        expectedItems.add(new UserDtoList(2L, "Tot", null, 0, Arrays.asList(new TagDto[]{new TagDto(2L, "javaScript"), new TagDto(1L, "java"), new TagDto(5L, "sql")})));
+        expectedItems.add(new UserDtoList(2L, "Tot", null, 0, Arrays.asList(new TagDto[]{new TagDto(1L, "java"), new TagDto(2L, "javaScript"), new TagDto(5L, "sql")})));
         expectedItems.add(new UserDtoList(3L, "Tot", null, 0, Arrays.asList(new TagDto[]{new TagDto(5L, "sql")})));
         expectedItems.add(new UserDtoList(4L, "Tot", null, 0, Arrays.asList(new TagDto[]{})));
         expectedItems.add(new UserDtoList(5L, "Tot", null, 0, Arrays.asList(new TagDto[]{})));

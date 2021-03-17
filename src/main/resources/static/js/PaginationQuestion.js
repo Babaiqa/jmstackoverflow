@@ -128,12 +128,14 @@ class PaginationQuestion {
             var secondNextPage = response.currentPageNumber + 2;
             var totalPageCount = response.totalPageCount;
             var previousPage = response.currentPageNumber - 1;
+            var startPageCount = 1;
 
             $('#questionsPagesNavigation').children().remove();
 
             if (currentPageNumber != 1) {
                 $('#questionsPagesNavigation').append(
                     "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationQuestion(" + previousPage + "," + size + "," + "\"" + type + "\"" + ").setQuestions()' >Назад</a></li>"
+                    + "<li class=\"page-item\"><a class=\"page-link\" href=\"#\" onclick='new PaginationQuestion(" + startPageCount + "," + size + "," + "\"" + type + "\"" + ").setQuestions()'>" + startPageCount + "</a></li>"
                 );
             }
 
