@@ -5,6 +5,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -33,6 +34,11 @@ public class Reputation implements Serializable {
 
     @Column(name = "count")
     private Integer count;
+
+    @Enumerated
+    @NotNull
+    @Column(name = "type")
+    private ReputationType type;
 
     @Override
     public boolean equals(Object o) {

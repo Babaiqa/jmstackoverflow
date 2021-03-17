@@ -6,7 +6,6 @@ import com.javamentor.qa.platform.models.entity.CommentType;
 import com.javamentor.qa.platform.models.entity.question.*;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
-import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.*;
 import com.javamentor.qa.platform.service.abstracts.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,7 +116,9 @@ public class  TestDataInitService {
             userService.persist(user);
 
             Reputation reputation = new Reputation();
+            int n = random.nextInt(ReputationType.values().length);
             reputation.setUser(user);
+            reputation.setType(ReputationType.values()[n]);
             reputation.setCount(random.nextInt(100) + 1);
             reputationService.persist(reputation);
 
