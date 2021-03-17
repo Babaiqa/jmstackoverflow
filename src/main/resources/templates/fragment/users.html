@@ -13,7 +13,7 @@
         <div class="form-group row justify-content-between m-2">
 
             <div class="col-2">
-                <input  class="form-control" id="inputPassword2" placeholder="Фильтр по участникам">
+                <input  class="form-control" onkeyup="new PaginationUser(1,20,'search',document.getElementById('inputFilterUser').value).writeUsers()" id="inputFilterUser" placeholder="Фильтр по участникам">
             </div>
 
 
