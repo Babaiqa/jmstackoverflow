@@ -881,5 +881,17 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().string("Question not found"));
     }
 
+    @Test
+    public void getQuestionDtoWithoutVotes() throws Exception {
+        String resultContext = this.mockMvc.perform(get("/api/question/13"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        QuestionDto questionDto = objectMapper.readValue(resultContext, QuestionDto.class);
+
+        Assertions.assertEquals(0,questionDto.getCountValuable());
+
+    }
+
 
 }
