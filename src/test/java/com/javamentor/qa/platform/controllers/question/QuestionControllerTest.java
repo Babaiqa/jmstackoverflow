@@ -12,7 +12,7 @@ import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import org.hamcrest.Matchers;
 import org.json.JSONObject;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -29,7 +29,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.math.BigInteger;
-import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -54,7 +53,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/comment/comment.yml",
         "dataset/comment/comment_question.yml",
         "dataset/question/question_viewed.yml",},
-        useSequenceFiltering = true, cleanBefore = true, cleanAfter = false)
+        cleanBefore = true)
 @WithMockUser(username = "principal@mail.ru", roles = {"ADMIN", "USER"})
 @ActiveProfiles("local")
 class QuestionControllerTest extends AbstractIntegrationTest {
@@ -69,15 +68,10 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     private EntityManager entityManager;
 
     @Test
-    void getAllDto() throws Exception {
-        System.out.println("test");
-    }
-
-    @Test
-    public void shouldSetTagForQuestionOneTag() throws Exception {
+    void shouldSetTagForQuestionOneTag() throws Exception {
 
         List<Long> tagId = new ArrayList<>();
-        tagId.add(new Long(1L));
+        tagId.add(1L);
         String jsonRequest = objectMapper.writeValueAsString(tagId);
         this.mockMvc.perform(MockMvcRequestBuilders
                 .patch("/api/question/13/tag/add")
@@ -90,10 +84,10 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldSetTagForQuestionWrongId() throws Exception {
+    void shouldSetTagForQuestionWrongId() throws Exception {
 
         List<Long> tagId = new ArrayList<>();
-        tagId.add(new Long(1L));
+        tagId.add(1L);
         String jsonRequest = objectMapper.writeValueAsString(tagId);
         this.mockMvc.perform(MockMvcRequestBuilders
                 .patch("/api/question/1111/tag/add")
@@ -107,12 +101,12 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
 
     @Test
-    public void shouldSetTagForQuestionFewTag() throws Exception {
+    void shouldSetTagForQuestionFewTag() throws Exception {
 
         List<Long> tag = new ArrayList<>();
-        tag.add(new Long(1L));
-        tag.add(new Long(2L));
-        tag.add(new Long(3L));
+        tag.add(1L);
+        tag.add(2L);
+        tag.add(3L);
         String jsonRequest = objectMapper.writeValueAsString(tag);
         this.mockMvc.perform(MockMvcRequestBuilders
                 .patch("/api/question/13/tag/add")
@@ -126,10 +120,10 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldSetTagForQuestionNoTag() throws Exception {
+    void shouldSetTagForQuestionNoTag() throws Exception {
 
         List<Long> tag = new ArrayList<>();
-        tag.add(new Long(11L));
+        tag.add(11L);
         String jsonRequest = objectMapper.writeValueAsString(tag);
         this.mockMvc.perform(MockMvcRequestBuilders
                 .patch("/api/question/13/tag/add")
@@ -142,7 +136,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldReturnErrorMessageBadParameterWrongSizeQuestionWithoutAnswer() throws Exception {
+    void shouldReturnErrorMessageBadParameterWrongSizeQuestionWithoutAnswer() throws Exception {
         mockMvc.perform(get("/api/question/order/new")
                 .param("page", "1")
                 .param("size", "0"))
@@ -153,7 +147,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldReturnErrorMessageBadParameterWrongPageQuestionWithoutAnswer() throws Exception {
+    void shouldReturnErrorMessageBadParameterWrongPageQuestionWithoutAnswer() throws Exception {
         mockMvc.perform(get("/api/question/order/new")
                 .param("page", "0")
                 .param("size", "2"))
@@ -186,7 +180,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
 
     @Test
-    public void shouldAddQuestionAnswerStatusOk() throws Exception {
+    void shouldAddQuestionAnswerStatusOk() throws Exception {
         QuestionCreateDto questionCreateDto = new QuestionCreateDto();
         questionCreateDto.setUserId(1L);
         questionCreateDto.setTitle("Question number one1");
@@ -211,7 +205,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
 
     @Test
-    public void shouldAddQuestionResponseBadRequestUserNotFound() throws Exception {
+    void shouldAddQuestionResponseBadRequestUserNotFound() throws Exception {
         QuestionCreateDto questionCreateDto = new QuestionCreateDto();
         questionCreateDto.setUserId(2222L);
         questionCreateDto.setTitle("Question number one1");
@@ -232,7 +226,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldAddQuestionResponseBadRequestTagsNotExist() throws Exception {
+    void shouldAddQuestionResponseBadRequestTagsNotExist() throws Exception {
         QuestionCreateDto questionCreateDto = new QuestionCreateDto();
         questionCreateDto.setUserId(1L);
         questionCreateDto.setTitle("Question number one1");
@@ -267,7 +261,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldAddAnswerToQuestionResponseStatusOk() throws Exception {
+    void shouldAddAnswerToQuestionResponseStatusOk() throws Exception {
         CreateAnswerDto createAnswerDto = new CreateAnswerDto();
         createAnswerDto.setHtmlBody("test answer");
 
@@ -291,7 +285,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .getSingleResult();
         AnswerDto answerDtoFromDB = answerConverter.answerToAnswerDTO(answer);
 
-        Assert.assertTrue(answerDtoFromResponse.getBody().equals(answerDtoFromDB.getBody()));
+        Assertions.assertEquals(answerDtoFromResponse.getBody(), answerDtoFromDB.getBody());
     }
 
     @Test
@@ -345,7 +339,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .setParameter("questionId", 10L)
                 .getResultList();
 
-        Assert.assertTrue(answerDtoListFromResponse.equals(answerList));
+        Assertions.assertEquals(answerDtoListFromResponse, answerList);
     }
 
     @Test
@@ -361,7 +355,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldReturnQuestionsWithGivenTags() throws Exception {
+    void shouldReturnQuestionsWithGivenTags() throws Exception {
         Long a[] = {1L, 3L, 5L};
         List<Long> tagIds = Arrays.stream(a).collect(Collectors.toList());
         String jsonRequest = objectMapper.writeValueAsString(tagIds);
@@ -384,11 +378,11 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         PageDto<LinkedHashMap, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
 
         int numberOfItemsOnPage = actual.getItems().size();
-        Assert.assertTrue(numberOfItemsOnPage == 3);
+        Assertions.assertEquals(3, numberOfItemsOnPage);
     }
 
     @Test
-    public void getQuestionSearchWithStatusOk() throws Exception {
+    void getQuestionSearchWithStatusOk() throws Exception {
         QuestionSearchDto questionSearchDto = new QuestionSearchDto("sql query in excel");
         String json = objectMapper.writeValueAsString(questionSearchDto);
 
@@ -404,7 +398,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void getQuestionSearchWithSearchMessageNull() throws Exception {
+    void getQuestionSearchWithSearchMessageNull() throws Exception {
         QuestionSearchDto questionSearchDto = new QuestionSearchDto(null);
         String json = objectMapper.writeValueAsString(questionSearchDto);
 
@@ -420,7 +414,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void getQuestionSearchWithSearchMessageIsEmpty() throws Exception {
+    void getQuestionSearchWithSearchMessageIsEmpty() throws Exception {
         QuestionSearchDto questionSearchDto = new QuestionSearchDto("");
         String json = objectMapper.writeValueAsString(questionSearchDto);
 
@@ -436,7 +430,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void getQuestionSearchWithSearchByAuthor() throws Exception {
+    void getQuestionSearchWithSearchByAuthor() throws Exception {
         QuestionSearchDto questionSearchDto = new QuestionSearchDto("author:3");
         String json = objectMapper.writeValueAsString(questionSearchDto);
 
@@ -478,7 +472,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldReturnErrorMessageBadParameterMaxPageQuestionWithoutAnswer() throws Exception {
+    void shouldReturnErrorMessageBadParameterMaxPageQuestionWithoutAnswer() throws Exception {
         mockMvc.perform(get("/api/question/order/new")
                 .param("page", "2")
                 .param("size", "200"))
@@ -489,7 +483,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void testPaginationQuestionsWithoutAnswer() throws Exception {
+    void testPaginationQuestionsWithoutAnswer() throws Exception {
 
         this.mockMvc.perform(get("/api/question/withoutAnswer")
                 .param("page", "1")
@@ -513,7 +507,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
             "dataset/question/question_has_tagQuestionApi.yml",
             "dataset/question/votes_on_question.yml"},
             useSequenceFiltering = true, cleanBefore = true, cleanAfter = true)
-    public void testIsQuestionWithoutAnswers() throws Exception {
+    void testIsQuestionWithoutAnswers() throws Exception {
 
         LocalDateTime persistDateTime = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(0, 0, 0));
         LocalDateTime lastUpdateDateTime = LocalDateTime.of(LocalDate.of(2020, 2, 1), LocalTime.of(13, 58, 56));
@@ -552,11 +546,11 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         PageDto<QuestionDto, Object> actualPage = objectMapper.readValue(result, PageDto.class);
-        Assert.assertEquals(expectPage.toString(), actualPage.toString());
+        Assertions.assertEquals(expectPage.toString(), actualPage.toString());
     }
 
     @Test
-    public void shouldReturnQuestionsWithoutSpecifiedTags() throws Exception {
+    void shouldReturnQuestionsWithoutSpecifiedTags() throws Exception {
 
         List<Long> withoutTagIds = new ArrayList<>();
         withoutTagIds.add(1L);
@@ -585,7 +579,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldReturnEmptyPaginationIfTagIdsMissing() throws Exception {
+    void shouldReturnEmptyPaginationIfTagIdsMissing() throws Exception {
 
         List<Long> withoutTagIds = new ArrayList<>();
 
@@ -628,7 +622,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
         List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int second = after.size();
-        Assert.assertEquals(first + 1, second);
+        Assertions.assertEquals(first + 1, second);
     }
 
     @Test
@@ -676,7 +670,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
         List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int second = after.size();
-        Assert.assertEquals(first + 1, second);
+        Assertions.assertEquals(first + 1, second);
     }
 
     @Test
@@ -705,7 +699,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldAddCommentToQuestionResponseBadRequestQuestionNotFound() throws Exception {
+    void shouldAddCommentToQuestionResponseBadRequestQuestionNotFound() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/question/9999/comment")
                 .content("This is very good question!")
@@ -716,7 +710,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldAddCommentToQuestionResponseCommentDto() throws Exception {
+    void shouldAddCommentToQuestionResponseCommentDto() throws Exception {
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/question/10/comment")
                 .content("This is very good question!")
@@ -735,11 +729,11 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         JSONObject dto = new JSONObject(result.getResponse().getContentAsString());
 
         List<CommentQuestion> resultList = entityManager.createNativeQuery("select * from comment_question where comment_id = " + dto.get("id")).getResultList();
-        Assert.assertFalse(resultList.isEmpty());
+        Assertions.assertFalse(resultList.isEmpty());
     }
 
     @Test
-    public void getCommentListByQuestionIdWithStatusOk() throws Exception {
+    void getCommentListByQuestionIdWithStatusOk() throws Exception {
 
         //тестируем контроллер, получаем лист CommentQuestionDto
         String resultContext = this.mockMvc.perform(get("/api/question/10/comments"))
@@ -748,18 +742,18 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
         List<CommentQuestionDto> commentQuestionDtoFromResponseList = objectMapper.readValue(resultContext, List.class);
 
-        Assert.assertTrue(!commentQuestionDtoFromResponseList.isEmpty());
+        Assertions.assertTrue(!commentQuestionDtoFromResponseList.isEmpty());
 
         //вытаскиваем из БД количество комментариев у указанного вопроса
         Query queryToCommentQuestionTable = entityManager.createNativeQuery("select count(*) from comment_question where question_id = ?");
         queryToCommentQuestionTable.setParameter(1, 10);
         BigInteger count = (BigInteger) queryToCommentQuestionTable.getSingleResult();
 
-        Assert.assertTrue(commentQuestionDtoFromResponseList.size() == count.intValue());
+        Assertions.assertEquals(commentQuestionDtoFromResponseList.size(), count.intValue());
     }
 
     @Test
-    public void getCommentListByQuestionIdWithStatusQuestionNotFound() throws Exception {
+    void getCommentListByQuestionIdWithStatusQuestionNotFound() throws Exception {
 
         Question question = null;
         try {
@@ -775,33 +769,33 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Question not found"));
 
-        Assert.assertTrue(question == null);
+        Assertions.assertNull(question);
     }
 
     @Test
-    public void shouldCreateVoteQuestionUp() throws Exception {
+    void shouldCreateVoteQuestionUp() throws Exception {
 
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/question/19/upVote")).andReturn();
 
         JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
 
-        Assert.assertEquals(jsonObject.get("vote"), 1);
+        Assertions.assertEquals(1, jsonObject.get("vote"));
     }
 
     @Test
-    public void shouldCreateVoteQuestionDown() throws Exception {
+    void shouldCreateVoteQuestionDown() throws Exception {
 
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/question/19/downVote")).andReturn();
 
         JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
 
-        Assert.assertEquals(jsonObject.get("vote"), -1);
+        Assertions.assertEquals(jsonObject.get("vote"), -1);
     }
 
     @Test
-    public void AddQuestionAsViewedStatusOk() throws Exception {
+    void AddQuestionAsViewedStatusOk() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/question/14/view"))
                 .andExpect(status().isOk());
@@ -809,7 +803,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
 
     @Test
-    public void AddQuestionAsViewedIfSecondRequest() throws Exception {
+    void AddQuestionAsViewedIfSecondRequest() throws Exception {
 
         //считаем имеющиеся записи в БД
         Query queryBefore = entityManager.createNativeQuery("select * from question_viewed where user_id = 153");
@@ -823,12 +817,13 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
         //считаем повторно и сравниваем количество записей
         Query queryAfter = entityManager.createNativeQuery("select * from question_viewed where user_id = 153");
-        Assert.assertEquals(countBefore + 1, queryAfter.getResultList().size());
+        Assertions.assertEquals(countBefore + 1, queryAfter.getResultList().size());
 
 
     }
+
     @Test
-    public void AddQuestionAsViewedIfSecondEqualRequest() throws Exception {
+    void AddQuestionAsViewedIfSecondEqualRequest() throws Exception {
 
         //вносим первую уникальную запись
         this.mockMvc.perform(MockMvcRequestBuilders
@@ -852,26 +847,24 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(status().isOk());
         //считаем количество записей повторно и сравниваем
         Query queryDoubleRequestAfter = entityManager.createNativeQuery("select * from question_viewed where " +
-                "user_id = 153",QuestionViewed.class );
+                "user_id = 153", QuestionViewed.class);
         int countAfter = queryDoubleRequestAfter.getResultList().size();
-        Assert.assertEquals(countBefore,countAfter);
+        Assertions.assertEquals(countBefore, countAfter);
 
         //проверяем изменилась ли запись после попытки ее повторного внесения?
         Query query2 = entityManager.createNativeQuery("select * from question_viewed where user_id = 153 and " +
                 "question_id = ?", QuestionViewed.class);
-        query2.setParameter (1, 15L);
+        query2.setParameter(1, 15L);
         QuestionViewed questionViewedSecond = (QuestionViewed) query2.getSingleResult();
-        Assert.assertEquals(questionViewedFirst.getId(), questionViewedSecond.getId());
-        Assert.assertEquals(questionViewedFirst.getLocalDateTime(), questionViewedSecond.getLocalDateTime());
-        Assert.assertEquals(questionViewedFirst.getUser().getId(), questionViewedSecond.getUser().getId());
-        Assert.assertEquals(questionViewedFirst.getQuestion().getId(), questionViewedSecond.getQuestion().getId());
-
+        Assertions.assertEquals(questionViewedFirst.getId(), questionViewedSecond.getId());
+        Assertions.assertEquals(questionViewedFirst.getLocalDateTime(), questionViewedSecond.getLocalDateTime());
+        Assertions.assertEquals(questionViewedFirst.getUser().getId(), questionViewedSecond.getUser().getId());
+        Assertions.assertEquals(questionViewedFirst.getQuestion().getId(), questionViewedSecond.getQuestion().getId());
     }
 
 
-
     @Test
-    public void AddQuestionAsViewedIsNotExist() throws Exception {
+    void AddQuestionAsViewedIsNotExist() throws Exception {
 
         this.mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/question/21/view"))

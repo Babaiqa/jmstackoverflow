@@ -6,8 +6,6 @@ import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.user.Reputation;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,18 +28,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WithMockUser(username = "principal@mail.ru", roles={"ADMIN", "USER"})
+@WithMockUser(username = "principal@mail.ru", roles = {"ADMIN", "USER"})
 @ActiveProfiles("local")
-public class UserControllerTest extends AbstractIntegrationTest {
+class UserControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @PersistenceContext
-    EntityManager entityManager;
-
-    @Autowired
-    UserService userService;
+    private EntityManager entityManager;
 
     private static final String DELETE = "/api/user/delete";
     private static final String BAD_REQUEST_MESSAGE_WRONG = "Something goes wrong";
@@ -50,7 +44,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @Test
     @DataSet(value = "dataset/user/userApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
-    public void shouldGetUserById() throws Exception {
+    void shouldGetUserById() throws Exception {
         UserDto user = new UserDto();
         user.setId(1L);
         user.setReputation(2);
@@ -71,7 +65,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @Test
     @DataSet(value = "dataset/question/usersQuestionApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
-    public void shouldGetUserByIsNot() throws Exception {
+    void shouldGetUserByIsNot() throws Exception {
         int id = 4;
         this.mockMvc.perform(get("/api/user/" + id))
                 .andDo(print())
@@ -100,7 +94,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 .andExpect(status().isOk());
 
         TypedQuery<User> userQuery = entityManager.createQuery("FROM User WHERE email =: email", User.class)
-                .setParameter("email","11@22.ru");
+                .setParameter("email", "11@22.ru");
 
         Optional<User> newUser = SingleResultUtil.getSingleResultOrNull(userQuery);
         Assertions.assertNotNull(newUser);
@@ -126,7 +120,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldCreateUserValidateEmail() throws Exception {
+    void shouldCreateUserValidateEmail() throws Exception {
         UserRegistrationDto user = new UserRegistrationDto();
         user.setEmail("ivanovmail.ru");
         user.setPassword("100");
@@ -140,7 +134,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @Test
     @DataSet(value = "dataset/user/userUserApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
-    public void shouldGetUserByName() throws Exception {
+    void shouldGetUserByName() throws Exception {
         PageDto<UserDtoList, Object> expected = new PageDto<>();
         expected.setCurrentPageNumber(1);
         expected.setTotalPageCount(1);
@@ -171,12 +165,12 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         PageDto<UserDtoList, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
-        Assert.assertEquals(expected.toString(), actual.toString());
+        Assertions.assertEquals(expected.toString(), actual.toString());
     }
 
     @Test
     @DataSet(value = "dataset/user/userUserApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
-    public void inabilityGetUserByNameWithWrongName() throws Exception {
+    void inabilityGetUserByNameWithWrongName() throws Exception {
         this.mockMvc.perform(get("/api/user/find")
                 .param("name", "c")
                 .param("page", "1")
@@ -189,7 +183,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @Test
     @DataSet(value = "dataset/user/userUserApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
-    public void inabilityGetUserByNameWithNegativePage() throws Exception {
+    void inabilityGetUserByNameWithNegativePage() throws Exception {
         this.mockMvc.perform(get("/api/user/find")
                 .param("name", "t")
                 .param("page", "-1")
@@ -202,7 +196,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @Test
     @DataSet(value = "dataset/user/userUserApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
-    public void inabilityGetUserByNameWithZeroSize() throws Exception {
+    void inabilityGetUserByNameWithZeroSize() throws Exception {
         this.mockMvc.perform(get("/api/user/find")
                 .param("name", "t")
                 .param("page", "1")
@@ -215,7 +209,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @Test
     @DataSet(value = "dataset/user/userUserApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
-    public void inabilityGetUserByNameWithNegativeSize() throws Exception {
+    void inabilityGetUserByNameWithNegativeSize() throws Exception {
         this.mockMvc.perform(get("/api/user/find")
                 .param("name", "t")
                 .param("page", "1")
@@ -228,7 +222,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @Test
     @DataSet(value = "dataset/user/userUserApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
-    public void inabilityGetUserByNameOnPageNotExists() throws Exception {
+    void inabilityGetUserByNameOnPageNotExists() throws Exception {
         this.mockMvc.perform(get("/api/user/find")
                 .param("name", "t")
                 .param("page", "13")
@@ -250,7 +244,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
             "dataset/question/tagQuestionApi.yml",
             "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    public void requestUserTagReputationOverMonth() throws Exception {
+    void requestUserTagReputationOverMonth() throws Exception {
 
         PageDto<UserDtoList, Object> expected = new PageDto<>();
         expected.setCurrentPageNumber(1);
@@ -281,13 +275,13 @@ public class UserControllerTest extends AbstractIntegrationTest {
                         .andReturn().getResponse().getContentAsString();
 
         PageDto<UserDtoList, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
-        Assert.assertEquals(expected.getClass(), actual.getClass());
-        Assert.assertEquals(expected.getCurrentPageNumber(), actual.getCurrentPageNumber());
-        Assert.assertEquals(expected.getTotalPageCount(), actual.getTotalPageCount());
-        Assert.assertEquals(expected.getTotalResultCount(), actual.getTotalResultCount());
-        Assert.assertEquals(expected.getItemsOnPage(), actual.getItemsOnPage());
-        Assert.assertEquals(expected.getItems().size(), actual.getItems().size());
-        Assert.assertEquals(expected.toString(), actual.toString());
+        Assertions.assertEquals(expected.getClass(), actual.getClass());
+        Assertions.assertEquals(expected.getCurrentPageNumber(), actual.getCurrentPageNumber());
+        Assertions.assertEquals(expected.getTotalPageCount(), actual.getTotalPageCount());
+        Assertions.assertEquals(expected.getTotalResultCount(), actual.getTotalResultCount());
+        Assertions.assertEquals(expected.getItemsOnPage(), actual.getItemsOnPage());
+        Assertions.assertEquals(expected.getItems().size(), actual.getItems().size());
+        Assertions.assertEquals(expected.toString(), actual.toString());
     }
 
     @DataSet(value = {"dataset/question/roleQuestionApi.yml",
@@ -296,7 +290,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
             "dataset/question/tagQuestionApi.yml",
             "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    public void requestNegativePageUserTagReputationOverMonth() throws Exception {
+    void requestNegativePageUserTagReputationOverMonth() throws Exception {
         mockMvc.perform(get("/api/user/order/reputation/month")
                 .param("page", "-1")
                 .param("size", "10"))
@@ -312,7 +306,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
             "dataset/question/tagQuestionApi.yml",
             "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    public void requestNegativeSizeUserTagReputationOverMonth() throws Exception {
+    void requestNegativeSizeUserTagReputationOverMonth() throws Exception {
         mockMvc.perform(get("/api/user/order/reputation/month")
                 .param("page", "1")
                 .param("size", "0"))
@@ -328,7 +322,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
             "dataset/question/tagQuestionApi.yml",
             "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    public void requestIncorrectSizeUserTagReputationOverMonth() throws Exception {
+    void requestIncorrectSizeUserTagReputationOverMonth() throws Exception {
         mockMvc.perform(get("/api/user/order/reputation/month")
                 .param("page", "1")
                 .param("size", "101"))
@@ -344,7 +338,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
             "dataset/question/tagQuestionApi.yml",
             "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    public void requestPageDontExistsUserTagReputationOverMonth() throws Exception {
+    void requestPageDontExistsUserTagReputationOverMonth() throws Exception {
         mockMvc.perform(get("/api/user/order/reputation/month")
                 .param("page", "99")
                 .param("size", "99"))
@@ -359,7 +353,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     //------------------- UserOrderReputationYear --------------------//
     @Test
-    public void requestPageUserReputationOverYearWithStatusOk() throws Exception {
+    void requestPageUserReputationOverYearWithStatusOk() throws Exception {
         mockMvc.perform(get("/api/user/order/reputation/year")
                 .param("page", "1")
                 .param("size", "100"))
@@ -367,7 +361,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestNegativePageUserReputationOverYear() throws Exception {
+    void requestNegativePageUserReputationOverYear() throws Exception {
         mockMvc.perform(get("/api/user/order/reputation/year")
                 .param("page", "-1")
                 .param("size", "100"))
@@ -377,7 +371,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestNegativeSizeUserReputationOverYear() throws Exception {
+    void requestNegativeSizeUserReputationOverYear() throws Exception {
         mockMvc.perform(get("/api/user/order/reputation/year")
                 .param("page", "1")
                 .param("size", "-100"))
@@ -387,7 +381,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestIncorrectSizeUserReputationOverYear() throws Exception {
+    void requestIncorrectSizeUserReputationOverYear() throws Exception {
         mockMvc.perform(get("/api/user/order/reputation/year")
                 .param("page", "1")
                 .param("size", "101"))
@@ -397,7 +391,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestUserReputationOverYear() throws Exception {
+    void requestUserReputationOverYear() throws Exception {
         mockMvc.perform(get("/api/user/order/reputation/year")
                 .param("page", "1")
                 .param("size", "100"))
@@ -411,7 +405,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    public void requestUserPasswordResetStatusOk() throws Exception {
+    void requestUserPasswordResetStatusOk() throws Exception {
         UserResetPasswordDto ps = new UserResetPasswordDto();
         ps.setOldPassword("password0");
         ps.setNewPassword("user");
@@ -426,7 +420,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    public void requestUserPasswordResetOldPasswordError() throws Exception {
+    void requestUserPasswordResetOldPasswordError() throws Exception {
         UserResetPasswordDto ps = new UserResetPasswordDto();
         ps.setOldPassword("errorPass");
         ps.setNewPassword("user");
@@ -441,7 +435,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    public void requestUserPasswordResetOldPasswordNull() throws Exception {
+    void requestUserPasswordResetOldPasswordNull() throws Exception {
         UserResetPasswordDto ps = new UserResetPasswordDto();
         ps.setOldPassword("");
         ps.setNewPassword("user");
@@ -471,7 +465,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @DataSet(value = {"dataset/user/userPublicInfoApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    public void updatesUserPublicInfo() throws Exception {
+    void updatesUserPublicInfo() throws Exception {
 
         UserPublicInfoDto userPublicInfoDto = new UserPublicInfoDto();
         userPublicInfoDto.setNickname("BestJavaProgrammer");
@@ -511,7 +505,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
             "someNickname, ",
             "someNickname, '    '",
     })
-    public void ifRequiredFieldsNullOrBlankThenBadRequest(String nickname, String fullName) throws Exception {
+    void ifRequiredFieldsNullOrBlankThenBadRequest(String nickname, String fullName) throws Exception {
         UserPublicInfoDto userPublicInfoDto = new UserPublicInfoDto();
         userPublicInfoDto.setNickname(nickname);
         userPublicInfoDto.setFullName(fullName);
@@ -526,7 +520,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @DataSet(value = {"dataset/user/userPublicInfoApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    public void ifFrontSendsWrongIdThenCorrectsIdAndUpdatesPrincipal() throws Exception {
+    void ifFrontSendsWrongIdThenCorrectsIdAndUpdatesPrincipal() throws Exception {
         UserPublicInfoDto userPublicInfoDto = new UserPublicInfoDto();
         userPublicInfoDto.setId(42L);
         userPublicInfoDto.setNickname("BestJavaProgrammer");
@@ -571,7 +565,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @DataSet(value = {"dataset/user/user153.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    void requestUserDelete() throws Exception{
+    void requestUserDelete() throws Exception {
         mockMvc.perform(delete(DELETE))
                 .andExpect(status().isOk())
                 .andExpect(content().string("User deleted successfully"));
@@ -579,7 +573,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @DataSet(value = {"dataset/user/userDeleted.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    void requestDeleteAlreadyDeletedUser() throws Exception{
+    void requestDeleteAlreadyDeletedUser() throws Exception {
         mockMvc.perform(delete(DELETE))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(BAD_REQUEST_MESSAGE_ALREADY_DELETED));
@@ -606,7 +600,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("reputation").value(0));
 
         TypedQuery<User> userQuery = entityManager.createQuery("FROM User WHERE email =: email", User.class)
-                                        .setParameter("email","some@with.email");
+                .setParameter("email", "some@with.email");
 
         Optional<User> newUser = SingleResultUtil.getSingleResultOrNull(userQuery);
         Assertions.assertNotNull(newUser);
