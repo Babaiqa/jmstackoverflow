@@ -1,6 +1,6 @@
 package com.javamentor.qa.platform.models.entity.user;
 
-public enum ItemToGetReputation {
+public enum ReputationType {
     Question,
     Answer,
     VoteAnswer,

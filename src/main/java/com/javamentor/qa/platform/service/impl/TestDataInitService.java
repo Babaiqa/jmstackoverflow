@@ -116,9 +116,9 @@ public class  TestDataInitService {
             userService.persist(user);
 
             Reputation reputation = new Reputation();
-            int count = 0;
+            int n = random.nextInt(ReputationType.values().length);
             reputation.setUser(user);
-            reputation.setItem(ItemToGetReputation.Answer);
+            reputation.setType(ReputationType.values()[n]);
             reputation.setCount(random.nextInt(100) + 1);
             reputationService.persist(reputation);
 
