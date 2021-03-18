@@ -172,8 +172,10 @@ public class AnswerController {
 
         if (neverAnswered) {
             answerService.persist(answer);
+            return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
+        } else {
+            return ResponseEntity.badRequest().body("Can't write more than one answer");
         }
-        return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
     }
 
 
