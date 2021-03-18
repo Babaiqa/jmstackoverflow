@@ -18,6 +18,8 @@ class PaginationQuestion {
             this.questions = this.questionService.getQuestionsWithoutAnswers(this.page, this.size)
         } else if (this.type === 'new') {
             this.questions = this.questionService.findPaginationNew(this.page, this.size);
+        } else if (this.type === 'popularWeek') {
+            this.questions = this.questionService.findPaginationPopularOverPeriod(this.page, this.size, 'week')
         } else {
             this.questions = this.questionService.findPagination(this.page, this.size);
         }
