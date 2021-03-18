@@ -166,9 +166,14 @@ public class AnswerController {
         Answer answer = new Answer(question.get(), user, createAnswerDto.getHtmlBody(), false, false);
         answer.setQuestion(question.get());
 
-        answerService.persist(answer);
-
-        return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
+        if (answerDtoService.getAllAnswersByQuestionId(questionId)
+                .stream()
+                .noneMatch(answerDto -> answerDto.getUserId() == answer.getUser().getId())) {
+            answerService.persist(answer);
+            return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
+        } else {
+            return ResponseEntity.badRequest().body("Can't write more than one answer");
+        }
     }
 
 
