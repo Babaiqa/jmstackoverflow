@@ -17,14 +17,14 @@
                 <a href="#" id="questionsQuantity"></a>
                 <div class="nav-col btn-group  btn-block mr-0   ">
                     <button type="button" class="btn  btn-sm   active " href="#" onclick="new PaginationQuestion(1,10, 'new').setQuestions()">Новые</button>
-                    <button type="button" class="btn btn-sm" href="#">Текущие</button>
+                    <button type="button" class="btn btn-sm active" href="#" onclick="new PaginationQuestion(1, 10, 'normal').setQuestions()">Текущие</button>
                     <button type="button" class="btn  btn-sm   active " href="#" onclick="new PaginationQuestion(1,10, 'withoutAnswers').setQuestions()">Неотвеченные</button>
                     <button type="button" class="btn  btn-sm " href="#">Конкурсные</button>
                     <button type="button" class="btn  btn-sm overflow-hidden" href="#">Еще</button>
                 </div>
                 <ul class="nav justify-content-end m-3">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#" onclick="new PaginationQuestion(1, 10, 'normal').setQuestions()">За неделю</a>
+                        <a class="nav-link active" href="#" onclick="new PaginationQuestion(1, 10, 'popularWeek').setQuestions()">За неделю</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" href="#" onclick="new PaginationQuestion(1, 10, 'popular').setQuestions()">По

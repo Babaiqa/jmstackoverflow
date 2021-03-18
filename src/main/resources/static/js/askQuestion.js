@@ -1,3 +1,11 @@
+let buttonAskQuestion = document.getElementById('buttonAskQuestion');
+let newQuestionId = 0;
+let userId;
+
+$(document).ready(function() {
+    getUserId();
+});
+
 document.querySelector('.tip-button-1').onclick = function () {
     document.querySelector('.tip-text-1').classList.toggle('d-none');
 }
@@ -14,11 +22,10 @@ document.querySelector('.tip-button-4').onclick = function () {
     document.querySelector('.tip-text-4').classList.toggle('d-none');
 }
 
-let buttonAskQuestion = document.getElementById('buttonAskQuestion');
-let newQuestionId = 0;
-
 buttonAskQuestion.onclick = function (e) {
     e.preventDefault();
+
+    let description = $('#summernote').summernote('code');
 
     let tagNames = $('#tags').val().split(' ');
     let tags = [];
@@ -36,8 +43,8 @@ buttonAskQuestion.onclick = function (e) {
 
     let questionCreateDto = {
         title: $('#questionTitle').val(),
-        userId: 153,
-        description: 'description',
+        userId: userId,
+        description: description,
         tags: tags
     };
 
@@ -54,5 +61,17 @@ buttonAskQuestion.onclick = function (e) {
     })) {
         alert('Вопрос не был добавлен');
     }
+}
+
+function getUserId() {
+    fetch('/api/auth/principal', {
+        method: 'GET',
+        headers: new Headers({
+            'Content-Type': 'application/json',
+            'Authorization': $.cookie("token")
+        })
+    })
+        .then(response => response.json())
+        .then(principal => userId = principal['id'])
 }
 
