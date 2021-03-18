@@ -166,14 +166,14 @@ public class AnswerController {
         Answer answer = new Answer(question.get(), user, createAnswerDto.getHtmlBody(), false, false);
         answer.setQuestion(question.get());
 
-        if (answerDtoService.getAllAnswersByQuestionId(questionId)
+        boolean neverAnswered = answerDtoService.getAllAnswersByQuestionId(questionId)
                 .stream()
-                .noneMatch(answerDto -> answerDto.getUserId() == answer.getUser().getId())) {
+                .noneMatch(answerDto -> answerDto.getUserId() == answer.getUser().getId());
+
+        if (neverAnswered) {
             answerService.persist(answer);
-            return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
-        } else {
-            return ResponseEntity.badRequest().body("Can't write more than one answer");
         }
+        return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
     }
 
 
@@ -249,7 +249,6 @@ public class AnswerController {
 
         return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
     }
-
 
 
     @GetMapping("/{questionId}/isAnswerVoted")
