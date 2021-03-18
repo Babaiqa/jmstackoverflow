@@ -393,7 +393,8 @@ public class QuestionController {
     @ApiOperation(value = "Add comment", notes = "This method Add comment to question and return CommentDto")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Comment was added", response = CommentDto.class),
-            @ApiResponse(code = 400, message = "Question or user not found", response = String.class)
+            @ApiResponse(code = 400, message = "Question or user not found", response = String.class),
+            @ApiResponse(code = 400, message = "This user already commented this question", response = String.class)
     })
 
     public ResponseEntity<?> addCommentToQuestion(
@@ -411,10 +412,17 @@ public class QuestionController {
             return ResponseEntity.badRequest().body("Question not found");
         }
 
-        CommentQuestion commentQuestion =
-                commentQuestionService.addCommentToQuestion(commentText, question.get(), user);
+        List<CommentQuestionDto> commentQuestionDtoList = commentDtoService.getAllCommentsByQuestionId(questionId);
+        boolean existsCommentByUser = commentQuestionDtoList.stream()
+                .anyMatch(comment -> comment.getUserId().equals(user.getId()));
 
-        return ResponseEntity.ok(commentConverter.commentToCommentDTO(commentQuestion));
+        if (!existsCommentByUser) {
+            CommentQuestion commentQuestion =
+                    commentQuestionService.addCommentToQuestion(commentText, question.get(), user);
+
+            return ResponseEntity.ok(commentConverter.commentToCommentDTO(commentQuestion));
+        }
+        return ResponseEntity.badRequest().body("You've already commented this question");
     }
 
     @GetMapping("/{questionId}/comments")
