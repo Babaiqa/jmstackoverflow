@@ -269,7 +269,7 @@ class QuestionService {
 
     setCommentByQuestionId(questionId) {
         let comment = {
-            text: $('#question_comment_summernote').summernote('code')
+            text: $('#comment_summernote').summernote('code')
         }
         fetch('/api/question/' + questionId + '/comment',
             {

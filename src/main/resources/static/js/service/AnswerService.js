@@ -91,7 +91,7 @@ class AnswerService {
         }).catch(error => console.log(error.message))
     }
 
-    setCommentByQuestionId(answerId, questionId) {
+    setCommentByAnswerAndQuestionId(answerId, questionId) {
         let comment = {
             text: $(`#comment_summernote${answerId}`).summernote('code')
         }

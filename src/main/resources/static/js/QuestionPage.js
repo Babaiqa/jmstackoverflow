@@ -90,10 +90,11 @@ class QuestionPage {
                     "                                </div>\n" +
                     "\n" +
                     "                                <div id=\"comments-link-1237608\" data-rep=\"50\" data-reg=\"true\">\n" +
-                    "                                    <a id=\"getcommentarea\" href=\"#\" onclick='getSummernoteTo(\"\")'>добавить комментарий</a>\n" +
-                    "                                    <span >&nbsp;|&nbsp;</span>\n" +
+                    "                                    <a id=\"getcommentarea\" href=\"#\" onclick='event.preventDefault(); getSummernoteTo(\"\")'>добавить комментарий</a>\n" +
+                    "                                    <span id=\"getcommentareasp\" >&nbsp;|&nbsp;</span></n>" +
+                    "                                    <h6 id=\"summer_head\" class=\"card-title\" style=\"display: none\">Ваш комментарий</h6></n>" +
                     "                                    <div class=\"summernote\" id=\"comment_summernote\" placeholder=\"Введите данные\"></div>" +
-                    '                                    <a id="addcomment" class="btn btn-primary" style="display: none" onclick="new QuestionService().setCommentByQuestionId(' + this.questionId + ')">Добавить коммент</a>' +
+                    '                                    <a id="addcomment" class="btn btn-primary" style="display: none; color: white" onclick="callQuestionService(event, ' + this.questionId + ')">Добавить коммент</a>' +
                     "                                </div>\n" +
                     "                            </div>\n" +
                     "                        </div>\n" +
@@ -209,10 +210,11 @@ class QuestionPage {
                         "                                    </ul>\n" +
                         "                                </div>\n" +
                         "                                <div id=\"comments-link-1237608\" data-rep=\"50\" data-reg=\"true\">\n" +
-                        "                                    <a id=\"getcommentarea" + elem.id + "\" href=\"#\" onclick='getSummernoteTo(" + elem.id + ")'>добавить комментарий</a>\n" +
-                        "                                    <span >&nbsp;|&nbsp;</span>\n" +
+                        "                                    <a id=\"getcommentarea" + elem.id + "\" href=\"#\" onclick='event.preventDefault(); getSummernoteTo(" + elem.id + ")'>добавить комментарий</a>\n" +
+                        "                                    <span id=\"getcommentareasp" + elem.id + "\">&nbsp;|&nbsp;</span>\n" +
+                        "                                    <h6 id=\"summer_head" + elem.id + "\" class=\"card-title\" style=\"display: none\">Ваш комментарий</h6></n>" +
                         "                                    <div class=\"summernote\" id=\"comment_summernote" + elem.id + "\" placeholder=\"Введите данные\"></div>" +
-                        '                                    <a id="addcomment' + elem.id + '" class="btn btn-primary" style="display: none" onclick="new AnswerService().setCommentByQuestionId(' + this.questionId + ', ' + this.questionId + ')">Добавить коммент</a>' +
+                        '                                    <a id="addcomment' + elem.id + '" class="btn btn-primary" style="display: none; color: white" onclick="callAnswerService(event, ' + elem.id + ', ' + this.questionId + ')">Добавить коммент</a>' +
                         "                                </div>\n" +
                         "                            </div>\n" +
                         "                        </div>\n" +
@@ -226,16 +228,28 @@ class QuestionPage {
     getCommentsById(id) {
         new QuestionService().getCommentsByQuestionId(id)
             .then(comments => {
-                console.log(comments);
+                $('#comments-list').children().remove();
                 comments.forEach(async (comment) => {
-                    let commentText = JSON.parse(comment.text);
+                    const date = new Date(comment.persistDate)
+                    const stringDate = ('0' + date.getDate()).slice(-2) + "."
+                        + ('0' + (date.getMonth() + 1)).slice(-2) + "."
+                        + date.getFullYear() + ' at ' + ('0' + date.getHours()).slice(-2)
+                        + ":" + ('0' + date.getMinutes()).slice(-2);
+                    let commentText;
+                    try {
+                        commentText = JSON.parse(comment.text).text;
+                    } catch (e) {
+                        //ignore
+                    }
                     let user = await new UserService().getUserById(comment.userId);
                     $('#comments-list').append("<hr/>\n"+
-                        "                                        <li>\n" +
-                        "                                            <span>" + commentText.text + "</span>\n" +
-                        "                                            –\n" +
+                        "                                        <li style='display: flex'>\n" +
+                        "                                            <span>" + commentText + "</span>\n" +
+                        "                                            <span>&nbsp;&nbsp;</span>\n" +
+                        "                                            –&nbsp;\n" +
                         "                                            <a href=\"#\">" + user.fullName + "</a>\n" +
-                        "                                            <span>" + comment.persistDate + "</span>\n" +
+                        "                                            <span>&nbsp;&nbsp;</span>\n" +
+                        "                                            <span>" + stringDate + "</span>\n" +
                         "                                        </li>\n"
                         )
                     }
@@ -245,16 +259,28 @@ class QuestionPage {
     getAnswerCommentsById(answerId, questionId) {
         new AnswerService().getCommentsByAnswerIdQuestionId(answerId, questionId)
             .then(comments => {
-                console.log(comments);
+                $(`#comments-answer${answerId}`).children().remove();
                 comments.forEach(async (comment) => {
-                        let commentText = JSON.parse(comment.text);
+                        const date = new Date(comment.persistDate)
+                        const stringDate = ('0' + date.getDate()).slice(-2) + "."
+                        + ('0' + (date.getMonth() + 1)).slice(-2) + "."
+                        + date.getFullYear() + ' at ' + ('0' + date.getHours()).slice(-2)
+                        + ":" + ('0' + date.getMinutes()).slice(-2);
+                        let commentText;
+                        try {
+                            commentText = JSON.parse(comment.text).text;
+                        } catch (e) {
+                            //ignore
+                        }
                         let user = await new UserService().getUserById(comment.userId);
-                        $(`#comments-answer${answerId}`).append("<hr/>\n"+
-                            "                                        <li>\n" +
-                            "                                            <span>" + commentText.text + "</span>\n" +
-                            "                                            –\n" +
+                        $(`#comments-answer${answerId}`).append("<hr/>\n" +
+                            "                                        <li style='display: flex'>\n" +
+                            "                                            <span>" + commentText + "</span>\n" +
+                            "                                            <span>&nbsp;&nbsp;</span>\n" +
+                            "                                            –&nbsp;\n" +
                             "                                            <a href=\"#\">" + user.fullName + "</a>\n" +
-                            "                                            <span>" + comment.persistDate + "</span>\n" +
+                            "                                            <span>&nbsp;&nbsp;</span>\n" +
+                            "                                            <span>" + stringDate + "</span>\n" +
                             "                                        </li>\n"
                         )
                     }
@@ -263,12 +289,36 @@ class QuestionPage {
     }
 }
 
+function callAnswerService(e, answerId, questionId) {
+    e.preventDefault();
+    new AnswerService().setCommentByAnswerAndQuestionId(answerId, questionId);
+    closeSummernote(answerId);
+}
+
+function callQuestionService(e, questionId) {
+    e.preventDefault();
+    new QuestionService().setCommentByQuestionId(questionId);
+    closeSummernote("");
+}
+
+function closeSummernote(id) {
+    $(`#comment_summernote${id}`).summernote('reset')
+    $(`#comment_summernote${id}`).next().hide();
+    $( `#addcomment${id}` ).toggle();
+    $( `#getcommentarea${id}`).toggle();
+    $( `#getcommentareasp${id}`).toggle();
+    $( `#summer_head${id}`).toggle();
+}
+
 function getSummernoteTo(id) {
     $(`#comment_summernote${id}`).summernote({
         tabsize: 2,
         height: 200
     });
+    $(`#comment_summernote${id}`).next().show();
     $( `#addcomment${id}` ).toggle();
     $( `#getcommentarea${id}`).toggle();
+    $( `#getcommentareasp${id}`).toggle();
+    $( `#summer_head${id}`).toggle();
 
 }
