@@ -874,7 +874,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void getQuestionDtoWithoutVotes() throws Exception {
+    void getQuestionDtoWithoutVotes() throws Exception {
         String resultContext = this.mockMvc.perform(get("/api/question/13"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
@@ -882,7 +882,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         QuestionDto questionDto = objectMapper.readValue(resultContext, QuestionDto.class);
 
         Assertions.assertEquals(0,questionDto.getCountValuable());
-
     }
 
 
