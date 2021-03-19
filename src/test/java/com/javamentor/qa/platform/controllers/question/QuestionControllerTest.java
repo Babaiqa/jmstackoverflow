@@ -740,6 +740,24 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    void shouldAddSecondCommentToQuestionStatusBadRequest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/15/comment")
+                .content("Test comment1")
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/15/comment")
+                .content("Test comment1")
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
     public void getCommentListByQuestionIdWithStatusOk() throws Exception {
 
         //тестируем контроллер, получаем лист CommentQuestionDto
