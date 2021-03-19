@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.controllers.Authentication;
+package com.javamentor.qa.platform.controllers.authentication;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DataSet(value = {"dataset/authentication/roleAuthenticationApi.yml",
         "dataset/authentication/usersAuthenticationApi.yml"},
-        useSequenceFiltering = true, cleanBefore = true, cleanAfter = false)
+        cleanBefore = true)
 @ActiveProfiles("local")
 class AuthenticationControllerTest extends AbstractIntegrationTest {
 
@@ -26,7 +26,7 @@ class AuthenticationControllerTest extends AbstractIntegrationTest {
     private MockMvc mockMvc;
 
     @Test
-    void getTokenStatusOk() throws Exception{
+    void getTokenStatusOk() throws Exception {
         UserAuthorizationDto user = new UserAuthorizationDto("Test1@mail.ru",
                 "password0");
         String jsonRequest = objectMapper.writeValueAsString(user);
@@ -50,7 +50,7 @@ class AuthenticationControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void getTokenWrongPassword() throws Exception{
+    void getTokenWrongPassword() throws Exception {
         UserAuthorizationDto user = new UserAuthorizationDto("Test1@mail.ru",
                 "password");
         String jsonRequest = objectMapper.writeValueAsString(user);
@@ -64,7 +64,7 @@ class AuthenticationControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void getTokenWrongUserName() throws Exception{
+    void getTokenWrongUserName() throws Exception {
         UserAuthorizationDto user = new UserAuthorizationDto("est1@mail.ru",
                 "password0");
         String jsonRequest = objectMapper.writeValueAsString(user);
@@ -78,7 +78,7 @@ class AuthenticationControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @WithMockUser(username = "Test1@mail.ru", roles={"ADMIN", "USER"})
+    @WithMockUser(username = "Test1@mail.ru", roles = {"ADMIN", "USER"})
     void getPrincipalUser() throws Exception {
 
         this.mockMvc.perform(MockMvcRequestBuilders
@@ -88,7 +88,7 @@ class AuthenticationControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @WithMockUser(username = "Test1@mail.ru", roles={"ADMIN", "USER"})
+    @WithMockUser(username = "Test1@mail.ru", roles = {"ADMIN", "USER"})
     void auntheticatedCheckStatucOk() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
                 .get("/api/auth/authenticated"))
