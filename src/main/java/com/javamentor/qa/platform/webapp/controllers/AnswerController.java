@@ -168,14 +168,14 @@ public class AnswerController {
 
         boolean neverAnswered = answerDtoService.getAllAnswersByQuestionId(questionId)
                 .stream()
-                .noneMatch(answerDto -> answerDto.getUserId() == answer.getUser().getId());
+                .noneMatch(answerDto -> answerDto.getUserId().equals(answer.getUser().getId()));
 
         if (neverAnswered) {
             answerService.persist(answer);
             return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
-        } else {
-            return ResponseEntity.badRequest().body("Can't write more than one answer");
         }
+
+        return ResponseEntity.badRequest().body("Can't write more than one answer");
     }
 
 
