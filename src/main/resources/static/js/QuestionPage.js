@@ -34,13 +34,13 @@ class QuestionPage {
                 $('#question-area').append(
                     "                    <div class=\"row\">\n" +
                     "                        <div vote-area-question class=\"col-1\">\n" +
-                    '                            <a class="btn  btn-sm m-0 p-0" onclick="new QuestionService().makeUpVoteQuestion('+ this.questionId +')">' +
+                    '                            <a class="btn  btn-sm m-0 p-0" onclick="new QuestionService().makeUpVoteQuestion(' + this.questionId + ')">' +
                     "                               <svg width=\"36\" height=\"36\" >\n" +
                     "                                  <path d=\"M2 26h32L18 10 2 26z\"></path>\n" +
                     "                               </svg>\n" +
                     '                             </a>' +
                     '                            <div style=\"font-size: 200%\" id="count_question"> &nbsp;' + response.countValuable + '</div>\n' +
-                    '                              <a class="btn  btn-sm m-0 p-0" onclick="new QuestionService().makeDownVoteQuestion('+ this.questionId +')">' +
+                    '                              <a class="btn  btn-sm m-0 p-0" onclick="new QuestionService().makeDownVoteQuestion(' + this.questionId + ');">' +
                     "                                 <svg  width=\"36\" height=\"36\" >\n" +
                     "                                    <path d=\"M2 10h32L18 26 2 10z\"></path>\n" +
                     "                                  </svg>\n" +
@@ -85,33 +85,21 @@ class QuestionPage {
                     "                            </div>\n" +
                     "                            <div comments class=\"post-layout--right\">\n" +
                     "                                <div id=\"comments-1237608\" class=\"comments js-comments-container bt bc-black-075 mt12  dno\" data-post-id=\"1237608\" data-min-length=\"15\">\n" +
-                    "                                    <ul class=\"comments-list js-comments-list\" data-remaining-comments-count=\"0\" data-canpost=\"false\" data-cansee=\"true\" data-comments-unavailable=\"false\" data-addlink-disabled=\"true\">\n" +
-                    "                                        <hr/>\n" +
-                    "                                        <li>\n" +
-                    "                                            <span>Что такое var_with_long_name ?</span>\n" +
-                    "                                            –\n" +
-                    "                                            <a href=\"#\">Alpensin</a>\n" +
-                    "                                            <span>1 час назад</span>\n" +
-                    "                                        </li>\n" +
-                    "                                        <hr/>\n" +
-                    "                                        <li>\n" +
-                    "                                            <span>Возможное имя переменной.</span>\n" +
-                    "                                            –\n" +
-                    "                                            <a href=\"#\">Алексей</a>\n" +
-                    "                                            <span>44 минуты назад</span>\n" +
-                    "                                        </li>\n" +
-                    "                                        <hr/>\n" +
+                    "                                    <ul id='comments-list' class=\"comments-list js-comments-list\" data-remaining-comments-count=\"0\" data-canpost=\"false\" data-cansee=\"true\" data-comments-unavailable=\"false\" data-addlink-disabled=\"true\">\n" +
                     "                                    </ul>\n" +
                     "                                </div>\n" +
                     "\n" +
                     "                                <div id=\"comments-link-1237608\" data-rep=\"50\" data-reg=\"true\">\n" +
-                    "                                    <a href=\"#\">добавить комментарий</a>\n" +
+                    "                                    <a id=\"getcommentarea\" href=\"#\" onclick='getSummernoteTo(\"\")'>добавить комментарий</a>\n" +
                     "                                    <span >&nbsp;|&nbsp;</span>\n" +
+                    "                                    <div class=\"summernote\" id=\"comment_summernote\" placeholder=\"Введите данные\"></div>" +
+                    '                                    <a id="addcomment" class="btn btn-primary" style="display: none" onclick="new QuestionService().setCommentByQuestionId(' + this.questionId + ')">Добавить коммент</a>' +
                     "                                </div>\n" +
                     "                            </div>\n" +
                     "                        </div>\n" +
                     "                    </div>"
                 )
+                this.getCommentsById(response.id);
                 response.listTagDto.forEach(tag => {
                     $('#question-tags').append(
                         "                                    <div class=\"mb-1\">\n" +
@@ -146,7 +134,7 @@ class QuestionPage {
                         + date.getFullYear();
 
                     let count = elem.countValuable;
-                    if(count == null) {
+                    if (count == null) {
                         count = 0;
                     }
                     let isHelpful = elem.isHelpful;
@@ -154,19 +142,19 @@ class QuestionPage {
                     $('#answer-area').append(
                         "<div answer1 class=\"row\">\n" +
                         "    <div vote-area-answer class=\"col-1\">\n" +
-                        '        <a  class="btn  btn-sm m-0 p-0" onclick="new AnswerService().getUpVoteAnswer(' + this.questionId + ',' + elem.id +','+ index +')">' +
+                        '        <a  class="btn  btn-sm m-0 p-0" onclick="new AnswerService().getUpVoteAnswer(' + this.questionId + ',' + elem.id + ',' + index + ')">' +
                         '             <svg   width=\"36\" height=\"36\" >\n' +
                         "                  <path d=\"M2 26h32L18 10 2 26z\"></path>\n" +
                         "              </svg>\n" +
                         '        </a>' +
                         '             <div class="countAnswer" style=\"font-size: 200%\">&nbsp;' + count + '</div>\n' +
-                        '        <a  class="btn  btn-sm m-0 p-0" onclick="new AnswerService().getDownVoteAnswer(' + this.questionId + ',' + elem.id +','+ index +')"> ' +
+                        '        <a  class="btn  btn-sm m-0 p-0" onclick="new AnswerService().getDownVoteAnswer(' + this.questionId + ',' + elem.id + ',' + index + ')"> ' +
                         "              <svg  width=\"36\" height=\"36\" >\n" +
                         "                   <path d=\"M2 10h32L18 26 2 10z\"></path>\n" +
                         "               </svg>\n" +
                         '        </a>     ' +
-                        '              <svg class="isHelpful" width="36" height="36">\n' + ( isHelpful == true ?
-                        '          <path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n': " ") +
+                        '              <svg class="isHelpful" width="36" height="36">\n' + (isHelpful == true ?
+                        '          <path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n' : " ") +
                         '       </svg>' +
                         "     </div>\n" +
                         "                      <div answer-and-comments-area class=\"col-11\">\n" +
@@ -202,7 +190,7 @@ class QuestionPage {
                         "                            </div>\n" +
                         "                            <div comments class=\"post-layout--right\">\n" +
                         "                                <div>\n" +
-                        "                                    <ul>\n" +
+                        "                                    <ul  id='comments-answer" + elem.id + "'>\n" +
                         "                                        <hr/>\n" +
                         "                                        <li>\n" +
                         "                                            <span>Что такое var_with_long_name ?</span>\n" +
@@ -220,17 +208,67 @@ class QuestionPage {
                         "                                        <hr/>\n" +
                         "                                    </ul>\n" +
                         "                                </div>\n" +
-                        "                                <div id=\"comments-link-1237602\" data-rep=\"50\" data-reg=\"true\">\n" +
-                        "                                    <a href=\"#\" >добавить комментарий</a>\n" +
-                        "                                    <span>&nbsp;|&nbsp;</span>\n" +
+                        "                                <div id=\"comments-link-1237608\" data-rep=\"50\" data-reg=\"true\">\n" +
+                        "                                    <a id=\"getcommentarea" + elem.id + "\" href=\"#\" onclick='getSummernoteTo(" + elem.id + ")'>добавить комментарий</a>\n" +
+                        "                                    <span >&nbsp;|&nbsp;</span>\n" +
+                        "                                    <div class=\"summernote\" id=\"comment_summernote" + elem.id + "\" placeholder=\"Введите данные\"></div>" +
+                        '                                    <a id="addcomment' + elem.id + '" class="btn btn-primary" style="display: none" onclick="new AnswerService().setCommentByQuestionId(' + this.questionId + ', ' + this.questionId + ')">Добавить коммент</a>' +
                         "                                </div>\n" +
                         "                            </div>\n" +
                         "                        </div>\n" +
                         "                    </div>\n" +
                         "                    <hr/>")
+                    this.getAnswerCommentsById(elem.id, elem.questionId);
                     index++;
                 })
             })
     }
+    getCommentsById(id) {
+        new QuestionService().getCommentsByQuestionId(id)
+            .then(comments => {
+                console.log(comments);
+                comments.forEach(async (comment) => {
+                    let commentText = JSON.parse(comment.text);
+                    let user = await new UserService().getUserById(comment.userId);
+                    $('#comments-list').append("<hr/>\n"+
+                        "                                        <li>\n" +
+                        "                                            <span>" + commentText.text + "</span>\n" +
+                        "                                            –\n" +
+                        "                                            <a href=\"#\">" + user.fullName + "</a>\n" +
+                        "                                            <span>" + comment.persistDate + "</span>\n" +
+                        "                                        </li>\n"
+                        )
+                    }
+                )
+            })
+    }
+    getAnswerCommentsById(answerId, questionId) {
+        new AnswerService().getCommentsByAnswerIdQuestionId(answerId, questionId)
+            .then(comments => {
+                console.log(comments);
+                comments.forEach(async (comment) => {
+                        let commentText = JSON.parse(comment.text);
+                        let user = await new UserService().getUserById(comment.userId);
+                        $(`#comments-answer${answerId}`).append("<hr/>\n"+
+                            "                                        <li>\n" +
+                            "                                            <span>" + commentText.text + "</span>\n" +
+                            "                                            –\n" +
+                            "                                            <a href=\"#\">" + user.fullName + "</a>\n" +
+                            "                                            <span>" + comment.persistDate + "</span>\n" +
+                            "                                        </li>\n"
+                        )
+                    }
+                )
+            })
+    }
+}
+
+function getSummernoteTo(id) {
+    $(`#comment_summernote${id}`).summernote({
+        tabsize: 2,
+        height: 200
+    });
+    $( `#addcomment${id}` ).toggle();
+    $( `#getcommentarea${id}`).toggle();
 
 }
