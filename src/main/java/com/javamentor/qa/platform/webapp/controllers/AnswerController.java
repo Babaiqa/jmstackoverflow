@@ -187,19 +187,15 @@ public class AnswerController {
 
 
         Optional<Question> question = questionService.getById(questionId);
-        // проверка есть ли данный вопрос
         if (!question.isPresent()) {
             return ResponseEntity.badRequest().body("Question was not found");
         }
-        //проверка есть ли данный ответ
+
         Optional<Answer> answer = answerService.getById(answerId);
         if (!answer.isPresent()) {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
-        // проверяем отдавал ли пользователь голос за ответ
-    /*    if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {
-            return ResponseEntity.ok("User already voted");
-        }*/
+
         if (voteAnswerService.isUserAlreadyVotedIsThisQuestion(question.get(), securityHelper.getPrincipal(), answer.get())) {
             return ResponseEntity.ok("User already voted in this question");
         }
@@ -242,10 +238,6 @@ public class AnswerController {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
 
-
-      /*  if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {
-            return ResponseEntity.ok("User already voted");
-        }*/
         if (voteAnswerService.isUserAlreadyVotedIsThisQuestion(question.get(), securityHelper.getPrincipal(), answer.get())) {
             return ResponseEntity.ok("User already voted in this question");
         }

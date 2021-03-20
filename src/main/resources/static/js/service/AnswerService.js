@@ -39,6 +39,11 @@ class AnswerService {
                     }
                 })
             }).then(function () {
+                switch (count) {
+                    case null:
+                        count=0;
+                        break;
+                }
                 document.querySelectorAll('div.countAnswer')[index].innerHTML = '&nbsp;' + count;
 
                 let html = '<path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n';
@@ -62,12 +67,18 @@ class AnswerService {
             let count = 0;
             this.getAnswerListByQuestionId(questionId).then(response => {
                 response.forEach(elem => {
-                    if (elem.id == answerId) {
+                    if (elem.id === answerId) {
                         count = elem.countValuable;
                     }
                 })
             }).then(function () {
-                document.querySelectorAll('div.countAnswer')[index].innerHTML = '&nbsp;' + count;
+                switch (count) {
+                    case null:
+                        count=0;
+                        break;
+                }
+                document.querySelectorAll('div.countAnswer')[index].innerHTML = '&nbsp;'+count
+
             })
         }).catch(error => console.log(error.message));
     }

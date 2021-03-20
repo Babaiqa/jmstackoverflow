@@ -17,22 +17,12 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
         super(voteAnswerDao);
     }
 
-    /*    @Override
-    public boolean isUserAlreadyVoted(Answer answer, User user) {
-        List<VoteAnswer> list = answer.getVoteAnswers();
-        for (VoteAnswer voteAnswer : list) {
-            if (voteAnswer.getUser().getId().equals(user.getId())) {
-                return true;
-            }
-        }
-        return answer.getVoteAnswers().stream().anyMatch(listItem -> listItem.getUser().getId().equals(user.getId()));
-    }*/
-
     @Override
     public boolean isUserAlreadyVotedIsThisQuestion(Question question, User user, Answer answer) {
         return answer.getVoteAnswers().stream()
-                .anyMatch(listItem -> listItem.getUser().getId().equals(user.getId())) ||
-                question.getAnswers().stream().anyMatch(answerListItem -> answerListItem.getVoteAnswers()
-                        .stream().anyMatch(voteAnswer -> voteAnswer.getUser().getId().equals(user.getId())));
+                     .anyMatch(listItem -> listItem.getUser().getId().equals(user.getId())) ||
+                question.getAnswers().stream()
+                        .anyMatch(answerListItem -> answerListItem.getVoteAnswers()
+                                .stream().anyMatch(voteAnswer -> voteAnswer.getUser().getId().equals(user.getId())));
     }
 }
