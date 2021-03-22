@@ -165,7 +165,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         questionCreateDto.setTitle("Question number one1");
         questionCreateDto.setDescription("Question Description493");
         List<TagDto> listTagsAdd = new ArrayList<>();
-        listTagsAdd.add(new TagDto(5L, "Structured Query Language"));
+        listTagsAdd.add(new TagDto(5L, "Structured Query Language", "description"));
         questionCreateDto.setTags(listTagsAdd);
 
         String jsonRequest = objectMapper.writeValueAsString(questionCreateDto);
@@ -186,7 +186,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         questionCreateDto.setTitle("Question number one1");
         questionCreateDto.setDescription("Question Description493");
         List<TagDto> listTagsAdd = new ArrayList<>();
-        listTagsAdd.add(new TagDto(5L, "Structured Query Language"));
+        listTagsAdd.add(new TagDto(5L, "Structured Query Language", "description"));
         questionCreateDto.setTags(listTagsAdd);
 
         String jsonRequest = objectMapper.writeValueAsString(questionCreateDto);
@@ -211,7 +211,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         questionCreateDto.setTitle("Question number one1");
         questionCreateDto.setDescription("Question Description493");
         List<TagDto> listTagsAdd = new ArrayList<>();
-        listTagsAdd.add(new TagDto(5L, "Structured Query Language"));
+        listTagsAdd.add(new TagDto(5L, "Structured Query Language", "description"));
         questionCreateDto.setTags(listTagsAdd);
 
         String jsonRequest = objectMapper.writeValueAsString(questionCreateDto);
@@ -443,7 +443,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         expect.setMeta(null);
 
         List<TagDto> tag = new ArrayList<>();
-        tag.add(new TagDto(5L, "sql"));
+        tag.add(new TagDto(5L, "sql", "description"));
 
         List<QuestionDto> items = new ArrayList<>();
         items.add(new QuestionDto(
@@ -519,7 +519,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         expectPage.setTotalResultCount(7);
 
         List<TagDto> tagsList = new ArrayList<>();
-        tagsList.add(new TagDto(1L, "java"));
+        tagsList.add(new TagDto(1L, "java", "description"));
 
         List<QuestionDto> itemsList = new ArrayList<>();
         itemsList.add(new QuestionDto(14L,

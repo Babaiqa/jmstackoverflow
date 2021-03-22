@@ -35,7 +35,7 @@ public class PaginationUserByReputationDaoImpl implements PaginationDao<UserDtoL
                                 "user.fullName as full_name, " +
                                 "user.imageLink as link_image, " +
                                 "(select coalesce(sum(ra.count), 0) from Reputation ra where ra.user.id = user_id) as reputation, " +
-                                "tag.id as tag_id, tag.name as tag_name " +
+                                "tag.id as tag_id, tag.name as tag_name, tag.description as tag_description " +
                                 "from User user " +
                                 "left outer join Reputation r on user.id = r.user.id " +
                                 "left join Question question on user.id=question.user.id " +
