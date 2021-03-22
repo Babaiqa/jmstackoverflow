@@ -95,17 +95,9 @@ class AnswerControllerTest extends AbstractIntegrationTest {
         this.mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/question/10/answer/51/comment")
                 .content("This is the first comment to answer!")
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.text").value("This is the first comment to answer!"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.persistDate", org.hamcrest.Matchers.containsString(LocalDate.now().toString())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.lastRedactionDate", org.hamcrest.Matchers.containsString(LocalDate.now().toString())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.commentType").value("ANSWER"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("Teat"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.reputation").value(2))
-                .andReturn();
+                .accept(MediaType.TEXT_PLAIN_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk());
 
         this.mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/question/10/answer/51/comment")
