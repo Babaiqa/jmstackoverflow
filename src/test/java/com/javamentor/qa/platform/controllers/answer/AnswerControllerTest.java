@@ -90,6 +90,33 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void shouldAddSecondCommentToAnswerResponseBadRequest() throws Exception {
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/10/answer/51/comment")
+                .content("This is the first comment to answer!")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.text").value("This is the first comment to answer!"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.persistDate", org.hamcrest.Matchers.containsString(LocalDate.now().toString())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.lastRedactionDate", org.hamcrest.Matchers.containsString(LocalDate.now().toString())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.commentType").value("ANSWER"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("Teat"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.reputation").value(2))
+                .andReturn();
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/10/answer/51/comment")
+                .content("This is the second comment to answer from the same user!")
+                .accept(MediaType.TEXT_PLAIN_VALUE))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("You have already commented this answer"));
+    }
+
+    @Test
     void shouldAddAnswerToQuestionStatusOk() throws Exception {
 
         CreateAnswerDto createAnswerDto = new CreateAnswerDto();
@@ -247,9 +274,8 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     }
 
 
-
     @Test
-    void userVotedForAnswerStatusOk() throws Exception{
+    void userVotedForAnswerStatusOk() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
                 .get("/api/question/1/isAnswerVoted"))
                 .andExpect(status().isOk())
@@ -258,7 +284,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void userNotVotedForAnswerStatusOk() throws Exception{
+    void userNotVotedForAnswerStatusOk() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
                 .get("/api/question/2/isAnswerVoted"))
                 .andExpect(status().isOk())
@@ -267,7 +293,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void userNotVotedForAnswerCuzQuestionNotFound() throws Exception{
+    void userNotVotedForAnswerCuzQuestionNotFound() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
                 .get("/api/question/0/isAnswerVoted"))
                 .andExpect(status().isBadRequest())
@@ -299,7 +325,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
 
         JSONArray array = new JSONArray(result.getResponse().getContentAsString());
 
-        Assert.assertEquals(array.length(),2);
+        Assert.assertEquals(array.length(), 2);
     }
 
     @Test
@@ -317,7 +343,9 @@ class AnswerControllerTest extends AbstractIntegrationTest {
         Answer afterAnswer = (Answer) entityManager.createQuery("From Answer  Where id=40").getSingleResult();
 
         Assert.assertFalse(beforeAnswer.getIsHelpful());
-        Assert.assertEquals(object.get("userId"),4);
+        Assert.assertEquals(object.get("userId"), 4);
         Assert.assertTrue(afterAnswer.getIsHelpful());
     }
+
+
 }

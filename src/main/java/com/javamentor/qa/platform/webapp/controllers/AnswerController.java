@@ -89,9 +89,13 @@ public class AnswerController {
         if (!answer.isPresent()) {
             return ResponseEntity.badRequest().body("Answer not found");
         }
-
+        boolean neverCommented = commentDtoService.getAllCommentsByAnswerId(answerId)
+                .stream()
+                .noneMatch(commentAnswerDto -> commentAnswerDto.getUserId().equals(user.getId()));
+        if (!neverCommented) {
+            return ResponseEntity.badRequest().body("You have already commented this answer ");
+        }
         CommentAnswer commentAnswer = commentAnswerService.addCommentToAnswer(commentText, answer.get(), user);
-
         return ResponseEntity.ok(commentConverter.commentToCommentDTO(commentAnswer));
     }
 
