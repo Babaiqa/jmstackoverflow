@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.service.impl;
 import com.javamentor.qa.platform.models.entity.Badge;
 import com.javamentor.qa.platform.models.entity.Comment;
 import com.javamentor.qa.platform.models.entity.CommentType;
+import com.javamentor.qa.platform.models.entity.chat.*;
 import com.javamentor.qa.platform.models.entity.question.*;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
@@ -12,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,12 +36,18 @@ public class  TestDataInitService {
     final RoleService roleService;
     final IgnoredTagService ignoredTagService;
     final TrackedTagService trackedTagService;
+    final ChatService chatService;
+    final SingleChatService singleChatService;
+    final GroupChatService groupChatService;
+    final MessageService messageService;
     final Random random;
 
     int numberOfUsers = 50;
     List<Tag> tagList = new ArrayList<>();
     Role USER_ROLE = Role.builder().name("USER").build();
     Role ADMIN_ROLE = Role.builder().name("ADMIN").build();
+    List<User> users = new ArrayList<>();
+
 
     @Autowired
     public TestDataInitService(UserService userService, BadgeService badgeService, QuestionService questionService,
@@ -51,7 +56,7 @@ public class  TestDataInitService {
                                RelatedTagService relatedTagService, CommentQuestionService commentQuestionService,
                                CommentAnswerService commentAnswerService, AnswerService answerService,
                                VoteAnswerService voteAnswerService, VoteQuestionService voteQuestionService, RoleService roleService,
-                               IgnoredTagService ignoredTagService, TrackedTagService trackedTagService) {
+                               IgnoredTagService ignoredTagService, TrackedTagService trackedTagService, ChatService chatService, SingleChatService singleChatService, GroupChatService groupChatService, MessageService messageService) {
         this.userService = userService;
         this.badgeService = badgeService;
         this.questionService = questionService;
@@ -69,6 +74,10 @@ public class  TestDataInitService {
         this.roleService = roleService;
         this.ignoredTagService = ignoredTagService;
         this.trackedTagService = trackedTagService;
+        this.chatService = chatService;
+        this.singleChatService = singleChatService;
+        this.groupChatService = groupChatService;
+        this.messageService = messageService;
         random = new Random();
     }
 
@@ -222,6 +231,47 @@ public class  TestDataInitService {
                 trackedTag.setTrackedTag(tagList.get(randomTrackedTagNum));
                 trackedTagService.persist(trackedTag);
             }
+
+            users.add(user);
+        }
+
+        int randomChatSingle = random.nextInt(19) + 1;
+
+        for (int i = 0; i < randomChatSingle; i++) {
+            int randomUserOne = random.nextInt(49) + 1;
+            int randomUserTwo = random.nextInt(49) + 1;
+
+            List<Message> messagesSingle = new ArrayList<>();
+            messagesSingle.add(new Message("Text single message" + i, users.get(randomUserOne)));
+            messagesSingle.add(new Message("Text single message" + i, users.get(randomUserTwo)));
+
+            SingleChat singleChat = new SingleChat();
+            singleChat.setChat(Chat.builder()
+                    .title("Single chat title" + i)
+                    .chatType(ChatType.SINGLE)
+                    .messages(messagesSingle)
+                    .build());
+            singleChat.setUserOne(users.get(randomUserOne));
+            singleChat.setUseTwo(users.get(randomUserTwo));
+            singleChatService.persist(singleChat);
+        }
+
+        int randomChatGroup = random.nextInt(19) + 1;
+
+        for (int i = 0; i < randomChatGroup; i++) {
+            int randomUsers = random.nextInt(49) + 1;
+
+            List<Message> messagesGroup = new ArrayList<>();
+            messagesGroup.add(new Message("Text group message" + i, users.get(randomUsers)));
+
+            GroupChat groupChat = new GroupChat();
+            groupChat.setChat(Chat.builder()
+                    .title("Group Chat title" + i)
+                    .chatType(ChatType.GROUP)
+                    .messages(messagesGroup)
+                    .build());
+            groupChat.setUsers(users.stream().limit(randomUsers).collect(Collectors.toSet()));
+            groupChatService.persist(groupChat);
         }
     }
 }
