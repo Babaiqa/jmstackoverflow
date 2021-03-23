@@ -171,7 +171,6 @@
             <artifactId>spring-boot-starter-oauth2-client</artifactId>
         </dependency>
 
-
     </dependencies>
 
     <build>
