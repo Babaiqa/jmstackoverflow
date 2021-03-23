@@ -36,7 +36,7 @@ public class Chat {
     @Column(columnDefinition = "smallint")
     private ChatType chatType;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "chat_id")
     private List<Message> messages;
 
