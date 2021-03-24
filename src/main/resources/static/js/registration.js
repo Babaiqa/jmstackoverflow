@@ -56,6 +56,7 @@ function validatePassword(){
         return true
     }
 }
+
 function showPassword() {
     if (password.type === "password") {
         password.type = "text";
@@ -67,6 +68,7 @@ function showPassword() {
         passwordButton.innerHTML = '&#x2605;'
     }
 }
+
 function showPasswordConfirm() {
     if (passwordConfirmation.type === "password") {
         passwordConfirmation.type = "text";

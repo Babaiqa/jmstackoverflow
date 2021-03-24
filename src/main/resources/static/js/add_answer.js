@@ -1,3 +1,5 @@
+const errorQuestion = document.getElementById('question-error')
+
 async function addAnswerToQuestion() {
 
     let questionId = window.location.pathname.replace(/\D/g, '')
@@ -17,6 +19,13 @@ async function addAnswerToQuestion() {
             },
             body: JSON.stringify(createAnswerDto)
         });
+
+        if (response.status >= 400 && response.status < 500) {
+            errorQuestion.innerHTML = ''
+            errorQuestion.innerHTML = '<div class="alert alert-danger m-1" role="alert">' +
+                'Нельзя отвечать больше одного раза</div>'
+        }
+
         const json = await response.json();
 
         //отрисовка страницы
