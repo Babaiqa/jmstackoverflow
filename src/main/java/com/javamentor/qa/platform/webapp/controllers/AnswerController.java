@@ -45,6 +45,7 @@ public class AnswerController {
     private final VoteAnswerService voteAnswerService;
     private final VoteAnswerConverter voteAnswerConverter;
 
+
     @Autowired
     public AnswerController(AnswerService answerService,
                             CommentAnswerService commentAnswerService,
