@@ -55,11 +55,11 @@ public class RegistrationController {
     public ResponseEntity<?> createUser(@Valid @RequestBody UserRegistrationDto userRegistrationDto ) {
 
         String email = userRegistrationDto.getEmail();
-        Optional<User> user = userService.getUserByEmail(email);
+        Optional<User> optionalUser = userService.getUserByEmail(email);
 
-        if (user.isPresent()) {
+        if (optionalUser.isPresent()) {
 
-            if (user.get().isEnabled()) {
+            if (optionalUser.get().isEnabled()) {
                 return ResponseEntity.badRequest().body(String.format("User with email %s already exist", email));
             }
 
