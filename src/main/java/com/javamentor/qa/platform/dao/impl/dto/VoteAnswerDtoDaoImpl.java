@@ -33,7 +33,7 @@ public class VoteAnswerDtoDaoImpl implements VoteAnswerDtoDao {
     public Optional<VoteAnswerDto> getVoteByAnswerIdAndUserId(Long answerId, Long userId) {
         TypedQuery<VoteAnswerDto> query = entityManager.createQuery(
                 "SELECT new com.javamentor.qa.platform.models.dto.VoteAnswerDto(v.id, v.user.id, v.answer.id, v.persistDateTime, v.vote)" +
-                        "FROM VoteAnswer v" +
+                        "FROM VoteAnswer v " +
                         "WHERE v.user.id =: userId AND v.answer.id =: answerId", VoteAnswerDto.class)
 
                 .setParameter("answerId", answerId)

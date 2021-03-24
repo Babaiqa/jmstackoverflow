@@ -4,13 +4,11 @@ import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
-import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.*;
 import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converters.*;
 import io.swagger.annotations.*;
@@ -43,10 +41,12 @@ public class QuestionController {
     private final UserService userService;
     private final VoteQuestionService voteQuestionService;
     private final VoteQuestionConverter voteQuestionConverter;
+    private final VoteQuestionDtoService voteQuestionDtoService;
     private final QuestionViewedService questionViewedService;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
+    @Autowired
     public QuestionController(QuestionService questionService,
                               TagService tagService,
                               SecurityHelper securityHelper,
@@ -58,6 +58,7 @@ public class QuestionController {
                               UserService userService,
                               VoteQuestionService voteQuestionService,
                               VoteQuestionConverter voteQuestionConverter,
+                              VoteQuestionDtoService voteQuestionDtoService,
                               QuestionViewedService questionViewedService) {
         this.questionService = questionService;
         this.tagService = tagService;
@@ -71,6 +72,7 @@ public class QuestionController {
         this.voteQuestionService = voteQuestionService;
         this.voteQuestionConverter = voteQuestionConverter;
         this.questionViewedService = questionViewedService;
+        this.voteQuestionDtoService = voteQuestionDtoService;
     }
 
     @DeleteMapping("/{id}/delete")
@@ -455,7 +457,19 @@ public class QuestionController {
         }
 
         if (voteQuestionService.isUserAlreadyVoted(question.get(), securityHelper.getPrincipal())) {
-            return ResponseEntity.ok("User already voted");
+            Optional<VoteQuestionDto> optionalVoteQuestion = voteQuestionDtoService.getVoteByQuestionIdAndUserId(questionId, securityHelper.getPrincipal().getId());
+            if (optionalVoteQuestion.isPresent()) {
+                int voteValue = optionalVoteQuestion.get().getVote();
+                if (voteValue == 1) {
+                    voteQuestionService.deleteById(optionalVoteQuestion.get().getId());
+                } else if (voteValue == -1) {
+                    voteQuestionService.deleteById(optionalVoteQuestion.get().getId());
+                    VoteQuestion voteQuestion = new VoteQuestion(securityHelper.getPrincipal(), question.get(), 1);
+                    voteQuestionService.persist(voteQuestion);
+                }
+                return ResponseEntity.ok("Vote changed");
+            }
+            return ResponseEntity.badRequest().body("Can't change vote");
         }
 
         VoteQuestion voteQuestion = new VoteQuestion(securityHelper.getPrincipal(), question.get(), 1);
@@ -482,7 +496,19 @@ public class QuestionController {
         }
 
         if (voteQuestionService.isUserAlreadyVoted(question.get(), securityHelper.getPrincipal())) {
-            return ResponseEntity.ok("User already voted");
+            Optional<VoteQuestionDto> optionalVoteQuestion = voteQuestionDtoService.getVoteByQuestionIdAndUserId(questionId, securityHelper.getPrincipal().getId());
+            if (optionalVoteQuestion.isPresent()) {
+                int voteValue = optionalVoteQuestion.get().getVote();
+                if (voteValue == -1) {
+                    voteQuestionService.deleteById(optionalVoteQuestion.get().getId());
+                } else if (voteValue == 1) {
+                    voteQuestionService.deleteById(optionalVoteQuestion.get().getId());
+                    VoteQuestion voteQuestion = new VoteQuestion(securityHelper.getPrincipal(), question.get(), -1);
+                    voteQuestionService.persist(voteQuestion);
+                }
+                return ResponseEntity.ok("Vote changed");
+            }
+            return ResponseEntity.badRequest().body("Can't change vote");
         }
 
         VoteQuestion voteQuestion = new VoteQuestion(securityHelper.getPrincipal(), question.get(), -1);

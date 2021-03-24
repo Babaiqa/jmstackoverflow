@@ -33,6 +33,7 @@ import java.util.Optional;
 @RequestMapping("/api/question")
 @Api(value = "AnswerApi")
 public class AnswerController {
+
     private final AnswerService answerService;
     private final CommentAnswerService commentAnswerService;
     private final CommentConverter commentConverter;
@@ -205,9 +206,10 @@ public class AnswerController {
         if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {
             Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answerId, securityHelper.getPrincipal().getId());
             if (optionalVoteAnswer.isPresent()) {
-                if (optionalVoteAnswer.get().getVote() == 1) {
+                int voteValue = optionalVoteAnswer.get().getVote();
+                if (voteValue == 1) {
                     voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
-                } else if (optionalVoteAnswer.get().getVote() == -1) {
+                } else if (voteValue == -1) {
                     voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
                     VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), 1);
                     voteAnswerService.persist(voteAnswer);
@@ -255,9 +257,10 @@ public class AnswerController {
         if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {
             Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answerId, securityHelper.getPrincipal().getId());
             if (optionalVoteAnswer.isPresent()) {
-                if (optionalVoteAnswer.get().getVote() == -1) {
+                int voteValue = optionalVoteAnswer.get().getVote();
+                if (voteValue == -1) {
                     voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
-                } else if (optionalVoteAnswer.get().getVote() == 1) {
+                } else if (voteValue == 1) {
                     voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
                     VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
                     voteAnswerService.persist(voteAnswer);
