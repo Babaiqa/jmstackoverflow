@@ -86,8 +86,8 @@ class PaginationQuestionWithoutAnswer {
             $("#totalResultCountView").empty()
             $("#totalResultCountView").append(
                 "               <div class=\"totalResultCountView\">" +
-                "                   <div class=\"totalResultCountView-count\">" + totalResultCount + "</div>" +
-                "                   <div class=\"totalResultCountView-text\">вопросов без принятого ответа или без ответа, за который были отданы голоса</div>" +
+                "                   <span class=\"totalResultCountView-count\">" + totalResultCount + "</span>" +
+                "                   <span class=\"totalResultCountView-text\">вопросов без принятого ответа или без ответа, за который были отданы голоса   </span>" +
                 "               </div>"
 
             );
