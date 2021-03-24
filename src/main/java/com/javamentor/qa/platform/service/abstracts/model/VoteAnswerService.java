@@ -9,4 +9,6 @@ import com.javamentor.qa.platform.models.entity.user.User;
 public interface VoteAnswerService extends ReadWriteService<VoteAnswer, Long> {
 
     boolean isUserAlreadyVoted(Answer answer, User user);
+
+
 }
