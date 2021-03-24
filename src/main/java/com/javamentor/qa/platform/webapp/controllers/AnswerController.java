@@ -201,20 +201,19 @@ public class AnswerController {
         if (!answer.isPresent()) {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
+
         if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {
-            System.out.println("gaz1==================");
             Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByQuestionIdAndUserId(questionId, securityHelper.getPrincipal().getId());
-            System.out.println("optionalVoteAnswer.get().getVote() = " + optionalVoteAnswer.get().getVote());
 
             if (optionalVoteAnswer.get().getVote() == 1) {
-//                System.out.println(optionalVoteAnswer.get().getVote() == 1);
                 voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
-
-//                VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
-//                voteAnswerService.persist(voteAnswer);
+            } else if (optionalVoteAnswer.get().getVote() == -1) {
+                voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
+                VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), 1);
+                voteAnswerService.persist(voteAnswer);
             }
-            System.out.println("gaz2==================");
-            return ResponseEntity.ok("User already voted");
+
+            return ResponseEntity.ok("Vote changed");
         }
 
         if (question.get().getUser().getId().equals(securityHelper.getPrincipal().getId())) {
@@ -225,17 +224,6 @@ public class AnswerController {
 
         VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), 1);
         voteAnswerService.persist(voteAnswer);
-
-//        System.out.println("gaz1==================");
-//        Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByQuestionIdAndUserId(questionId, securityHelper.getPrincipal().getId());
-//
-//        if (optionalVoteAnswer.isPresent()) {
-//            System.out.println("vote id = " + optionalVoteAnswer.get().getId());
-//            System.out.println("answer id = " + optionalVoteAnswer.get().getAnswerId());
-//            System.out.println("user id = " + optionalVoteAnswer.get().getAnswerId());
-//            System.out.println("vote = " + optionalVoteAnswer.get().getVote());
-//        }
-//        System.out.println("gaz2==================");
 
         return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
     }
@@ -264,9 +252,18 @@ public class AnswerController {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
 
-
         if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {
-            return ResponseEntity.ok("User already voted");
+            Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByQuestionIdAndUserId(questionId, securityHelper.getPrincipal().getId());
+
+            if (optionalVoteAnswer.get().getVote() == -1) {
+                voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
+            } else if (optionalVoteAnswer.get().getVote() == 1) {
+                voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
+                VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
+                voteAnswerService.persist(voteAnswer);
+            }
+
+            return ResponseEntity.ok("Vote changed");
         }
 
         VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
