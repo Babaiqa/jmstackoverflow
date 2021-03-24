@@ -203,7 +203,7 @@ public class AnswerController {
         }
 
         if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {
-            Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByQuestionIdAndUserId(questionId, securityHelper.getPrincipal().getId());
+            Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answerId, securityHelper.getPrincipal().getId());
 
             if (optionalVoteAnswer.get().getVote() == 1) {
                 voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
@@ -241,7 +241,6 @@ public class AnswerController {
             @ApiParam(name = "answerId", value = "type Long", required = true, example = "0")
             @PathVariable Long answerId) {
 
-
         Optional<Question> question = questionService.getById(questionId);
         if (!question.isPresent()) {
             return ResponseEntity.badRequest().body("Question was not found");
@@ -253,7 +252,7 @@ public class AnswerController {
         }
 
         if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {
-            Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByQuestionIdAndUserId(questionId, securityHelper.getPrincipal().getId());
+            Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answerId, securityHelper.getPrincipal().getId());
 
             if (optionalVoteAnswer.get().getVote() == -1) {
                 voteAnswerService.deleteById(optionalVoteAnswer.get().getId());

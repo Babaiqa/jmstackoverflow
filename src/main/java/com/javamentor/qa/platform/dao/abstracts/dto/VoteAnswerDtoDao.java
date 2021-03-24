@@ -6,4 +6,6 @@ import java.util.Optional;
 
 public interface VoteAnswerDtoDao {
     Optional<VoteAnswerDto> getVoteByQuestionIdAndUserId(Long questionId, Long userId);
+
+    Optional<VoteAnswerDto> getVoteByAnswerIdAndUserId(Long answerId, Long userId);
 }
