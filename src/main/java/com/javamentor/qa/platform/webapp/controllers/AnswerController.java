@@ -73,7 +73,7 @@ public class AnswerController {
     @ApiOperation(value = "Add comment", notes = "This method Add comment to answer and return CommentDto")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Comment was added", response = CommentDto.class),
-            @ApiResponse(code = 400, message = "Answer or question not found", response = String.class)
+            @ApiResponse(code = 400, message = "Answer or Question was not found", response = String.class)
     })
     public ResponseEntity<?> addCommentToAnswer(
             @ApiParam(name = "AnswerId", value = "AnswerId. Type long", required = true, example = "1")
@@ -127,7 +127,7 @@ public class AnswerController {
     @ApiOperation(value = "Return List<AnswerDto> with answers for question", notes = "This method return List<AnswerDto> with answers with has presented questionId")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Return answers for question", response = AnswerDto.class, responseContainer = "List"),
-            @ApiResponse(code = 400, message = "Question not found", response = String.class)
+            @ApiResponse(code = 400, message = "Question was not found", response = String.class)
     })
 
     public ResponseEntity<?> getAnswerListByQuestionId(@ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
@@ -135,7 +135,7 @@ public class AnswerController {
 
         Optional<Question> question = questionService.getById(questionId);
         if (!question.isPresent()) {
-            return ResponseEntity.badRequest().body("Question not found");
+            return ResponseEntity.badRequest().body("Question was not found");
         }
 
         List<AnswerDto> answerDtoList = answerDtoService.getAllAnswersByQuestionId(questionId);
@@ -160,7 +160,7 @@ public class AnswerController {
 
         Optional<Question> question = questionService.getById(questionId);
         if (!question.isPresent()) {
-            return ResponseEntity.badRequest().body("Question not found");
+            return ResponseEntity.badRequest().body("Question was not found");
         }
 
         Answer answer = new Answer(question.get(), user, createAnswerDto.getHtmlBody(), false, false);
@@ -183,7 +183,7 @@ public class AnswerController {
     @ResponseBody
     @ApiResponses({
             @ApiResponse(code = 200, message = "Answer was up voted", response = VoteAnswerDto.class),
-            @ApiResponse(code = 400, message = "Question not found", response = String.class)
+            @ApiResponse(code = 400, message = "Question was not found", response = String.class)
     })
     public ResponseEntity<?> answerUpVote(
             @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
@@ -204,16 +204,17 @@ public class AnswerController {
 
         if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {
             Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answerId, securityHelper.getPrincipal().getId());
-
-            if (optionalVoteAnswer.get().getVote() == 1) {
-                voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
-            } else if (optionalVoteAnswer.get().getVote() == -1) {
-                voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
-                VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), 1);
-                voteAnswerService.persist(voteAnswer);
+            if (optionalVoteAnswer.isPresent()) {
+                if (optionalVoteAnswer.get().getVote() == 1) {
+                    voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
+                } else if (optionalVoteAnswer.get().getVote() == -1) {
+                    voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
+                    VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), 1);
+                    voteAnswerService.persist(voteAnswer);
+                }
+                return ResponseEntity.ok("Vote changed");
             }
-
-            return ResponseEntity.ok("Vote changed");
+            return ResponseEntity.badRequest().body("Can't change vote");
         }
 
         if (question.get().getUser().getId().equals(securityHelper.getPrincipal().getId())) {
@@ -233,7 +234,7 @@ public class AnswerController {
     @ResponseBody
     @ApiResponses({
             @ApiResponse(code = 200, message = "Answer was up voted", response = VoteAnswerDto.class),
-            @ApiResponse(code = 400, message = "Question not found", response = String.class)
+            @ApiResponse(code = 400, message = "Question was not found", response = String.class)
     })
     public ResponseEntity<?> answerDownVote(
             @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
@@ -253,16 +254,17 @@ public class AnswerController {
 
         if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {
             Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answerId, securityHelper.getPrincipal().getId());
-
-            if (optionalVoteAnswer.get().getVote() == -1) {
-                voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
-            } else if (optionalVoteAnswer.get().getVote() == 1) {
-                voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
-                VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
-                voteAnswerService.persist(voteAnswer);
+            if (optionalVoteAnswer.isPresent()) {
+                if (optionalVoteAnswer.get().getVote() == -1) {
+                    voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
+                } else if (optionalVoteAnswer.get().getVote() == 1) {
+                    voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
+                    VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
+                    voteAnswerService.persist(voteAnswer);
+                }
+                return ResponseEntity.ok("Vote changed");
             }
-
-            return ResponseEntity.ok("Vote changed");
+            return ResponseEntity.badRequest().body("Failed to change vote");
         }
 
         VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
@@ -278,7 +280,7 @@ public class AnswerController {
             response = Boolean.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "True, if user voted; False, if not", response = Boolean.class),
-            @ApiResponse(code = 400, message = "Question not found", response = String.class),
+            @ApiResponse(code = 400, message = "Question was not found", response = String.class),
     })
     public ResponseEntity<?> isAnyAnswerVotedByCurrentUser(@ApiParam(name = "questionId", value = "ID value, for the question, the answer to which needs to be check", required = true, example = "1")
                                                            @PathVariable Long questionId) {
@@ -286,7 +288,7 @@ public class AnswerController {
         Optional<Question> question = questionService.getById(questionId);
 
         if (!question.isPresent()) {
-            return ResponseEntity.badRequest().body("Question not found");
+            return ResponseEntity.badRequest().body("Question was not found");
         }
 
         User user = securityHelper.getPrincipal();

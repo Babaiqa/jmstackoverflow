@@ -464,8 +464,6 @@ public class QuestionController {
         return ResponseEntity.ok(voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion));
     }
 
-
-
     @PostMapping("/{questionId}/downVote")
     @ResponseBody
     @ApiOperation(value ="Down vote for question")
