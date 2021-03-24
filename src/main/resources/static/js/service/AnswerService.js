@@ -39,6 +39,7 @@ class AnswerService {
                     }
                 })
             }).then(function () {
+                count = count == null ? 0 : count;
                 document.querySelectorAll('div.countAnswer')[index].innerHTML = '&nbsp;' + count;
 
                 let html = '<path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n';
@@ -67,6 +68,7 @@ class AnswerService {
                     }
                 })
             }).then(function () {
+                count = count == null ? 0 : count;
                 document.querySelectorAll('div.countAnswer')[index].innerHTML = '&nbsp;' + count;
             })
         }).catch(error => console.log(error.message));

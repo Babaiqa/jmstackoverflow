@@ -145,10 +145,8 @@ class QuestionPage {
                         + ('0' + (date.getMonth() + 1)).slice(-2) + "."
                         + date.getFullYear();
 
-                    let count = elem.countValuable;
-                    if(count == null) {
-                        count = 0;
-                    }
+                    let count = elem.countValuable == null ? 0 : elem.countValuable;
+
                     let isHelpful = elem.isHelpful;
 
                     $('#answer-area').append(
