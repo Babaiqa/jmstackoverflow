@@ -144,7 +144,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .content(jsonRequest))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Question not found"));
+                .andExpect(content().string("Question was not found"));
     }
 
     @Test
@@ -268,7 +268,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .get("/api/question/0/isAnswerVoted"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("text/plain;charset=UTF-8"))
-                .andExpect(content().string("Question not found"));
+                .andExpect(content().string("Question was not found"));
     }
 
 
