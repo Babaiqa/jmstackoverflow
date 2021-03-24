@@ -258,19 +258,16 @@ public class AnswerController {
                 int voteValue = optionalVoteAnswer.get().getVote();
                 if (voteValue == -1) {
                     voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
-                    markHelpful(question, answer, false);
                 } else if (voteValue == 1) {
                     voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
                     VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
                     voteAnswerService.persist(voteAnswer);
-                    markHelpful(question, answer, false);
                 }
+                markHelpful(question, answer, false);
                 return ResponseEntity.ok("Vote changed");
             }
             return ResponseEntity.badRequest().body("Failed to change vote");
         }
-
-        markHelpful(question, answer, false);
 
         VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
         voteAnswerService.persist(voteAnswer);
