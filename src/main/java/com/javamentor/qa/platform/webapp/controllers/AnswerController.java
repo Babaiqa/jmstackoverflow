@@ -209,21 +209,19 @@ public class AnswerController {
                 int voteValue = optionalVoteAnswer.get().getVote();
                 if (voteValue == 1) {
                     voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
+                    markHelpful(question, answer, false);
                 } else if (voteValue == -1) {
                     voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
                     VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), 1);
                     voteAnswerService.persist(voteAnswer);
+                    markHelpful(question, answer, true);
                 }
                 return ResponseEntity.ok("Vote changed");
             }
             return ResponseEntity.badRequest().body("Can't change vote");
         }
 
-        if (question.get().getUser().getId().equals(securityHelper.getPrincipal().getId())) {
-            answer.get().setIsHelpful(true);
-            answer.get().setDateAcceptTime(LocalDateTime.now());
-            answerService.update(answer.get());
-        }
+        markHelpful(question, answer, true);
 
         VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), 1);
         voteAnswerService.persist(voteAnswer);
@@ -260,15 +258,19 @@ public class AnswerController {
                 int voteValue = optionalVoteAnswer.get().getVote();
                 if (voteValue == -1) {
                     voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
+                    markHelpful(question, answer, false);
                 } else if (voteValue == 1) {
                     voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
                     VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
                     voteAnswerService.persist(voteAnswer);
+                    markHelpful(question, answer, false);
                 }
                 return ResponseEntity.ok("Vote changed");
             }
             return ResponseEntity.badRequest().body("Failed to change vote");
         }
+
+        markHelpful(question, answer, false);
 
         VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
         voteAnswerService.persist(voteAnswer);
@@ -276,6 +278,13 @@ public class AnswerController {
         return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
     }
 
+    private void markHelpful(Optional<Question> question, Optional<Answer> answer, boolean isHelpful) {
+        if (question.get().getUser().getId().equals(securityHelper.getPrincipal().getId())) {
+            answer.get().setIsHelpful(isHelpful);
+            answer.get().setDateAcceptTime(LocalDateTime.now());
+            answerService.update(answer.get());
+        }
+    }
 
     @GetMapping("/{questionId}/isAnswerVoted")
     @ApiOperation(value = "Checks if user vote up answer to the question",
