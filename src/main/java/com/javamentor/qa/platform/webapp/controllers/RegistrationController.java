@@ -2,11 +2,9 @@ package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserRegistrationDto;
-import com.javamentor.qa.platform.models.entity.user.Reputation;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.jwt.JwtUtils;
-import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.configs.mail.MailService;
 import com.javamentor.qa.platform.webapp.converters.UserConverter;
@@ -29,7 +27,6 @@ public class RegistrationController {
     private final UserConverter userConverter;
     private final JwtUtils jwtUtils;
     private final MailService mailService;
-    private final ReputationService reputationService;
 
     @Value("${address.mail.confirm}")
     private String address;
@@ -38,14 +35,12 @@ public class RegistrationController {
     public RegistrationController(UserService userService,
                                   UserConverter userConverter,
                                   JwtUtils jwtUtils,
-                                  MailService mailService,
-                                  ReputationService reputationService) {
+                                  MailService mailService) {
 
         this.userService = userService;
         this.userConverter = userConverter;
         this.jwtUtils = jwtUtils;
         this.mailService = mailService;
-        this.reputationService = reputationService;
     }
 
     @PostMapping("/registration")
@@ -60,11 +55,11 @@ public class RegistrationController {
     public ResponseEntity<?> createUser(@Valid @RequestBody UserRegistrationDto userRegistrationDto ) {
 
         String email = userRegistrationDto.getEmail();
-        Optional<User> user = userService.getUserByEmail(email);
+        Optional<User> optionalUser = userService.getUserByEmail(email);
 
-        if (user.isPresent()) {
+        if (optionalUser.isPresent()) {
 
-            if (user.get().isEnabled()) {
+            if (optionalUser.get().isEnabled()) {
                 return ResponseEntity.badRequest().body(String.format("User with email %s already exist", email));
             }
 
@@ -74,17 +69,6 @@ public class RegistrationController {
         User newUser = userConverter.userDtoToUser(userRegistrationDto);
         newUser.setIsEnabled(false);
         userService.persist(newUser);
-
-        Optional<Reputation> reputation = reputationService.getReputationByUserId(newUser.getId());
-
-        if (reputation.isPresent()) {
-
-            return ResponseEntity.badRequest().body(String.format("Reputation for user, with id %d already exist", newUser.getId()));
-        }
-
-        Reputation userReputation = new Reputation();
-        userReputation.setUser(newUser);
-        reputationService.persist(userReputation);
 
         String token = jwtUtils.generateRegJwtToken(email);
 
