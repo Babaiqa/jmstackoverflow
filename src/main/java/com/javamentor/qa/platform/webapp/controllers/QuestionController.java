@@ -412,10 +412,7 @@ public class QuestionController {
             return ResponseEntity.badRequest().body("Question not found");
         }
 
-        List<CommentQuestionDto> commentQuestionDtoList = commentDtoService.getAllCommentsByQuestionId(questionId);
-        boolean existsCommentByUser = commentQuestionDtoList.stream()
-                .anyMatch(comment -> comment.getUserId().equals(user.getId()));
-
+        boolean existsCommentByUser = commentDtoService.isUserAlreadyCommentedQuestion(user.getId(), questionId);
         if (!existsCommentByUser) {
             CommentQuestion commentQuestion =
                     commentQuestionService.addCommentToQuestion(commentText, question.get(), user);

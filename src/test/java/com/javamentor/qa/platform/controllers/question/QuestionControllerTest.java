@@ -750,7 +750,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
         this.mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/question/15/comment")
-                .content("Test comment1")
+                .content("Test comment2")
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isBadRequest());

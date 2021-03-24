@@ -61,6 +61,6 @@ reputation:
 
   - id: 4
     persist_date: "2021-02-20 21:22:13"
-    user_id: 153
+    user_id: 4
     count: 2
     type: 3
