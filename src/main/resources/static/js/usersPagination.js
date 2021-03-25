@@ -100,13 +100,3 @@ class PaginationUser {
         })
     }
 }
-
-document.getElementById("inputFilterUser").addEventListener("keyup", function (event) {
-    const key = event.keyCode
-    console.log(key)
-    if (key >= 46 && key <= 90 || key >= 96 && key <= 105 || key === 8) {
-        console.log(event.target.value)
-        new PaginationUser(1, 20, 'search', document.getElementById('inputFilterUser').value).writeUsers()
-    }
-});
-
