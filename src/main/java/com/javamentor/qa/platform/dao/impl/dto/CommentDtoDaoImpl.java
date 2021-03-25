@@ -47,4 +47,15 @@ public class CommentDtoDaoImpl implements CommentDtoDao {
                 .unwrap(org.hibernate.query.Query.class)
                 .getResultList();
     }
+
+    @Override
+    public boolean isUserAlreadyCommentedQuestion(Long userId, Long questionId) {
+        return (entityManager.unwrap(Session.class)
+                .createQuery("FROM CommentQuestion as cq WHERE cq.question.id = :questionId" +
+                        " and cq.comment.user.id = :userId")
+                .setParameter("questionId", questionId)
+                .setParameter("userId", userId)
+                .unwrap(org.hibernate.query.Query.class)
+                .uniqueResult() != null);
+    }
 }
