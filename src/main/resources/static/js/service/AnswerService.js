@@ -39,12 +39,13 @@ class AnswerService {
                     }
                 })
             }).then(function () {
+                count = count == null ? 0 : count;
                 document.querySelectorAll('div.countAnswer')[index].innerHTML = '&nbsp;' + count;
 
                 let html = '<path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n';
                 if (isHelpful === true) {
                     document.querySelectorAll('svg.isHelpful')[index].innerHTML = html;
-                } else {
+                } else if (isHelpful === false) {
                      document.getElementsByClassName('isHelpful')[index].innerHTML = '';
                 }
             })
@@ -62,17 +63,23 @@ class AnswerService {
                 })
             }).then(data => {
             let count = 0;
+            let isHelpful = false;
             this.getAnswerListByQuestionId(questionId).then(response => {
                 response.forEach(elem => {
                     if (elem.id === answerId) {
                         count = elem.countValuable;
+                        isHelpful = elem.isHelpful;
                     }
                 })
             }).then(function () {
                 count = count == null ? 0 : count;
                 document.querySelectorAll('div.countAnswer')[index].innerHTML = '&nbsp;' + count;
 
-                document.getElementsByClassName('isHelpful')[index].innerHTML = '';
+                if (isHelpful === true) {
+                    document.querySelectorAll('svg.isHelpful')[index].innerHTML = html;
+                } else if (isHelpful === false) {
+                    document.getElementsByClassName('isHelpful')[index].innerHTML = '';
+                }
             })
         }).catch(error => console.log(error.message));
     }

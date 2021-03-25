@@ -204,10 +204,6 @@ public class AnswerController {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
 
-        if (voteAnswerService.isUserAlreadyVotedIsThisQuestion(question.get(), securityHelper.getPrincipal(), answer.get())) {
-            return ResponseEntity.ok("User already voted in this question");
-        }
-
         if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {
             Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answerId, securityHelper.getPrincipal().getId());
             if (optionalVoteAnswer.isPresent()) {
@@ -226,9 +222,11 @@ public class AnswerController {
             return ResponseEntity.badRequest().body("Can't change vote");
         }
 
-
-
         markHelpful(question, answer, true);
+
+        if (voteAnswerService.isUserAlreadyVotedIsThisQuestion(question.get(), securityHelper.getPrincipal(), answer.get())) {
+            return ResponseEntity.ok("User already voted in this question");
+        }
 
         VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), 1);
         voteAnswerService.persist(voteAnswer);
@@ -260,10 +258,6 @@ public class AnswerController {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
 
-        if (voteAnswerService.isUserAlreadyVotedIsThisQuestion(question.get(), securityHelper.getPrincipal(), answer.get())) {
-            return ResponseEntity.ok("User already voted in this question");
-        }
-
         if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {
             Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answerId, securityHelper.getPrincipal().getId());
             if (optionalVoteAnswer.isPresent()) {
@@ -281,6 +275,10 @@ public class AnswerController {
             return ResponseEntity.badRequest().body("Failed to change vote");
         }
 
+        if (voteAnswerService.isUserAlreadyVotedIsThisQuestion(question.get(), securityHelper.getPrincipal(), answer.get())) {
+            return ResponseEntity.ok("User already voted in this question");
+        }
+
         VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
         voteAnswerService.persist(voteAnswer);
 
@@ -288,7 +286,8 @@ public class AnswerController {
     }
 
     private void markHelpful(Optional<Question> question, Optional<Answer> answer, boolean isHelpful) {
-        if (question.get().getUser().getId().equals(securityHelper.getPrincipal().getId())) {
+        boolean authorOfQuestion = question.get().getUser().getId().equals(securityHelper.getPrincipal().getId());
+        if (authorOfQuestion) {
             answer.get().setIsHelpful(isHelpful);
             answer.get().setDateAcceptTime(LocalDateTime.now());
             answerService.update(answer.get());

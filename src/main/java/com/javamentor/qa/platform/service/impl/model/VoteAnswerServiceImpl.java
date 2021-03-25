@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Service
 public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long> implements VoteAnswerService {
@@ -18,13 +19,19 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
         super(voteAnswerDao);
     }
 
-    @PersistenceContext
-    EntityManager entityManager;
-
     @Override
     public boolean isUserAlreadyVoted(Answer answer, User user) {
+        List<VoteAnswer> list = answer.getVoteAnswers();
+        for (VoteAnswer voteAnswer : list) {
+            if (voteAnswer.getUser().getId().equals(user.getId())) {
+                return true;
+            }
+        }
         return false;
     }
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Override
     public boolean isUserAlreadyVotedIsThisQuestion(Question question, User user, Answer answer) {
