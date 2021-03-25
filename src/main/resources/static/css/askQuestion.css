@@ -27,3 +27,31 @@
 .iconFacebook {
     background-color:#ffffff;
 }
+
+.tag {
+    height: 155px;
+    display: block;
+    width: 278px;
+    border: 1px solid #b1b1b1;
+    float: left;
+    padding: 10px;
+    margin: 1px;
+}
+
+.tag:hover {
+    background-color: #d1e5f1;
+}
+
+.tag-header {
+    margin-bottom: 3px;
+    font-size: 15px;
+}
+
+.tag-description {
+    font-size: 11px;
+    line-height: 13px;
+}
+
+.tag-count {
+    margin-left: 10px;
+}
