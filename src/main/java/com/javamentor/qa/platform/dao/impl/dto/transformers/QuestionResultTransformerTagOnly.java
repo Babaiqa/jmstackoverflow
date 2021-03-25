@@ -32,7 +32,8 @@ public class QuestionResultTransformerTagOnly implements ResultTransformer {
         questionDto.getListTagDto().add(
                 new TagDto(
                         ((Number) tuple[aliasToIndexMapTrans.get("tag_id")]).longValue(),
-                        ((String) tuple[aliasToIndexMapTrans.get("tag_name")])
+                        ((String) tuple[aliasToIndexMapTrans.get("tag_name")]),
+                        ((String) tuple[aliasToIndexMapTrans.get("tag_description")])
                 )
         );
 

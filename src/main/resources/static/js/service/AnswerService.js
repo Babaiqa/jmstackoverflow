@@ -33,13 +33,12 @@ class AnswerService {
             let isHelpful = false;
             this.getAnswerListByQuestionId(questionId).then(response => {
                 response.forEach(elem => {
-                    if (elem.id == answerId) {
+                    if (elem.id === answerId) {
                         count = elem.countValuable;
                         isHelpful = elem.isHelpful;
                     }
                 })
             }).then(function () {
-                count = count == null ? 0 : count;
                 document.querySelectorAll('div.countAnswer')[index].innerHTML = '&nbsp;' + count;
 
                 let html = '<path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n';
@@ -65,7 +64,7 @@ class AnswerService {
             let count = 0;
             this.getAnswerListByQuestionId(questionId).then(response => {
                 response.forEach(elem => {
-                    if (elem.id == answerId) {
+                    if (elem.id === answerId) {
                         count = elem.countValuable;
                     }
                 })

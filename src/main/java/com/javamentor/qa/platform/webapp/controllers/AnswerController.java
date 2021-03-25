@@ -74,7 +74,7 @@ public class AnswerController {
     @ApiOperation(value = "Add comment", notes = "This method Add comment to answer and return CommentDto")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Comment was added", response = CommentDto.class),
-            @ApiResponse(code = 400, message = "Answer or Question was not found", response = String.class)
+            @ApiResponse(code = 400, message = "Answer or question not found", response = String.class)
     })
     public ResponseEntity<?> addCommentToAnswer(
             @ApiParam(name = "AnswerId", value = "AnswerId. Type long", required = true, example = "1")
@@ -184,7 +184,8 @@ public class AnswerController {
     @ResponseBody
     @ApiResponses({
             @ApiResponse(code = 200, message = "Answer was up voted", response = VoteAnswerDto.class),
-            @ApiResponse(code = 400, message = "Question was not found", response = String.class)
+            @ApiResponse(code = 400, message = "Question was not found", response = String.class),
+            @ApiResponse(code = 400, message = "User already voted in this question ", response = String.class)
     })
     public ResponseEntity<?> answerUpVote(
             @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
@@ -201,6 +202,10 @@ public class AnswerController {
         Optional<Answer> answer = answerService.getById(answerId);
         if (!answer.isPresent()) {
             return ResponseEntity.badRequest().body("Answer was not found");
+        }
+
+        if (voteAnswerService.isUserAlreadyVotedIsThisQuestion(question.get(), securityHelper.getPrincipal(), answer.get())) {
+            return ResponseEntity.ok("User already voted in this question");
         }
 
         if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {
@@ -221,6 +226,8 @@ public class AnswerController {
             return ResponseEntity.badRequest().body("Can't change vote");
         }
 
+
+
         markHelpful(question, answer, true);
 
         VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), 1);
@@ -234,7 +241,8 @@ public class AnswerController {
     @ResponseBody
     @ApiResponses({
             @ApiResponse(code = 200, message = "Answer was up voted", response = VoteAnswerDto.class),
-            @ApiResponse(code = 400, message = "Question was not found", response = String.class)
+            @ApiResponse(code = 400, message = "Question was not found", response = String.class),
+            @ApiResponse(code = 400, message = "User already voted in this question ", response = String.class)
     })
     public ResponseEntity<?> answerDownVote(
             @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
@@ -250,6 +258,10 @@ public class AnswerController {
         Optional<Answer> answer = answerService.getById(answerId);
         if (!answer.isPresent()) {
             return ResponseEntity.badRequest().body("Answer was not found");
+        }
+
+        if (voteAnswerService.isUserAlreadyVotedIsThisQuestion(question.get(), securityHelper.getPrincipal(), answer.get())) {
+            return ResponseEntity.ok("User already voted in this question");
         }
 
         if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {

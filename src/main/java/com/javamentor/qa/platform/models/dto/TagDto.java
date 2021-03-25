@@ -11,17 +11,18 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class TagDto implements Serializable {
 
-    private static final long serialVersionUID = -8087563918115872879L;
+    private static final long serialVersionUID = 8947020898978539963L;
 
     private Long id;
     private String name;
+    private String description;
 
     @Override
     public String toString() {
         return "{" +
                 "id=" + id +
                 ", name=" + name +
+                ", description=" + description +
                 '}';
     }
-
 }
