@@ -434,5 +434,41 @@ User при регистрации получает все знаки лишь �
         userSet.add(user);
         return userSet;
     }
+````
+##Postman
 
+Postman удобный HTTP-клиент для тестирования веб-сайтов. Предназначен для проверки запросов с клиента на сервер и получения ответа от бэкенда.
 
+###Как авторизоваться и отправлять запросы
+
+1. Авторизуйтесь на сайте с открытой консолью разработчика
+
+![](src/main/resources/static/images/git_tutor/postman_1_authorise.png)
+
+2. Перейти по разделам **Network | XHR** и открыть **authenticated**
+
+![](src/main/resources/static/images/git_tutor/postman_2_authenticated.png)
+
+3. В пункте **Request Headers** скопировать Bearer-токен. Он используется для авторизации в Postman
+
+![](src/main/resources/static/images/git_tutor/postman_3_authorization.png)
+
+4. Далее создаем новый запрос в Postman
+
+![](src/main/resources/static/images/git_tutor/postman_4_new.png)
+
+5. Важно указать правильный тип запроса и mapping. В разделе **Auth** - Inherit auth from parent
+
+![](src/main/resources/static/images/git_tutor/postman_5_request.png)
+
+6. В разделе **Headers** добавить ключ **Authorization** со значением Bearer-токена 
+
+![](src/main/resources/static/images/git_tutor/postman_6_header.png)
+
+7. Если все прошло гладко, то в ответе будет ожидаемый результат, в противном случае выпадет ошибка
+
+![](src/main/resources/static/images/git_tutor/postman_7_response.png)
+
+Если в ответе ошибка **Unauthorized**, значит авторизация не заработала, попробуй еще раз
+
+![](src/main/resources/static/images/git_tutor/postman_8_error.png)
