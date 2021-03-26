@@ -1,6 +1,5 @@
 package com.javamentor.qa.platform.models.dto;
 
-import com.javamentor.qa.platform.models.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,16 +17,16 @@ public class MessageDto {
     private String message;
     private LocalDateTime lastRedactionDate;
     private LocalDateTime persistDate;
-    private User userSender;
+    private Long userSenderId;
 
     @Override
     public String toString() {
         return "{" +
                 "id=" + id +
-                ", message='" + message + '\'' +
+                ", message='" + message + "'" +
                 ", lastRedactionDate=" + lastRedactionDate +
                 ", persistDate=" + persistDate +
-                ", userSender=" + userSender +
+                ", userSender=" + userSenderId +
                 '}';
     }
 }

@@ -1,7 +1,5 @@
 package com.javamentor.qa.platform.models.dto;
 
-import com.javamentor.qa.platform.models.entity.chat.Chat;
-import com.javamentor.qa.platform.models.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,17 +12,17 @@ import lombok.Setter;
 public class SingleChatDto {
 
     private Long id;
-    private Chat chat;
-    private User userOne;
-    private User userTwo;
+    private Long chatId;
+    private Long userOneId;
+    private Long userTwoId;
 
     @Override
     public String toString() {
         return "{" +
                 "id=" + id +
-                ", chat=" + chat +
-                ", userOne=" + userOne +
-                ", userTwo=" + userTwo +
+                ", chatId=" + chatId +
+                ", userOneId=" + userOneId +
+                ", userTwoId=" + userTwoId +
                 '}';
     }
 }

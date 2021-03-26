@@ -1,7 +1,5 @@
 package com.javamentor.qa.platform.models.dto;
 
-import com.javamentor.qa.platform.models.entity.chat.Chat;
-import com.javamentor.qa.platform.models.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,14 +14,14 @@ import java.util.Set;
 public class GroupChatDto {
 
     private Long id;
-    private Chat chat;
-    private Set<User> users;
+    private Long chatId;
+    private Set<UserDto> users;
 
     @Override
     public String toString() {
         return "{" +
                 "id=" + id +
-                ", chat=" + chat +
+                ", chat=" + chatId +
                 ", users=" + users +
                 '}';
     }

@@ -1,7 +1,6 @@
 package com.javamentor.qa.platform.models.dto;
 
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
-import com.javamentor.qa.platform.models.entity.chat.Message;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +18,7 @@ public class ChatDto {
     private String title;
     private LocalDateTime persistDate;
     private ChatType chatType;
-    private List<Message> messages;
+    //private List<MessageDto> messages;
 
     @Override
     public String toString() {
@@ -28,7 +27,7 @@ public class ChatDto {
                 ", title='" + title + '\'' +
                 ", persistDate=" + persistDate +
                 ", chatType=" + chatType +
-                ", messages=" + messages +
+                //", messages=" + messages +
                 '}';
     }
 }
