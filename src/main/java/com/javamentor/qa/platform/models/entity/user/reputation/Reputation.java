@@ -1,5 +1,9 @@
-package com.javamentor.qa.platform.models.entity.user;
+package com.javamentor.qa.platform.models.entity.user.reputation;
 
+import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.user.Role;
+import com.javamentor.qa.platform.models.entity.user.User;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
@@ -16,6 +20,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@CombinedNotNull(fields = {"question_id", "answer_id"})
 @Table(name = "reputation")
 public class Reputation implements Serializable {
     private static final long serialVersionUID = 7177182244933788025L;
@@ -39,6 +44,14 @@ public class Reputation implements Serializable {
     @NotNull
     @Column(name = "type")
     private ReputationType type;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id")
+    private Question question;
+
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = Answer.class, cascade = {CascadeType.REFRESH})
+    @JoinColumn(name = "answer_id")
+    private Answer answer;
 
     @Override
     public boolean equals(Object o) {
