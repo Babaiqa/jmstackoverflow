@@ -144,7 +144,7 @@ class UserControllerTest extends AbstractIntegrationTest {
 
 
         List<UserDtoList> expectedItems = new ArrayList<>();
-
+        // в датасет другие показатели репутации
         expectedItems.add(new UserDtoList(1L, "Teat", "linkImage1", 2, Arrays.asList(new TagDto[]{})));
         expectedItems.add(new UserDtoList(2L, "Teat", "linkImage2", 1, Arrays.asList(new TagDto[]{})));
         expectedItems.add(new UserDtoList(4L, "Tob", "linkImage4", 4, Arrays.asList(new TagDto[]{})));
@@ -253,13 +253,13 @@ class UserControllerTest extends AbstractIntegrationTest {
         expected.setItemsOnPage(10);
 
         List<UserDtoList> expectedItems = new ArrayList<>();
-        expectedItems.add(new UserDtoList(1L, "Teat", null, 0, Arrays.asList(new TagDto[]{new TagDto(1L, "java"), new TagDto(3L, "html")})));
+        expectedItems.add(new UserDtoList(1L, "Teat", null,0,Arrays.asList(new TagDto[]{new TagDto(1L, "java"), new TagDto(3L, "html")})));
         expectedItems.add(new UserDtoList(2L, "Tot", null, 0, Arrays.asList(new TagDto[]{new TagDto(1L, "java"), new TagDto(2L, "javaScript"), new TagDto(5L, "sql")})));
         expectedItems.add(new UserDtoList(3L, "Tot", null, 0, Arrays.asList(new TagDto[]{new TagDto(5L, "sql")})));
         expectedItems.add(new UserDtoList(4L, "Tot", null, 0, Arrays.asList(new TagDto[]{})));
         expectedItems.add(new UserDtoList(5L, "Tot", null, 0, Arrays.asList(new TagDto[]{})));
         expected.setItems(expectedItems);
-
+        // Expected a non-empty value at JSON path "$.items" but found: []
         String resultContext =
                 mockMvc.perform(get("/api/user/order/reputation/month")
                         .param("page", "1")
@@ -405,6 +405,7 @@ class UserControllerTest extends AbstractIntegrationTest {
 
     @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
+        // user 4 ?
     void requestUserPasswordResetStatusOk() throws Exception {
         UserResetPasswordDto ps = new UserResetPasswordDto();
         ps.setOldPassword("password0");
@@ -420,6 +421,7 @@ class UserControllerTest extends AbstractIntegrationTest {
 
     @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
+        // user 4 ?
     void requestUserPasswordResetOldPasswordError() throws Exception {
         UserResetPasswordDto ps = new UserResetPasswordDto();
         ps.setOldPassword("errorPass");
@@ -435,6 +437,7 @@ class UserControllerTest extends AbstractIntegrationTest {
 
     @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
+    // user 4 ?
     void requestUserPasswordResetOldPasswordNull() throws Exception {
         UserResetPasswordDto ps = new UserResetPasswordDto();
         ps.setOldPassword("");
@@ -450,6 +453,7 @@ class UserControllerTest extends AbstractIntegrationTest {
 
     @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
+        // user 4 ?
     void requestUserPasswordResetNewPasswordNull() throws Exception {
         UserResetPasswordDto ps = new UserResetPasswordDto();
         ps.setOldPassword("password0");
@@ -607,6 +611,7 @@ class UserControllerTest extends AbstractIntegrationTest {
         TypedQuery<Reputation> reputationQuery = entityManager.createQuery("FROM Reputation WHERE user.id =: userId", Reputation.class)
                 .setParameter("userId", newUser.get().getId());
         Assertions.assertNotNull(SingleResultUtil.getSingleResultOrNull(reputationQuery));
+        // ожидаем 200 а приходит 401 ответ
     }
 
     @Test
