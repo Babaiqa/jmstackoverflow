@@ -20,6 +20,7 @@ public class QuestionCreateDto implements Serializable {
     @NotNull String title;
 
 
+
     @NotNull(groups = OnCreate.class, message = "Значение userId должно быть заполнено")
     private Long userId;
 
