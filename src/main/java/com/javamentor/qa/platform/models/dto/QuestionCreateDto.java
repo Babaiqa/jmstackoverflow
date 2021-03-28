@@ -17,7 +17,8 @@ public class QuestionCreateDto implements Serializable {
 
     @NotNull(groups = OnCreate.class, message = "Значение title отсутствует")
     @NotBlank(groups = OnCreate.class, message = "Значение title не должно быть пустым")
-    @NotNull String title;
+    @NotNull
+    String title;
 
 
 
@@ -26,7 +27,7 @@ public class QuestionCreateDto implements Serializable {
 
     @NotNull(groups = OnCreate.class, message = "Значение description отсутствует")
     @NotBlank(groups = OnCreate.class, message = "Значение description не должно быть пустым")
-    @NotNull private String description;
+    private String description;
 
     @NotNull(groups = OnCreate.class, message = "Значение tags должно быть заполнено")
     private List<TagDto> tags;
