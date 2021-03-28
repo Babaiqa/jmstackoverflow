@@ -421,7 +421,7 @@ class UserControllerTest extends AbstractIntegrationTest {
 
     @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-        // user 4 ?
+
     void requestUserPasswordResetOldPasswordError() throws Exception {
         UserResetPasswordDto ps = new UserResetPasswordDto();
         ps.setOldPassword("errorPass");
@@ -437,7 +437,7 @@ class UserControllerTest extends AbstractIntegrationTest {
 
     @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    // user 4 ?
+
     void requestUserPasswordResetOldPasswordNull() throws Exception {
         UserResetPasswordDto ps = new UserResetPasswordDto();
         ps.setOldPassword("");
@@ -453,7 +453,7 @@ class UserControllerTest extends AbstractIntegrationTest {
 
     @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-        // user 4 ?
+
     void requestUserPasswordResetNewPasswordNull() throws Exception {
         UserResetPasswordDto ps = new UserResetPasswordDto();
         ps.setOldPassword("password0");
