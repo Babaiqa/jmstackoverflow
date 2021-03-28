@@ -32,7 +32,7 @@ public class PaginationQuestionOrderByNewDaoImpl implements PaginationDao<Questi
                         "(select count(v.id) from VoteQuestion v where v.question.id=question.id) as question_countValuable," +
                         "question.persistDateTime as question_persistDateTime," +
                         "question.lastUpdateDateTime as question_lastUpdateDateTime, " +
-                        " tag.id as tag_id,tag.name as tag_name " +
+                        " tag.id as tag_id,tag.name as tag_name, tag.description as tag_description " +
                         "from Question question  " +
                         "INNER JOIN  question.user u" +
                         "  join question.tags tag" +

@@ -66,12 +66,12 @@ class TagControllerTest extends AbstractIntegrationTest {
         expected.setItemsOnPage(10);
 
         List<TagDto> expectedItems = new ArrayList<>();
-        expectedItems.add(new TagDto(1L, "java"));
-        expectedItems.add(new TagDto(5L, "sql"));
-        expectedItems.add(new TagDto(2L, "javaScript"));
-        expectedItems.add(new TagDto(3L, "html"));
-        expectedItems.add(new TagDto(4L, "bootstrap-4"));
-        expectedItems.add(new TagDto(6L, "sql22"));
+        expectedItems.add(new TagDto(1L, "java", "description"));
+        expectedItems.add(new TagDto(5L, "sql", "description"));
+        expectedItems.add(new TagDto(2L, "javaScript", "description"));
+        expectedItems.add(new TagDto(3L, "html", "description"));
+        expectedItems.add(new TagDto(4L, "bootstrap-4", "description"));
+        expectedItems.add(new TagDto(6L, "sql22", "description"));
         expected.setItems(expectedItems);
 
         String resultContext = mockMvc.perform(get(POPULAR)
