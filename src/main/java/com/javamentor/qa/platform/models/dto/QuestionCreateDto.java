@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.models.dto;
 
 import com.javamentor.qa.platform.models.util.OnCreate;
+import com.sun.org.apache.xpath.internal.objects.XNull;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -16,17 +17,19 @@ public class QuestionCreateDto implements Serializable {
 
     @NotNull(groups = OnCreate.class, message = "Значение title отсутствует")
     @NotBlank(groups = OnCreate.class, message = "Значение title не должно быть пустым")
-    private String title;
+    @NotNull String title;
+
 
     @NotNull(groups = OnCreate.class, message = "Значение userId должно быть заполнено")
     private Long userId;
 
     @NotNull(groups = OnCreate.class, message = "Значение description отсутствует")
     @NotBlank(groups = OnCreate.class, message = "Значение description не должно быть пустым")
-    private String description;
+    @NotNull private String description;
 
     @NotNull(groups = OnCreate.class, message = "Значение tags должно быть заполнено")
     private List<TagDto> tags;
+
 
 }
 
