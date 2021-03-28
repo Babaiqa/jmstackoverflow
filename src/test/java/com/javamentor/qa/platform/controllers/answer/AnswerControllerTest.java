@@ -217,6 +217,28 @@ class AnswerControllerTest extends AbstractIntegrationTest {
         int second = after.size();
         Assertions.assertEquals(first + 1, second);
     }
+    //тестирую возможность двойного голоса на ответ в одном вопросе
+    @Test
+    void voteUpInQuestionOneVoteStatusOk() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/1/answer/14/upVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("User already voted in this question"));
+
+    }
+    //тестирую возможность двойного голоса на ответ в одном вопросе
+    @Test
+    void voteDownInQuestionOneVoteStatusOk() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/1/answer/51/downVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("User already voted in this question"));
+
+    }
 
     @Test
     void voteDownQuestionIsNotExist() throws Exception {
