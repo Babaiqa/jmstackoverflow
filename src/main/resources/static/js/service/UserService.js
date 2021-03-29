@@ -84,8 +84,7 @@ class UserService {
     }
 
     getResponse(query) {
-        let result = new Array();
-        fetch(query, {
+        return fetch(query, {
             method: 'GET',
             headers: new Headers({
                 'Content-Type': 'application/json',
@@ -101,8 +100,14 @@ class UserService {
                     throw error;
                 }
             })
-            .then(entity => result.push(entity))
             .catch( error => error.response.then(message => console.log(message)));
-        return result;
     }
 }
+
+// ----------------Functions------------------
+document.getElementById("inputFilterUser").onkeyup = function (event) {
+    const key = event.keyCode
+    if (key >= 46 && key <= 90 || key >= 96 && key <= 105 || key === 8) {
+        new PaginationUser(1, 20, 'search', document.getElementById('inputFilterUser').value).writeUsers()
+    }
+};
