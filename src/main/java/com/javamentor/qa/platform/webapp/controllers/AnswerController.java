@@ -45,6 +45,7 @@ public class AnswerController {
     private final VoteAnswerService voteAnswerService;
     private final VoteAnswerConverter voteAnswerConverter;
 
+
     @Autowired
     public AnswerController(AnswerService answerService,
                             CommentAnswerService commentAnswerService,
@@ -170,9 +171,16 @@ public class AnswerController {
         Answer answer = new Answer(question.get(), user, createAnswerDto.getHtmlBody(), false, false);
         answer.setQuestion(question.get());
 
-        answerService.persist(answer);
+        boolean neverAnswered = answerDtoService.getAllAnswersByQuestionId(questionId)
+                .stream()
+                .noneMatch(answerDto -> answerDto.getUserId().equals(answer.getUser().getId()));
 
-        return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
+        if (neverAnswered) {
+            answerService.persist(answer);
+            return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
+        }
+
+        return ResponseEntity.badRequest().body("Can't write more than one answer");
     }
 
 
@@ -180,7 +188,8 @@ public class AnswerController {
     @ResponseBody
     @ApiResponses({
             @ApiResponse(code = 200, message = "Answer was up voted", response = VoteAnswerDto.class),
-            @ApiResponse(code = 400, message = "Question not found", response = String.class)
+            @ApiResponse(code = 400, message = "Question not found", response = String.class),
+            @ApiResponse(code = 400, message = "User already voted in this question ", response = String.class)
     })
     public ResponseEntity<?> answerUpVote(
             @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
@@ -198,9 +207,11 @@ public class AnswerController {
         if (!answer.isPresent()) {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
-        if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {
-            return ResponseEntity.ok("User already voted");
+
+        if (voteAnswerService.isUserAlreadyVotedIsThisQuestion(question.get(), securityHelper.getPrincipal(), answer.get())) {
+            return ResponseEntity.ok("User already voted in this question");
         }
+
 
         if (question.get().getUser().getId().equals(securityHelper.getPrincipal().getId())) {
             answer.get().setIsHelpful(true);
@@ -219,7 +230,8 @@ public class AnswerController {
     @ResponseBody
     @ApiResponses({
             @ApiResponse(code = 200, message = "Answer was up voted", response = VoteAnswerDto.class),
-            @ApiResponse(code = 400, message = "Question not found", response = String.class)
+            @ApiResponse(code = 400, message = "Question not found", response = String.class),
+            @ApiResponse(code = 400, message = "User already voted in this question ", response = String.class)
     })
     public ResponseEntity<?> answerDownVote(
             @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
@@ -238,9 +250,8 @@ public class AnswerController {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
 
-
-        if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {
-            return ResponseEntity.ok("User already voted");
+        if (voteAnswerService.isUserAlreadyVotedIsThisQuestion(question.get(), securityHelper.getPrincipal(), answer.get())) {
+            return ResponseEntity.ok("User already voted in this question");
         }
 
         VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
@@ -248,7 +259,6 @@ public class AnswerController {
 
         return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
     }
-
 
 
     @GetMapping("/{questionId}/isAnswerVoted")

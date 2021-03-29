@@ -1,19 +1,16 @@
 package com.javamentor.qa.platform.controllers.answer;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.CreateAnswerDto;
 import com.javamentor.qa.platform.models.dto.AnswerDto;
-import com.javamentor.qa.platform.models.dto.CommentDto;
-import com.javamentor.qa.platform.models.dto.CreateAnswerDto;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -39,8 +36,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "dataset/question/questionQuestionApi.yml",
         "dataset/answer/questionApi.yml",
         "dataset/answer/votes_on_answers.yml"},
-        cleanBefore = true, cleanAfter = false)
-@WithMockUser(username = "principal@mail.ru", roles={"ADMIN", "USER"})
+        cleanBefore = true)
+@WithMockUser(username = "principal@mail.ru", roles = {"ADMIN", "USER"})
 @ActiveProfiles("local")
 class AnswerControllerTest extends AbstractIntegrationTest {
 
@@ -54,7 +51,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     private EntityManager entityManager;
 
     @Test
-    public void shouldAddCommentToAnswerResponseBadRequestAnswerNotFound() throws Exception {
+    void shouldAddCommentToAnswerResponseBadRequestAnswerNotFound() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/question/10/answer/99999/comment")
                 .content("This is very good answer!")
@@ -66,7 +63,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
 
 
     @Test
-    public void shouldAddCommentToAnswerResponseCommentDto() throws Exception {
+    void shouldAddCommentToAnswerResponseCommentDto() throws Exception {
 
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/question/14/answer/20/comment")
@@ -86,26 +83,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
         JSONObject dto = new JSONObject(result.getResponse().getContentAsString());
 
         List<CommentAnswer> resultList = entityManager.createNativeQuery("select * from comment_answer where comment_id = " + dto.get("id")).getResultList();
-        Assert.assertFalse(resultList.isEmpty());
-    }
-
-    @Test
-    public void shouldAddSecondCommentToAnswerResponseBadRequest() throws Exception {
-
-        this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/10/answer/51/comment")
-                .content("This is the first comment to answer!")
-                .accept(MediaType.TEXT_PLAIN_VALUE))
-                .andDo(print())
-                .andExpect(status().isOk());
-
-        this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/10/answer/51/comment")
-                .content("This is the second comment to answer from the same user!")
-                .accept(MediaType.TEXT_PLAIN_VALUE))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("You have already commented this answer"));
+        Assertions.assertFalse(resultList.isEmpty());
     }
 
     @Test
@@ -125,7 +103,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldAddAnswerToQuestionResponseStatusOk() throws Exception {
+    void shouldAddAnswerToQuestionResponseStatusOk() throws Exception {
         CreateAnswerDto createAnswerDto = new CreateAnswerDto();
         createAnswerDto.setHtmlBody("test answer");
 
@@ -149,7 +127,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .getSingleResult();
         AnswerDto answerDtoFromDB = answerConverter.answerToAnswerDTO(answer);
 
-        Assert.assertTrue(answerDtoFromResponse.getBody().equals(answerDtoFromDB.getBody()));
+        Assertions.assertEquals(answerDtoFromResponse.getBody(), answerDtoFromDB.getBody());
     }
 
     @Test
@@ -189,7 +167,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
 
         List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int second = after.size();
-        Assert.assertEquals(first + 1, second);
+        Assertions.assertEquals(first + 1, second);
     }
 
     @Test
@@ -237,7 +215,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
 
         List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int second = after.size();
-        Assert.assertEquals(first + 1, second);
+        Assertions.assertEquals(first + 1, second);
     }
 
     @Test
@@ -295,7 +273,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
 
 
     @Test
-    public void shouldGetAllCommentsByAnswer() throws Exception {
+    void shouldGetAllCommentsByAnswer() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/question/9/answer/30/comment")
                 .content("This is very good answer!")
@@ -317,14 +295,14 @@ class AnswerControllerTest extends AbstractIntegrationTest {
 
         JSONArray array = new JSONArray(result.getResponse().getContentAsString());
 
-        Assert.assertEquals(array.length(), 2);
+        Assertions.assertEquals(2, array.length());
     }
 
     @Test
     @WithMockUser(username = "admin@tut.by", roles = {"ADMIN"})
-    public void shouldMarkAnswerAsHelpful() throws Exception {
+    void shouldMarkAnswerAsHelpful() throws Exception {
 
-        Answer beforeAnswer = (Answer) entityManager.createQuery("From Answer Where id=40").getSingleResult();
+        Answer beforeAnswer = (Answer) entityManager.createQuery("from Answer Where id=40").getSingleResult();
 
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
                 .patch("/api/question/77/answer/40/upVote"))
@@ -332,12 +310,33 @@ class AnswerControllerTest extends AbstractIntegrationTest {
 
         JSONObject object = new JSONObject(result.getResponse().getContentAsString());
 
-        Answer afterAnswer = (Answer) entityManager.createQuery("From Answer  Where id=40").getSingleResult();
+        Answer afterAnswer = (Answer) entityManager.createQuery("from Answer Where id=40").getSingleResult();
 
-        Assert.assertFalse(beforeAnswer.getIsHelpful());
-        Assert.assertEquals(object.get("userId"), 4);
-        Assert.assertTrue(afterAnswer.getIsHelpful());
+        Assertions.assertFalse(beforeAnswer.getIsHelpful());
+        Assertions.assertEquals(4, object.get("userId"));
+        Assertions.assertTrue(afterAnswer.getIsHelpful());
     }
 
+    @Test
+    void shouldAddSecondAnswerToQuestionStatusBadRequest() throws Exception {
 
+        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
+        createAnswerDto.setHtmlBody("test answer");
+
+        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/14/answer")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequest))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/14/answer")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequest))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
 }

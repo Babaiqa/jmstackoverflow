@@ -3,8 +3,10 @@ package com.javamentor.qa.platform.webapp.controllers;
 import com.javamentor.qa.platform.dao.abstracts.model.TrackedTagDao;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
+import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.question.TrackedTag;
+import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
@@ -12,6 +14,7 @@ import com.javamentor.qa.platform.service.abstracts.model.IgnoredTagService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.TrackedTagService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.webapp.converters.TagConverter;
 import com.javamentor.qa.platform.webapp.converters.TagIgnoredConverter;
 import com.javamentor.qa.platform.webapp.converters.TagTrackedConverter;
 import io.swagger.annotations.Api;
@@ -39,17 +42,20 @@ public class TagController {
     private final TrackedTagService trackedTagService;
     private final IgnoredTagService ignoredTagService;
     private final TagService tagService;
+    private final TagConverter tagConverter;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
     public TagController(TagDtoService tagDtoService, SecurityHelper securityHelper,
-                         TrackedTagService trackedTagService, IgnoredTagService ignoredTagService, TagService tagService) {
+                         TrackedTagService trackedTagService, IgnoredTagService ignoredTagService, TagService tagService,
+                         TagConverter tagConverter) {
         this.tagDtoService = tagDtoService;
         this.securityHelper = securityHelper;
         this.trackedTagService = trackedTagService;
         this.ignoredTagService = ignoredTagService;
         this.tagService = tagService;
+        this.tagConverter = tagConverter;
     }
 
     @Autowired
@@ -194,6 +200,24 @@ public class TagController {
         }
 
         return ResponseEntity.ok(tagDtoService.getTagDtoPaginationWithSearch(page, size, tagName));
+    }
+
+    @PostMapping("/add")
+    @Validated(OnCreate.class)
+    @ResponseBody
+    @ApiOperation(value = "Create Tag", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Create Tag", response = Tag.class),
+            @ApiResponse(code = 400, message = "Tag not created", response = String.class)
+    })
+    public ResponseEntity<?> createTag(@Valid @RequestBody TagDto tagDto) {
+
+        Tag tag = tagConverter.tagDtoToTag(tagDto);
+        tagService.persist(tag);
+
+        TagDto newTagDto = tagConverter.tagToTagDto(tag);
+
+        return ResponseEntity.ok(newTagDto);
     }
 
     @GetMapping(value = "{tagId}/child", params = {"page", "size"})

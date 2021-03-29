@@ -5,10 +5,7 @@ import com.javamentor.qa.platform.models.dto.TagDto;
 import org.hibernate.transform.ResultTransformer;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class QuestionResultTransformer implements ResultTransformer {
 
@@ -47,7 +44,8 @@ public class QuestionResultTransformer implements ResultTransformer {
         questionDto.getListTagDto().add(
                 new TagDto(
                         ((Number) tuple[aliasToIndexMapTrans.get("tag_id")]).longValue(),
-                        ((String) tuple[aliasToIndexMapTrans.get("tag_name")])
+                        ((String) tuple[aliasToIndexMapTrans.get("tag_name")]),
+                        ((String) tuple[aliasToIndexMapTrans.get("tag_description")])
                 )
         );
 

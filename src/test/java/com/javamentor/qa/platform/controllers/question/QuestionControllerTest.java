@@ -170,7 +170,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         questionCreateDto.setTitle("Question number one1");
         questionCreateDto.setDescription("Question Description493");
         List<TagDto> listTagsAdd = new ArrayList<>();
-        listTagsAdd.add(new TagDto(5L, "Structured Query Language"));
+        listTagsAdd.add(new TagDto(5L, "Structured Query Language", "description"));
         questionCreateDto.setTags(listTagsAdd);
 
         String jsonRequest = objectMapper.writeValueAsString(questionCreateDto);
@@ -191,7 +191,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         questionCreateDto.setTitle("Question number one1");
         questionCreateDto.setDescription("Question Description493");
         List<TagDto> listTagsAdd = new ArrayList<>();
-        listTagsAdd.add(new TagDto(5L, "Structured Query Language"));
+        listTagsAdd.add(new TagDto(5L, "Structured Query Language", "description"));
         questionCreateDto.setTags(listTagsAdd);
 
         String jsonRequest = objectMapper.writeValueAsString(questionCreateDto);
@@ -216,7 +216,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         questionCreateDto.setTitle("Question number one1");
         questionCreateDto.setDescription("Question Description493");
         List<TagDto> listTagsAdd = new ArrayList<>();
-        listTagsAdd.add(new TagDto(5L, "Structured Query Language"));
+        listTagsAdd.add(new TagDto(5L, "Structured Query Language", "description"));
         questionCreateDto.setTags(listTagsAdd);
 
         String jsonRequest = objectMapper.writeValueAsString(questionCreateDto);
@@ -450,7 +450,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         expect.setMeta(null);
 
         List<TagDto> tag = new ArrayList<>();
-        tag.add(new TagDto(5L, "sql"));
+        tag.add(new TagDto(5L, "sql", "description"));
 
         List<QuestionDto> items = new ArrayList<>();
         items.add(new QuestionDto(
@@ -526,7 +526,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         expectPage.setTotalResultCount(7);
 
         List<TagDto> tagsList = new ArrayList<>();
-        tagsList.add(new TagDto(1L, "java"));
+        tagsList.add(new TagDto(1L, "java", "description"));
 
         List<QuestionDto> itemsList = new ArrayList<>();
         itemsList.add(new QuestionDto(14L,
@@ -740,6 +740,23 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    void shouldAddSecondCommentToQuestionStatusBadRequest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/15/comment")
+                .content("Test comment1")
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/15/comment")
+                .content("Test comment2")
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void getCommentListByQuestionIdWithStatusOk() throws Exception {
 
         //тестируем контроллер, получаем лист CommentQuestionDto
@@ -879,6 +896,17 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
                 .andExpect(content().string("Question not found"));
+    }
+
+    @Test
+    void getQuestionDtoWithoutVotes() throws Exception {
+        String resultContext = this.mockMvc.perform(get("/api/question/13"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        QuestionDto questionDto = objectMapper.readValue(resultContext, QuestionDto.class);
+
+        Assertions.assertEquals(0,questionDto.getCountValuable());
     }
 
 
