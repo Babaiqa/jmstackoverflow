@@ -84,8 +84,7 @@ class UserService {
     }
 
     getResponse(query) {
-        let result = new Array();
-        fetch(query, {
+        return fetch(query, {
             method: 'GET',
             headers: new Headers({
                 'Content-Type': 'application/json',
@@ -101,9 +100,7 @@ class UserService {
                     throw error;
                 }
             })
-            .then(entity => result.push(entity))
             .catch( error => error.response.then(message => console.log(message)));
-        return result;
     }
 }
 
