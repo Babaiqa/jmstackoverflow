@@ -106,3 +106,11 @@ class UserService {
         return result;
     }
 }
+
+// ----------------Functions------------------
+document.getElementById("inputFilterUser").onkeyup = function (event) {
+    const key = event.keyCode
+    if (key >= 46 && key <= 90 || key >= 96 && key <= 105 || key === 8) {
+        new PaginationUser(1, 20, 'search', document.getElementById('inputFilterUser').value).writeUsers()
+    }
+};
