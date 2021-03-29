@@ -204,25 +204,26 @@ public class AnswerController {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
 
+        // FIXME:: Эту логику вынести в сервис
         if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {
             Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answerId, securityHelper.getPrincipal().getId());
             if (optionalVoteAnswer.isPresent()) {
                 int voteValue = optionalVoteAnswer.get().getVote();
                 if (voteValue == 1) {
                     voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
-                    markHelpful(question, answer, false);
+                    voteAnswerService.markHelpful(question, answer, false);
                 } else if (voteValue == -1) {
                     voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
                     VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), 1);
                     voteAnswerService.persist(voteAnswer);
-                    markHelpful(question, answer, true);
+                    voteAnswerService.markHelpful(question, answer, true);
                 }
                 return ResponseEntity.ok("Vote changed");
             }
             return ResponseEntity.badRequest().body("Can't change vote");
         }
 
-        markHelpful(question, answer, true);
+        voteAnswerService.markHelpful(question, answer, true);
 
         if (voteAnswerService.isUserAlreadyVotedIsThisQuestion(question.get(), securityHelper.getPrincipal(), answer.get())) {
             return ResponseEntity.ok("User already voted in this question");
@@ -258,6 +259,7 @@ public class AnswerController {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
 
+        // FIXME:: Эту логику вынести в сервис
         if (voteAnswerService.isUserAlreadyVoted(answer.get(), securityHelper.getPrincipal())) {
             Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answerId, securityHelper.getPrincipal().getId());
             if (optionalVoteAnswer.isPresent()) {
@@ -269,7 +271,7 @@ public class AnswerController {
                     VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
                     voteAnswerService.persist(voteAnswer);
                 }
-                markHelpful(question, answer, false);
+                voteAnswerService.markHelpful(question, answer, false);
                 return ResponseEntity.ok("Vote changed");
             }
             return ResponseEntity.badRequest().body("Failed to change vote");
@@ -283,15 +285,6 @@ public class AnswerController {
         voteAnswerService.persist(voteAnswer);
 
         return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
-    }
-
-    private void markHelpful(Optional<Question> question, Optional<Answer> answer, boolean isHelpful) {
-        boolean authorOfQuestion = question.get().getUser().getId().equals(securityHelper.getPrincipal().getId());
-        if (authorOfQuestion) {
-            answer.get().setIsHelpful(isHelpful);
-            answer.get().setDateAcceptTime(LocalDateTime.now());
-            answerService.update(answer.get());
-        }
     }
 
     @GetMapping("/{questionId}/isAnswerVoted")
