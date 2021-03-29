@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.service.impl.model;
 
+import com.javamentor.qa.platform.dao.abstracts.model.ReadWriteDao;
 import com.javamentor.qa.platform.dao.abstracts.model.VoteAnswerDao;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
@@ -21,11 +22,19 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
 
     private final SecurityHelper securityHelper;
     private final AnswerService answerService;
+    private final VoteAnswerDao voteAnswerDao;
 
-    public VoteAnswerServiceImpl(VoteAnswerDao voteAnswerDao,
+//    public VoteAnswerServiceImpl(ReadWriteDao<VoteAnswer, Long> readWriteDao, VoteAnswerDao voteAnswerDao) {
+//        super(readWriteDao);
+//        this.voteAnswerDao = voteAnswerDao;
+//    }
+
+    public VoteAnswerServiceImpl(ReadWriteDao<VoteAnswer, Long> readWriteDao,
+                                 VoteAnswerDao voteAnswerDao,
                                  SecurityHelper securityHelper,
                                  AnswerService answerService) {
-        super(voteAnswerDao);
+        super(readWriteDao);
+        this.voteAnswerDao = voteAnswerDao;
         this.securityHelper = securityHelper;
         this.answerService = answerService;
     }
@@ -61,23 +70,10 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
         }
     }
 
-
-    @PersistenceContext
-    EntityManager entityManager;
-
     @Override
     public boolean isUserAlreadyVotedIsThisQuestion(Question question, User user, Answer answer) {
 
-        return (Boolean) entityManager.createQuery(" SELECT " +
-                " case when exists " +
-                "(select vote  from VoteAnswer vote  where (vote.answer.id =: answerId AND vote.user.id =: userId ) " +
-                "OR (vote.answer.question.id =:questionId AND vote.user.id =: userId))" +
-                " then true " +
-                " else  false " +
-                "END from Answer")
-                .setParameter("answerId", answer.getId())
-                .setParameter("userId", user.getId())
-                .setParameter("questionId",question.getId())
-                .getSingleResult();
+        return voteAnswerDao.isUserAlreadyVotedIsThisQuestion(question, user, answer);
+
     }
 }
