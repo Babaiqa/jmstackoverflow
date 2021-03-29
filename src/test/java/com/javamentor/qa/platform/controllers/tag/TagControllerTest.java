@@ -39,13 +39,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         , cleanBefore = true, cleanAfter = true)
 @WithMockUser(username = "principal@mail.ru", roles = {"ADMIN", "USER"})
 @ActiveProfiles("local")
-public class TagControllerTest extends AbstractIntegrationTest {
+class TagControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private TagTrackedConverter tagTrackedConverter;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -61,7 +58,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
 
     // Тесты запросов популярных тэгов
     @Test
-    public void requestGetTagDtoPaginationByPopular() throws Exception {
+    void requestGetTagDtoPaginationByPopular() throws Exception {
         PageDto<TagDto, Object> expected = new PageDto<>();
         expected.setCurrentPageNumber(1);
         expected.setTotalPageCount(1);
@@ -69,12 +66,12 @@ public class TagControllerTest extends AbstractIntegrationTest {
         expected.setItemsOnPage(10);
 
         List<TagDto> expectedItems = new ArrayList<>();
-        expectedItems.add(new TagDto(1L, "java"));
-        expectedItems.add(new TagDto(5L, "sql"));
-        expectedItems.add(new TagDto(2L, "javaScript"));
-        expectedItems.add(new TagDto(3L, "html"));
-        expectedItems.add(new TagDto(4L, "bootstrap-4"));
-        expectedItems.add(new TagDto(6L, "sql22"));
+        expectedItems.add(new TagDto(1L, "java", "description"));
+        expectedItems.add(new TagDto(5L, "sql", "description"));
+        expectedItems.add(new TagDto(2L, "javaScript", "description"));
+        expectedItems.add(new TagDto(3L, "html", "description"));
+        expectedItems.add(new TagDto(4L, "bootstrap-4", "description"));
+        expectedItems.add(new TagDto(6L, "sql22", "description"));
         expected.setItems(expectedItems);
 
         String resultContext = mockMvc.perform(get(POPULAR)
@@ -91,11 +88,11 @@ public class TagControllerTest extends AbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         PageDto<TagDto, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
-        Assert.assertEquals(expected.toString(), actual.toString());
+        Assertions.assertEquals(expected.toString(), actual.toString());
     }
 
     @Test
-    public void requestNegativePageGetTagDtoPaginationByPopular() throws Exception {
+    void requestNegativePageGetTagDtoPaginationByPopular() throws Exception {
         mockMvc.perform(get(POPULAR)
                 .param("page", "-1")
                 .param("size", "10"))
@@ -106,7 +103,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestNegativeSizeGetTagDtoPaginationByPopular() throws Exception {
+    void requestNegativeSizeGetTagDtoPaginationByPopular() throws Exception {
         mockMvc.perform(get(POPULAR)
                 .param("page", "1")
                 .param("size", "0"))
@@ -117,7 +114,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestIncorrectSizeGetTagDtoPaginationByPopular() throws Exception {
+    void requestIncorrectSizeGetTagDtoPaginationByPopular() throws Exception {
         mockMvc.perform(get(POPULAR)
                 .param("page", "1")
                 .param("size", "101"))
@@ -128,7 +125,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestPageDontExistsGetTagDtoPaginationByPopular() throws Exception {
+    void requestPageDontExistsGetTagDtoPaginationByPopular() throws Exception {
         mockMvc.perform(get(POPULAR)
                 .param("page", "13")
                 .param("size", "10"))
@@ -144,7 +141,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
 
     // Тесты запросов недавних тэгов
     @Test
-    public void requestGetTagRecentDtoPagination() throws Exception {
+    void requestGetTagRecentDtoPagination() throws Exception {
         PageDto<TagRecentDto, Object> expected = new PageDto<>();
         expected.setCurrentPageNumber(1);
         expected.setTotalPageCount(1);
@@ -174,11 +171,11 @@ public class TagControllerTest extends AbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         PageDto<TagRecentDto, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
-        Assert.assertEquals(expected.toString(), actual.toString());
+        Assertions.assertEquals(expected.toString(), actual.toString());
     }
 
     @Test
-    public void requestNegativePageGetTagRecentDtoPagination() throws Exception {
+    void requestNegativePageGetTagRecentDtoPagination() throws Exception {
         mockMvc.perform(get(RECENT)
                 .param("page", "-1")
                 .param("size", "10"))
@@ -189,7 +186,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestNegativeSizeGetTagRecentDtoPagination() throws Exception {
+    void requestNegativeSizeGetTagRecentDtoPagination() throws Exception {
         mockMvc.perform(get(RECENT)
                 .param("page", "1")
                 .param("size", "0"))
@@ -200,7 +197,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestIncorrectSizeGetTagRecentDtoPagination() throws Exception {
+    void requestIncorrectSizeGetTagRecentDtoPagination() throws Exception {
         mockMvc.perform(get(RECENT)
                 .param("page", "1")
                 .param("size", "101"))
@@ -211,7 +208,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestPageDontExistsGetTagRecentDtoPagination() throws Exception {
+    void requestPageDontExistsGetTagRecentDtoPagination() throws Exception {
         mockMvc.perform(get(RECENT)
                 .param("page", "13")
                 .param("size", "10"))
@@ -227,7 +224,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
 
     // Тесты запросов тэгов по алфавиту
     @Test
-    public void requestGetTagDtoPaginationOrderByAlphabet() throws Exception {
+    void requestGetTagDtoPaginationOrderByAlphabet() throws Exception {
         PageDto<TagListDto, Object> expected = new PageDto<>();
         expected.setCurrentPageNumber(1);
         expected.setTotalPageCount(1);
@@ -257,11 +254,11 @@ public class TagControllerTest extends AbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         PageDto<TagListDto, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
-        Assert.assertEquals(expected.toString(), actual.toString());
+        Assertions.assertEquals(expected.toString(), actual.toString());
     }
 
     @Test
-    public void requestNegativePageGetTagDtoPaginationOrderByAlphabet() throws Exception {
+    void requestNegativePageGetTagDtoPaginationOrderByAlphabet() throws Exception {
         mockMvc.perform(get(ALPHABET)
                 .param("page", "-1")
                 .param("size", "10"))
@@ -272,7 +269,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestNegativeSizeGetTagDtoPaginationOrderByAlphabet() throws Exception {
+    void requestNegativeSizeGetTagDtoPaginationOrderByAlphabet() throws Exception {
         mockMvc.perform(get(ALPHABET)
                 .param("page", "1")
                 .param("size", "0"))
@@ -283,7 +280,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestIncorrectSizeGetTagDtoPaginationOrderByAlphabet() throws Exception {
+    void requestIncorrectSizeGetTagDtoPaginationOrderByAlphabet() throws Exception {
         mockMvc.perform(get(ALPHABET)
                 .param("page", "1")
                 .param("size", "101"))
@@ -294,7 +291,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestPageDontExistsGetTagDtoPaginationOrderByAlphabet() throws Exception {
+    void requestPageDontExistsGetTagDtoPaginationOrderByAlphabet() throws Exception {
         mockMvc.perform(get(ALPHABET)
                 .param("page", "13")
                 .param("size", "10"))
@@ -310,7 +307,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
 
     // Тест order popular
     @Test
-    public void requestGetTagListDtoByPopularPagination() throws Exception {
+    void requestGetTagListDtoByPopularPagination() throws Exception {
         PageDto<TagListDto, Object> expected = new PageDto<>();
         expected.setCurrentPageNumber(1);
         expected.setTotalPageCount(1);
@@ -340,11 +337,11 @@ public class TagControllerTest extends AbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         PageDto<TagListDto, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
-        Assert.assertEquals(expected.toString(), actual.toString());
+        Assertions.assertEquals(expected.toString(), actual.toString());
     }
 
     @Test
-    public void requestNegativePageGetTagListDtoByPopularPagination() throws Exception {
+    void requestNegativePageGetTagListDtoByPopularPagination() throws Exception {
         mockMvc.perform(get(ORDER_POPULAR)
                 .param("page", "-1")
                 .param("size", "10"))
@@ -355,7 +352,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestNegativeSizeGetTagListDtoByPopularPagination() throws Exception {
+    void requestNegativeSizeGetTagListDtoByPopularPagination() throws Exception {
         mockMvc.perform(get(ORDER_POPULAR)
                 .param("page", "1")
                 .param("size", "0"))
@@ -366,7 +363,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestIncorrectSizeGetTagListDtoByPopularPagination() throws Exception {
+    void requestIncorrectSizeGetTagListDtoByPopularPagination() throws Exception {
         mockMvc.perform(get(ORDER_POPULAR)
                 .param("page", "1")
                 .param("size", "101"))
@@ -377,7 +374,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestPageDontExistsGetTagListDtoByPopularPagination() throws Exception {
+    void requestPageDontExistsGetTagListDtoByPopularPagination() throws Exception {
         mockMvc.perform(get(ORDER_POPULAR)
                 .param("page", "13")
                 .param("size", "10"))
@@ -392,7 +389,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
 
 
     @Test
-    public void requestGetTagName() throws Exception {
+    void requestGetTagName() throws Exception {
         PageDto<TagListDto, Object> expected = new PageDto<>();
         expected.setCurrentPageNumber(1);
         expected.setTotalPageCount(1);
@@ -427,11 +424,11 @@ public class TagControllerTest extends AbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         PageDto<TagListDto, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
-        Assert.assertEquals(expected.toString(), actual.toString());
+        Assertions.assertEquals(expected.toString(), actual.toString());
     }
 
     @Test
-    public void requestNegativePageGetTagName() throws Exception {
+    void requestNegativePageGetTagName() throws Exception {
         mockMvc.perform(get(NAME)
                 .param("name", "java")
                 .param("page", "-1")
@@ -443,7 +440,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestNegativeSizeGetTagName() throws Exception {
+    void requestNegativeSizeGetTagName() throws Exception {
         mockMvc.perform(get(NAME)
                 .param("name", "java")
                 .param("page", "1")
@@ -455,7 +452,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestIncorrectSizeGetTagName() throws Exception {
+    void requestIncorrectSizeGetTagName() throws Exception {
         mockMvc.perform(get(NAME)
                 .param("name", "java")
                 .param("page", "1")
@@ -467,7 +464,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestPageDontExistsGetTagName() throws Exception {
+    void requestPageDontExistsGetTagName() throws Exception {
         mockMvc.perform(get(NAME)
                 .param("name", "java")
                 .param("page", "13")
@@ -485,7 +482,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     @Test
     @DataSet(value = {"dataset/tag/related_tag.yml"}
             , cleanBefore = true, cleanAfter = true)
-    public void requestChildTagByMainTagId() throws Exception {
+    void requestChildTagByMainTagId() throws Exception {
         PageDto<TagRecentDto, Object> expected = new PageDto<>();
         List<TagRecentDto> expectedChild = new ArrayList<>();
         expectedChild.add(new TagRecentDto(5L, "Child", 1L));
@@ -511,11 +508,11 @@ public class TagControllerTest extends AbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         PageDto<TagRecentDto, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
-        Assert.assertEquals(expected.toString(), actual.toString());
+        Assertions.assertEquals(expected.toString(), actual.toString());
     }
 
     @Test
-    public void requestNegativePageGetTagRecentDtoChildTagById() throws Exception {
+    void requestNegativePageGetTagRecentDtoChildTagById() throws Exception {
         long id = 4L;
         mockMvc.perform(get("/api/tag/{id}/child", id)
                 .param("page", "-1")
@@ -527,7 +524,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestChildTagsWithWrongTagId() throws Exception {
+    void requestChildTagsWithWrongTagId() throws Exception {
         long id = 500L;
         mockMvc.perform(get("/api/tag/{id}/child", id)
                 .param("page", "1")
@@ -544,7 +541,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestTooBigSizeToChildEndpoint() throws Exception {
+    void requestTooBigSizeToChildEndpoint() throws Exception {
         long id = 4L;
         mockMvc.perform(get("/api/tag/{id}/child", id)
                 .param("page", "1")
@@ -556,7 +553,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestPageDontExistsGetPageWithEmptyTagRecentDto() throws Exception {
+    void requestPageDontExistsGetPageWithEmptyTagRecentDto() throws Exception {
         long id = 4L;
         mockMvc.perform(get("/api/tag/{id}/child", id)
                 .param("page", "15")
@@ -572,7 +569,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
 
     // Test order by new Tag
     @Test
-    public void requestGetTagDtoPaginationByNewTag() throws Exception {
+    void requestGetTagDtoPaginationByNewTag() throws Exception {
         PageDto<TagListDto, Object> expected = new PageDto<>();
         expected.setCurrentPageNumber(1);
         expected.setTotalPageCount(1);
@@ -606,7 +603,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestNegativePageGetTagDtoPaginationByNewTag() throws Exception {
+    void requestNegativePageGetTagDtoPaginationByNewTag() throws Exception {
         mockMvc.perform(get(NEW_TAG)
                 .param("page", "-1")
                 .param("size", "10"))
@@ -617,7 +614,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestNegativeSizeGetTagDtoPaginationByNewTag() throws Exception {
+    void requestNegativeSizeGetTagDtoPaginationByNewTag() throws Exception {
         mockMvc.perform(get(NEW_TAG)
                 .param("page", "1")
                 .param("size", "0"))
@@ -628,7 +625,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestIncorrectSizeGetTagDtoPaginationByNewTag() throws Exception {
+    void requestIncorrectSizeGetTagDtoPaginationByNewTag() throws Exception {
         mockMvc.perform(get(NEW_TAG)
                 .param("page", "1")
                 .param("size", "101"))
@@ -639,7 +636,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void requestPageDontExistsGetTagDtoPaginationByNewTag() throws Exception {
+    void requestPageDontExistsGetTagDtoPaginationByNewTag() throws Exception {
         mockMvc.perform(get(NEW_TAG)
                 .param("page", "13")
                 .param("size", "10"))
@@ -653,7 +650,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void addTagTrackedStatusOk() throws Exception {
+    void addTagTrackedStatusOk() throws Exception {
 
         final String TAG_NAME = "java";
 
@@ -678,7 +675,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void addTagTrackedStatusNotExistOnThisSite() throws Exception {
+    void addTagTrackedStatusNotExistOnThisSite() throws Exception {
 
         final String TAG_NAME = "Tag Name11";
 
@@ -702,7 +699,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void addTagTrackedStatusHasAlreadyBeenAdded() throws Exception {
+    void addTagTrackedStatusHasAlreadyBeenAdded() throws Exception {
 
         final String TAG_NAME = "java";
 
@@ -749,7 +746,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void addTagIgnoredStatusOk() throws Exception {
+    void addTagIgnoredStatusOk() throws Exception {
 
         final String TAG_NAME = "java";
 
@@ -774,7 +771,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void addTagIgnoredStatusNotExistOnThisSite() throws Exception {
+    void addTagIgnoredStatusNotExistOnThisSite() throws Exception {
 
         final String TAG_NAME = "Tag Name11";
 
@@ -797,7 +794,7 @@ public class TagControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void addTagIgnoredStatusHasAlreadyBeenAdded() throws Exception {
+    void addTagIgnoredStatusHasAlreadyBeenAdded() throws Exception {
 
         final String TAG_NAME = "java";
 

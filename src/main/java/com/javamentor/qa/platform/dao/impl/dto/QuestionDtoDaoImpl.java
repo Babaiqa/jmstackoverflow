@@ -33,10 +33,10 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                         "question.description as question_description," +
                         " question.viewCount as question_viewCount," +
                         "(select count(a.question.id) from Answer a where a.question.id=:id) as question_countAnswer," +
-                        "(select sum(v.vote) from VoteQuestion v where v.question.id=:id) as question_countValuable," +
+                        "(select coalesce(sum(v.vote), 0) from VoteQuestion v where v.question.id=:id) as question_countValuable," +
                         "question.persistDateTime as question_persistDateTime," +
                         "question.lastUpdateDateTime as question_lastUpdateDateTime, " +
-                        " tag.id as tag_id,tag.name as tag_name " +
+                        " tag.id as tag_id,tag.name as tag_name, tag.description as tag_description " +
                         "from Question question  " +
                         "INNER JOIN  question.user u" +
                         "  join question.tags tag"

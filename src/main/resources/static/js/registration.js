@@ -4,7 +4,8 @@ let emailRegistration = document.getElementById('email')
 let fullnameRegistration = document.getElementById('fullname')
 let passwordRegistration = document.getElementById('password')
 let passwordConfirmation = document.getElementById('password2')
-let confirmbutton = document.getElementById('show-password2')
+let passwordButton = document.getElementById('show-password')
+let confirmButton = document.getElementById('show-password2')
 passwordRegistration.onchange = validatePassword;
 passwordConfirmation.onkeyup = validatePassword;
 
@@ -55,26 +56,28 @@ function validatePassword(){
         return true
     }
 }
+
 function showPassword() {
     if (password.type === "password") {
         password.type = "text";
-        btn.innerHTML = ''
-        btn.innerHTML = '&#x2606;'
+        passwordButton.innerHTML = ''
+        passwordButton.innerHTML = '&#x2606;'
     } else {
         password.type = "password";
-        btn.innerHTML = ''
-        btn.innerHTML = '&#x2605;'
+        passwordButton.innerHTML = ''
+        passwordButton.innerHTML = '&#x2605;'
     }
 }
+
 function showPasswordConfirm() {
     if (passwordConfirmation.type === "password") {
         passwordConfirmation.type = "text";
-        confirmbutton.innerHTML = ''
-        confirmbutton.innerHTML = '&#x2606;'
+        confirmButton.innerHTML = ''
+        confirmButton.innerHTML = '&#x2606;'
     } else {
         passwordConfirmation.type = "password";
-        confirmbutton.innerHTML = ''
-        confirmbutton.innerHTML = '&#x2605;'
+        confirmButton.innerHTML = ''
+        confirmButton.innerHTML = '&#x2605;'
     }
 }
 

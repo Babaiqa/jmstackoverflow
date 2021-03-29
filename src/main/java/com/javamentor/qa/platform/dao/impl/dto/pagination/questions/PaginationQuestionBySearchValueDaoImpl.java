@@ -78,7 +78,7 @@ public class PaginationQuestionBySearchValueDaoImpl implements PaginationDao<Que
                 "(select count(v.question.id) from VoteQuestion v where v.question.id=question_id) as question_countValuable," +
                 "question.persistDateTime as question_persistDateTime," +
                 "question.lastUpdateDateTime as question_lastUpdateDateTime, " +
-                "tag.id as tag_id,tag.name as tag_name " +
+                "tag.id as tag_id,tag.name as tag_name, tag.description as tag_description " +
                 "from Question question  " +
                 "INNER JOIN  question.user u " +
                 "join question.tags tag " +
