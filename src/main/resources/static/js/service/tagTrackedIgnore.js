@@ -61,9 +61,7 @@ function addListenersForTagBarElems(pageName, tagType) {
                 && (!button.isEqualNode(event.target))) {
                 searchList.style.display = "none"
                 searchList.innerHTML=""
-                input.value=""
                 let errors = document.getElementsByClassName("error")
-                console.log(errors)
                 for (let elem of errors) {
                     if (elem.style.display == 'block') {
                         elem.style.display = 'none'
