@@ -2,9 +2,11 @@ package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserRegistrationDto;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.jwt.JwtUtils;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.configs.mail.MailService;
 import com.javamentor.qa.platform.webapp.converters.UserConverter;
@@ -16,7 +18,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @Validated
@@ -27,20 +32,24 @@ public class RegistrationController {
     private final UserConverter userConverter;
     private final JwtUtils jwtUtils;
     private final MailService mailService;
-
+    private final GroupChatService groupChatService;
     @Value("${address.mail.confirm}")
     private String address;
+
+    private Long groupChatId;
 
     @Autowired
     public RegistrationController(UserService userService,
                                   UserConverter userConverter,
                                   JwtUtils jwtUtils,
-                                  MailService mailService) {
+                                  MailService mailService,
+                                  GroupChatService groupChatService) {
 
         this.userService = userService;
         this.userConverter = userConverter;
         this.jwtUtils = jwtUtils;
         this.mailService = mailService;
+        this.groupChatService = groupChatService;
     }
 
     @PostMapping("/registration")
@@ -97,6 +106,9 @@ public class RegistrationController {
             User newUser = user.get();
             newUser.setIsEnabled(true);
             userService.update(newUser);
+            GroupChat groupChat = groupChatService.getById(groupChatId).get();
+            groupChat.getUsers().add(newUser);
+            groupChatService.update(groupChat);
 
             return ResponseEntity.ok().body(userConverter.userToDto(newUser));
 
