@@ -202,11 +202,11 @@ class AnswerControllerTest extends AbstractIntegrationTest {
         int first = before.size();
 
         this.mockMvc.perform(MockMvcRequestBuilders
-                .patch("/api/question/1/answer/14/downVote")
+                .patch("/api/question/10/answer/51/downVote")
                 .contentType("application/json;charset=UTF-8"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.userId").isNumber())
                 .andExpect(jsonPath("$.answerId").isNumber())
