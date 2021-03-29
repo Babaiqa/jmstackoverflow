@@ -13,6 +13,7 @@ public class SingleChatDto {
 
     private Long id;
     private Long chatId;
+    private String title;
     private Long userOneId;
     private Long userTwoId;
 
@@ -21,6 +22,7 @@ public class SingleChatDto {
         return "{" +
                 "id=" + id +
                 ", chatId=" + chatId +
+                ", title='" + title + '\'' +
                 ", userOneId=" + userOneId +
                 ", userTwoId=" + userTwoId +
                 '}';

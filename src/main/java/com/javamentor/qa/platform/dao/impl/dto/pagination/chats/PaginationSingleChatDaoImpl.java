@@ -1,42 +1,27 @@
-package com.javamentor.qa.platform.dao.impl.dto;
+package com.javamentor.qa.platform.dao.impl.dto.pagination.chats;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.SingleChatDtoDao;
+import com.javamentor.qa.platform.dao.abstracts.dto.pagination.PaginationDao;
 import com.javamentor.qa.platform.dao.impl.dto.transformers.SingleChatResultTransformer;
 import com.javamentor.qa.platform.models.dto.SingleChatDto;
+import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
-import org.hibernate.Session;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
-@Repository
-public class SingleChatDtoDaoImpl implements SingleChatDtoDao {
+@Repository(value = "paginationSingleChat")
+public class PaginationSingleChatDaoImpl implements PaginationDao<SingleChatDto> {
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public Optional<SingleChatDto> findSingleChatDtoById(Long id) {
-        return (Optional<SingleChatDto>) entityManager.unwrap(Session.class)
-                .createQuery("SELECT new SingleChatDto(" +
-                        "sc.id, " +
-                        "sc.chat.id, " +
-                        "sc.chat.title, " +
-                        "sc.userOne.id, " +
-                        "sc.useTwo.id) " +
-                        "FROM SingleChat sc " +
-                        "JOIN Chat c ON sc.chat.id = c.id " +
-                        "WHERE sc.id = :id")
-                .setParameter("id", id)
-                .unwrap(Query.class)
-                .uniqueResultOptional();
-    }
-
-    @Override
-    public List<SingleChatDto> getAllSingleChatDto() {
+    public List<SingleChatDto> getItems(Map<String, Object> parameters) {
+        int page = (int)parameters.get("page");
+        int size = (int)parameters.get("size");
 
         return (List<SingleChatDto>) entityManager.unwrap(Session.class)
                 .createQuery("SELECT sc.id as id, " +
@@ -47,7 +32,14 @@ public class SingleChatDtoDaoImpl implements SingleChatDtoDao {
                         "FROM SingleChat sc " +
                         "JOIN Chat c on sc.chat.id = c.id ")
                 .unwrap(Query.class)
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
                 .setResultTransformer(new SingleChatResultTransformer())
                 .getResultList();
+    }
+
+    @Override
+    public int getCount(Map<String, Object> parameters) {
+        return (int)(long) entityManager.createQuery("select count(sc) from SingleChat sc").getSingleResult();
     }
 }

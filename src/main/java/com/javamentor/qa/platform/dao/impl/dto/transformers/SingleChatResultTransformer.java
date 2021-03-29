@@ -24,6 +24,7 @@ public class SingleChatResultTransformer implements ResultTransformer {
                     SingleChatDto singleChatDtoTemp = new SingleChatDto();
                     singleChatDtoTemp.setId(((Number)tuple[aliasToIndexMapTrans.get("id")]).longValue());
                     singleChatDtoTemp.setChatId(((Number)tuple[aliasToIndexMapTrans.get("chatId")]).longValue());
+                    singleChatDtoTemp.setTitle((String)tuple[aliasToIndexMapTrans.get("title")]);
                     singleChatDtoTemp.setUserOneId(((Number)tuple[aliasToIndexMapTrans.get("userOneId")]).longValue());
                     singleChatDtoTemp.setUserTwoId(((Number)tuple[aliasToIndexMapTrans.get("userTwoId")]).longValue());
 
