@@ -18,10 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 @RestController
 @Validated
@@ -36,7 +33,7 @@ public class RegistrationController {
     @Value("${address.mail.confirm}")
     private String address;
 
-    private Long groupChatId;
+    private Long chatId;
 
     @Autowired
     public RegistrationController(UserService userService,
@@ -102,16 +99,17 @@ public class RegistrationController {
 
         Optional<User> user = userService.getUserByEmail(jwtUtils.getUsernameFromToken(token));
 
-        if (user.isPresent()){
+        if (user.isPresent()) {
             User newUser = user.get();
             newUser.setIsEnabled(true);
             userService.update(newUser);
-            GroupChat groupChat = groupChatService.getById(groupChatId).get();
-            groupChat.getUsers().add(newUser);
-            groupChatService.update(groupChat);
-
+            Optional<GroupChat> groupChatOptional = groupChatService.getById(chatId);
+            if (groupChatOptional.isPresent()) {
+                GroupChat groupChat = groupChatOptional.get();
+                groupChat.getUsers().add(newUser);
+                groupChatService.update(groupChat);
+            }
             return ResponseEntity.ok().body(userConverter.userToDto(newUser));
-
         }
 
         return ResponseEntity.badRequest().body("User not found");
