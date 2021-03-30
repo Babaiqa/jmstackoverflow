@@ -34,13 +34,13 @@ class QuestionPage {
                 $('#question-area').append(
                     "                    <div class=\"row\">\n" +
                     "                        <div vote-area-question class=\"col-1\">\n" +
-                    '                            <a class="btn  btn-sm m-0 p-0" onclick="new QuestionService().makeUpVoteQuestion('+ this.questionId +')">' +
+                    '                            <a class="btn  btn-sm m-0 p-0" onclick="new QuestionService().makeUpVoteQuestion(' + this.questionId + ')">' +
                     "                               <svg width=\"36\" height=\"36\" >\n" +
                     "                                  <path d=\"M2 26h32L18 10 2 26z\"></path>\n" +
                     "                               </svg>\n" +
                     '                             </a>' +
                     '                            <div style=\"font-size: 200%\" id="count_question"> &nbsp;' + response.countValuable + '</div>\n' +
-                    '                              <a class="btn  btn-sm m-0 p-0" onclick="new QuestionService().makeDownVoteQuestion('+ this.questionId +')">' +
+                    '                              <a class="btn  btn-sm m-0 p-0" onclick="new QuestionService().makeDownVoteQuestion(' + this.questionId + ');">' +
                     "                                 <svg  width=\"36\" height=\"36\" >\n" +
                     "                                    <path d=\"M2 10h32L18 26 2 10z\"></path>\n" +
                     "                                  </svg>\n" +
@@ -145,8 +145,10 @@ class QuestionPage {
                         + ('0' + (date.getMonth() + 1)).slice(-2) + "."
                         + date.getFullYear();
 
-                    let count = elem.countValuable == null ? 0 : elem.countValuable;
-
+                    let count = elem.countValuable;
+                    if(count == null) {
+                        count = 0;
+                    }
                     let isHelpful = elem.isHelpful;
 
                     $('#answer-area').append(

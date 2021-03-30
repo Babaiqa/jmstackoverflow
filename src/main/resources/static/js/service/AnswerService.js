@@ -84,4 +84,39 @@ class AnswerService {
         }).catch(error => console.log(error.message));
     }
 
+    getCommentsByAnswerIdQuestionId(answerId, questionId) {
+        let query = `/api/question/${questionId}/answer/${answerId}/comments`
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        }).then(response =>{
+            if (response.ok) {
+                return response.json()
+            } else {
+                let error = new Error();
+                error.response = response.text();
+                throw error;
+            }
+        }).catch(error => console.log(error.message))
+    }
+
+    setCommentByAnswerAndQuestionId(answerId, questionId) {
+        let comment = {
+            text: $(`#comment_summernote${answerId}`).summernote('code')
+        }
+        fetch(`/api/question/${questionId}/answer/${answerId}/comment`,
+            {
+                method: 'POST',
+                headers: new Headers({
+                    'Content-Type': 'application/json',
+                    'Authorization': $.cookie("token")
+                }),
+                body: JSON.stringify(comment)
+            }).then(data => new QuestionPage().getAnswerCommentsById(answerId, questionId))
+            .catch(error => console.log(error.message));
+    }
+
 }
