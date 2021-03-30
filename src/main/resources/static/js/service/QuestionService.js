@@ -248,6 +248,40 @@ class QuestionService {
         }).catch(error => console.log(error.message));
     }
 
+    getCommentsByQuestionId(questionId) {
+        let query = '/api/question/' + questionId + '/comments';
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        }).then(response =>{
+            if (response.ok) {
+                return response.json()
+            } else {
+                let error = new Error();
+                error.response = response.text();
+                throw error;
+            }
+        }).catch(error => console.log(error.message))
+    }
+
+    setCommentByQuestionId(questionId) {
+        let comment = {
+            text: $('#comment_summernote').summernote('code')
+        }
+        fetch('/api/question/' + questionId + '/comment',
+            {
+                method: 'POST',
+                headers: new Headers({
+                    'Content-Type': 'application/json',
+                    'Authorization': $.cookie("token")
+                }),
+                body: JSON.stringify(comment)
+            }).then(data => new QuestionPage().getCommentsById(questionId))
+            .catch(error => console.log(error.message));
+    }
 
     makeDownVoteQuestion(questionId) {
         fetch('/api/question/' + questionId + '/downVote',

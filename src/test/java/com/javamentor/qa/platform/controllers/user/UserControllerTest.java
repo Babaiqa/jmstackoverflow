@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
@@ -265,6 +266,7 @@ class UserControllerTest extends AbstractIntegrationTest {
         expected.setItems(expectedItems);
 
         String resultContext =
+                //тут прилетает пустота
                 mockMvc.perform(get("/api/user/order/reputation/month")
                         .param("page", "1")
                         .param("size", "10"))
@@ -590,6 +592,7 @@ class UserControllerTest extends AbstractIntegrationTest {
         user.setEmail("some@with.email");
         user.setPassword("100500");
         user.setFullName("Samuel Smith");
+
 
         String jsonRequest = objectMapper.writeValueAsString(user);
 
