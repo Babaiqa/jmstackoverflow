@@ -12,4 +12,6 @@ public interface CommentDtoService {
     List<CommentAnswerDto> getAllCommentsByAnswerId(Long questionId);
 
     boolean isUserAlreadyCommentedQuestion(Long userId, Long questionId);
+
+    boolean isUserAlreadyCommentedAnswer(Long userId, Long answerId);
 }

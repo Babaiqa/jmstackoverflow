@@ -114,6 +114,4 @@ public class RegistrationController {
 
         return ResponseEntity.badRequest().body("User not found");
     }
-
-
 }

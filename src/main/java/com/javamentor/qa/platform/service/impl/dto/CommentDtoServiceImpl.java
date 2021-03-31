@@ -33,4 +33,9 @@ public class CommentDtoServiceImpl implements CommentDtoService {
     public boolean isUserAlreadyCommentedQuestion(Long userId, Long questionId) {
         return commentDtoDao.isUserAlreadyCommentedQuestion(userId, questionId);
     }
+
+    @Override
+    public boolean isUserAlreadyCommentedAnswer(Long userId, Long answerId) {
+        return commentDtoDao.isUserAlreadyCommentedAnswer(userId, answerId);
+    }
 }
