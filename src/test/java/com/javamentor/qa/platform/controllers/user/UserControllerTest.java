@@ -2,8 +2,10 @@ package com.javamentor.qa.platform.controllers.user;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
+import com.javamentor.qa.platform.dao.abstracts.model.GroupChatDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.user.Reputation;
 import com.javamentor.qa.platform.models.entity.user.User;
 import org.junit.jupiter.api.Assertions;
@@ -103,6 +105,8 @@ class UserControllerTest extends AbstractIntegrationTest {
                 .setParameter("userId", newUser.get().getId());
         Assertions.assertNotNull(SingleResultUtil.getSingleResultOrNull(reputationQuery));
     }
+
+
 
     @Test
     @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, disableConstraints = true, cleanBefore = true, cleanAfter = true)
@@ -627,5 +631,35 @@ class UserControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().contentType("text/plain;charset=UTF-8"))
                 .andExpect(content().string(String.format("User with email %s already exist", user.getEmail())));
     }
+    @Test
+    @DataSet(value = "dataset/user/roleUserApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
+    void isIncludedInGroupChat() throws Exception {
+        UserRegistrationDto user = new UserRegistrationDto();
+        user.setEmail("11@22.ru");
+        user.setPassword("100");
+        user.setFullName("Ivan Ivanich");
 
+        Long chatId = 1l;
+
+        String jsonRequest = objectMapper.writeValueAsString(user);
+
+        this.mockMvc.perform(post("/api/auth/reg/confirm")
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("email").value(user.email))
+                .andExpect(jsonPath("fullName").value(user.fullName))
+                .andExpect(jsonPath("linkImage").isEmpty())
+                .andExpect(status().isOk());
+
+        TypedQuery<User> createdUser = entityManager.createQuery("FROM User WHERE email =: email", User.class)
+                .setParameter("email", "11@22.ru");
+
+        User newUser = SingleResultUtil.getSingleResultOrNull(createdUser).get();
+        Assertions.assertNotNull(newUser);
+        TypedQuery<User> addedToGroupChat= entityManager.createQuery("FROM GroupChat WHERE chat.id =: chatId and user.id =: userId", User.class)
+                .setParameter("userId", newUser.getId())
+                .setParameter("chatId", chatId);
+        Assertions.assertEquals(createdUser,addedToGroupChat);
+    }
 }
