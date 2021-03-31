@@ -202,11 +202,11 @@ class AnswerControllerTest extends AbstractIntegrationTest {
         int first = before.size();
 
         this.mockMvc.perform(MockMvcRequestBuilders
-                .patch("/api/question/1/answer/14/downVote")
+                .patch("/api/question/10/answer/51/downVote")
                 .contentType("application/json;charset=UTF-8"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.userId").isNumber())
                 .andExpect(jsonPath("$.answerId").isNumber())
@@ -216,6 +216,28 @@ class AnswerControllerTest extends AbstractIntegrationTest {
         List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int second = after.size();
         Assertions.assertEquals(first + 1, second);
+    }
+    //тестирую возможность двойного голоса на ответ в одном вопросе
+    @Test
+    void voteUpInQuestionOneVoteStatusOk() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/1/answer/14/upVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("User already voted in this question"));
+
+    }
+    //тестирую возможность двойного голоса на ответ в одном вопросе
+    @Test
+    void voteDownInQuestionOneVoteStatusOk() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/1/answer/51/downVote")
+                .contentType("application/json;charset=UTF-8"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("User already voted in this question"));
+
     }
 
     @Test
@@ -338,5 +360,25 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .content(jsonRequest))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+
+    public void shouldAddSecondCommentToAnswerResponseBadRequest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/10/answer/51/comment")
+                .content("This is the first comment to answer!")
+                .accept(MediaType.TEXT_PLAIN_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/10/answer/51/comment")
+                .content("This is the second comment to answer from the same user!")
+                .accept(MediaType.TEXT_PLAIN_VALUE))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("You have already commented this answer"));
+
     }
 }
