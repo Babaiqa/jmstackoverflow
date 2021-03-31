@@ -23,7 +23,8 @@ function addTagToInput(tagName) {
 
 function checkTagsCount() {
     if (tags.length > 0) {
-        buttonAskQuestion.removeAttribute('disabled');
+        checkTitle()
+        checkDescription()
     } else if (tags.length === 0) {
         buttonAskQuestion.setAttribute('disabled', 'true');
     }
@@ -33,6 +34,27 @@ function checkTagsCount() {
     } else if (tags.length < 5) {
         tagsSearchInput.removeAttribute('disabled');
         tagsSearchInput.classList.remove('d-none');
+    }
+
+}
+function checkTitle() {
+    let title = $('#questionTitle').val();
+    if (title.length != 0) {
+        checkDescription()
+    } else if (title.length == 0) {
+        buttonAskQuestion.setAttribute('disabled', 'true');
+        checkTagsCount()
+    }
+}
+
+function checkDescription() {
+    let description = $('#summernote').summernote('code');
+    if (description.length != 0) {
+        buttonAskQuestion.removeAttribute('disabled');
+        checkTagsCount()
+    } else if (description.length == 0) {
+        buttonAskQuestion.setAttribute('disabled', 'true');
+        checkTagsCount()
     }
 }
 
