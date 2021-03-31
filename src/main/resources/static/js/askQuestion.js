@@ -37,7 +37,26 @@ function checkTagsCount() {
     }
 
 }
+function checkTitle() {
+    let title = $('#questionTitle').val();
+    if (title.length != 0) {
+        checkDescription()
+    } else if (title.length == 0) {
+        buttonAskQuestion.setAttribute('disabled', 'true');
+        checkTagsCount()
+    }
+}
 
+function checkDescription() {
+    let description = $('#summernote').summernote('code');
+    if (description.length != 0) {
+        buttonAskQuestion.removeAttribute('disabled');
+        checkTagsCount()
+    } else if (description.length == 0) {
+        buttonAskQuestion.setAttribute('disabled', 'true');
+        checkTagsCount()
+    }
+}
 
 tagBlock.addEventListener('click', (event) => {
     let target = event.target;
