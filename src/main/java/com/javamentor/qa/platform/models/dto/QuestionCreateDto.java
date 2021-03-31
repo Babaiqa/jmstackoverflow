@@ -16,17 +16,20 @@ public class QuestionCreateDto implements Serializable {
 
     @NotNull(groups = OnCreate.class, message = "Значение title отсутствует")
     @NotBlank(groups = OnCreate.class, message = "Значение title не должно быть пустым")
-    private String title;
+    @NotNull String title;
+
+
 
     @NotNull(groups = OnCreate.class, message = "Значение userId должно быть заполнено")
     private Long userId;
 
     @NotNull(groups = OnCreate.class, message = "Значение description отсутствует")
     @NotBlank(groups = OnCreate.class, message = "Значение description не должно быть пустым")
-    private String description;
+    @NotNull private String description;
 
     @NotNull(groups = OnCreate.class, message = "Значение tags должно быть заполнено")
     private List<TagDto> tags;
+
 
 }
 
