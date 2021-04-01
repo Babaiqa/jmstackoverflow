@@ -5,15 +5,13 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
-
-import java.util.Optional;
-
+import org.springframework.http.ResponseEntity;
 
 public interface VoteAnswerService extends ReadWriteService<VoteAnswer, Long> {
 
-    boolean isUserAlreadyVoted(Answer answer, User user);
-
     boolean isUserAlreadyVotedIsThisQuestion(Question question, User user, Answer answer);
 
-    void markHelpful(Optional<Question> question, Optional<Answer> answer, boolean isHelpful);
+    void markHelpful(Question question, User user, Answer answer, boolean isHelpful);
+
+    ResponseEntity<String> upVoteIfAlreadyVoted(Question question, User user, Answer answer);
 }
