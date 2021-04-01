@@ -20,23 +20,6 @@ function addTagToInput(tagName) {
     tagAddon.innerHTML = `<span class="tag-title">${tagName}</span><a href="#" class="delete-button badge badge-secondary ml-1">x</a>`;
     tagsInInput.append(tagAddon);
 }
-
-function checkTagsCount() {
-    if (tags.length > 0) {
-        checkTitle()
-        checkDescription()
-    } else if (tags.length === 0) {
-        buttonAskQuestion.setAttribute('disabled', 'true');
-    }
-    if (tags.length === 5) {
-        tagsSearchInput.setAttribute('disabled', 'true');
-        tagsSearchInput.classList.add('d-none');
-    } else if (tags.length < 5) {
-        tagsSearchInput.removeAttribute('disabled');
-        tagsSearchInput.classList.remove('d-none');
-    }
-
-}
 function checkTitle() {
     let title = $('#questionTitle').val();
     if (title.length != 0) {
@@ -56,6 +39,23 @@ function checkDescription() {
         buttonAskQuestion.setAttribute('disabled', 'true');
         checkTagsCount()
     }
+}
+
+function checkTagsCount() {
+    if (tags.length > 0) {
+        checkTitle()
+        checkDescription()
+    } else if (tags.length === 0) {
+        buttonAskQuestion.setAttribute('disabled', 'true');
+    }
+    if (tags.length === 5) {
+        tagsSearchInput.setAttribute('disabled', 'true');
+        tagsSearchInput.classList.add('d-none');
+    } else if (tags.length < 5) {
+        tagsSearchInput.removeAttribute('disabled');
+        tagsSearchInput.classList.remove('d-none');
+    }
+
 }
 
 tagBlock.addEventListener('click', (event) => {
@@ -207,7 +207,7 @@ buttonAskQuestion.onclick = function (e) {
     }).then(response => response.json()
     ).then(question => {
         newQuestionId = question.id;
-        window.location.href = '/site';
+        window.location.href = '/question/'+question.id;
     })) {
         alert('Вопрос не был добавлен');
     }
