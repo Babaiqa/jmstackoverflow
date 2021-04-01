@@ -22,4 +22,9 @@ public class AnswersDtoServiceImpl implements AnswerDtoService {
     public List<AnswerDto> getAllAnswersByQuestionId(Long questionId) {
         return answerDtoDao.getAllAnswersByQuestionId(questionId);
     }
+
+    @Override
+    public boolean isUserAlreadyAnsweredToQuestion(Long userId, Long questionId) {
+        return answerDtoDao.isUserAlreadyAnsweredToQuestion(userId, questionId);
+    }
 }

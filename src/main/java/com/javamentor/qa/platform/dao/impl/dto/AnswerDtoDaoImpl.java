@@ -36,4 +36,15 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                 .unwrap(org.hibernate.query.Query.class)
                 .getResultList();
     }
+
+    @Override
+    public boolean isUserAlreadyAnsweredToQuestion(Long userId, Long questionId) {
+        return (entityManager.unwrap(Session.class)
+                .createQuery("FROM Answer WHERE question.id =: questionId" +
+                        " and user.id =: userId")
+                .setParameter("questionId", questionId)
+                .setParameter("userId", userId)
+                .unwrap(org.hibernate.query.Query.class)
+                .uniqueResult() != null);
+    }
 }
