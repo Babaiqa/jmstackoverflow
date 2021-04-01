@@ -281,17 +281,6 @@ public class UserController {
         User newUser = userConverter.userDtoToUser(userRegistrationDto);
         userService.persist(newUser);
 
-        Optional<Reputation> reputation = reputationService.getReputationByUserId(newUser.getId());
-
-        if (reputation.isPresent()) {
-
-            return ResponseEntity.badRequest().body(String.format("Reputation for user, with id %d already exist", newUser.getId()));
-        }
-
-        Reputation userReputation = new Reputation();
-        userReputation.setUser(newUser);
-        reputationService.persist(userReputation);
-
         return ResponseEntity.ok(userConverter.userToDto(newUser));
     }
 }
