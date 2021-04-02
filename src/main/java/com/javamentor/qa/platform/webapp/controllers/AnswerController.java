@@ -5,15 +5,13 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
+import com.javamentor.qa.platform.models.entity.user.Reputation;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.VoteAnswerDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
-import com.javamentor.qa.platform.service.abstracts.model.CommentAnswerService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import com.javamentor.qa.platform.webapp.converters.CommentConverter;
 import com.javamentor.qa.platform.webapp.converters.VoteAnswerConverter;
@@ -44,6 +42,7 @@ public class AnswerController {
     private final AnswerConverter answerConverter;
     private final VoteAnswerService voteAnswerService;
     private final VoteAnswerConverter voteAnswerConverter;
+    private final ReputationService reputationService;
 
 
     @Autowired
@@ -56,7 +55,7 @@ public class AnswerController {
                             VoteAnswerDtoService voteAnswerDtoService,
                             AnswerDtoService answerDtoService,
                             AnswerConverter answerConverter,
-                            VoteAnswerService voteAnswerService, VoteAnswerConverter voteAnswerConverter) {
+                            VoteAnswerService voteAnswerService, VoteAnswerConverter voteAnswerConverter, ReputationService reputationService) {
         this.answerService = answerService;
         this.commentAnswerService = commentAnswerService;
         this.commentConverter = commentConverter;
@@ -68,6 +67,7 @@ public class AnswerController {
         this.answerConverter = answerConverter;
         this.voteAnswerService = voteAnswerService;
         this.voteAnswerConverter = voteAnswerConverter;
+        this.reputationService = reputationService;
     }
 
     @PostMapping("/{questionId}/answer/{answerId}/comment")
@@ -173,6 +173,12 @@ public class AnswerController {
 
         if (!everAnswered) {
             answerService.persist(answer);
+            Optional<Reputation> reputationOpt = reputationService.getReputationByUserId(user.getId());
+            if (reputationOpt.isPresent()) {
+                Reputation reputation = reputationOpt.get();
+                reputation.setCount(reputation.getCount() + 5);
+                reputationService.update(reputation);
+            }
             return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
         }
 
