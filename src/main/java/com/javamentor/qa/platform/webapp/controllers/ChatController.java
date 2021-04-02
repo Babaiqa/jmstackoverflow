@@ -1,7 +1,10 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
+import com.javamentor.qa.platform.models.dto.ChatDto;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.SingleChatDto;
+import com.javamentor.qa.platform.security.util.SecurityHelper;
+import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.SingleChatDtoService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +24,16 @@ import java.util.List;
 public class ChatController {
 
     private SingleChatDtoService singleChatDtoService;
+    private final SecurityHelper securityHelper;
+    private final ChatDtoService chatDtoService;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
-    public ChatController(SingleChatDtoService singleChatDtoService) {
+    public ChatController(SingleChatDtoService singleChatDtoService, SecurityHelper securityHelper, ChatDtoService chatDtoService) {
         this.singleChatDtoService = singleChatDtoService;
+        this.securityHelper = securityHelper;
+        this.chatDtoService = chatDtoService;
     }
 
 
@@ -52,6 +59,19 @@ public class ChatController {
         PageDto<SingleChatDto, Object> allSingleChats = singleChatDtoService.getAllSingleChatDtoPagination(page, size);
 
         return ResponseEntity.ok(allSingleChats);
+
+    }
+
+    @GetMapping(path = "/byuser")
+    @ApiOperation(value = "Get Chats By User")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the List<ChatDto>"),
+    })
+    public ResponseEntity<?> getAllChatsByUser() {
+
+        List<ChatDto> chatsByUser = chatDtoService.getAllChatsByUser(securityHelper.getPrincipal().getId());
+
+        return ResponseEntity.ok(chatsByUser);
 
     }
 
