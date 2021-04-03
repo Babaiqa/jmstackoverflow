@@ -66,12 +66,15 @@ class TagControllerTest extends AbstractIntegrationTest {
         expected.setItemsOnPage(10);
 
         List<TagDto> expectedItems = new ArrayList<>();
-        expectedItems.add(new TagDto(1L, "java", "description"));
-        expectedItems.add(new TagDto(5L, "sql", "description"));
-        expectedItems.add(new TagDto(2L, "javaScript", "description"));
-        expectedItems.add(new TagDto(3L, "html", "description"));
-        expectedItems.add(new TagDto(4L, "bootstrap-4", "description"));
-        expectedItems.add(new TagDto(6L, "sql22", "description"));
+        expectedItems.add(new TagDto(1L, "java", "Java is a popular high-level programming language."));
+        expectedItems.add(new TagDto(5L, "sql", "Structured Query Language (SQL) is a language for querying databases."));
+        expectedItems.add(new TagDto(2L, "javaScript", "For questions regarding programming in " +
+                "ECMAScript (JavaScript/JS) and its various dialects/implementations (excluding ActionScript)."));
+        expectedItems.add(new TagDto(3L, "html", "HTML (HyperText Markup Language) is the markup language for " +
+                "creating web pages and other information to be displayed in a web browser."));
+        expectedItems.add(new TagDto(4L, "bootstrap-4", "Bootstrap 4 is the fourth major version of " +
+                "the popular front-end component library. The Bootstrap framework aids in the creation of responsive, mobile-first websites and web apps."));
+        expectedItems.add(new TagDto(6L, "sql22", "aaStructured Query Language (SQL) is a language for querying databases."));
         expected.setItems(expectedItems);
 
         String resultContext = mockMvc.perform(get(POPULAR)

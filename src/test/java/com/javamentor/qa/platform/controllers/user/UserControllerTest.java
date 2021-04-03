@@ -4,6 +4,7 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.User;
 import org.junit.jupiter.api.Assertions;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
@@ -144,7 +146,7 @@ class UserControllerTest extends AbstractIntegrationTest {
 
 
         List<UserDtoList> expectedItems = new ArrayList<>();
-
+        // в датасет другие показатели репутации
         expectedItems.add(new UserDtoList(1L, "Teat", "linkImage1", 2, Arrays.asList(new TagDto[]{})));
         expectedItems.add(new UserDtoList(2L, "Teat", "linkImage2", 1, Arrays.asList(new TagDto[]{})));
         expectedItems.add(new UserDtoList(4L, "Tob", "linkImage4", 4, Arrays.asList(new TagDto[]{})));
@@ -259,7 +261,7 @@ class UserControllerTest extends AbstractIntegrationTest {
         expectedItems.add(new UserDtoList(4L, "Tot", null, 0, Arrays.asList(new TagDto[]{})));
         expectedItems.add(new UserDtoList(5L, "Tot", null, 0, Arrays.asList(new TagDto[]{})));
         expected.setItems(expectedItems);
-
+        // Expected a non-empty value at JSON path "$.items" but found: []
         String resultContext =
                 mockMvc.perform(get("/api/user/order/reputation/month")
                         .param("page", "1")
@@ -405,6 +407,7 @@ class UserControllerTest extends AbstractIntegrationTest {
 
     @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
+        // user 4 ?
     void requestUserPasswordResetStatusOk() throws Exception {
         UserResetPasswordDto ps = new UserResetPasswordDto();
         ps.setOldPassword("password0");
@@ -607,6 +610,7 @@ class UserControllerTest extends AbstractIntegrationTest {
         TypedQuery<Reputation> reputationQuery = entityManager.createQuery("FROM Reputation WHERE user.id =: userId", Reputation.class)
                 .setParameter("userId", newUser.get().getId());
         Assertions.assertNotNull(SingleResultUtil.getSingleResultOrNull(reputationQuery));
+        // ожидаем 200 а приходит 401 ответ
     }
 
     @Test
@@ -624,5 +628,35 @@ class UserControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().contentType("text/plain;charset=UTF-8"))
                 .andExpect(content().string(String.format("User with email %s already exist", user.getEmail())));
     }
+    @Test
+    @DataSet(value = "dataset/user/roleUserApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
+    void isIncludedInGroupChat() throws Exception {
+        UserRegistrationDto user = new UserRegistrationDto();
+        user.setEmail("11@22.ru");
+        user.setPassword("100");
+        user.setFullName("Ivan Ivanich");
 
+        Long chatId = 1l;
+
+        String jsonRequest = objectMapper.writeValueAsString(user);
+
+        this.mockMvc.perform(post("/api/auth/reg/confirm")
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("email").value(user.email))
+                .andExpect(jsonPath("fullName").value(user.fullName))
+                .andExpect(jsonPath("linkImage").isEmpty())
+                .andExpect(status().isOk());
+
+        TypedQuery<User> createdUser = entityManager.createQuery("FROM User WHERE email =: email", User.class)
+                .setParameter("email", "11@22.ru");
+
+        User newUser = SingleResultUtil.getSingleResultOrNull(createdUser).get();
+        Assertions.assertNotNull(newUser);
+        TypedQuery<User> addedToGroupChat= entityManager.createQuery("FROM GroupChat WHERE chat.id =: chatId and user.id =: userId", User.class)
+                .setParameter("userId", newUser.getId())
+                .setParameter("chatId", chatId);
+        Assertions.assertEquals(createdUser,addedToGroupChat);
+    }
 }

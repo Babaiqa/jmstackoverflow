@@ -90,9 +90,11 @@ public class AnswerController {
         if (!answer.isPresent()) {
             return ResponseEntity.badRequest().body("Answer not found");
         }
-
+        boolean everCommented = commentDtoService.isUserAlreadyCommentedAnswer(user.getId(), answerId);
+        if (everCommented) {
+            return ResponseEntity.badRequest().body("You have already commented this answer");
+        }
         CommentAnswer commentAnswer = commentAnswerService.addCommentToAnswer(commentText, answer.get(), user);
-
         return ResponseEntity.ok(commentConverter.commentToCommentDTO(commentAnswer));
     }
 
