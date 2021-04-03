@@ -7,7 +7,6 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.VoteAnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
@@ -55,6 +54,7 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
         return voteAnswerDao.isUserAlreadyVotedIsThisQuestion(question, user, answer);
     }
 
+    @Override
     public ResponseEntity<String> upVoteIfAlreadyVoted(Question question, User user, Answer answer) {
 
         if (isUserAlreadyVotedIsThisQuestion(question, user, answer)) {
@@ -62,12 +62,12 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
             if (optionalVoteAnswerDto.isPresent()) {
                 int voteValue = optionalVoteAnswerDto.get().getVote();
                 if (voteValue == 1) {
-                    deleteById(optionalVoteAnswerDto.get().getId());
+                    voteAnswerDao.deleteById(optionalVoteAnswerDto.get().getId());
                     markHelpful(question, user, answer, false);
                 } else if (voteValue == -1) {
-                    deleteById(optionalVoteAnswerDto.get().getId());
+                    voteAnswerDao.deleteById(optionalVoteAnswerDto.get().getId());
                     VoteAnswer voteAnswer = new VoteAnswer(user, answer, 1);
-                    persist(voteAnswer);
+                    voteAnswerDao.persist(voteAnswer);
                     markHelpful(question, user, answer, true);
                 }
                 return ResponseEntity.ok("Vote changed");
