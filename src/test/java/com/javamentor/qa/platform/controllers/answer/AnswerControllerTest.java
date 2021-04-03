@@ -365,6 +365,26 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+
+    public void shouldAddSecondCommentToAnswerResponseBadRequest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/10/answer/51/comment")
+                .content("This is the first comment to answer!")
+                .accept(MediaType.TEXT_PLAIN_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/question/10/answer/51/comment")
+                .content("This is the second comment to answer from the same user!")
+                .accept(MediaType.TEXT_PLAIN_VALUE))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("You have already commented this answer"));
+
+    }
+
+    @Test
     void answerVoteUpAndVoteUpAgainStatusOk() throws Exception {
 
         VoteAnswerDto voteAnswerDto = new VoteAnswerDto();

@@ -23,7 +23,7 @@ public class PaginationTagsByPopularDaoImpl implements PaginationDao<TagDto> {
         int size = (int)parameters.get("size");
 
         return em.createQuery(
-                "select new com.javamentor.qa.platform.models.dto.TagDto(tag.id,tag.name)" +
+                "select new com.javamentor.qa.platform.models.dto.TagDto(tag.id,tag.name, tag.description)" +
                         " from Tag  tag order by tag.questions.size desc, tag.id ")
                 .setFirstResult(page * size - size)
                 .setMaxResults(size)
