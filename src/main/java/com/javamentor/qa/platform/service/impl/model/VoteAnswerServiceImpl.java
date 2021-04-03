@@ -66,11 +66,14 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
                 int voteValue = optionalVoteAnswer.get().getVote();
                 if (voteValue == 1) {
                     voteAnswerDao.deleteById(optionalVoteAnswer.get().getId());
+//                    deleteById(optionalVoteAnswer.get().getId());
                     markHelpful(question, user, answer, false);
                 } else if (voteValue == -1) {
                     voteAnswerDao.deleteById(optionalVoteAnswer.get().getId());
+//                    deleteById(optionalVoteAnswer.get().getId());
                     VoteAnswer voteAnswer = new VoteAnswer(user, answer, 1);
                     voteAnswerDao.persist(voteAnswer);
+//                    persist(voteAnswer);
                     markHelpful(question, user, answer, true);
                 }
                 return ResponseEntity.ok("Vote changed");
