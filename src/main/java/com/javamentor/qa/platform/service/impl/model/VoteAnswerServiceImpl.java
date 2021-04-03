@@ -55,17 +55,20 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
     }
 
     @Override
-    public ResponseEntity<String> upVoteIfAlreadyVoted(Question question, User user, Answer answer) {
+    public ResponseEntity<String> upVoteIfAlreadyVoted(Optional<Question> questionOptional, User user, Optional<Answer> answerOptional) {
 
-        if (isUserAlreadyVotedIsThisQuestion(question, user, answer)) {
-            Optional<VoteAnswerDto> optionalVoteAnswerDto = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answer.getId(), user.getId());
-            if (optionalVoteAnswerDto.isPresent()) {
-                int voteValue = optionalVoteAnswerDto.get().getVote();
+        Question question = questionOptional.get();
+        Answer answer = answerOptional.get();
+
+        if (isUserAlreadyVotedIsThisQuestion(questionOptional.get(), user, answerOptional.get())) {
+            Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answer.getId(), user.getId());
+            if (optionalVoteAnswer.isPresent()) {
+                int voteValue = optionalVoteAnswer.get().getVote();
                 if (voteValue == 1) {
-                    voteAnswerDao.deleteById(optionalVoteAnswerDto.get().getId());
+                    voteAnswerDao.deleteById(optionalVoteAnswer.get().getId());
                     markHelpful(question, user, answer, false);
                 } else if (voteValue == -1) {
-                    voteAnswerDao.deleteById(optionalVoteAnswerDto.get().getId());
+                    voteAnswerDao.deleteById(optionalVoteAnswer.get().getId());
                     VoteAnswer voteAnswer = new VoteAnswer(user, answer, 1);
                     voteAnswerDao.persist(voteAnswer);
                     markHelpful(question, user, answer, true);
@@ -74,6 +77,31 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
             }
             return ResponseEntity.ok("Can't change vote");
         }
+        // FIXME: Разобраться что отправлять
         return ResponseEntity.ok("OK");
     }
+
+//    @Override
+//    public ResponseEntity<String> upVoteIfAlreadyVoted(Question question, User user, Answer answer) {
+//
+//        if (isUserAlreadyVotedIsThisQuestion(question, user, answer)) {
+//            Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answer.getId(), user.getId());
+//            if (optionalVoteAnswer.isPresent()) {
+//                int voteValue = optionalVoteAnswer.get().getVote();
+//                if (voteValue == 1) {
+//                    voteAnswerDao.deleteById(optionalVoteAnswer.get().getId());
+//                    markHelpful(question, user, answer, false);
+//                } else if (voteValue == -1) {
+//                    voteAnswerDao.deleteById(optionalVoteAnswer.get().getId());
+//                    VoteAnswer voteAnswer = new VoteAnswer(user, answer, 1);
+//                    voteAnswerDao.persist(voteAnswer);
+//                    markHelpful(question, user, answer, true);
+//                }
+//                return ResponseEntity.ok("Vote changed");
+//            }
+//            return ResponseEntity.ok("Can't change vote");
+//        }
+//        // FIXME: Разобраться что отправлять
+//        return ResponseEntity.ok("OK");
+//    }
 }

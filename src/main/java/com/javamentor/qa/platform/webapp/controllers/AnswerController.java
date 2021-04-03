@@ -209,7 +209,7 @@ public class AnswerController {
 
 //        // FIXME:: Эту логику вынести в сервис
 //        if (voteAnswerService.isUserAlreadyVotedIsThisQuestion(questionOptional.get(), currentUser, answerOptional.get())) {
-//            Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answerId, securityHelper.getPrincipal().getId());
+//            Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answerId, currentUser.getId());
 //            if (optionalVoteAnswer.isPresent()) {
 //                int voteValue = optionalVoteAnswer.get().getVote();
 //                if (voteValue == 1) {
@@ -226,7 +226,7 @@ public class AnswerController {
 //            return ResponseEntity.ok("Can't change vote");
 //        }
 
-        voteAnswerService.upVoteIfAlreadyVoted(questionOptional.get(), currentUser, answerOptional.get());
+        voteAnswerService.upVoteIfAlreadyVoted(questionOptional, currentUser, answerOptional);
 
         voteAnswerService.markHelpful(questionOptional.get(), currentUser, answerOptional.get(), true);
 
