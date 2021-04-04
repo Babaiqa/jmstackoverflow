@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.Reputation;
+import com.javamentor.qa.platform.models.entity.user.ReputationType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
@@ -174,11 +175,17 @@ public class AnswerController {
         if (!everAnswered) {
             answerService.persist(answer);
             Optional<Reputation> reputationOpt = reputationService.getReputationByUserId(user.getId());
+            Reputation reputation;
+            Integer count = 5;
             if (reputationOpt.isPresent()) {
-                Reputation reputation = reputationOpt.get();
-                reputation.setCount(reputation.getCount() + 5);
-                reputationService.update(reputation);
+                reputation = reputationOpt.get();
+                reputation.setCount(reputation.getCount() + count);
+            } else {
+                reputation = new Reputation();
+                reputation.setCount(count);
             }
+            reputation.setType(ReputationType.Answer);
+            reputationService.update(reputation);
             return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
         }
 

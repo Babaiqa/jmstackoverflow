@@ -4,18 +4,16 @@ import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
+import com.javamentor.qa.platform.models.entity.user.Reputation;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
-import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converters.*;
 import io.swagger.annotations.*;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -44,8 +42,9 @@ public class QuestionController {
     private final VoteQuestionService voteQuestionService;
     private final VoteQuestionConverter voteQuestionConverter;
     private final QuestionViewedService questionViewedService;
-
+    private final ReputationService reputationService;
     private static final int MAX_ITEMS_ON_PAGE = 100;
+
 
     public QuestionController(QuestionService questionService,
                               TagService tagService,
@@ -58,7 +57,7 @@ public class QuestionController {
                               UserService userService,
                               VoteQuestionService voteQuestionService,
                               VoteQuestionConverter voteQuestionConverter,
-                              QuestionViewedService questionViewedService) {
+                              QuestionViewedService questionViewedService, ReputationService reputationService) {
         this.questionService = questionService;
         this.tagService = tagService;
         this.securityHelper = securityHelper;
@@ -71,6 +70,7 @@ public class QuestionController {
         this.voteQuestionService = voteQuestionService;
         this.voteQuestionConverter = voteQuestionConverter;
         this.questionViewedService = questionViewedService;
+        this.reputationService = reputationService;
     }
 
     @DeleteMapping("/{id}/delete")
@@ -253,6 +253,8 @@ public class QuestionController {
 
         Question question = questionConverter.questionCreateDtoToQuestion(questionCreateDto);
         questionService.persist(question);
+        Optional<Reputation> reputationOpt = reputationService.getReputationByUserId(questionCreateDto.getUserId());
+        
 
         QuestionDto questionDtoNew = questionConverter.questionToQuestionDto(question);
 
