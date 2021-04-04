@@ -19,7 +19,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@CombinedNotNull(fields = {"question_id", "answer_id"})
+//@CombinedNotNull(fields = {"question_id", "answer_id"})
 @Table(name = "reputation")
 public class Reputation implements Serializable {
     private static final long serialVersionUID = 7177182244933788025L;
@@ -44,7 +44,7 @@ public class Reputation implements Serializable {
     @Column(name = "type")
     private ReputationType type;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Answer.class, cascade = {CascadeType.REFRESH})
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Question.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "question_id")
     private Question question;
 
