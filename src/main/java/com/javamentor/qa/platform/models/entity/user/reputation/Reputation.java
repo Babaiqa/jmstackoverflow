@@ -2,7 +2,6 @@ package com.javamentor.qa.platform.models.entity.user.reputation;
 
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
-import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -45,11 +44,11 @@ public class Reputation implements Serializable {
     @Column(name = "type")
     private ReputationType type;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Answer.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "question_id")
     private Question question;
 
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = Answer.class, cascade = {CascadeType.REFRESH})
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Answer.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "answer_id")
     private Answer answer;
 
