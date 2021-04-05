@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface AnswerDtoDao {
     List<AnswerDto> getAllAnswersByQuestionId(Long questionId);
+
+    boolean isUserAlreadyAnsweredToQuestion(Long userId, Long questionId);
 }

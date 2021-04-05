@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.models.entity.user;
+package com.javamentor.qa.platform.models.entity.user.reputation;
 
 public enum ReputationType {
     Question,

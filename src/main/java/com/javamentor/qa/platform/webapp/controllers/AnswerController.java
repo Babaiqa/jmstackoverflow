@@ -168,11 +168,9 @@ public class AnswerController {
         Answer answer = new Answer(question.get(), user, createAnswerDto.getHtmlBody(), false, false);
         answer.setQuestion(question.get());
 
-        boolean neverAnswered = answerDtoService.getAllAnswersByQuestionId(questionId)
-                .stream()
-                .noneMatch(answerDto -> answerDto.getUserId().equals(answer.getUser().getId()));
+        boolean everAnswered = answerDtoService.isUserAlreadyAnsweredToQuestion(user.getId(), questionId);
 
-        if (neverAnswered) {
+        if (!everAnswered) {
             answerService.persist(answer);
             return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
         }
