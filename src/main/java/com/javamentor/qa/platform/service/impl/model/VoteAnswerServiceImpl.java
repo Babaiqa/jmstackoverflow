@@ -27,24 +27,20 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
     private final VoteAnswerConverter voteAnswerConverter;
 
     public VoteAnswerServiceImpl(ReadWriteDao<VoteAnswer, Long> readWriteDao,
-                                 VoteAnswerDao voteAnswerDao,
                                  AnswerService answerService,
-                                 VoteAnswerDtoService voteAnswerDtoService
-            , VoteAnswerConverter voteAnswerConverter) {
+                                 VoteAnswerDao voteAnswerDao,
+                                 VoteAnswerDtoService voteAnswerDtoService,
+                                 VoteAnswerConverter voteAnswerConverter) {
         super(readWriteDao);
-        this.voteAnswerDao = voteAnswerDao;
         this.answerService = answerService;
+        this.voteAnswerDao = voteAnswerDao;
         this.voteAnswerDtoService = voteAnswerDtoService;
         this.voteAnswerConverter = voteAnswerConverter;
     }
 
-    // FIXME:: Опять же нельзя доставать у questiom юзера т.к.
-    //  ты получил этот вопрос по id из контроллера и т.к.
-    //  у нас стоит lazy он приходит без него дальше проблема
-    //  которую я описывал выше
     public void markHelpful(Question question, User user, Answer answer, boolean isHelpful) {
 
-        boolean authorOfQuestion = question.getUser().getId().equals(user.getId());
+        boolean authorOfQuestion = voteAnswerDao.isAuthorOfQuestion(question.getId(), user.getId());
         if (authorOfQuestion) {
             answer.setIsHelpful(isHelpful);
             answer.setDateAcceptTime(LocalDateTime.now());
@@ -90,6 +86,7 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
     @Override
     @Transactional
     public ResponseEntity<String> answerDownVote(Question question, User user, Answer answer) {
+
         if (isUserAlreadyVotedIsThisQuestion(question, user, answer)) {
             Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answer.getId(), user.getId());
             if (optionalVoteAnswer.isPresent()) {

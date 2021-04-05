@@ -456,31 +456,15 @@ public class QuestionController {
             @PathVariable Long questionId) {
 
 
-        Optional<Question> question = questionService.getById(questionId);
-        if (!question.isPresent()) {
+        Optional<Question> questionOptional = questionService.getById(questionId);
+        if (!questionOptional.isPresent()) {
             return ResponseEntity.badRequest().body("Question was not found");
         }
 
-        if (voteQuestionService.isUserAlreadyVoted(question.get(), securityHelper.getPrincipal())) {
-            Optional<VoteQuestionDto> optionalVoteQuestion = voteQuestionDtoService.getVoteByQuestionIdAndUserId(questionId, securityHelper.getPrincipal().getId());
-            if (optionalVoteQuestion.isPresent()) {
-                int voteValue = optionalVoteQuestion.get().getVote();
-                if (voteValue == 1) {
-                    voteQuestionService.deleteById(optionalVoteQuestion.get().getId());
-                } else if (voteValue == -1) {
-                    voteQuestionService.deleteById(optionalVoteQuestion.get().getId());
-                    VoteQuestion voteQuestion = new VoteQuestion(securityHelper.getPrincipal(), question.get(), 1);
-                    voteQuestionService.persist(voteQuestion);
-                }
-                return ResponseEntity.ok("Vote changed");
-            }
-            return ResponseEntity.badRequest().body("Can't change vote");
-        }
+        Question question = questionOptional.get();
+        User user = securityHelper.getPrincipal();
 
-        VoteQuestion voteQuestion = new VoteQuestion(securityHelper.getPrincipal(), question.get(), 1);
-        voteQuestionService.persist(voteQuestion);
-
-        return ResponseEntity.ok(voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion));
+        return voteQuestionService.answerUpVote(question, user);
     }
 
     @PostMapping("/{questionId}/downVote")
@@ -495,31 +479,15 @@ public class QuestionController {
             @PathVariable Long questionId) {
 
 
-        Optional<Question> question = questionService.getById(questionId);
-        if (!question.isPresent()) {
+        Optional<Question> questionOptional = questionService.getById(questionId);
+        if (!questionOptional.isPresent()) {
             return ResponseEntity.badRequest().body("Question was not found");
         }
 
-        if (voteQuestionService.isUserAlreadyVoted(question.get(), securityHelper.getPrincipal())) {
-            Optional<VoteQuestionDto> optionalVoteQuestion = voteQuestionDtoService.getVoteByQuestionIdAndUserId(questionId, securityHelper.getPrincipal().getId());
-            if (optionalVoteQuestion.isPresent()) {
-                int voteValue = optionalVoteQuestion.get().getVote();
-                if (voteValue == -1) {
-                    voteQuestionService.deleteById(optionalVoteQuestion.get().getId());
-                } else if (voteValue == 1) {
-                    voteQuestionService.deleteById(optionalVoteQuestion.get().getId());
-                    VoteQuestion voteQuestion = new VoteQuestion(securityHelper.getPrincipal(), question.get(), -1);
-                    voteQuestionService.persist(voteQuestion);
-                }
-                return ResponseEntity.ok("Vote changed");
-            }
-            return ResponseEntity.badRequest().body("Can't change vote");
-        }
+        Question question = questionOptional.get();
+        User user = securityHelper.getPrincipal();
 
-        VoteQuestion voteQuestion = new VoteQuestion(securityHelper.getPrincipal(), question.get(), -1);
-        voteQuestionService.persist(voteQuestion);
-
-        return ResponseEntity.ok(voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion));
+        return voteQuestionService.answerDownVote(question, user);
     }
 
 

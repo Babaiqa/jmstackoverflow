@@ -12,20 +12,37 @@ import javax.persistence.PersistenceContext;
 
 @Repository
 public class VoteAnswerDaoImpl extends ReadWriteDaoImpl<VoteAnswer, Long> implements VoteAnswerDao {
+
     @PersistenceContext
     EntityManager entityManager;
 
+    @Override
     public boolean isUserAlreadyVotedIsThisQuestion(Question question, User user, Answer answer) {
-        return (Boolean) entityManager.createQuery(" SELECT " +
+
+        return (Boolean) entityManager.createQuery(" select " +
                 " case when exists " +
-                "(select vote  from VoteAnswer vote  where (vote.answer.id =: answerId AND vote.user.id =: userId ) " +
-                "OR (vote.answer.question.id =:questionId AND vote.user.id =: userId))" +
+                "(select vote from VoteAnswer vote where (vote.answer.id =: answerId and vote.user.id =: userId) " +
+                "OR (vote.answer.question.id =:questionId and vote.user.id =: userId))" +
                 " then true " +
-                " else  false " +
-                "END from Answer")
+                " else false " +
+                "end from Answer")
                 .setParameter("answerId", answer.getId())
                 .setParameter("userId", user.getId())
                 .setParameter("questionId", question.getId())
+                .getSingleResult();
+    }
+
+    @Override
+    public boolean isAuthorOfQuestion(Long questionId, Long userId) {
+
+        return (Boolean) entityManager.createQuery("select" +
+                " case when exists " +
+                "(select question from Question question where (question.id =: questionId and question.user.id =: userId))" +
+                " then true " +
+                " else false " +
+                "end from Question")
+                .setParameter("questionId", questionId)
+                .setParameter("userId", userId)
                 .getSingleResult();
     }
 }
