@@ -2,11 +2,10 @@ package com.javamentor.qa.platform.controllers.user;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
-import com.javamentor.qa.platform.dao.abstracts.model.GroupChatDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
-import com.javamentor.qa.platform.models.entity.user.Reputation;
+import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -105,8 +104,6 @@ class UserControllerTest extends AbstractIntegrationTest {
                 .setParameter("userId", newUser.get().getId());
         Assertions.assertNotNull(SingleResultUtil.getSingleResultOrNull(reputationQuery));
     }
-
-
 
     @Test
     @DataSet(value = {"dataset/user/userApi.yml", "dataset/user/roleUserApi.yml"}, disableConstraints = true, cleanBefore = true, cleanAfter = true)
@@ -266,7 +263,6 @@ class UserControllerTest extends AbstractIntegrationTest {
         expected.setItems(expectedItems);
         // Expected a non-empty value at JSON path "$.items" but found: []
         String resultContext =
-                //тут прилетает пустота
                 mockMvc.perform(get("/api/user/order/reputation/month")
                         .param("page", "1")
                         .param("size", "10"))
@@ -593,7 +589,6 @@ class UserControllerTest extends AbstractIntegrationTest {
         user.setEmail("some@with.email");
         user.setPassword("100500");
         user.setFullName("Samuel Smith");
-
 
         String jsonRequest = objectMapper.writeValueAsString(user);
 
