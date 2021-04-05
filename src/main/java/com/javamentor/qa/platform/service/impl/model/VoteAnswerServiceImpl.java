@@ -10,8 +10,10 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.VoteAnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
+import com.javamentor.qa.platform.webapp.converters.VoteAnswerConverter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -22,22 +24,24 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
     private final AnswerService answerService;
     private final VoteAnswerDao voteAnswerDao;
     private final VoteAnswerDtoService voteAnswerDtoService;
+    private final VoteAnswerConverter voteAnswerConverter;
 
     public VoteAnswerServiceImpl(ReadWriteDao<VoteAnswer, Long> readWriteDao,
                                  VoteAnswerDao voteAnswerDao,
                                  AnswerService answerService,
-                                 VoteAnswerDtoService voteAnswerDtoService) {
+                                 VoteAnswerDtoService voteAnswerDtoService
+            , VoteAnswerConverter voteAnswerConverter) {
         super(readWriteDao);
         this.voteAnswerDao = voteAnswerDao;
         this.answerService = answerService;
         this.voteAnswerDtoService = voteAnswerDtoService;
+        this.voteAnswerConverter = voteAnswerConverter;
     }
 
     // FIXME:: Опять же нельзя доставать у questiom юзера т.к.
     //  ты получил этот вопрос по id из контроллера и т.к.
     //  у нас стоит lazy он приходит без него дальше проблема
     //  которую я описывал выше
-    // FIXME:: этот метод из контроллера убрать и вынести в сервис
     public void markHelpful(Question question, User user, Answer answer, boolean isHelpful) {
 
         boolean authorOfQuestion = question.getUser().getId().equals(user.getId());
@@ -55,56 +59,57 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
     }
 
     @Override
-    public ResponseEntity<String> upVoteIfAlreadyVoted(Optional<Question> questionOptional, User user, Optional<Answer> answerOptional) {
+    @Transactional
+    public ResponseEntity<String> answerUpVote(Question question, User user, Answer answer) {
 
-        Question question = questionOptional.get();
-        Answer answer = answerOptional.get();
-
-        if (isUserAlreadyVotedIsThisQuestion(questionOptional.get(), user, answerOptional.get())) {
+        if (isUserAlreadyVotedIsThisQuestion(question, user, answer)) {
             Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answer.getId(), user.getId());
             if (optionalVoteAnswer.isPresent()) {
                 int voteValue = optionalVoteAnswer.get().getVote();
                 if (voteValue == 1) {
                     voteAnswerDao.deleteById(optionalVoteAnswer.get().getId());
-//                    deleteById(optionalVoteAnswer.get().getId());
                     markHelpful(question, user, answer, false);
                 } else if (voteValue == -1) {
                     voteAnswerDao.deleteById(optionalVoteAnswer.get().getId());
-//                    deleteById(optionalVoteAnswer.get().getId());
                     VoteAnswer voteAnswer = new VoteAnswer(user, answer, 1);
                     voteAnswerDao.persist(voteAnswer);
-//                    persist(voteAnswer);
                     markHelpful(question, user, answer, true);
                 }
                 return ResponseEntity.ok("Vote changed");
             }
             return ResponseEntity.ok("Can't change vote");
         }
-        // FIXME: Разобраться что отправлять
-        return ResponseEntity.ok("OK");
+        markHelpful(question, user, answer, true);
+
+        VoteAnswer voteAnswer = new VoteAnswer(user, answer, 1);
+        voteAnswerDao.persist(voteAnswer);
+
+        return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer).toString());
     }
 
-//    @Override
-//    public ResponseEntity<String> upVoteIfAlreadyVoted(Question question, User user, Answer answer) {
-//
-//        if (isUserAlreadyVotedIsThisQuestion(question, user, answer)) {
-//            Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answer.getId(), user.getId());
-//            if (optionalVoteAnswer.isPresent()) {
-//                int voteValue = optionalVoteAnswer.get().getVote();
-//                if (voteValue == 1) {
-//                    voteAnswerDao.deleteById(optionalVoteAnswer.get().getId());
-//                    markHelpful(question, user, answer, false);
-//                } else if (voteValue == -1) {
-//                    voteAnswerDao.deleteById(optionalVoteAnswer.get().getId());
-//                    VoteAnswer voteAnswer = new VoteAnswer(user, answer, 1);
-//                    voteAnswerDao.persist(voteAnswer);
-//                    markHelpful(question, user, answer, true);
-//                }
-//                return ResponseEntity.ok("Vote changed");
-//            }
-//            return ResponseEntity.ok("Can't change vote");
-//        }
-//        // FIXME: Разобраться что отправлять
-//        return ResponseEntity.ok("OK");
-//    }
+    @Override
+    @Transactional
+    public ResponseEntity<String> answerDownVote(Question question, User user, Answer answer) {
+        if (isUserAlreadyVotedIsThisQuestion(question, user, answer)) {
+            Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answer.getId(), user.getId());
+            if (optionalVoteAnswer.isPresent()) {
+                int voteValue = optionalVoteAnswer.get().getVote();
+                if (voteValue == -1) {
+                    voteAnswerDao.deleteById(optionalVoteAnswer.get().getId());
+                } else if (voteValue == 1) {
+                    voteAnswerDao.deleteById(optionalVoteAnswer.get().getId());
+                    VoteAnswer voteAnswer = new VoteAnswer(user, answer, -1);
+                    voteAnswerDao.persist(voteAnswer);
+                }
+                markHelpful(question, user, answer, false);
+                return ResponseEntity.ok("Vote changed");
+            }
+            return ResponseEntity.ok("Can't change vote");
+        }
+
+        VoteAnswer voteAnswer = new VoteAnswer(user, answer, -1);
+        voteAnswerDao.persist(voteAnswer);
+
+        return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer).toString());
+    }
 }

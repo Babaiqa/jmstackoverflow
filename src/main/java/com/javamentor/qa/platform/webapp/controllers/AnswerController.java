@@ -194,7 +194,6 @@ public class AnswerController {
             @ApiParam(name = "answerId", value = "type Long", required = true, example = "0")
             @PathVariable Long answerId) {
 
-
         Optional<Question> questionOptional = questionService.getById(questionId);
         if (!questionOptional.isPresent()) {
             return ResponseEntity.badRequest().body("Question was not found");
@@ -205,35 +204,11 @@ public class AnswerController {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
 
-        User currentUser = securityHelper.getPrincipal();
+        Question question = questionOptional.get();
+        User user = securityHelper.getPrincipal();
+        Answer answer = answerOptional.get();
 
-//        // FIXME:: Эту логику вынести в сервис
-//        if (voteAnswerService.isUserAlreadyVotedIsThisQuestion(questionOptional.get(), currentUser, answerOptional.get())) {
-//            Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answerId, currentUser.getId());
-//            if (optionalVoteAnswer.isPresent()) {
-//                int voteValue = optionalVoteAnswer.get().getVote();
-//                if (voteValue == 1) {
-//                    voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
-//                    voteAnswerService.markHelpful(questionOptional.get(), currentUser, answerOptional.get(), false);
-//                } else if (voteValue == -1) {
-//                    voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
-//                    VoteAnswer voteAnswer = new VoteAnswer(currentUser, answerOptional.get(), 1);
-//                    voteAnswerService.persist(voteAnswer);
-//                    voteAnswerService.markHelpful(questionOptional.get(), currentUser, answerOptional.get(), true);
-//                }
-//                return ResponseEntity.ok("Vote changed");
-//            }
-//            return ResponseEntity.ok("Can't change vote");
-//        }
-
-        voteAnswerService.upVoteIfAlreadyVoted(questionOptional, currentUser, answerOptional);
-
-        voteAnswerService.markHelpful(questionOptional.get(), currentUser, answerOptional.get(), true);
-
-        VoteAnswer voteAnswer = new VoteAnswer(currentUser, answerOptional.get(), 1);
-        voteAnswerService.persist(voteAnswer);
-
-        return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
+        return voteAnswerService.answerUpVote(question, user, answer);
     }
 
 
@@ -250,38 +225,21 @@ public class AnswerController {
             @ApiParam(name = "answerId", value = "type Long", required = true, example = "0")
             @PathVariable Long answerId) {
 
-        Optional<Question> question = questionService.getById(questionId);
-        if (!question.isPresent()) {
+        Optional<Question> questionOptional = questionService.getById(questionId);
+        if (!questionOptional.isPresent()) {
             return ResponseEntity.badRequest().body("Question was not found");
         }
 
-        Optional<Answer> answer = answerService.getById(answerId);
-        if (!answer.isPresent()) {
+        Optional<Answer> answerOptional = answerService.getById(answerId);
+        if (!answerOptional.isPresent()) {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
 
-        // FIXME:: Эту логику вынести в сервис
-        if (voteAnswerService.isUserAlreadyVotedIsThisQuestion(question.get(), securityHelper.getPrincipal(), answer.get())) {
-            Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answerId, securityHelper.getPrincipal().getId());
-            if (optionalVoteAnswer.isPresent()) {
-                int voteValue = optionalVoteAnswer.get().getVote();
-                if (voteValue == -1) {
-                    voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
-                } else if (voteValue == 1) {
-                    voteAnswerService.deleteById(optionalVoteAnswer.get().getId());
-                    VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
-                    voteAnswerService.persist(voteAnswer);
-                }
-                voteAnswerService.markHelpful(question.get(), securityHelper.getPrincipal(), answer.get(), false);
-                return ResponseEntity.ok("Vote changed");
-            }
-            return ResponseEntity.badRequest().body("Failed to change vote");
-        }
+        Question question = questionOptional.get();
+        User user = securityHelper.getPrincipal();
+        Answer answer = answerOptional.get();
 
-        VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
-        voteAnswerService.persist(voteAnswer);
-
-        return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
+        return voteAnswerService.answerDownVote(question, user, answer);
     }
 
     @GetMapping("/{questionId}/isAnswerVoted")
