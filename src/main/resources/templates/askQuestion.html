@@ -29,7 +29,7 @@
                             <p class="card-text">Будьте конкретны. Представьте, что вы задаёте вопрос другому
                                 человеку.</p>
                             <form>
-                                <input type="text" class="form-control" id="questionTitle"
+                                <input type="text" class="form-control" id="questionTitle" onkeyup='checkTitle()'
                                        placeholder="В чем заключается ваш вопрос? Будьте конкретны.">
                             </form>
                         </div>
@@ -37,7 +37,7 @@
                             <h6 class="card-title">Основная часть</h6>
                             <p class="card-text">Добавьте всю информацию, которая может понадобиться для ответа на ваш
                                 вопрос.</p>
-                            <div id="summernote"></div>
+                            <div class="summernote" id="summernote" onkeyup='checkDescription()' > </div>
                         </div>
                         <div class="card-body">
                             <h6 class="card-title">Метки</h6>
@@ -158,7 +158,7 @@
                 </div>
             </div>
             <form>
-                <button type="submit" class="btn btn-primary" id="buttonAskQuestion" disabled>Проверьте ваш вопрос</button>
+                <button type="submit" class="btn btn-primary" id="buttonAskQuestion" disabled>Задать вопрос</button>
             </form>
         </div>
     </div>
