@@ -20,7 +20,6 @@ public class ChatDtoServiceImpl implements ChatDtoService {
     }
 
     @Override
-    @Transactional
     public List<ChatDto> getAllChatsByUser(Long userId) {
         return chatDtoDao.getAllChatsByUser(userId);
     }
