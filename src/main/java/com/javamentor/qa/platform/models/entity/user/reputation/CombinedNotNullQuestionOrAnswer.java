@@ -7,12 +7,10 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Constraint(validatedBy = ReputationValidator.class)
-public @interface CombinedNotNull {
+public @interface CombinedNotNullQuestionOrAnswer {
     String message() default "questionId or answerId is required";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-
-    String[] fields() default {};
 }

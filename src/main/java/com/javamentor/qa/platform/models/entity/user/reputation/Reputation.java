@@ -19,7 +19,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-//@CombinedNotNull(fields = {"question_id", "answer_id"})
+@CombinedNotNullQuestionOrAnswer
 @Table(name = "reputation")
 public class Reputation implements Serializable {
     private static final long serialVersionUID = 7177182244933788025L;
