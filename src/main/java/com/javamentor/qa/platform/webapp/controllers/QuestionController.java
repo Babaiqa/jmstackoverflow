@@ -258,6 +258,7 @@ public class QuestionController {
         questionService.persist(question);
         Reputation reputation = new Reputation();
         reputation.setCount(count);
+        reputation.setQuestion(question);
         reputation.setType(ReputationType.Question);
         reputationService.update(reputation);
 
