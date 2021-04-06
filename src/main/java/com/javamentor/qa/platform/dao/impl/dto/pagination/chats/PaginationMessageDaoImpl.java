@@ -31,7 +31,7 @@ public class PaginationMessageDaoImpl implements PaginationDao<MessageDto> {
                         "ms.lastRedactionDate," +
                         "ms.userSender.id," +
                         "ms.chat.id )" +
-                        "from Message ms where ms.chat.id =: chatId")
+                        "from Message ms  where ms.chat.id =: chatId order by ms.persistDate desc")
                 .unwrap(Query.class)
                 .setParameter("chatId", chatId)
                 .getResultList();
