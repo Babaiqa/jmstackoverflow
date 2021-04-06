@@ -4,7 +4,6 @@ import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
-import com.javamentor.qa.platform.models.entity.user.Reputation;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
@@ -253,11 +252,7 @@ public class QuestionController {
 
         Question question = questionConverter.questionCreateDtoToQuestion(questionCreateDto);
         questionService.persist(question);
-        Optional<Reputation> reputationOpt = reputationService.getReputationByUserId(questionCreateDto.getUserId());
-        
-
         QuestionDto questionDtoNew = questionConverter.questionToQuestionDto(question);
-
         return ResponseEntity.ok(questionDtoNew);
     }
 
@@ -293,6 +288,29 @@ public class QuestionController {
             @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDto>"),
     })
     public ResponseEntity<?> getQuestionsWithoutAnswer(
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    required = true,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationWithoutAnswers(page, size);
+        return ResponseEntity.ok(resultPage);
+    }
+
+    @GetMapping(value = "/withoutAnswer/votes", params = {"page", "size"})
+    @ApiOperation(value = "Return Questions without answers sorted by votes")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDto>"),
+    })
+    public ResponseEntity<?> getQuestionsWithoutAnswerSortedByVotes(
             @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
             @RequestParam("page") int page,
             @ApiParam(name = "size", value = "Number of entries per page.Type int." +
