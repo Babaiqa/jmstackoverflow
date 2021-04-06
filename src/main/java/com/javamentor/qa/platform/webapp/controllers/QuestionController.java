@@ -324,7 +324,7 @@ public class QuestionController {
             return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
-        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationWithoutAnswers(page, size);
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationWithoutAnswerSortedByVotes(page, size);
         return ResponseEntity.ok(resultPage);
     }
 
