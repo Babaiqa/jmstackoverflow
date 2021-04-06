@@ -85,6 +85,4 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
         return parameters;
     }
 
-
-
 }
