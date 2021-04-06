@@ -4,8 +4,9 @@ import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
-import com.javamentor.qa.platform.models.entity.user.Reputation;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
+import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
@@ -246,16 +247,17 @@ public class QuestionController {
             @ApiResponse(code = 400, message = "Question not add", response = String.class)
     })
     public ResponseEntity<?> addQuestion(@Valid @RequestBody QuestionCreateDto questionCreateDto) {
-
+        Integer count = 5;
         if (!userService.existsById(questionCreateDto.getUserId())) {
             return ResponseEntity.badRequest().body("questionCreateDto.userId dont`t exist");
         }
 
         Question question = questionConverter.questionCreateDtoToQuestion(questionCreateDto);
         questionService.persist(question);
-        Optional<Reputation> reputationOpt = reputationService.getReputationByUserId(questionCreateDto.getUserId());
-        
-
+        Reputation reputation = new Reputation();
+        reputation.setCount(count);
+        reputation.setType(ReputationType.Question);
+        reputationService.update(reputation);
         QuestionDto questionDtoNew = questionConverter.questionToQuestionDto(question);
 
         return ResponseEntity.ok(questionDtoNew);
