@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class  TestDataInitService {
+public class TestDataInitService {
 
     final UserService userService;
     final QuestionService questionService;
@@ -47,6 +47,7 @@ public class  TestDataInitService {
     Role USER_ROLE = Role.builder().name("USER").build();
     Role ADMIN_ROLE = Role.builder().name("ADMIN").build();
     List<User> users = new ArrayList<>();
+    List<Chat> chats = new ArrayList<>();
 
 
     @Autowired
@@ -235,25 +236,28 @@ public class  TestDataInitService {
             users.add(user);
         }
 
+
         int randomChatSingle = random.nextInt(19) + 1;
 
         for (int i = 0; i < randomChatSingle; i++) {
             int randomUserOne = random.nextInt(49) + 1;
             int randomUserTwo = random.nextInt(49) + 1;
 
-            List<Message> messagesSingle = new ArrayList<>();
-            messagesSingle.add(new Message("Text single message" + i, users.get(randomUserOne)));
-            messagesSingle.add(new Message("Text single message" + i, users.get(randomUserTwo)));
-
             SingleChat singleChat = new SingleChat();
             singleChat.setChat(Chat.builder()
                     .title("Single chat title" + i)
                     .chatType(ChatType.SINGLE)
-                    .messages(messagesSingle)
                     .build());
+
+            Message message1 = new Message("Text single message" + i, users.get(randomUserOne), singleChat.getChat());
+            Message message2 = new Message("Text single message" + i, users.get(randomUserTwo), singleChat.getChat());
+
             singleChat.setUserOne(users.get(randomUserOne));
             singleChat.setUseTwo(users.get(randomUserTwo));
             singleChatService.persist(singleChat);
+            messageService.persist(message1);
+            messageService.persist(message2);
+
         }
 
         int randomChatGroup = random.nextInt(19) + 1;
@@ -261,17 +265,21 @@ public class  TestDataInitService {
         for (int i = 0; i < randomChatGroup; i++) {
             int randomUsers = random.nextInt(49) + 1;
 
-            List<Message> messagesGroup = new ArrayList<>();
-            messagesGroup.add(new Message("Text group message" + i, users.get(randomUsers)));
 
             GroupChat groupChat = new GroupChat();
             groupChat.setChat(Chat.builder()
                     .title("Group Chat title" + i)
                     .chatType(ChatType.GROUP)
-                    .messages(messagesGroup)
                     .build());
+
+            Message message1 = new Message("Text group message" + i, users.get(randomUsers), groupChat.getChat());
+
             groupChat.setUsers(users.stream().limit(randomUsers).collect(Collectors.toSet()));
             groupChatService.persist(groupChat);
+            messageService.persist(message1);
         }
+
     }
+
+
 }

@@ -18,7 +18,7 @@ public class ChatDto {
     private String title;
     private LocalDateTime persistDate;
     private ChatType chatType;
-    //private List<MessageDto> messages;
+
 
     @Override
     public String toString() {

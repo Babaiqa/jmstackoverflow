@@ -17,7 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Table(name = "group_chat")
-public class GroupChat {
+public class GroupChat{
 
     @Id
     private Long id;
