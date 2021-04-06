@@ -8,6 +8,7 @@ import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
+import com.javamentor.qa.platform.models.entity.user.reputation.ReputationValidator;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
@@ -159,9 +160,8 @@ public class AnswerController {
                                                  @ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
                                                  @PathVariable Long questionId) {
 
-
-        User user = securityHelper.getPrincipal();
         Integer count = 5;
+        User user = securityHelper.getPrincipal();
 
         Optional<Question> question = questionService.getById(questionId);
         if (!question.isPresent()) {

@@ -43,9 +43,9 @@ public class QuestionController {
     private final VoteQuestionService voteQuestionService;
     private final VoteQuestionConverter voteQuestionConverter;
     private final QuestionViewedService questionViewedService;
-    private final ReputationService reputationService;
-    private static final int MAX_ITEMS_ON_PAGE = 100;
+    private final  ReputationService reputationService;
 
+    private static final int MAX_ITEMS_ON_PAGE = 100;
 
     public QuestionController(QuestionService questionService,
                               TagService tagService,
@@ -247,7 +247,9 @@ public class QuestionController {
             @ApiResponse(code = 400, message = "Question not add", response = String.class)
     })
     public ResponseEntity<?> addQuestion(@Valid @RequestBody QuestionCreateDto questionCreateDto) {
+        User user = securityHelper.getPrincipal();
         Integer count = 5;
+
         if (!userService.existsById(questionCreateDto.getUserId())) {
             return ResponseEntity.badRequest().body("questionCreateDto.userId dont`t exist");
         }
@@ -259,8 +261,8 @@ public class QuestionController {
         reputation.setQuestion(question);
         reputation.setType(ReputationType.Question);
         reputationService.update(reputation);
-        QuestionDto questionDtoNew = questionConverter.questionToQuestionDto(question);
 
+        QuestionDto questionDtoNew = questionConverter.questionToQuestionDto(question);
         return ResponseEntity.ok(questionDtoNew);
     }
 
