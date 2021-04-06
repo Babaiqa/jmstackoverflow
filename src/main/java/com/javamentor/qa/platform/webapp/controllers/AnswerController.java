@@ -5,9 +5,9 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
-import com.javamentor.qa.platform.models.entity.user.Reputation;
-import com.javamentor.qa.platform.models.entity.user.ReputationType;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
+import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
@@ -161,6 +161,7 @@ public class AnswerController {
 
 
         User user = securityHelper.getPrincipal();
+        Integer count = 5;
 
         Optional<Question> question = questionService.getById(questionId);
         if (!question.isPresent()) {
@@ -174,16 +175,8 @@ public class AnswerController {
 
         if (!everAnswered) {
             answerService.persist(answer);
-            Optional<Reputation> reputationOpt = reputationService.getReputationByUserId(user.getId());
-            Reputation reputation;
-            Integer count = 5;
-            if (reputationOpt.isPresent()) {
-                reputation = reputationOpt.get();
-                reputation.setCount(reputation.getCount() + count);
-            } else {
-                reputation = new Reputation();
-                reputation.setCount(count);
-            }
+            Reputation reputation = new Reputation();
+            reputation.setCount(count);
             reputation.setType(ReputationType.Answer);
             reputationService.update(reputation);
             return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
