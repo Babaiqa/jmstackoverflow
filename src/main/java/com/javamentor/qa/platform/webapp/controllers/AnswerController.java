@@ -5,8 +5,9 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
-import com.javamentor.qa.platform.models.entity.user.Reputation;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
+import com.javamentor.qa.platform.models.entity.user.reputation.ReputationValidator;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
@@ -158,7 +159,7 @@ public class AnswerController {
                                                  @ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
                                                  @PathVariable Long questionId) {
 
-
+        Integer count = 5;
         User user = securityHelper.getPrincipal();
 
         Optional<Question> question = questionService.getById(questionId);
@@ -173,12 +174,9 @@ public class AnswerController {
 
         if (!everAnswered) {
             answerService.persist(answer);
-            Optional<Reputation> reputationOpt = reputationService.getReputationByUserId(user.getId());
-            if (reputationOpt.isPresent()) {
-                Reputation reputation = reputationOpt.get();
-                reputation.setCount(reputation.getCount() + 5);
-                reputationService.update(reputation);
-            }
+            Reputation reputation = new Reputation();
+            reputation.setCount(count);
+            reputationService.update(reputation);
             return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
         }
 
