@@ -76,6 +76,17 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
                 setPaginationParameters(page, size, Optional.empty(), Optional.empty()));
     }
 
+    @Override
+    public PageDto<QuestionDto, Object> getPaginationWithoutAnswersTrackedTag(int page, int size, long id){
+        Map<String, Object> parameters = setPaginationParameters(page, size, Optional.empty(), Optional.empty());
+        parameters.put("page", page);
+        parameters.put("size", size);
+        parameters.put("id", id);
+        return getPageDto(
+                "paginationWithoutAnswersTrackedTag",
+                parameters);
+    }
+
     private Map<String, Object> setPaginationParameters(int page, int size, Optional<List<Long>> tagsIds, Optional<String> message) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("page", page);

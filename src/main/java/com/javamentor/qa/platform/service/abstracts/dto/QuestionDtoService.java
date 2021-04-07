@@ -4,9 +4,6 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 
 import java.util.List;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public interface QuestionDtoService {
@@ -27,5 +24,7 @@ public interface QuestionDtoService {
     PageDto<QuestionDto, Object> getQuestionBySearchValue(String message, int page, int size);
 
     PageDto<QuestionDto, Object> getPaginationWithoutAnswersNew(int page, int size);
+
+    PageDto<QuestionDto, Object> getPaginationWithoutAnswersTrackedTag(int page, int size, long id);
 
 }

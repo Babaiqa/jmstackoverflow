@@ -553,4 +553,26 @@ public class QuestionController {
         PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationWithoutAnswersNew(page, size);
         return ResponseEntity.ok(resultPage);
     }
+
+    @GetMapping(value = "/withoutAnswer/trackedTag", params = {"page", "size"})
+    @ApiOperation(value = "Return Questions without answers sorted by trackedTag")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDto>"),
+    })
+    public ResponseEntity<?> getQuestionsWithoutAnswerTrackedTag(
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    required = true,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationWithoutAnswersTrackedTag(page, size, securityHelper.getPrincipal().getId() );
+        return ResponseEntity.ok(resultPage);
+    }
 }
