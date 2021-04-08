@@ -21,14 +21,7 @@ public class PaginationQuestionWithoutAnswersNewDaoImpl implements PaginationDao
     @Override
     public List<QuestionDto> getItems(Map<String, Object> parameters) {
 
-        int page = (int) parameters.get("page");
-        int size = (int) parameters.get("size");
-
-        List<Long> questionIds = (List<Long>) em
-                .createQuery("select q.id from Question q left outer join Answer a on (q.id = a.question.id) where a.question.id is null order by q.persistDateTime desc")
-                .setFirstResult(page * size - size)
-                .setMaxResults(size)
-                .getResultList();
+        List<Long> questionIds = (List<Long>) parameters.get("ids");
 
         return (List<QuestionDto>) em.unwrap(Session.class)
                 .createQuery("select question.id as question_id, " +

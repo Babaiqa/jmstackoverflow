@@ -47,4 +47,13 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 .uniqueResultOptional();
 
     }
+
+    @Override
+    public List<Long> getPaginationQuestionIdsWithoutAnswerOrderByNew(int page, int size) {
+        return   (List<Long>) entityManager
+                .createQuery("select q.id from Question q left outer join Answer a on (q.id = a.question.id) where a.question.id is null order by q.persistDateTime desc")
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
+    }
 }
