@@ -6,14 +6,14 @@ import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
+import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
+import com.javamentor.qa.platform.models.entity.user.reputation.ReputationValidator;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.VoteAnswerDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
-import com.javamentor.qa.platform.service.abstracts.model.CommentAnswerService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import com.javamentor.qa.platform.webapp.converters.CommentConverter;
 import com.javamentor.qa.platform.webapp.converters.VoteAnswerConverter;
@@ -44,6 +44,7 @@ public class AnswerController {
     private final AnswerConverter answerConverter;
     private final VoteAnswerService voteAnswerService;
     private final VoteAnswerConverter voteAnswerConverter;
+    private final ReputationService reputationService;
 
 
     @Autowired
@@ -56,7 +57,7 @@ public class AnswerController {
                             VoteAnswerDtoService voteAnswerDtoService,
                             AnswerDtoService answerDtoService,
                             AnswerConverter answerConverter,
-                            VoteAnswerService voteAnswerService, VoteAnswerConverter voteAnswerConverter) {
+                            VoteAnswerService voteAnswerService, VoteAnswerConverter voteAnswerConverter, ReputationService reputationService) {
         this.answerService = answerService;
         this.commentAnswerService = commentAnswerService;
         this.commentConverter = commentConverter;
@@ -68,6 +69,7 @@ public class AnswerController {
         this.answerConverter = answerConverter;
         this.voteAnswerService = voteAnswerService;
         this.voteAnswerConverter = voteAnswerConverter;
+        this.reputationService = reputationService;
     }
 
     @PostMapping("/{questionId}/answer/{answerId}/comment")
@@ -158,7 +160,7 @@ public class AnswerController {
                                                  @ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
                                                  @PathVariable Long questionId) {
 
-
+        Integer count = 5;
         User user = securityHelper.getPrincipal();
 
         Optional<Question> question = questionService.getById(questionId);
@@ -169,12 +171,15 @@ public class AnswerController {
         Answer answer = new Answer(question.get(), user, createAnswerDto.getHtmlBody(), false, false);
         answer.setQuestion(question.get());
 
-        boolean neverAnswered = answerDtoService.getAllAnswersByQuestionId(questionId)
-                .stream()
-                .noneMatch(answerDto -> answerDto.getUserId().equals(answer.getUser().getId()));
+        boolean everAnswered = answerDtoService.isUserAlreadyAnsweredToQuestion(user.getId(), questionId);
 
-        if (neverAnswered) {
+        if (!everAnswered) {
             answerService.persist(answer);
+            Reputation reputation = new Reputation();
+            reputation.setCount(count);
+            reputation.setAnswer(answer);
+            reputation.setType(ReputationType.Answer);
+            reputationService.update(reputation);
             return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
         }
 

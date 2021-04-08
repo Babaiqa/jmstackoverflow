@@ -8,6 +8,8 @@ import com.javamentor.qa.platform.models.entity.question.*;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.user.*;
+import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
+import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import com.javamentor.qa.platform.service.abstracts.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -125,13 +127,6 @@ public class TestDataInitService {
             else user.setRole(USER_ROLE);
             userService.persist(user);
 
-            Reputation reputation = new Reputation();
-            int n = random.nextInt(ReputationType.values().length);
-            reputation.setUser(user);
-            reputation.setType(ReputationType.values()[n]);
-            reputation.setCount(random.nextInt(100) + 1);
-            reputationService.persist(reputation);
-
             Question question = new Question();
             List<Tag> randomQuestionTagList = new ArrayList<>();
 
@@ -191,6 +186,24 @@ public class TestDataInitService {
             answer.setIsHelpful(false);
             answer.setIsDeleted(false);
             answerService.persist(answer);
+
+            Reputation reputation = new Reputation();
+            reputation.setUser(user);
+            reputation.setCount(random.nextInt(100) + 1);
+            if (i % 4 == 0) {
+                reputation.setType(ReputationType.Question);
+                reputation.setQuestion(question);
+            } else if (i % 4 == 1) {
+                reputation.setType(ReputationType.Answer);
+                reputation.setAnswer(answer);
+            } else if (i % 4 == 2) {
+                reputation.setType(ReputationType.VoteAnswer);
+                reputation.setAnswer(answer);
+            } else {
+                reputation.setType(ReputationType.VoteQuestion);
+                reputation.setQuestion(question);
+            }
+            reputationService.persist(reputation);
 
             CommentQuestion commentQuestion = new CommentQuestion();
             commentQuestion.setQuestion(question);
