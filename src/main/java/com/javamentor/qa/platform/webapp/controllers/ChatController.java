@@ -57,7 +57,7 @@ public class ChatController {
     @GetMapping(path = "/{chatId}/message")
     @ApiOperation(value = "Get page MessageDto. MAX ITEMS ON PAGE=" + MAX_ITEMS_ON_PAGE)
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns the pagination List<MessageDto>"),
+            @ApiResponse(code = 200, message = "Returns the pagination List<MessageDto> "),
     })
     public ResponseEntity<?> getAllMessageByChatIdPagination(
             @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
@@ -74,7 +74,7 @@ public class ChatController {
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
 
-        PageDto<MessageDto, Object> allMessage = messageDtoService.getAllMessageDtoByChatIdPagination(size, page, chatId);
+        PageDto<MessageDto, Object> allMessage = messageDtoService.getAllMessageDtoByChatIdPagination(page, size, chatId);
 
 
         return ResponseEntity.ok(allMessage);

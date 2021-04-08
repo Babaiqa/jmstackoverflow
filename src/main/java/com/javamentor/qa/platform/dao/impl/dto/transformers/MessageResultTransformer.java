@@ -9,9 +9,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+// для потомков , эта собака сутулая не работает  хз почему , мож разберется кто=)
 public class MessageResultTransformer implements ResultTransformer {
 
-    private final Map<Long, MessageDto> messageDtoMap = new LinkedHashMap<>();
+    private Map<Long, MessageDto> messageDtoMap = new LinkedHashMap<>();
 
     @Override
     public Object transformTuple(Object[] tuple, String[] aliases) {
@@ -23,10 +24,11 @@ public class MessageResultTransformer implements ResultTransformer {
                 id -> {
                     MessageDto messageDtoTemp = new MessageDto();
                     messageDtoTemp.setId(((Number) tuple[aliasToIndexMapTrans.get("id")]).longValue());
-                    messageDtoTemp.setChatId(((Number) tuple[aliasToIndexMapTrans.get("chatId")]).longValue());
                     messageDtoTemp.setMessage((String) tuple[aliasToIndexMapTrans.get("message")]);
-                    messageDtoTemp.setUserSenderId(((Number) tuple[aliasToIndexMapTrans.get("userSenderId")]).longValue());
-                    messageDtoTemp.setPersistDate(((LocalDateTime) tuple[aliasToIndexMapTrans.get("persistDate")]));
+                    messageDtoTemp.setLastRedactionDate(((LocalDateTime) tuple[aliasToIndexMapTrans.get("last_redaction_date")]));
+                    messageDtoTemp.setPersistDate(((LocalDateTime) tuple[aliasToIndexMapTrans.get("persist_date")]));
+                    messageDtoTemp.setChatId(((Number) tuple[aliasToIndexMapTrans.get("chat_id")]).longValue());
+                    messageDtoTemp.setUserSenderId(((Number) tuple[aliasToIndexMapTrans.get("user_sender_id")]).longValue());
 
                     return messageDtoTemp;
                 });

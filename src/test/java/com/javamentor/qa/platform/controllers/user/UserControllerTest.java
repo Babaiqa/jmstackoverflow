@@ -140,6 +140,7 @@ class UserControllerTest extends AbstractIntegrationTest {
     @Test
     @DataSet(value = "dataset/user/userUserApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
     void shouldGetUserByName() throws Exception {
+
         PageDto<UserDtoList, Object> expected = new PageDto<>();
         expected.setCurrentPageNumber(1);
         expected.setTotalPageCount(1);
@@ -149,7 +150,6 @@ class UserControllerTest extends AbstractIntegrationTest {
 
 
         List<UserDtoList> expectedItems = new ArrayList<>();
-        // в датасет другие показатели репутации
         expectedItems.add(new UserDtoList(1L, "Teat", "linkImage1", 2, Arrays.asList(new TagDto[]{})));
         expectedItems.add(new UserDtoList(2L, "Teat", "linkImage2", 1, Arrays.asList(new TagDto[]{})));
         expectedItems.add(new UserDtoList(4L, "Tob", "linkImage4", 4, Arrays.asList(new TagDto[]{})));
@@ -264,9 +264,7 @@ class UserControllerTest extends AbstractIntegrationTest {
         expectedItems.add(new UserDtoList(4L, "Tot", null, 0, Arrays.asList(new TagDto[]{})));
         expectedItems.add(new UserDtoList(5L, "Tot", null, 0, Arrays.asList(new TagDto[]{})));
         expected.setItems(expectedItems);
-        // Expected a non-empty value at JSON path "$.items" but found: []
         String resultContext =
-                //тут прилетает пустота
                 mockMvc.perform(get("/api/user/order/reputation/month")
                         .param("page", "1")
                         .param("size", "10"))

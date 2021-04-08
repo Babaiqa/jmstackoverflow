@@ -19,8 +19,6 @@ public class PaginationMessageDaoImpl implements PaginationDao<MessageDto> {
 
     @Override
     public List<MessageDto> getItems(Map<String, Object> parameters) {
-        int page = (int) parameters.get("page");
-        int size = (int) parameters.get("size");
         long chatId = (long) parameters.get("chatId");
 
         return (List<MessageDto>) entityManager.unwrap(Session.class)
@@ -35,6 +33,7 @@ public class PaginationMessageDaoImpl implements PaginationDao<MessageDto> {
                 .unwrap(Query.class)
                 .setParameter("chatId", chatId)
                 .getResultList();
+
     }
 
 
