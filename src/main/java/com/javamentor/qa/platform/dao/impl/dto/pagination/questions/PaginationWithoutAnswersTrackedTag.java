@@ -22,22 +22,7 @@ public class PaginationWithoutAnswersTrackedTag implements PaginationDao<Questio
     @Override
     public List<QuestionDto> getItems(Map<String, Object> parameters) {
 
-        int page = (int) parameters.get("page");
-        int size = (int) parameters.get("size");
-        long id = (long) parameters.get("id");
-
-        List<Long> questionIds = (List<Long>) em.createQuery(
-                "select q.id " +
-                        "from Question q " +
-                        "join  q.tags tag " +
-                        "left outer join Answer a on (q.id = a.question.id) " +
-                        "join TrackedTag trackedTag on tag.id=trackedTag.trackedTag.id " +
-                        "inner join User user on user.id=trackedTag.user.id " +
-                        "where  user.id in :id and a.question.id is null ")
-                .setParameter("id", id)
-                .setFirstResult((page - 1) * size)
-                .setMaxResults(size)
-                .getResultList();
+        List<Long> questionIds = (List<Long>) parameters.get("ids");
 
         return (List<QuestionDto>) em.unwrap(Session.class)
                 .createQuery("select question.id as question_id, " +
