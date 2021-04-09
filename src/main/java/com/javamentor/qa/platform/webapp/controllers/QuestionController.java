@@ -6,6 +6,8 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
+import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.*;
@@ -43,6 +45,7 @@ public class QuestionController {
     private final VoteQuestionConverter voteQuestionConverter;
     private final VoteQuestionDtoService voteQuestionDtoService;
     private final QuestionViewedService questionViewedService;
+    private final ReputationService reputationService;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
@@ -58,8 +61,9 @@ public class QuestionController {
                               UserService userService,
                               VoteQuestionService voteQuestionService,
                               VoteQuestionConverter voteQuestionConverter,
-                              VoteQuestionDtoService voteQuestionDtoService,
-                              QuestionViewedService questionViewedService) {
+                              QuestionViewedService questionViewedService,
+                              ReputationService reputationService,
+                              VoteQuestionDtoService voteQuestionDtoService) {
         this.questionService = questionService;
         this.tagService = tagService;
         this.securityHelper = securityHelper;
@@ -72,6 +76,7 @@ public class QuestionController {
         this.voteQuestionService = voteQuestionService;
         this.voteQuestionConverter = voteQuestionConverter;
         this.questionViewedService = questionViewedService;
+        this.reputationService = reputationService;
         this.voteQuestionDtoService = voteQuestionDtoService;
     }
 
@@ -248,6 +253,8 @@ public class QuestionController {
             @ApiResponse(code = 400, message = "Question not add", response = String.class)
     })
     public ResponseEntity<?> addQuestion(@Valid @RequestBody QuestionCreateDto questionCreateDto) {
+        User user = securityHelper.getPrincipal();
+        Integer count = 5;
 
         if (!userService.existsById(questionCreateDto.getUserId())) {
             return ResponseEntity.badRequest().body("questionCreateDto.userId dont`t exist");
@@ -255,9 +262,13 @@ public class QuestionController {
 
         Question question = questionConverter.questionCreateDtoToQuestion(questionCreateDto);
         questionService.persist(question);
+        Reputation reputation = new Reputation();
+        reputation.setCount(count);
+        reputation.setQuestion(question);
+        reputation.setType(ReputationType.Question);
+        reputationService.update(reputation);
 
         QuestionDto questionDtoNew = questionConverter.questionToQuestionDto(question);
-
         return ResponseEntity.ok(questionDtoNew);
     }
 
@@ -466,6 +477,8 @@ public class QuestionController {
 
         return voteQuestionService.answerUpVote(question, user);
     }
+
+
 
     @PostMapping("/{questionId}/downVote")
     @ResponseBody
