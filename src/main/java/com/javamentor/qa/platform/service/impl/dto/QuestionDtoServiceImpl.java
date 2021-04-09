@@ -69,6 +69,19 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
                 setPaginationParameters(page, size, Optional.empty(), Optional.ofNullable(message)));
     }
 
+    @Override
+    public PageDto<QuestionDto, Object> getPaginationWithoutAnswersNew(int page, int size){
+        List<Long> ids = questionDtoDao.getPaginationQuestionIdsWithoutAnswerOrderByNew(page, size);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("page", page);
+        parameters.put("size", size);
+        parameters.put("ids", ids);
+
+        return getPageDto(
+                "paginationQuestionWithoutAnswersNew",
+                parameters);
+    }
+
     private Map<String, Object> setPaginationParameters(int page, int size, Optional<List<Long>> tagsIds, Optional<String> message) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("page", page);
