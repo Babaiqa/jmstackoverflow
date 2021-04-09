@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.exception.VoteException;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
@@ -43,6 +44,7 @@ public class QuestionController {
     private final VoteQuestionService voteQuestionService;
     private final QuestionViewedService questionViewedService;
     private final ReputationService reputationService;
+    private final VoteQuestionConverter voteQuestionConverter;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
@@ -58,7 +60,8 @@ public class QuestionController {
                               UserService userService,
                               VoteQuestionService voteQuestionService,
                               QuestionViewedService questionViewedService,
-                              ReputationService reputationService) {
+                              ReputationService reputationService,
+                              VoteQuestionConverter voteQuestionConverter) {
         this.questionService = questionService;
         this.tagService = tagService;
         this.securityHelper = securityHelper;
@@ -71,6 +74,7 @@ public class QuestionController {
         this.voteQuestionService = voteQuestionService;
         this.questionViewedService = questionViewedService;
         this.reputationService = reputationService;
+        this.voteQuestionConverter = voteQuestionConverter;
     }
 
     @DeleteMapping("/{id}/delete")
@@ -410,7 +414,6 @@ public class QuestionController {
             @ApiParam(name = "text", value = "Text of comment. Type string", required = true, example = "Some comment")
             @RequestBody String commentText) {
 
-
         User user = securityHelper.getPrincipal();
 
         Optional<Question> question = questionService.getById(questionId);
@@ -459,7 +462,6 @@ public class QuestionController {
             @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
             @PathVariable Long questionId) {
 
-
         Optional<Question> questionOptional = questionService.getById(questionId);
         if (!questionOptional.isPresent()) {
             return ResponseEntity.badRequest().body("Question was not found");
@@ -468,13 +470,15 @@ public class QuestionController {
         Question question = questionOptional.get();
         User user = securityHelper.getPrincipal();
 
-        String message;
+        VoteQuestion voteQuestion;
         try {
-            message = voteQuestionService.questionUpVote(question, user);
+            voteQuestion = voteQuestionService.questionUpVote(question, user);
         }  catch (VoteException e) {
             return ResponseEntity.ok(e.getMessage());
         }
-        return ResponseEntity.ok(message);
+        voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
+
+        return ResponseEntity.ok("Correct vote");
     }
 
 
@@ -490,7 +494,6 @@ public class QuestionController {
             @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
             @PathVariable Long questionId) {
 
-
         Optional<Question> questionOptional = questionService.getById(questionId);
         if (!questionOptional.isPresent()) {
             return ResponseEntity.badRequest().body("Question was not found");
@@ -499,13 +502,15 @@ public class QuestionController {
         Question question = questionOptional.get();
         User user = securityHelper.getPrincipal();
 
-        String message;
+        VoteQuestion voteQuestion;
         try {
-            message = voteQuestionService.questionDownVote(question, user);
+            voteQuestion = voteQuestionService.questionDownVote(question, user);
         }  catch (VoteException e) {
             return ResponseEntity.ok(e.getMessage());
         }
-        return ResponseEntity.ok(message);
+        voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
+
+        return ResponseEntity.ok("Correct vote");
     }
 
 

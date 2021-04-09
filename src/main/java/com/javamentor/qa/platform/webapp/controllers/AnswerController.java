@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
@@ -212,13 +213,15 @@ public class AnswerController {
         User user = securityHelper.getPrincipal();
         Answer answer = answerOptional.get();
 
-        String message;
+        VoteAnswer voteAnswer;
         try {
-            message = voteAnswerService.answerUpVote(question, user, answer);
+            voteAnswer = voteAnswerService.answerUpVote(question, user, answer);
         } catch (VoteException e) {
             return ResponseEntity.ok(e.getMessage());
         }
-        return ResponseEntity.ok(message);
+        voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer);
+
+        return ResponseEntity.ok("Correct vote");
     }
 
 
@@ -249,11 +252,14 @@ public class AnswerController {
         User user = securityHelper.getPrincipal();
         Answer answer = answerOptional.get();
 
+        VoteAnswer voteAnswer;
         try {
-            voteAnswerService.answerDownVote(question, user, answer);
+            voteAnswer = voteAnswerService.answerDownVote(question, user, answer);
         } catch (VoteException e) {
             return ResponseEntity.ok(e.getMessage());
         }
+        voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer);
+
         return ResponseEntity.ok("Correct vote");
     }
 

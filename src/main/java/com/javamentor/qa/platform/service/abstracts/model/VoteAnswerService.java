@@ -14,7 +14,7 @@ public interface VoteAnswerService extends ReadWriteService<VoteAnswer, Long> {
 
     void markHelpful(Question question, User user, Answer answer, boolean isHelpful);
 
-    String answerUpVote(Question question, User user, Answer answer);
+    VoteAnswer answerUpVote(Question question, User user, Answer answer);
 
-    String answerDownVote(Question question, User user, Answer answer);
+    VoteAnswer answerDownVote(Question question, User user, Answer answer);
 }

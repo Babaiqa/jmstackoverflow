@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.exception.VoteException;
 import com.javamentor.qa.platform.models.dto.VoteQuestionDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.VoteQuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteQuestionService;
@@ -45,7 +46,10 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
 
     @Override
     @Transactional
-    public String questionUpVote(Question question, User user) {
+    public VoteQuestion questionUpVote(Question question, User user) {
+
+        VoteQuestion voteQuestion = null;
+
         if (isUserAlreadyVoted(question, user)) {
             Optional<VoteQuestionDto> optionalVoteQuestion = voteQuestionDtoService.getVoteByQuestionIdAndUserId(question.getId(), user.getId());
             if (optionalVoteQuestion.isPresent()) {
@@ -54,23 +58,26 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
                     voteQuestionDao.deleteById(optionalVoteQuestion.get().getId());
                 } else if (voteValue == -1) {
                     voteQuestionDao.deleteById(optionalVoteQuestion.get().getId());
-                    VoteQuestion voteQuestion = new VoteQuestion(user, question, 1);
+                    voteQuestion = new VoteQuestion(user, question, 1);
                     voteQuestionDao.persist(voteQuestion);
                 }
-                return "Vote changed";
+                return voteQuestion;
             }
             throw new VoteException("Can't change vote");
         }
 
-        VoteQuestion voteQuestion = new VoteQuestion(user, question, 1);
+        voteQuestion = new VoteQuestion(user, question, 1);
         voteQuestionDao.persist(voteQuestion);
 
-        return voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion).toString();
+        return voteQuestion;
     }
 
     @Override
     @Transactional
-    public String questionDownVote(Question question, User user) {
+    public VoteQuestion questionDownVote(Question question, User user) {
+
+        VoteQuestion voteQuestion = null;
+
         if (isUserAlreadyVoted(question, user)) {
             Optional<VoteQuestionDto> optionalVoteQuestion = voteQuestionDtoService.getVoteByQuestionIdAndUserId(question.getId(), user.getId());
             if (optionalVoteQuestion.isPresent()) {
@@ -79,17 +86,17 @@ public class VoteQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestion, 
                     voteQuestionDao.deleteById(optionalVoteQuestion.get().getId());
                 } else if (voteValue == 1) {
                     voteQuestionDao.deleteById(optionalVoteQuestion.get().getId());
-                    VoteQuestion voteQuestion = new VoteQuestion(user, question, -1);
+                    voteQuestion = new VoteQuestion(user, question, -1);
                     voteQuestionDao.persist(voteQuestion);
                 }
-                return "Vote changed";
+                return voteQuestion;
             }
             throw new VoteException("Can't change vote");
         }
 
-        VoteQuestion voteQuestion = new VoteQuestion(user, question, -1);
+        voteQuestion = new VoteQuestion(user, question, -1);
         voteQuestionDao.persist(voteQuestion);
 
-        return voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion).toString();
+        return voteQuestion;
     }
 }

@@ -56,7 +56,9 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
 
     @Override
     @Transactional
-    public String answerUpVote(Question question, User user, Answer answer) {
+    public VoteAnswer answerUpVote(Question question, User user, Answer answer) {
+
+        VoteAnswer voteAnswer = null;
 
         if (isUserAlreadyVotedIsThisQuestion(question, user, answer)) {
             Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answer.getId(), user.getId());
@@ -67,25 +69,27 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
                     markHelpful(question, user, answer, false);
                 } else if (voteValue == -1) {
                     voteAnswerDao.deleteById(optionalVoteAnswer.get().getId());
-                    VoteAnswer voteAnswer = new VoteAnswer(user, answer, 1);
+                    voteAnswer = new VoteAnswer(user, answer, 1);
                     voteAnswerDao.persist(voteAnswer);
                     markHelpful(question, user, answer, true);
                 }
-                return "Vote changed";
+                return voteAnswer;
             }
             throw new VoteException("Can't change vote");
         }
         markHelpful(question, user, answer, true);
 
-        VoteAnswer voteAnswer = new VoteAnswer(user, answer, 1);
+        voteAnswer = new VoteAnswer(user, answer, 1);
         voteAnswerDao.persist(voteAnswer);
 
-        return voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer).toString();
+        return voteAnswer;
     }
 
     @Override
     @Transactional
-    public String answerDownVote(Question question, User user, Answer answer) {
+    public VoteAnswer answerDownVote(Question question, User user, Answer answer) {
+
+        VoteAnswer voteAnswer = null;
 
         if (isUserAlreadyVotedIsThisQuestion(question, user, answer)) {
             Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answer.getId(), user.getId());
@@ -95,18 +99,18 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
                     voteAnswerDao.deleteById(optionalVoteAnswer.get().getId());
                 } else if (voteValue == 1) {
                     voteAnswerDao.deleteById(optionalVoteAnswer.get().getId());
-                    VoteAnswer voteAnswer = new VoteAnswer(user, answer, -1);
+                    voteAnswer = new VoteAnswer(user, answer, -1);
                     voteAnswerDao.persist(voteAnswer);
                 }
                 markHelpful(question, user, answer, false);
-                return "Vote changed";
+                return voteAnswer;
             }
             throw new VoteException("Can't change vote");
         }
 
-        VoteAnswer voteAnswer = new VoteAnswer(user, answer, -1);
+        voteAnswer = new VoteAnswer(user, answer, -1);
         voteAnswerDao.persist(voteAnswer);
 
-        return voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer).toString();
+        return voteAnswer;
     }
 }
