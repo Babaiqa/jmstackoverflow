@@ -1,14 +1,13 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
+import com.javamentor.qa.platform.exception.VoteException;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
-import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
-import com.javamentor.qa.platform.models.entity.user.reputation.ReputationValidator;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
@@ -213,7 +212,13 @@ public class AnswerController {
         User user = securityHelper.getPrincipal();
         Answer answer = answerOptional.get();
 
-        return voteAnswerService.answerUpVote(question, user, answer);
+        String message;
+        try {
+            message = voteAnswerService.answerUpVote(question, user, answer);
+        } catch (VoteException e) {
+            return ResponseEntity.ok(e.getMessage());
+        }
+        return ResponseEntity.ok(message);
     }
 
 
@@ -244,7 +249,12 @@ public class AnswerController {
         User user = securityHelper.getPrincipal();
         Answer answer = answerOptional.get();
 
-        return voteAnswerService.answerDownVote(question, user, answer);
+        try {
+            voteAnswerService.answerDownVote(question, user, answer);
+        } catch (VoteException e) {
+            return ResponseEntity.ok(e.getMessage());
+        }
+        return ResponseEntity.ok("Correct vote");
     }
 
     @GetMapping("/{questionId}/isAnswerVoted")

@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.ReadWriteDao;
 import com.javamentor.qa.platform.dao.abstracts.model.VoteAnswerDao;
+import com.javamentor.qa.platform.exception.VoteException;
 import com.javamentor.qa.platform.models.dto.VoteAnswerDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
@@ -11,7 +12,6 @@ import com.javamentor.qa.platform.service.abstracts.dto.VoteAnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
 import com.javamentor.qa.platform.webapp.converters.VoteAnswerConverter;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,7 +56,7 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
 
     @Override
     @Transactional
-    public ResponseEntity<String> answerUpVote(Question question, User user, Answer answer) {
+    public String answerUpVote(Question question, User user, Answer answer) {
 
         if (isUserAlreadyVotedIsThisQuestion(question, user, answer)) {
             Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answer.getId(), user.getId());
@@ -71,21 +71,21 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
                     voteAnswerDao.persist(voteAnswer);
                     markHelpful(question, user, answer, true);
                 }
-                return ResponseEntity.ok("Vote changed");
+                return "Vote changed";
             }
-            return ResponseEntity.ok("Can't change vote");
+            throw new VoteException("Can't change vote");
         }
         markHelpful(question, user, answer, true);
 
         VoteAnswer voteAnswer = new VoteAnswer(user, answer, 1);
         voteAnswerDao.persist(voteAnswer);
 
-        return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer).toString());
+        return voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer).toString();
     }
 
     @Override
     @Transactional
-    public ResponseEntity<String> answerDownVote(Question question, User user, Answer answer) {
+    public String answerDownVote(Question question, User user, Answer answer) {
 
         if (isUserAlreadyVotedIsThisQuestion(question, user, answer)) {
             Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answer.getId(), user.getId());
@@ -99,14 +99,14 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
                     voteAnswerDao.persist(voteAnswer);
                 }
                 markHelpful(question, user, answer, false);
-                return ResponseEntity.ok("Vote changed");
+                return "Vote changed";
             }
-            return ResponseEntity.ok("Can't change vote");
+            throw new VoteException("Can't change vote");
         }
 
         VoteAnswer voteAnswer = new VoteAnswer(user, answer, -1);
         voteAnswerDao.persist(voteAnswer);
 
-        return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer).toString());
+        return voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer).toString();
     }
 }

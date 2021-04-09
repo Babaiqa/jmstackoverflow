@@ -1,10 +1,9 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
+import com.javamentor.qa.platform.exception.VoteException;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
-import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
@@ -42,8 +41,6 @@ public class QuestionController {
     private final QuestionConverter questionConverter;
     private final UserService userService;
     private final VoteQuestionService voteQuestionService;
-    private final VoteQuestionConverter voteQuestionConverter;
-    private final VoteQuestionDtoService voteQuestionDtoService;
     private final QuestionViewedService questionViewedService;
     private final ReputationService reputationService;
 
@@ -60,10 +57,8 @@ public class QuestionController {
                               QuestionConverter questionConverter,
                               UserService userService,
                               VoteQuestionService voteQuestionService,
-                              VoteQuestionConverter voteQuestionConverter,
                               QuestionViewedService questionViewedService,
-                              ReputationService reputationService,
-                              VoteQuestionDtoService voteQuestionDtoService) {
+                              ReputationService reputationService) {
         this.questionService = questionService;
         this.tagService = tagService;
         this.securityHelper = securityHelper;
@@ -74,10 +69,8 @@ public class QuestionController {
         this.questionConverter = questionConverter;
         this.userService = userService;
         this.voteQuestionService = voteQuestionService;
-        this.voteQuestionConverter = voteQuestionConverter;
         this.questionViewedService = questionViewedService;
         this.reputationService = reputationService;
-        this.voteQuestionDtoService = voteQuestionDtoService;
     }
 
     @DeleteMapping("/{id}/delete")
@@ -475,7 +468,13 @@ public class QuestionController {
         Question question = questionOptional.get();
         User user = securityHelper.getPrincipal();
 
-        return voteQuestionService.answerUpVote(question, user);
+        String message;
+        try {
+            message = voteQuestionService.questionUpVote(question, user);
+        }  catch (VoteException e) {
+            return ResponseEntity.ok(e.getMessage());
+        }
+        return ResponseEntity.ok(message);
     }
 
 
@@ -500,7 +499,13 @@ public class QuestionController {
         Question question = questionOptional.get();
         User user = securityHelper.getPrincipal();
 
-        return voteQuestionService.answerDownVote(question, user);
+        String message;
+        try {
+            message = voteQuestionService.questionDownVote(question, user);
+        }  catch (VoteException e) {
+            return ResponseEntity.ok(e.getMessage());
+        }
+        return ResponseEntity.ok(message);
     }
 
 

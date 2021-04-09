@@ -9,7 +9,7 @@ public interface VoteQuestionService extends ReadWriteService<VoteQuestion, Long
 
     boolean isUserAlreadyVoted(Question question, User user);
 
-    ResponseEntity<String> answerUpVote(Question question, User user);
+    String questionUpVote(Question question, User user);
 
-    ResponseEntity<String> answerDownVote(Question question, User user);
+    String questionDownVote(Question question, User user);
 }
