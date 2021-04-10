@@ -20,12 +20,14 @@ public interface QuestionDtoService {
 
     PageDto<QuestionDto, Object> getPaginationOrderedNew(int page, int size);
 
-    PageDto<QuestionDto, Object> getPAginationWithGivenTags(int page, int size, List<Long> tagIds);
+    PageDto<QuestionDto, Object> getPaginationWithGivenTags(int page, int size, List<Long> tagIds);
 
     PageDto<QuestionDto, Object> getPaginationWithoutTags(int page, int size, List<Long> tagIds);
 
     PageDto<QuestionDto, Object> getQuestionBySearchValue(String message, int page, int size);
 
     PageDto<QuestionDto, Object> getPaginationWithoutAnswersNew(int page, int size);
+
+    PageDto<QuestionDto, Object> getPaginationWithoutAnswersIgnoredTags(int page, int size, long id);
 
 }
