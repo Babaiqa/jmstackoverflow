@@ -505,6 +505,28 @@ public class QuestionController {
         return ResponseEntity.ok(voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion));
     }
 
+    @GetMapping(value = "/withoutAnswer/new", params = {"page", "size"})
+    @ApiOperation(value = "Return Questions without answers sorted by new")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDto>"),
+    })
+    public ResponseEntity<?> getQuestionsWithoutAnswerNew(
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    required = true,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationWithoutAnswersNew(page, size);
+        return ResponseEntity.ok(resultPage);
+    }
+
 
     @PostMapping("{questionId}/view")
     @ApiOperation(value = "Mark as viewed", notes = "Аdd notes at the table 'question_viewed' ")

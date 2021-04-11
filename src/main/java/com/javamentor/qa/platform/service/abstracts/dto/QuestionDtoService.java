@@ -23,6 +23,8 @@ public interface QuestionDtoService {
 
     PageDto<QuestionDto, Object> getQuestionBySearchValue(String message, int page, int size);
 
+    PageDto<QuestionDto, Object> getPaginationWithoutAnswersNew(int page, int size);
+
     PageDto<QuestionDto, Object> getPaginationWithoutAnswersTrackedTag(int page, int size, long id);
 
 }
