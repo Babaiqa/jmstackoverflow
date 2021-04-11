@@ -3,7 +3,11 @@ package com.javamentor.qa.platform.dao.impl.dto;
 import com.javamentor.qa.platform.dao.abstracts.dto.QuestionDtoDao;
 import com.javamentor.qa.platform.dao.impl.dto.transformers.QuestionResultTransformer;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
+import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
+import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -41,6 +45,15 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 .setResultTransformer(new QuestionResultTransformer())
                 .uniqueResultOptional();
 
+    }
+
+    @Override
+    public List<Long> getPaginationQuestionIdsWithoutAnswerOrderByNew(int page, int size) {
+        return   (List<Long>) entityManager
+                .createQuery("select q.id from Question q left outer join Answer a on (q.id = a.question.id) where a.question.id is null order by q.persistDateTime desc")
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
     }
 
     @Override

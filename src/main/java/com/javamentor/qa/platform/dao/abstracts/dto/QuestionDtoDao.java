@@ -8,6 +8,8 @@ import java.util.Optional;
 public interface QuestionDtoDao {
      Optional<QuestionDto> getQuestionDtoById(Long id);
 
+     List<Long> getPaginationQuestionIdsWithoutAnswerOrderByNew(int page, int size);
+
      List<Long> getPaginationQuestionIdsWithoutAnswerWithTrackedTags(int page, int size, long id);
 
 }
