@@ -18,6 +18,8 @@ public interface QuestionDtoService {
 
     PageDto<QuestionDto, Object> getPaginationWithoutAnswers(int page, int size);
 
+    PageDto<QuestionDto, Object> getPaginationWithoutAnswersNoAnyAnswer(int page, int size);
+
     PageDto<QuestionDto, Object> getPaginationOrderedNew(int page, int size);
 
     PageDto<QuestionDto, Object> getPaginationWithGivenTags(int page, int size, List<Long> tagIds);
