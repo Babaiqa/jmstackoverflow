@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository(value = "paginationSingleChat")
+
 public class PaginationSingleChatDaoImpl implements PaginationDao<SingleChatDto> {
 
     @PersistenceContext

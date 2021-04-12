@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
@@ -18,7 +17,7 @@ public class ChatDto {
     private String title;
     private LocalDateTime persistDate;
     private ChatType chatType;
-    //private List<MessageDto> messages;
+
 
     @Override
     public String toString() {
@@ -27,7 +26,6 @@ public class ChatDto {
                 ", title='" + title + '\'' +
                 ", persistDate=" + persistDate +
                 ", chatType=" + chatType +
-                //", messages=" + messages +
                 '}';
     }
 }

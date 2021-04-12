@@ -15,7 +15,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Builder
 @Table(name = "singel_chat")
-public class SingleChat {
+public class SingleChat{
 
     @Id
     private Long id;
