@@ -25,7 +25,7 @@ public class PaginationQuestionWithoutAnswersDaoImpl implements PaginationDao<Qu
         int size = (int) parameters.get("size");
 
         List<Long> questionIds = (List<Long>) em
-                .createQuery("select q.id from Question q left outer join Answer a on (q.id = a.question.id) where a.question.id is null")
+                .createQuery("select q.id from Question q left outer join Answer a on (q.id = a.question.id) where a.isHelpful = false")
                 .setFirstResult(page * size - size)
                 .setMaxResults(size)
                 .getResultList();
@@ -57,6 +57,6 @@ public class PaginationQuestionWithoutAnswersDaoImpl implements PaginationDao<Qu
     public int getCount(Map<String, Object> parameters) {
         return (int)(long) em.createQuery("select count (q.id)" +
                         " from Question q left outer join Answer a on (q.id = a.question.id)" +
-                        " where a.question.id is null").getSingleResult();
+                        " where a.isHelpful = false").getSingleResult();
     }
 }

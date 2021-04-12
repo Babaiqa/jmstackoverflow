@@ -12,9 +12,9 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Map;
 
-@Repository(value = "paginationWithoutAnswersIgnoredTag")
+@Repository(value = "paginationQuestionWithoutAnswersNoAnyAnswer")
 @SuppressWarnings(value = "unchecked")
-public class PaginationQuestionWithoutAnswersIgnoredTagImpl implements PaginationDao<QuestionDto> {
+public class PaginationQuestionWithoutAnswersNoAnyAnswerDaoImpl implements PaginationDao<QuestionDto> {
 
     @PersistenceContext
     private EntityManager em;
@@ -22,7 +22,14 @@ public class PaginationQuestionWithoutAnswersIgnoredTagImpl implements Paginatio
     @Override
     public List<QuestionDto> getItems(Map<String, Object> parameters) {
 
-        List<Long> questionIds = (List<Long>) parameters.get("ids");
+        int page = (int) parameters.get("page");
+        int size = (int) parameters.get("size");
+
+        List<Long> questionIds = (List<Long>) em
+                .createQuery("select q.id from Question q left outer join Answer a on (q.id = a.question.id) where a.question.id is null")
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
 
         return (List<QuestionDto>) em.unwrap(Session.class)
                 .createQuery("select question.id as question_id, " +
@@ -49,16 +56,8 @@ public class PaginationQuestionWithoutAnswersIgnoredTagImpl implements Paginatio
 
     @Override
     public int getCount(Map<String, Object> parameters) {
-        long id = (long) parameters.get("id");
-        return (int)(long)em.createQuery(
-                "select count(q.id) " +
-                        "from Question q " +
-                        "join  q.tags tag " +
-                        "left outer join Answer a on (q.id = a.question.id) " +
-                        "join TrackedTag trackedTag on tag.id=trackedTag.trackedTag.id " +
-                        "inner join User user on user.id=trackedTag.user.id " +
-                        "where  user.id in :id and a.question.id is null")
-                .setParameter("id", id)
-                .getSingleResult();
+        return (int)(long) em.createQuery("select count (q.id)" +
+                        " from Question q left outer join Answer a on (q.id = a.question.id)" +
+                        " where a.question.id is null").getSingleResult();
     }
 }

@@ -50,6 +50,12 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
                 setPaginationParameters(page, size, Optional.empty(), Optional.empty()));
     }
 
+    public PageDto<QuestionDto, Object> getPaginationWithoutAnswersNoAnyAnswer(int page, int size) {
+        return getPageDto(
+                "paginationQuestionWithoutAnswersNoAnyAnswer",
+                setPaginationParameters(page, size, Optional.empty(), Optional.empty()));
+    }
+
     public PageDto<QuestionDto, Object> getPaginationWithGivenTags(int page, int size, List<Long> tagIds) {
         return getPageDto(
                 "paginationQuestionWithGivenTags",
@@ -100,7 +106,7 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
         parameters.put("ids", ids);
         parameters.put("id", id);
         return getPageDto(
-                "paginationWithoutAnswersTrackedTag",
+                "paginationWithoutAnswersIgnoredTag",
                 parameters);
     }
 
