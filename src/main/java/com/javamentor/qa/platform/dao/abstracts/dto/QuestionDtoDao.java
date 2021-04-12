@@ -10,6 +10,8 @@ public interface QuestionDtoDao {
 
      List<Long> getPaginationQuestionIdsWithoutAnswerOrderByNew(int page, int size);
 
+     List<Long> getPaginationQuestionIdsWithoutAnswerWithIgnoredTags(int page, int size, long id);
+
      List<Long> getPaginationQuestionIdsWithoutAnswerWithTrackedTags(int page, int size, long id);
 
 }

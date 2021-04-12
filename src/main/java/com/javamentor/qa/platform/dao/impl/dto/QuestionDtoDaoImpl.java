@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +52,22 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
     public List<Long> getPaginationQuestionIdsWithoutAnswerOrderByNew(int page, int size) {
         return   (List<Long>) entityManager
                 .createQuery("select q.id from Question q left outer join Answer a on (q.id = a.question.id) where a.question.id is null order by q.persistDateTime desc")
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
+    }
+
+    @Override
+    public List<Long> getPaginationQuestionIdsWithoutAnswerWithIgnoredTags(int page, int size, long id) {
+        return  (List<Long>) entityManager.createQuery(
+                "select q.id " +
+                        "from Question q " +
+                        "join  q.tags tag " +
+                        "left outer join Answer a on (q.id = a.question.id) " +
+                        "join IgnoredTag ignoredTag on tag.id=ignoredTag.ignoredTag.id " +
+                        "inner join User user on user.id=ignoredTag.user.id " +
+                        "where  user.id in :id and a.question.id is null ")
+                .setParameter("id", id)
                 .setFirstResult(page * size - size)
                 .setMaxResults(size)
                 .getResultList();
