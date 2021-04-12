@@ -4,6 +4,7 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.models.dto.CreateAnswerDto;
 import com.javamentor.qa.platform.models.dto.AnswerDto;
+import com.javamentor.qa.platform.models.dto.VoteAnswerDto;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
@@ -24,6 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -144,7 +146,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .content(jsonRequest))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Question not found"));
+                .andExpect(content().string("Question was not found"));
     }
 
     @Test
@@ -290,7 +292,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .get("/api/question/0/isAnswerVoted"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("text/plain;charset=UTF-8"))
-                .andExpect(content().string("Question not found"));
+                .andExpect(content().string("Question was not found"));
     }
 
 
@@ -380,5 +382,143 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("You have already commented this answer"));
 
+    }
+
+    @Test
+    void answerVoteUpAndVoteUpAgainStatusOk() throws Exception {
+
+        VoteAnswerDto voteAnswerDto = new VoteAnswerDto();
+        voteAnswerDto.setUserId(1L);
+        voteAnswerDto.setAnswerId(51L);
+        voteAnswerDto.setPersistDateTime(LocalDateTime.now());
+        voteAnswerDto.setVote(1);
+
+        String jsonRequestVote = objectMapper.writeValueAsString(voteAnswerDto);
+
+        List<VoteAnswer> before = entityManager.createNativeQuery("select * from votes_on_answers where answer_id = 51").getResultList();
+        int first = before.size();
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/10/answer/51/upVote")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequestVote))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/10/answer/51/upVote")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequestVote))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers where answer_id = 51").getResultList();
+        int second = after.size();
+        Assertions.assertEquals(first, second);
+    }
+
+    @Test
+    void answerVoteDownAndVoteDownAgainStatusOk() throws Exception {
+
+        VoteAnswerDto voteAnswerDto = new VoteAnswerDto();
+        voteAnswerDto.setUserId(1L);
+        voteAnswerDto.setAnswerId(51L);
+        voteAnswerDto.setPersistDateTime(LocalDateTime.now());
+        voteAnswerDto.setVote(-1);
+
+        String jsonRequest = objectMapper.writeValueAsString(voteAnswerDto);
+
+        List<VoteAnswer> before = entityManager.createNativeQuery("select * from votes_on_answers where answer_id = 51").getResultList();
+        int first = before.size();
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/10/answer/51/downVote")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequest))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/10/answer/51/downVote")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequest))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers where answer_id = 51").getResultList();
+        int second = after.size();
+        Assertions.assertEquals(first, second);
+    }
+
+    @Test
+    void answerVoteUpAndVoteDownStatusOk() throws Exception {
+
+        VoteAnswerDto voteAnswerDto = new VoteAnswerDto();
+        voteAnswerDto.setUserId(1L);
+        voteAnswerDto.setAnswerId(51L);
+        voteAnswerDto.setPersistDateTime(LocalDateTime.now());
+        voteAnswerDto.setVote(1);
+
+        String jsonRequestVote = objectMapper.writeValueAsString(voteAnswerDto);
+
+        List<VoteAnswer> before = entityManager.createNativeQuery("select * from votes_on_answers where answer_id = 51").getResultList();
+        int first = before.size();
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/10/answer/51/upVote")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequestVote))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        voteAnswerDto.setVote(-1);
+        jsonRequestVote = objectMapper.writeValueAsString(voteAnswerDto);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/10/answer/51/downVote")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequestVote))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers where answer_id = 51").getResultList();
+        int second = after.size();
+        Assertions.assertEquals(first + 1, second);
+    }
+
+    @Test
+    void answerVoteDownAndVoteUpStatusOk() throws Exception {
+
+        VoteAnswerDto voteAnswerDto = new VoteAnswerDto();
+        voteAnswerDto.setUserId(1L);
+        voteAnswerDto.setAnswerId(51L);
+        voteAnswerDto.setPersistDateTime(LocalDateTime.now());
+        voteAnswerDto.setVote(-1);
+
+        String jsonRequestVote = objectMapper.writeValueAsString(voteAnswerDto);
+
+        List<VoteAnswer> before = entityManager.createNativeQuery("select * from votes_on_answers where answer_id = 51").getResultList();
+        int first = before.size();
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/10/answer/51/downVote")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequestVote))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        voteAnswerDto.setVote(1);
+        jsonRequestVote = objectMapper.writeValueAsString(voteAnswerDto);
+
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .patch("/api/question/10/answer/51/upVote")
+                .contentType("application/json;charset=UTF-8")
+                .content(jsonRequestVote))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers where answer_id = 51").getResultList();
+        int second = after.size();
+        Assertions.assertEquals(first + 1, second);
     }
 }

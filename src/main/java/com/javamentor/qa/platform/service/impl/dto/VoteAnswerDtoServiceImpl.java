@@ -23,4 +23,9 @@ public class VoteAnswerDtoServiceImpl implements VoteAnswerDtoService {
     public Optional<VoteAnswerDto> getVoteByQuestionIdAndUserId(Long questionId, Long userId) {
         return voteAnswerDtoDao.getVoteByQuestionIdAndUserId(questionId, userId);
     }
+
+    @Override
+    public Optional<VoteAnswerDto> getVoteByAnswerIdAndUserId(Long answerId, Long userId) {
+        return voteAnswerDtoDao.getVoteByAnswerIdAndUserId(answerId, userId);
+    }
 }

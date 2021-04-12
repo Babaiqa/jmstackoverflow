@@ -6,5 +6,8 @@ import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 
 public interface VoteAnswerDao extends ReadWriteDao<VoteAnswer, Long>{
+
      boolean isUserAlreadyVotedIsThisQuestion(Question question, User user, Answer answer);
+
+     boolean isAuthorOfQuestion(Long questionId, Long userId);
 }
