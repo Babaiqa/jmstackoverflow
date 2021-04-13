@@ -32,13 +32,9 @@ public class Chat {
     private LocalDateTime persistDate;
 
     @Enumerated
-   // @NotNull
     @Column(columnDefinition = "smallint")
     private ChatType chatType;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "chat_id")
-    private List<Message> messages;
 
     public Chat(ChatType chatType) {
         this.chatType = chatType;
@@ -50,12 +46,11 @@ public class Chat {
         if (o == null || getClass() != o.getClass()) return false;
         Chat chat = (Chat) o;
         return Objects.equals(id, chat.id) && Objects.equals(title, chat.title) &&
-                Objects.equals(persistDate, chat.persistDate) && chatType == chat.chatType &&
-                Objects.equals(messages, chat.messages);
+                Objects.equals(persistDate, chat.persistDate) && chatType == chat.chatType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, persistDate, chatType, messages);
+        return Objects.hash(id, title, persistDate, chatType);
     }
 }

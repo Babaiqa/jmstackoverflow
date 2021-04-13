@@ -24,7 +24,6 @@ public class Message {
     @GeneratedValue(generator = "Message_seq")
     private Long id;
 
-    //@NotNull
     @Column
     @Type(type = "org.hibernate.type.TextType")
     private String message;
@@ -42,9 +41,15 @@ public class Message {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User userSender;
 
-    public Message(String message, User userSender) {
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "chat_id")
+    private Chat chat;
+
+
+    public Message(String message, User userSender, Chat chat) {
         this.message = message;
         this.userSender = userSender;
+        this.chat = chat;
     }
 
     @Override

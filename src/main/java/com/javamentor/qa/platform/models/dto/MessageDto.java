@@ -1,32 +1,47 @@
 package com.javamentor.qa.platform.models.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MessageDto {
+public class MessageDto  implements Serializable {
 
     private Long id;
     private String message;
     private LocalDateTime lastRedactionDate;
     private LocalDateTime persistDate;
     private Long userSenderId;
+    private Long chatId;
 
     @Override
     public String toString() {
-        return "{" +
+        return "MessageDto{" +
                 "id=" + id +
-                ", message='" + message + "'" +
+                ", message='" + message +
                 ", lastRedactionDate=" + lastRedactionDate +
                 ", persistDate=" + persistDate +
-                ", userSender=" + userSenderId +
+                ", userSenderId=" + userSenderId +
+                ", chatId=" + chatId +
                 '}';
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MessageDto that = (MessageDto) o;
+        return Objects.equals(id, that.id) && Objects.equals(message, that.message) && Objects.equals(lastRedactionDate, that.lastRedactionDate) && Objects.equals(persistDate, that.persistDate) && Objects.equals(userSenderId, that.userSenderId) && Objects.equals(chatId, that.chatId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, message, lastRedactionDate, persistDate, userSenderId, chatId);
     }
 }

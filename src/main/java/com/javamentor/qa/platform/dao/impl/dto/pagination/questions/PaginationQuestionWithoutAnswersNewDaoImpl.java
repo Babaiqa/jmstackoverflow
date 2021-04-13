@@ -6,15 +6,15 @@ import com.javamentor.qa.platform.models.dto.QuestionDto;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Map;
 
-@Repository(value = "paginationQuestionWithoutAnswerSortedByVotes")
+@Repository(value = "paginationQuestionWithoutAnswersNew")
 @SuppressWarnings(value = "unchecked")
-public class PaginationQuestionWithoutAnswersByVotesImpl implements PaginationDao<QuestionDto> {
+public class PaginationQuestionWithoutAnswersNewDaoImpl implements PaginationDao<QuestionDto>{
+
     @PersistenceContext
     private EntityManager em;
 
@@ -23,7 +23,7 @@ public class PaginationQuestionWithoutAnswersByVotesImpl implements PaginationDa
 
         List<Long> questionIds = (List<Long>) parameters.get("ids");
 
-        return em.unwrap(Session.class)
+        return (List<QuestionDto>) em.unwrap(Session.class)
                 .createQuery("select question.id as question_id, " +
                         " question.title as question_title," +
                         "u.fullName as question_authorName," +
@@ -39,9 +39,10 @@ public class PaginationQuestionWithoutAnswersByVotesImpl implements PaginationDa
                         "from Question question  " +
                         "INNER JOIN  question.user u" +
                         "  join question.tags tag" +
-                        " where question_id IN :ids order by question.voteQuestions.size desc")
+                        " where question_id IN :ids order by question.persistDateTime desc")
                 .setParameter("ids", questionIds)
                 .unwrap(Query.class)
+                .setResultTransformer(new QuestionResultTransformer())
                 .getResultList();
     }
 
