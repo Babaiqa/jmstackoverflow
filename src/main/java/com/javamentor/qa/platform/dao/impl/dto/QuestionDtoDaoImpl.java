@@ -67,4 +67,14 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 .setMaxResults(size)
                 .getResultList();
     }
+
+    @Override
+    public List<Long> getPaginationQuestionIdsWithoutAnswer(int page, int size) {
+        return entityManager
+                .createQuery("select q.id from Question q left outer join Answer a on (q.id = a.question.id) where a.question.id is null")
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
+    }
+
 }
