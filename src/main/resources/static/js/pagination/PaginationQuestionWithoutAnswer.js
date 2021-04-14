@@ -1,10 +1,26 @@
 class PaginationQuestionWithoutAnswer {
 
-    constructor(page, size) {
+    constructor(page, size, type) {
         this.page = page;
         this.size = size;
+        this.type = type;
         this.questionService = new QuestionService();
-        this.questionWithoutAnswers = this.questionService.getQuestionWithoutAnswers(this.page, this.size);
+
+        if (this.type === 'noSort') {
+            this.questionWithoutAnswers = this.questionService.getQuestionWithoutAnswers(this.page, this.size);
+        } else if (this.type === 'tracked') {
+            this.questionWithoutAnswers = this.questionService.getQuestionWithoutAnswersTrackedTag(this.page, this.size);
+        } else if (this.type === 'new') {
+            this.questionWithoutAnswers = this.questionService.getQuestionOrderedNew(this.page, this.size);
+        } else if (this.type === 'votes') {
+            this.questionWithoutAnswers = this.questionService.getQuestionWithoutAnswerSortedByVotes(this.page, this.size);
+        } else if (this.type === 'noAnyAnswer'){
+            this.questionWithoutAnswers = this.questionService.getQuestionWithoutAnswersNoAnyAnswer(this.page, this.size);
+        } else {
+            this.questionWithoutAnswers = this.questionService.getQuestionWithoutAnswers(this.page, this.size);
+        }
+
+        // this.questionWithoutAnswers = this.questionService.getQuestionWithoutAnswers(this.page, this.size);
     }
 
     writeQuestionWithoutAnswer() {
@@ -97,6 +113,7 @@ class PaginationQuestionWithoutAnswer {
 
     questWithoutAnswerPagesNavigation() {
         var size = this.size;
+        var type = this.type;
 
         this.questionWithoutAnswers.then(function (response) {
                 var currentPageNumber = response.currentPageNumber;
@@ -110,8 +127,8 @@ class PaginationQuestionWithoutAnswer {
 
                 if (currentPageNumber != 1) {
                     $('.questionWithoutAnswerPagination').append(
-                        "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + previousPage + "," + size + ").writeQuestionWithoutAnswer()'>Назад</a></li>"
-                        + "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + startPageCount + "," + size + ").writeQuestionWithoutAnswer()'>" + startPageCount + "</a></li>"
+                        "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + previousPage + "," + size + "," + "\"" + type + "\"" + ").writeQuestionWithoutAnswer()'>Назад</a></li>"
+                        + "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + startPageCount + "," + size + "," + "\"" + type + "\"" + ").writeQuestionWithoutAnswer()'>" + startPageCount + "</a></li>"
                     );
                 }
 
@@ -124,8 +141,8 @@ class PaginationQuestionWithoutAnswer {
                 if (nextPage == totalPageCount) {
                     $('.questionWithoutAnswerPagination').append(
                         "<li class=\"page-item-element active\"><a class=\"page-element-link\" href=\"#\" >" + currentPageNumber + "</a></li>"
-                        + "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + nextPage + "," + size + ").writeQuestionWithoutAnswer()'>" + nextPage + "</a></li>"
-                        + "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + nextPage + "," + size + ").writeQuestionWithoutAnswer()'>" + "Далее" + "</a></li>"
+                        + "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + nextPage + "," + size + "," + "\"" + type + "\"" + ").writeQuestionWithoutAnswer()'>" + nextPage + "</a></li>"
+                        + "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + nextPage + "," + size + "," + "\"" + type + "\"" + ").writeQuestionWithoutAnswer()'>" + "Далее" + "</a></li>"
                     );
                 }
 
@@ -133,9 +150,9 @@ class PaginationQuestionWithoutAnswer {
                 if (secondNextPage == totalPageCount) {
                     $('.questionWithoutAnswerPagination').append(
                         "<li class=\"page-item-element active\"><a class=\"page-element-link\" href=\"#\" >" + currentPageNumber + "</a></li>"
-                        + "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + nextPage + "," + size + ").writeQuestionWithoutAnswer()'>" + nextPage + "</a></li>"
-                        + "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + secondNextPage + "," + size + ").writeQuestionWithoutAnswer()'>" + secondNextPage + "</a></li>"
-                        + "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + nextPage + "," + size + ").writeQuestionWithoutAnswer()'>" + "Далее" + "</a></li>"
+                        + "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + nextPage + "," + size + "," + "\"" + type + "\"" + ").writeQuestionWithoutAnswer()'>" + nextPage + "</a></li>"
+                        + "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + secondNextPage + "," + size + "," + "\"" + type + "\"" + ").writeQuestionWithoutAnswer()'>" + secondNextPage + "</a></li>"
+                        + "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + nextPage + "," + size + "," + "\"" + type + "\"" + ").writeQuestionWithoutAnswer()'>" + "Далее" + "</a></li>"
                     );
                 }
 
@@ -143,11 +160,11 @@ class PaginationQuestionWithoutAnswer {
                 if (secondNextPage < totalPageCount) {
                     $('.questionWithoutAnswerPagination').append(
                         "<li class=\"page-item-element active\"><a class=\"page-element-link\" href=\"#\" >" + currentPageNumber + "</a></li>"
-                        + "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + nextPage + "," + size + ").writeQuestionWithoutAnswer()'>" + nextPage + "</a></li>"
-                        + "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + secondNextPage + "," + size + ").writeQuestionWithoutAnswer()'>" + secondNextPage + "</a></li>"
+                        + "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + nextPage + "," + size + "," + "\"" + type + "\"" + ").writeQuestionWithoutAnswer()'>" + nextPage + "</a></li>"
+                        + "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + secondNextPage + "," + size + "," + "\"" + type + "\"" + ").writeQuestionWithoutAnswer()'>" + secondNextPage + "</a></li>"
                         + "<li class=\"page-item-element\"><span class='mr-2 ml-2'>" + "..." + "</span></li>"
-                        + "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + totalPageCount + "," + size + ").writeQuestionWithoutAnswer()'>" + totalPageCount + "</a></li>"
-                        + "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + nextPage + "," + size + ").writeQuestionWithoutAnswer()'>" + "Далее" + "</a></li>"
+                        + "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + totalPageCount + "," + size + "," + "\"" + type + "\"" + ").writeQuestionWithoutAnswer()'>" + totalPageCount + "</a></li>"
+                        + "<li class=\"page-item-element\"><a class=\"page-element-link\" href=\"#\" onclick='new PaginationQuestionWithoutAnswer(" + nextPage + "," + size + "," + "\"" + type + "\"" + ").writeQuestionWithoutAnswer()'>" + "Далее" + "</a></li>"
                     );
                 }
             }

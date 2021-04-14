@@ -636,7 +636,7 @@ public class QuestionController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDto>"),
     })
-    public ResponseEntity<?> getQuestionsWithoutAnswerTrackedTag(
+    public ResponseEntity<?> getQuestionsWithoutAnswerIgnoredTag(
             @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
             @RequestParam("page") int page,
             @ApiParam(name = "size", value = "Number of entries per page.Type int." +

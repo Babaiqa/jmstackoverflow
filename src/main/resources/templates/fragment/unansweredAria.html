@@ -27,11 +27,15 @@
                 </div>
 
                 <div class="inline-block">
-                    <div class="menu-container">
-                        <div class="menu-element"><a class="menu-element-link menu-element-link__border active" href="#">С отслеживаемыми метками</a></div>
-                        <div class="menu-element"><a class="menu-element-link menu-element-link__border" href="#">Новые</a></div>
-                        <div class="menu-element"><a class="menu-element-link menu-element-link__border" href="#">Голоса</a></div>
-                        <div class="menu-element"><a class="menu-element-link menu-element-link__border" href="#">Без единого ответа</a></div>
+                    <div class="nav-col btn-group  btn-block mr-0">
+                        <button type="button" class="btn  btn-sm active" href="#" onclick="new PaginationQuestionWithoutAnswer(1,10, 'tracked').writeQuestionWithoutAnswer()">С отслеживаемыми метками</button>
+                        <button type="button" class="btn  btn-sm active" href="#" onclick="new PaginationQuestionWithoutAnswer(1,10, 'new').writeQuestionWithoutAnswer()">Новые</button>
+                        <button type="button" class="btn  btn-sm active" href="#" onclick="new PaginationQuestionWithoutAnswer(1,10, 'votes').writeQuestionWithoutAnswer()">Голоса</button>
+                        <button type="button" class="btn  btn-sm active" href="#" onclick="new PaginationQuestionWithoutAnswer(1,10, 'noAnyAnswer').writeQuestionWithoutAnswer()">Без единого ответа</button>
+<!--                        <div class="menu-element"><a class="menu-element-link menu-element-link__border active" href="#" onclick="new PaginationQuestionWithoutAnswer(1,10, 'tracked').writeQuestionWithoutAnswer()">С отслеживаемыми метками</a></div>-->
+<!--                        <div class="menu-element"><a class="menu-element-link menu-element-link__border" href="#" onclick="new PaginationQuestionWithoutAnswer(1,10, 'new').writeQuestionWithoutAnswer()">Новые</a></div>-->
+<!--                        <div class="menu-element"><a class="menu-element-link menu-element-link__border" href="#" onclick="new PaginationQuestionWithoutAnswer(1,10, 'votes').writeQuestionWithoutAnswer()">Голоса</a></div>-->
+<!--                        <div class="menu-element"><a class="menu-element-link menu-element-link__border" href="#" onclick="new PaginationQuestionWithoutAnswer(1,10, 'noAnyAnswer').writeQuestionWithoutAnswer()">Без единого ответа</a></div>-->
                     </div>
                 </div>
 
