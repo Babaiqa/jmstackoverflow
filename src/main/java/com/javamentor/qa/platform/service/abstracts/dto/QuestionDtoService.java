@@ -31,4 +31,6 @@ public interface QuestionDtoService {
 
     PageDto<QuestionDto, Object> getPaginationWithoutAnswerSortedByVotes(int page, int size);
 
+    PageDto<QuestionDto, Object> getPaginationWithoutAnswersTrackedTag(int page, int size, long id);
+
 }

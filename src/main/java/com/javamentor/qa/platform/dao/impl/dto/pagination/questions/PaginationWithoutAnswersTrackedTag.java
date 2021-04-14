@@ -6,14 +6,15 @@ import com.javamentor.qa.platform.models.dto.QuestionDto;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Map;
 
-@Repository(value = "paginationQuestionWithoutAnswersNew")
+@Repository(value = "paginationWithoutAnswersTrackedTag")
 @SuppressWarnings(value = "unchecked")
-public class PaginationQuestionWithoutAnswersNewDaoImpl implements PaginationDao<QuestionDto>{
+public class PaginationWithoutAnswersTrackedTag implements PaginationDao<QuestionDto> {
 
     @PersistenceContext
     private EntityManager em;
@@ -39,7 +40,7 @@ public class PaginationQuestionWithoutAnswersNewDaoImpl implements PaginationDao
                         "from Question question  " +
                         "INNER JOIN  question.user u" +
                         "  join question.tags tag" +
-                        " where question_id IN :ids order by question.persistDateTime desc")
+                        " where question_id IN :ids")
                 .setParameter("ids", questionIds)
                 .unwrap(Query.class)
                 .setResultTransformer(new QuestionResultTransformer())
@@ -48,8 +49,16 @@ public class PaginationQuestionWithoutAnswersNewDaoImpl implements PaginationDao
 
     @Override
     public int getCount(Map<String, Object> parameters) {
-        return (int)(long) em.createQuery("select count (q.id)" +
-                " from Question q left outer join Answer a on (q.id = a.question.id)" +
-                " where a.question.id is null").getSingleResult();
+        long id = (long) parameters.get("id");
+        return (int)(long)em.createQuery(
+                "select count(q.id) " +
+                        "from Question q " +
+                        "join  q.tags tag " +
+                        "left outer join Answer a on (q.id = a.question.id) " +
+                        "join TrackedTag trackedTag on tag.id=trackedTag.trackedTag.id " +
+                        "inner join User user on user.id=trackedTag.user.id " +
+                        "where  user.id in :id and a.question.id is null")
+                .setParameter("id", id)
+                .getSingleResult();
     }
 }

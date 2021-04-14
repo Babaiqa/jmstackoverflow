@@ -13,4 +13,7 @@ public interface QuestionDtoDao {
      List<Long> getPaginationQuestionIdsWithoutAnswerWithIgnoredTags(int page, int size, long id);
 
      List<Long> getPaginationQuestionIdsWithoutAnswer(int page, int size);
+
+     List<Long> getPaginationQuestionIdsWithoutAnswerWithTrackedTags(int page, int size, long id);
+
 }

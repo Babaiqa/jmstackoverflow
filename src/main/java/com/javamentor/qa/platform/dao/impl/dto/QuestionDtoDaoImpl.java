@@ -77,4 +77,20 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 .getResultList();
     }
 
+
+    @Override
+    public List<Long> getPaginationQuestionIdsWithoutAnswerWithTrackedTags(int page, int size, long id) {
+        return  (List<Long>) entityManager.createQuery(
+                "select q.id " +
+                        "from Question q " +
+                        "join  q.tags tag " +
+                        "left outer join Answer a on (q.id = a.question.id) " +
+                        "join TrackedTag trackedTag on tag.id=trackedTag.trackedTag.id " +
+                        "inner join User user on user.id=trackedTag.user.id " +
+                        "where  user.id in :id and a.question.id is null ")
+                .setParameter("id", id)
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
+    }
 }
