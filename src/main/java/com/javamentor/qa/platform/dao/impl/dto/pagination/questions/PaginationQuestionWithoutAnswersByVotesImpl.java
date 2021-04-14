@@ -12,10 +12,9 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Map;
 
-@Repository(value = "paginationWithoutAnswersIgnoredTag")
+@Repository(value = "paginationQuestionWithoutAnswerSortedByVotes")
 @SuppressWarnings(value = "unchecked")
-public class PaginationQuestionWithoutAnswersIgnoredTagImpl implements PaginationDao<QuestionDto> {
-
+public class PaginationQuestionWithoutAnswersByVotesImpl implements PaginationDao<QuestionDto> {
     @PersistenceContext
     private EntityManager em;
 
@@ -24,7 +23,7 @@ public class PaginationQuestionWithoutAnswersIgnoredTagImpl implements Paginatio
 
         List<Long> questionIds = (List<Long>) parameters.get("ids");
 
-        return (List<QuestionDto>) em.unwrap(Session.class)
+        return em.unwrap(Session.class)
                 .createQuery("select question.id as question_id, " +
                         " question.title as question_title," +
                         "u.fullName as question_authorName," +
@@ -40,25 +39,16 @@ public class PaginationQuestionWithoutAnswersIgnoredTagImpl implements Paginatio
                         "from Question question  " +
                         "INNER JOIN  question.user u" +
                         "  join question.tags tag" +
-                        " where question_id IN :ids")
+                        " where question_id IN :ids order by question.voteQuestions.size desc")
                 .setParameter("ids", questionIds)
                 .unwrap(Query.class)
-                .setResultTransformer(new QuestionResultTransformer())
                 .getResultList();
     }
 
     @Override
     public int getCount(Map<String, Object> parameters) {
-        long id = (long) parameters.get("id");
-        return (int)(long)em.createQuery(
-                "select count(q.id) " +
-                        "from Question q " +
-                        "join  q.tags tag " +
-                        "left outer join Answer a on (q.id = a.question.id) " +
-                        "join TrackedTag trackedTag on tag.id=trackedTag.trackedTag.id " +
-                        "inner join User user on user.id=trackedTag.user.id " +
-                        "where  user.id in :id and a.question.id is null")
-                .setParameter("id", id)
-                .getSingleResult();
+        return (int)(long) em.createQuery("select count (q.id)" +
+                " from Question q left outer join Answer a on (q.id = a.question.id)" +
+                " where a.question.id is null").getSingleResult();
     }
 }

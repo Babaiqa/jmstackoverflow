@@ -4,9 +4,6 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 
 import java.util.List;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public interface QuestionDtoService {
@@ -17,6 +14,8 @@ public interface QuestionDtoService {
     PageDto<QuestionDto, Object> getPaginationPopular(int page, int size, long days);
 
     PageDto<QuestionDto, Object> getPaginationWithoutAnswers(int page, int size);
+
+    PageDto<QuestionDto, Object> getPaginationWithoutAnswersNoAnyAnswer(int page, int size);
 
     PageDto<QuestionDto, Object> getPaginationOrderedNew(int page, int size);
 
@@ -29,6 +28,8 @@ public interface QuestionDtoService {
     PageDto<QuestionDto, Object> getPaginationWithoutAnswersNew(int page, int size);
 
     PageDto<QuestionDto, Object> getPaginationWithoutAnswersIgnoredTags(int page, int size, long id);
+
+    PageDto<QuestionDto, Object> getPaginationWithoutAnswerSortedByVotes(int page, int size);
 
     PageDto<QuestionDto, Object> getPaginationWithoutAnswersTrackedTag(int page, int size, long id);
 

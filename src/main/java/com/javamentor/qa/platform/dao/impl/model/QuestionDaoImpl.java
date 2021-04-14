@@ -32,5 +32,4 @@ public class QuestionDaoImpl extends ReadWriteDaoImpl<Question, Long> implements
                 .setMaxResults(size)
                 .getResultList();
     }
-
 }
