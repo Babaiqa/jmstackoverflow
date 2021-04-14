@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
 
 </head>
@@ -12,8 +12,12 @@
         <div class="collapse navbar-collapse " id=upNavBar>
             <a href="/logout" class="btn btn-primary">LOGOUT</a>
         </div>
-
-        <input class="form-control mr-sm-2 w-25 p-3" type="search" placeholder="Search" aria-label="Search">
+        <div class="w-75">
+            <form class="form-inline">
+                <input class="form-control mr-sm-2 p-3 w-75" type="search" id="site-search" placeholder="Search" aria-label="Search" autocomplete="off">
+                <button type="submit" class="invisible" id="buttonSearch">Search</button>
+            </form>
+        </div>
         <input type="button" class="btn btn-primary" value="Мой профиль"/>
     </nav>
 </div>

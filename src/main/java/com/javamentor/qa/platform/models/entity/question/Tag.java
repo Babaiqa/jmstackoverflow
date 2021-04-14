@@ -4,6 +4,10 @@ import com.javamentor.qa.platform.exception.ConstrainException;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
+import org.hibernate.search.engine.backend.types.Projectable;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -24,14 +28,17 @@ public class Tag implements Serializable {
     private static final long serialVersionUID = 6264105282197120461L;
     @Id
     @GeneratedValue(generator = "Tag_seq")
+    @GenericField(projectable = Projectable.YES)
     private Long id;
 
     @NotNull
     @Column
+    @GenericField(projectable = Projectable.YES)
     private String name;
 
 
     @Column
+    @FullTextField(projectable = Projectable.YES)
     private String description;
 
     @CreationTimestamp

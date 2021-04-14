@@ -26,9 +26,11 @@
                 <div th:insert="~{fragment/tagsAria :: tagsAria}" class="tabcontent"  id="areaTag"></div>
                 <div th:insert="~{fragment/unansweredAria :: unansweredAria}" class="tabcontent"  id="areaUnanswered"></div>
                 <div th:insert="~{fragment/question :: question}" class="tabcontent"  id="question"></div>
+                <div th:insert="~{fragment/search :: #searchResult}" class="tabcontent"  id="searchResult"></div>
             </div>
         </div>
     </div>
+    <div th:insert="fragment/searchHelp :: searchHelp"></div>
     <div th:insert="~{fragment/footer :: footer}" ></div>
     <div th:insert="fragment/generalFragments :: styleheader"></div>
     <div th:insert="fragment/generalFragments :: scriptfooter"></div>

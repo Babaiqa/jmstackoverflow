@@ -29,6 +29,8 @@ $( document ).ready(function() {
                 break;
             case "/unansweredAria": openContent("areaUnansweredLink", "areaUnanswered")
                 break;
+            case "/search": openContent("searchResult", "searchResult")
+                break;
         }
     }
 
