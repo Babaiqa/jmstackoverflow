@@ -19,8 +19,6 @@ class PaginationQuestionWithoutAnswer {
         } else {
             this.questionWithoutAnswers = this.questionService.getQuestionWithoutAnswers(this.page, this.size);
         }
-
-        // this.questionWithoutAnswers = this.questionService.getQuestionWithoutAnswers(this.page, this.size);
     }
 
     writeQuestionWithoutAnswer() {
