@@ -27,6 +27,7 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addViewController("/questionAria").setViewName(HEADER_SIDEBAR_FOOTER);
         registry.addViewController("/unansweredAria").setViewName(HEADER_SIDEBAR_FOOTER);
         registry.addViewController("/question/{questionId}").setViewName(HEADER_SIDEBAR_FOOTER);
+        registry.addViewController("/userPage").setViewName("userPage");
     }
 
     @Override
