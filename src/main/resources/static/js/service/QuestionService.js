@@ -300,4 +300,80 @@ class QuestionService {
             })
         }).catch(error => console.log(error.message));
     }
+
+    getQuestionWithoutAnswersTrackedTag(page, size) {
+        let query = '/api/question/withoutAnswer/trackedTag?page=' + page + '&size=' + size;
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        }).then(response =>  {
+            if (response.ok) {
+                return response.json()
+            } else {
+                let error = new Error();
+                error.response = response.text();
+                throw error;
+            }
+        }).catch( error => error.response.then(message => console.log(message)));
+    }
+
+    getQuestionOrderedNew(page, size) {
+        let query = '/api/question/withoutAnswer/new?page=' + page + '&size=' + size;
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        }).then(response =>  {
+            if (response.ok) {
+                return response.json()
+            } else {
+                let error = new Error();
+                error.response = response.text();
+                throw error;
+            }
+        }).catch( error => error.response.then(message => console.log(message)));
+    }
+
+    getQuestionWithoutAnswerSortedByVotes(page, size) {
+        let query = '/api/question/withoutAnswer/votes?page=' + page + '&size=' + size;
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        }).then(response =>  {
+            if (response.ok) {
+                return response.json()
+            } else {
+                let error = new Error();
+                error.response = response.text();
+                throw error;
+            }
+        }).catch( error => error.response.then(message => console.log(message)));
+    }
+
+    getQuestionWithoutAnswersNoAnyAnswer(page, size) {
+        let query = '/api/question/withoutAnswer/noAnyAnswer?page=' + page + '&size=' + size;
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        }).then(response =>  {
+            if (response.ok) {
+                return response.json()
+            } else {
+                let error = new Error();
+                error.response = response.text();
+                throw error;
+            }
+        }).catch( error => error.response.then(message => console.log(message)));
+    }
 }

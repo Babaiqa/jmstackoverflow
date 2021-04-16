@@ -6,24 +6,31 @@ import com.javamentor.qa.platform.models.dto.QuestionDto;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Map;
 
-@Repository(value = "paginationQuestionWithoutAnswerSortedByVotes")
+@Repository(value = "paginationQuestionWithoutAnswersNew")
 @SuppressWarnings(value = "unchecked")
-public class PaginationQuestionWithoutAnswersByVotesImpl implements PaginationDao<QuestionDto> {
+public class PaginationQuestionWithoutAnswersNewDaoImpl implements PaginationDao<QuestionDto>{
+
     @PersistenceContext
     private EntityManager em;
 
     @Override
     public List<QuestionDto> getItems(Map<String, Object> parameters) {
 
-        List<Long> questionIds = (List<Long>) parameters.get("ids");
+        int page = (int) parameters.get("page");
+        int size = (int) parameters.get("size");
 
-        return em.unwrap(Session.class)
+        List<Long> questionIds = (List<Long>) em
+                .createQuery("select q.id from Question q left outer join Answer a on (q.id = a.question.id) where a.question.id is null order by q.persistDateTime desc")
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
+
+        return (List<QuestionDto>) em.unwrap(Session.class)
                 .createQuery("select question.id as question_id, " +
                         " question.title as question_title," +
                         "u.fullName as question_authorName," +
@@ -39,7 +46,7 @@ public class PaginationQuestionWithoutAnswersByVotesImpl implements PaginationDa
                         "from Question question  " +
                         "INNER JOIN  question.user u" +
                         "  join question.tags tag" +
-                        " where question_id IN :ids order by question.voteQuestions.size desc")
+                        " where question_id IN :ids order by question.persistDateTime desc")
                 .setParameter("ids", questionIds)
                 .unwrap(Query.class)
                 .setResultTransformer(new QuestionResultTransformer())

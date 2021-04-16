@@ -5,7 +5,7 @@ $( document ).ready(function() {
     new PaginationUser(1,20,'week').writeUsers()
     new PaginationQuestion(1,10,'normal').setQuestions()
     new PaginationQuestionForMainPage(1,10, 'new').setQuestions()
-    new PaginationQuestionWithoutAnswer(1,10).writeQuestionWithoutAnswer()
+    new PaginationQuestionWithoutAnswer(1,10, 'noSort').writeQuestionWithoutAnswer()
     new PaginationQuestionWithoutAnswer(1,10).totalResultCountView()
 
     if(/^\/question\//.test(window.location.pathname)){
