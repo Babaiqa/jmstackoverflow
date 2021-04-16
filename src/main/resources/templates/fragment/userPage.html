@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+</head>
+<body>
+    <div th:fragment="userPage" class="snippet-hidden align-self-start" id="userPage">
+
+        <!-- HEADER START-->
+        <div th:fragment="header">
+            <nav class="navbar navbar-expand-sm  navbar-dark bg-dark text-white">
+                <div class="collapse navbar-collapse " id=upNavBar>
+                    <a href="/logout" class="btn btn-primary">LOGOUT</a>
+                </div>
+
+                <input class="form-control mr-sm-2 w-25 p-3" type="search" placeholder="Search" aria-label="Search">
+                <input type="button" class="btn btn-primary" value="Мой профиль"/>
+            </nav>
+        </div>
+        <!-- HEADER FINISH-->
+
+        <div class="Page">
+            <div class="row">
+                <div class="left-sidebar col-md-2">
+                    <div id="left-sidebar" data-is-here-when="md lg" class="col-2" >
+                        <div th:fragment="sidebar">
+                            <div id="sidebar" >
+                                <div class="nav-col btn-group-vertical  btn-block mr-0">
+                                    <a class="nav-link-menu" href="/site"><button type="button" class="btn  btn-sm  tablinks" id="mainPageLink"  onclick="openContent(id, 'mainPage')">
+                                        Главная</button></a>
+                                    <a class="nav-link-menu" href="/questionAria"><button type="button" class="btn btn-sm tablinks" id="areaQuestionLink" onclick="openContent(id, 'areaQuestion'),
+                 new PaginationQuestion(1, 10).setQuestions()">Вопросы</button></a>
+                                    <a class="nav-link-menu" href="/tagsAria"><button type="button" class="btn  btn-sm tablinks" id="areaTagLink" onclick="openContent(id, 'areaTag'),
+                new PaginationTag(1, 12, 'popular').writeTags()">Метки</button></a>
+                                    <a class="nav-link-menu" href="/users"><button type="button" class="btn  btn-sm tablinks" id="areaUsersLink" onclick="openContent(id, 'areaUsers'), new PaginationUser(1,20,'week').writeUsers()">
+                                        Участники</button></a>
+                                    <a class="nav-link-menu" href="/unansweredAria"><button type="button" class="btn  btn-sm tablinks" id="areaUnansweredLink" onclick="openContent(id, 'areaUnanswered')">Неотвеченные</button></a>
+                                    <a class="nav-link-menu" href="/chat"><button type="button" class="btn  btn-sm  tablinks" id="chatLink">Чат</button></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="main-content col-10">
+                    <!--MAINBAR START-->
+                    <div id="mainbar-full" class="user-show-new">
+                        <div class="grid ai-center jc-space-between mb16 js-user-header">
+                            <div class="grid--cell s-navigation">
+                                <a href="/users" class="s-navigation--item is-selected" data-shortcut="P">Профиль
+                                </a>
+                                <a href="/users" class="s-navigation--item" data-shortcut="A">Активность
+                                </a>
+                                <a href="/users" class="s-navigation--item" data-shortcut="A">Редактировать
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <!--MAINBAR FINISH-->
+
+                    <!--USER-CARD START-->
+                    <div class="row user-information">
+
+                        <div class="card">
+                            <div class="avatar">
+                                <img src="" alt="" width="164" height="164" class="avatar-user">
+                            </div>
+                            <div class="card-body">
+                                <div class="reputation">
+                                    <div class="row">
+                                        <div  class="reputation-number">
+                                            1
+                                        </div>
+                                        <div class="reputation-header fs-fine fc-light tt-uppercase">
+                                            репутация
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                        <div class="info-name-profile-user-about col-6">
+                            <div class="profile-user-name">
+                                <h2 class="profile-user-name">
+                                    <div class="name">
+                                        Имя юзера
+                                    </div>
+                                </h2>
+                            </div>
+                            <div class="user-info-about col-md-5">
+                                <p>
+                                    "Тестовая заметка"
+                                </p>
+                                <p>
+                                    <a href="/users/edit/{id}">Нажмите здесь для редактирования</a>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="user-stats-about">
+                            <div class="row">
+                                <div class="answers-info-about col-4">
+                                    <div class="grid fd-column">
+                                        <div style="text-align: center"; class="grid--cell fs-body3 fc-dark fw-bold">
+                                            3
+                                        </div>
+                                        <div style="text-align: center"; class="grid--cell">
+                                            ответа
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="question-info-about col-4">
+                                    <div class="grid fd-column">
+                                        <div style="text-align: center"; class="grid--cell fs-body3 fc-dark fw-bold">
+                                            7
+                                        </div>
+                                        <div style="text-align: center"; class="grid--cell">
+                                            вопросов
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="people-communicate-info-about col-4">
+                                    <div class="grid fd-column">
+                                        <div style="text-align: center"; class="grid--cell fs-body3 fc-dark fw-bold">
+                                            11
+                                        </div>
+                                        <div style="text-align: center"; class="grid--cell">
+                                            человек
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="user-profile-detail-info">
+                                <div class="user-profile-info">
+                                    <ul class="list-reset grid gs8 gsy fd-column fc-medium">
+                                        <li class="grid--cell ow-break-word">
+                                            <div class="grid gs8 gsx ai-center">
+                                                <div class="grid--cell fl1">Город</div>
+                                            </div>
+                                        </li>
+
+                                        <li class="grid--cell ow-break-word">
+                                            <div class="grid gs8 gsx ai-center">
+                                                <div class="grid--cell fl1">Последнее посещение</div>
+                                            </div>
+                                        </li>
+
+                                        <li class="grid--cell ow-break-word">
+                                            <div class="grid gs8 gsx ai-center">
+                                                <div class="grid--cell fl1">Просмотров</div>
+                                            </div>
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    <!--USER-CARD FINISH-->
+
+                     </div>
+
+                    <div class="user-profile-activity">
+                        <div class="row">
+                          <!--  <div class="user-profile-tags">
+                                <div class="tags-list">
+
+                                    <div class="tags-table">
+                                        <div class="card tag-tracked-container">
+                                            <div class="card-header" >
+                                                <span style="font-size: 120%">Теги</span>
+                                            </div>
+                                            <div class="card-body">
+                                                <ul id="best-messages">
+
+                                                </ul>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div> -->
+
+                            <div class="user-profile-message col-7">
+                                <div class="nav-col btn-group  btn-block mr-0 col-3">
+                                    <button type="button" class="btn  btn-sm   active " href="#" onclick="">Сводка</button>
+                                    <button type="button" class="btn btn-sm" href="#" onclick="">Ответы</button>
+                                    <button type="button" class="btn  btn-sm " href="#" onclick="">Вопросы</button>
+                                    <button type="button" class="btn  btn-sm " href="#" onclick="">Метки</button>
+                                    <button type="button" class="btn  btn-sm " href="#" onclick="">Знаки</button>
+                                    <button type="button" class="btn  btn-sm " href="#" onclick="">Закладки</button>
+                                    <button type="button" class="btn  btn-sm " href="#" onclick="">Отслеживаемые</button>
+                                    <button type="button" class="btn  btn-sm " href="#" onclick="">Конкурсные</button>
+                                    <button type="button" class="btn  btn-sm " href="#" onclick="">Репутация</button>
+                                    <button type="button" class="btn  btn-sm " href="#" onclick="">Все действия</button>
+                                    <button type="button" class="btn  btn-sm " href="#" onclick="">Реакции</button>
+                                    <button type="button" class="btn  btn-sm " href="#" onclick="">Голоса</button>
+
+
+                                </div>
+
+                                <div id="first-row-table-user-info" class="row">
+                                    <div class="answers-user-about-table col-6">
+                                        <div class="table-header">
+                                            <div id="header-table-row-answer" class="row">
+                                                <h5 class="answer-table-header col-6">
+                                                    <a href="/users">
+                                                        Ответы
+                                                    </a>
+                                                </h5>
+                                                <div class="nav-col btn-group  btn-block col-4">
+                                                    <button type="button" class="btn  btn-sm   active " href="#" onclick="">Голоса</button>
+                                                    <button type="button" class="btn btn-sm" href="#" onclick="">Активность</button>
+                                                    <button type="button" class="btn  btn-sm " href="#" onclick="">Новые</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="answer-all" style= "min-height:50px">
+                                            <a href="#" class="list-group-item list-group-item-action ">
+                                                <div class="row align-items-center">
+                                                    <div class="col-sm-2 mx-auto">
+                                                        <div class="row">
+                                                            <div class="col-sm-4">
+                                                                <div style="text-align: center;">
+                                                                    <small style="display: inline-block;">0 <br /> голосов</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-10">
+                                                        <div class="d-flex w-100 justify-content-between">
+                                                            <h6 href="#" class="mb-2">Какой-то ответ1</h6>
+                                                            <small>3 days ago</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                            <a href="#" class="list-group-item list-group-item-action">
+                                                <div class="row align-items-center h-100">
+                                                    <div class="col-sm-2 mx-auto">
+                                                        <div class="row">
+                                                            <div class="col-sm-4">
+                                                                <div style="text-align: center;">
+                                                                    <small style="display: inline-block;">0 <br /> голосов</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-10">
+                                                        <div class="d-flex w-100 justify-content-between">
+                                                            <h6 href="#" class="mb-1">Какой-то ответ2</h6>
+                                                            <small>3 days ago</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                            <a href="#" class="list-group-item list-group-item-action">
+                                                <div class="row align-items-center">
+                                                    <div class="col-sm-2 mx-auto">
+                                                        <div class="row">
+                                                            <div class="col-sm-4">
+                                                                <div style="text-align: center;">
+                                                                    <small style="display: inline-block;">0 <br /> голосов</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-10">
+                                                        <div class="d-flex w-100 justify-content-between">
+                                                            <h6 href="#" class="mb-1">Какой-то ответ3</h6>
+                                                            <small>3 days ago</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+
+                                        </div>
+                                        <div class="answer-table-footer">
+                                            <a href="users/">
+                                                <h7> Показать еще -></h7>
+
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="reputation-user-about-table col-6">
+                                        <div class="table-header">
+                                            <div id="header-table-row" class="row">
+                                                <h5 class="answer-table-header col-2">
+                                                    <a href="/users">
+                                                        Репутация
+                                                    </a>
+                                                </h5>
+
+                                            </div>
+                                        </div>
+                                        <div class="table-reputation-user" style= "min-height:50px">
+                                            <a href="#" class="list-group-item list-group-item-action ">
+                                                <div class="row align-items-center">
+                                                    <div class="col-sm-2 mx-auto">
+                                                        <div class="row">
+                                                            <div class="col-sm-4">
+                                                                <div style="text-align: center;">
+                                                                    <small style="display: inline-block;">+1 <br />репутации</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-10">
+                                                        <div class="d-flex w-100 justify-content-between">
+                                                            <h6 href="#" class="mb-2">За ответ на какой-то на вопрос1</h6>
+                                                            <small>3 days ago</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                            <a href="#" class="list-group-item list-group-item-action ">
+                                                <div class="row align-items-center">
+                                                    <div class="col-sm-2 mx-auto">
+                                                        <div class="row">
+                                                            <div class="col-sm-4">
+                                                                <div style="text-align: center;">
+                                                                    <small style="display: inline-block;">+1 <br />репутации</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-10">
+                                                        <div class="d-flex w-100 justify-content-between">
+                                                            <h6 href="#" class="mb-2">За ответ на какой-то на вопрос2</h6>
+                                                            <small>3 days ago</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                            <a href="#" class="list-group-item list-group-item-action ">
+                                                <div class="row align-items-center">
+                                                    <div class="col-sm-2 mx-auto">
+                                                        <div class="row">
+                                                            <div class="col-sm-4">
+                                                                <div style="text-align: center;">
+                                                                    <small style="display: inline-block;">+1 <br />репутации</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-10">
+                                                        <div class="d-flex w-100 justify-content-between">
+                                                            <h6 href="#" class="mb-2">За ответ на какой-то на вопрос3</h6>
+                                                            <small>3 days ago</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+
+                                        </div>
+                                        <div class="answer-table-footer">
+                                            <a href="users/">
+                                                <h7> Показать еще -></h7>
+
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="second-row-table-user-info" class="row">
+                                    <div class="question-user-about-table col-6">
+                                        <div class="table-header">
+                                            <div id="headers-tables-row" class="row">
+                                                <h5 class="answer-table-header col-6">
+                                                    <a href="/users">
+                                                        Вопросы
+                                                    </a>
+                                                </h5>
+                                                <div class="nav-col btn-group  btn-block col-4">
+                                                    <button type="button" class="btn  btn-sm   active " href="#" onclick="">Голоса</button>
+                                                    <button type="button" class="btn btn-sm" href="#" onclick="">Активность</button>
+                                                    <button type="button" class="btn  btn-sm " href="#" onclick="">Новые</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="questions-all" style= "min-height:50px">
+                                            <a href="#" class="list-group-item list-group-item-action ">
+                                                <div class="row align-items-center">
+                                                    <div class="col-sm-2 mx-auto">
+                                                        <div class="row">
+                                                            <div class="col-sm-4">
+                                                                <div style="text-align: center;">
+                                                                    <small style="display: inline-block;">0 <br /> голосов</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-10">
+                                                        <div class="d-flex w-100 justify-content-between">
+                                                            <h6 href="#" class="mb-2">Какой-то вопрос1</h6>
+                                                            <small>3 days ago</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                            <a href="#" class="list-group-item list-group-item-action">
+                                                <div class="row align-items-center">
+                                                    <div class="col-sm-2 mx-auto">
+                                                        <div class="row">
+                                                            <div class="col-sm-4">
+                                                                <div style="text-align: center;">
+                                                                    <small style="display: inline-block;">0 <br /> голосов</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-10">
+                                                        <div class="d-flex w-100 justify-content-between">
+                                                            <h6 href="#" class="mb-1">Какой-то вопрос2</h6>
+                                                            <small>3 days ago</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                            <a href="#" class="list-group-item list-group-item-action">
+                                                <div class="row align-items-center">
+                                                    <div class="col-sm-2 mx-auto">
+                                                        <div class="row">
+                                                            <div class="col-sm-4">
+                                                                <div style="text-align: center;">
+                                                                    <small style="display: inline-block;">0 <br /> голосов</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-10">
+                                                        <div class="d-flex w-100 justify-content-between">
+                                                            <h6 href="#" class="mb-1">Какой-то вопрос3</h6>
+                                                            <small>3 days ago</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="question-table-footer">
+                                            <a href="users/">
+                                                <h7> Показать еще -></h7>
+
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="tags-user-about-table col-6">
+                                        <div class="table-header">
+                                            <div id="header-tag-table-row" class="row">
+                                                <h5 class="answer-table-header col-2">
+                                                    <a href="/users">
+                                                        Метки
+                                                    </a>
+                                                </h5>
+                                            </div>
+                                        </div>
+                                        <div id="tags-all" style= "min-height:50px">
+
+                                            <a href="#" class="list-group-item list-group-item-action ">
+                                                <div class="row align-items-center">
+                                                    <div class="col-sm-10">
+                                                        <div class="nav-col btn-group  btn-block mr-0   ">
+                                                            <button type="button" class="btn  btn-sm   active ">тэг 1</button>
+                                                            <button type="button" class="btn btn-sm">тэг 2</button>
+                                                            <button type="button" class="btn btn-sm">тэг 3</button>
+                                                            <button type="button" class="btn  btn-sm ">тэг 4</button>
+                                                            <button type="button" class="btn  btn-sm overflow-hidden">тэг 5</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+
+                                        </div>
+                                        <div class="question-table-footer">
+                                            <a href="users/">
+                                                <h7> Показать еще -></h7>
+
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div id="third-row-table-user-info" class="row">
+                                    <div class="following-message-user-about-table col-6">
+                                        <div class="following-message-table-header">
+                                            <div id="following-message-headers-tables-row" class="row">
+                                                <h6 class="message-table-header col-4">
+                                                    <a href="/users">
+                                                        Отслеживаемые
+                                                    </a>
+                                                </h6>
+                                                <div class="nav-col btn-group  btn-block col-2">
+                                                    <button type="button" class="btn  btn-sm   active " href="#" onclick="">Голоса</button>
+                                                    <button type="button" class="btn btn-sm" href="#" onclick="">Активность</button>
+                                                    <button type="button" class="btn  btn-sm " href="#" onclick="">Новые</button>
+                                                    <button type="button" class="btn  btn-sm " href="#" onclick="">Добавлены</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="following-message-all" style= "min-height:50px">
+                                            <a href="#" class="list-group-item list-group-item-action ">
+                                                <div class="row align-items-center">
+                                                    <div class="col-sm-2 mx-auto">
+                                                        <div class="row">
+                                                            <div class="col-sm-4">
+                                                                <div style="text-align: center;">
+                                                                    <small style="display: inline-block;">0 <br /> голосов</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-10">
+                                                        <div class="d-flex w-100 justify-content-between">
+                                                            <h6 href="#" class="mb-2">Какое-то сообщение1</h6>
+                                                            <small>3 days ago</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                            <a href="#" class="list-group-item list-group-item-action ">
+                                                <div class="row align-items-center">
+                                                    <div class="col-sm-2 mx-auto">
+                                                        <div class="row">
+                                                            <div class="col-sm-4">
+                                                                <div style="text-align: center;">
+                                                                    <small style="display: inline-block;">0 <br /> голосов</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-10">
+                                                        <div class="d-flex w-100 justify-content-between">
+                                                            <h6 href="#" class="mb-2">Какое-то сообщение2</h6>
+                                                            <small>3 days ago</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                            <a href="#" class="list-group-item list-group-item-action ">
+                                                <div class="row align-items-center">
+                                                    <div class="col-sm-2 mx-auto">
+                                                        <div class="row">
+                                                            <div class="col-sm-4">
+                                                                <div style="text-align: center;">
+                                                                    <small style="display: inline-block;">0 <br /> голосов</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-10">
+                                                        <div class="d-flex w-100 justify-content-between">
+                                                            <h6 href="#" class="mb-2">Какое-то сообщение3</h6>
+                                                            <small>3 days ago</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+
+
+                                        </div>
+                                        <div class="following-table-footer">
+                                            <a href="users/">
+                                                <h7> Показать еще -></h7>
+
+                                            </a>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="bookmarks-user-about-table col-6">
+                                        <div class="bookmarks-table-header">
+                                            <div id="bookmarks-headers-tables-row" class="row">
+                                                <h5 class="message-table-header col-2">
+                                                    <a href="/users">
+                                                        Закладки
+                                                    </a>
+                                                </h5>
+                                                <div class="nav-col btn-group  btn-block col-2">
+                                                    <button type="button" class="btn  btn-sm   active " href="#" onclick="">Голоса</button>
+                                                    <button type="button" class="btn btn-sm" href="#" onclick="">Активность</button>
+                                                    <button type="button" class="btn  btn-sm " href="#" onclick="">Новые</button>
+                                                    <button type="button" class="btn  btn-sm " href="#" onclick="">Просмотры</button>
+                                                    <button type="button" class="btn  btn-sm " href="#" onclick="">Добавлены</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="bookmarks-all" style= "min-height:50px">
+                                            <a href="#" class="list-group-item list-group-item-action ">
+                                                <div class="row align-items-center">
+                                                    <div class="col-sm-2 mx-auto">
+                                                        <div class="row">
+                                                            <div class="col-sm-4">
+                                                                <div style="text-align: center;">
+                                                                    <small style="display: inline-block;">0 <br /> голосов</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-10">
+                                                        <div class="d-flex w-100 justify-content-between">
+                                                            <h6 href="#" class="mb-2">Какой-то вопрос1</h6>
+                                                            <small>3 days ago</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                            <a href="#" class="list-group-item list-group-item-action ">
+                                                <div class="row align-items-center">
+                                                    <div class="col-sm-2 mx-auto">
+                                                        <div class="row">
+                                                            <div class="col-sm-4">
+                                                                <div style="text-align: center;">
+                                                                    <small style="display: inline-block;">0 <br /> голосов</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-10">
+                                                        <div class="d-flex w-100 justify-content-between">
+                                                            <h6 href="#" class="mb-2">Какой-то вопрос2</h6>
+                                                            <small>3 days ago</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                            <a href="#" class="list-group-item list-group-item-action ">
+                                                <div class="row align-items-center">
+                                                    <div class="col-sm-2 mx-auto">
+                                                        <div class="row">
+                                                            <div class="col-sm-4">
+                                                                <div style="text-align: center;">
+                                                                    <small style="display: inline-block;">0 <br /> голосов</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-10">
+                                                        <div class="d-flex w-100 justify-content-between">
+                                                            <h6 href="#" class="mb-2">Какой-то вопрос3</h6>
+                                                            <small>3 days ago</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+
+                                        </div>
+                                        <div class="bookmarks-table-footer">
+                                            <a href="users/">
+                                                <h7> Показать еще -></h7>
+
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
