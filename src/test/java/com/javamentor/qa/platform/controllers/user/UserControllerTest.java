@@ -137,6 +137,7 @@ class UserControllerTest extends AbstractIntegrationTest {
     @Test
     @DataSet(value = "dataset/user/userUserApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
     void shouldGetUserByName() throws Exception {
+
         PageDto<UserDtoList, Object> expected = new PageDto<>();
         expected.setCurrentPageNumber(1);
         expected.setTotalPageCount(1);
@@ -146,7 +147,6 @@ class UserControllerTest extends AbstractIntegrationTest {
 
 
         List<UserDtoList> expectedItems = new ArrayList<>();
-        // в датасет другие показатели репутации
         expectedItems.add(new UserDtoList(1L, "Teat", "linkImage1", 2, Arrays.asList(new TagDto[]{})));
         expectedItems.add(new UserDtoList(2L, "Teat", "linkImage2", 1, Arrays.asList(new TagDto[]{})));
         expectedItems.add(new UserDtoList(4L, "Tob", "linkImage4", 4, Arrays.asList(new TagDto[]{})));
@@ -255,13 +255,12 @@ class UserControllerTest extends AbstractIntegrationTest {
         expected.setItemsOnPage(10);
 
         List<UserDtoList> expectedItems = new ArrayList<>();
-        expectedItems.add(new UserDtoList(1L, "Teat", null, 0, Arrays.asList(new TagDto[]{new TagDto(1L, "java", "description"), new TagDto(3L, "html", "description")})));
-        expectedItems.add(new UserDtoList(2L, "Tot", null, 0, Arrays.asList(new TagDto[]{new TagDto(1L, "java", "description"), new TagDto(2L, "javaScript", "description"), new TagDto(5L, "sql", "description")})));
-        expectedItems.add(new UserDtoList(3L, "Tot", null, 0, Arrays.asList(new TagDto[]{new TagDto(5L, "sql", "description")})));
-        expectedItems.add(new UserDtoList(4L, "Tot", null, 0, Arrays.asList(new TagDto[]{})));
-        expectedItems.add(new UserDtoList(5L, "Tot", null, 0, Arrays.asList(new TagDto[]{})));
+        expectedItems.add(new UserDtoList(1L, "Teat", null, 2, Arrays.asList(new TagDto[]{new TagDto(1L, "java", "Java is a popular high-level programming language."), new TagDto(3L, "html", "HTML (HyperText Markup Language) is the markup language for creating web pages and other information to be displayed in a web browser.")})));
+        expectedItems.add(new UserDtoList(2L, "Tot", null, 2, Arrays.asList(new TagDto[]{new TagDto(1L, "java", "Java is a popular high-level programming language."), new TagDto(2L, "javaScript", "For questions regarding programming in ECMAScript (JavaScript/JS) and its various dialects/implementations (excluding ActionScript)."), new TagDto(5L, "sql", "Structured Query Language (SQL) is a language for querying databases.")})));
+        expectedItems.add(new UserDtoList(3L, "Tot", null, 2, Arrays.asList(new TagDto[]{new TagDto(5L, "sql", "Structured Query Language (SQL) is a language for querying databases.")})));
+        expectedItems.add(new UserDtoList(4L, "Tot", null, 2, Arrays.asList(new TagDto[]{})));
+        expectedItems.add(new UserDtoList(5L, "Tot", null, 2, Arrays.asList(new TagDto[]{})));
         expected.setItems(expectedItems);
-        // Expected a non-empty value at JSON path "$.items" but found: []
         String resultContext =
                 mockMvc.perform(get("/api/user/order/reputation/month")
                         .param("page", "1")

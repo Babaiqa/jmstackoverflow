@@ -50,12 +50,12 @@ class PaginationTag {
             topTenTags="<div class=\"nav-col btn-group  btn-block mr-0\">"
             for (var i = 0; i < 5; i++) {
                 topTenTags=topTenTags + '<button type=\"button\"  class=\"mb-1\" ' +
-                    'tag_id=' + response.items[i].id + '>' + response.items[i].name + '</button>'
+                    'onclick=\"new PaginationQuestionForMainPage(1,10,`withTags`,' + response.items[i].id + ').setQuestions()\"' + '>' + response.items[i].name + '</button>'
             }
             topTenTags = topTenTags + "</div><div class=\"nav-col btn-group  btn-block mt-0\">"
             for (var i = 5; i < 10; i++) {
                 topTenTags = topTenTags + '<button type=\"button\"  class=\"mb-1\" ' +
-                    'tag_id=' + response.items[i].id + '>' + response.items[i].name + '</button>'
+                    'onclick=\"new PaginationQuestionForMainPage(1,10,`withTags`,' + response.items[i].id + ').setQuestions()\"' + '>' + response.items[i].name + '</button>'
             }
             topTenTags = topTenTags + "</div>"
             $("#topTenTagsBar").append(topTenTags)

@@ -1,11 +1,13 @@
 $( document ).ready(function() {
-
+    $('#inputFilter').on('keyup', delay(function (e) {
+        new PaginationTag(1,12,'search',document.getElementById('inputFilter').value).writeTags()
+    }, 500));
     new PaginationTag(1, 12, 'popular').writeTags()
     new PaginationTag(1, 10, 'popular').writeTopTenTags()
     new PaginationUser(1,20,'week').writeUsers()
     new PaginationQuestion(1,10,'normal').setQuestions()
     new PaginationQuestionForMainPage(1,10, 'new').setQuestions()
-    new PaginationQuestionWithoutAnswer(1,10).writeQuestionWithoutAnswer()
+    new PaginationQuestionWithoutAnswer(1,10, 'noSort').writeQuestionWithoutAnswer()
     new PaginationQuestionWithoutAnswer(1,10).totalResultCountView()
 
     if(/^\/question\//.test(window.location.pathname)){
@@ -30,6 +32,17 @@ $( document ).ready(function() {
             case "/unansweredAria": openContent("areaUnansweredLink", "areaUnanswered")
                 break;
         }
+    }
+
+    function delay(callback, ms) {
+        var timer = 0;
+        return function() {
+            var context = this, args = arguments;
+            clearTimeout(timer);
+            timer = setTimeout(function () {
+                callback.apply(context, args);
+            }, ms || 0);
+        };
     }
 
     function openContent(evt, contentName){

@@ -1,16 +1,16 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
+import com.javamentor.qa.platform.exception.VoteException;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
+import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
-import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.*;
 import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converters.*;
 import io.swagger.annotations.*;
@@ -42,11 +42,13 @@ public class QuestionController {
     private final QuestionConverter questionConverter;
     private final UserService userService;
     private final VoteQuestionService voteQuestionService;
-    private final VoteQuestionConverter voteQuestionConverter;
     private final QuestionViewedService questionViewedService;
+    private final ReputationService reputationService;
+    private final VoteQuestionConverter voteQuestionConverter;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
+    @Autowired
     public QuestionController(QuestionService questionService,
                               TagService tagService,
                               SecurityHelper securityHelper,
@@ -57,8 +59,9 @@ public class QuestionController {
                               QuestionConverter questionConverter,
                               UserService userService,
                               VoteQuestionService voteQuestionService,
-                              VoteQuestionConverter voteQuestionConverter,
-                              QuestionViewedService questionViewedService) {
+                              QuestionViewedService questionViewedService,
+                              ReputationService reputationService,
+                              VoteQuestionConverter voteQuestionConverter) {
         this.questionService = questionService;
         this.tagService = tagService;
         this.securityHelper = securityHelper;
@@ -69,8 +72,9 @@ public class QuestionController {
         this.questionConverter = questionConverter;
         this.userService = userService;
         this.voteQuestionService = voteQuestionService;
-        this.voteQuestionConverter = voteQuestionConverter;
         this.questionViewedService = questionViewedService;
+        this.reputationService = reputationService;
+        this.voteQuestionConverter = voteQuestionConverter;
     }
 
     @DeleteMapping("/{id}/delete")
@@ -246,6 +250,8 @@ public class QuestionController {
             @ApiResponse(code = 400, message = "Question not add", response = String.class)
     })
     public ResponseEntity<?> addQuestion(@Valid @RequestBody QuestionCreateDto questionCreateDto) {
+        User user = securityHelper.getPrincipal();
+        Integer count = 5;
 
         if (!userService.existsById(questionCreateDto.getUserId())) {
             return ResponseEntity.badRequest().body("questionCreateDto.userId dont`t exist");
@@ -253,9 +259,13 @@ public class QuestionController {
 
         Question question = questionConverter.questionCreateDtoToQuestion(questionCreateDto);
         questionService.persist(question);
+        Reputation reputation = new Reputation();
+        reputation.setCount(count);
+        reputation.setQuestion(question);
+        reputation.setType(ReputationType.Question);
+        reputationService.update(reputation);
 
         QuestionDto questionDtoNew = questionConverter.questionToQuestionDto(question);
-
         return ResponseEntity.ok(questionDtoNew);
     }
 
@@ -286,7 +296,7 @@ public class QuestionController {
     }
 
     @GetMapping(value = "/withoutAnswer", params = {"page", "size"})
-    @ApiOperation(value = "Return Questions without answers")
+    @ApiOperation(value = "Return Questions without answers (where the author did not mark is_helpful)")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDto>"),
     })
@@ -305,6 +315,52 @@ public class QuestionController {
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
         PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationWithoutAnswers(page, size);
+        return ResponseEntity.ok(resultPage);
+    }
+
+    @GetMapping(value = "/withoutAnswer/noAnyAnswer", params = {"page", "size"})
+    @ApiOperation(value = "Return Questions without answers (not a single answer written)")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDto>"),
+    })
+    public ResponseEntity<?> getQuestionsWithoutAnswerNoAnyAnswer(
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    required = true,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationWithoutAnswersNoAnyAnswer(page, size);
+        return ResponseEntity.ok(resultPage);
+    }
+
+    @GetMapping(value = "/withoutAnswer/votes", params = {"page", "size"})
+    @ApiOperation(value = "Return Questions without answers sorted by votes")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDto>"),
+    })
+    public ResponseEntity<?> getQuestionsWithoutAnswerSortedByVotes(
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    required = true,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationWithoutAnswerSortedByVotes(page, size);
         return ResponseEntity.ok(resultPage);
     }
 
@@ -330,7 +386,7 @@ public class QuestionController {
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
 
-        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPAginationWithGivenTags(page, size, tagIds);
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationWithGivenTags(page, size, tagIds);
 
         if (resultPage.getItems().isEmpty()) {
             ResponseEntity.notFound();
@@ -404,7 +460,6 @@ public class QuestionController {
             @ApiParam(name = "text", value = "Text of comment. Type string", required = true, example = "Some comment")
             @RequestBody String commentText) {
 
-
         User user = securityHelper.getPrincipal();
 
         Optional<Question> question = questionService.getById(questionId);
@@ -453,20 +508,23 @@ public class QuestionController {
             @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
             @PathVariable Long questionId) {
 
-
-        Optional<Question> question = questionService.getById(questionId);
-        if (!question.isPresent()) {
+        Optional<Question> questionOptional = questionService.getById(questionId);
+        if (!questionOptional.isPresent()) {
             return ResponseEntity.badRequest().body("Question was not found");
         }
 
-        if (voteQuestionService.isUserAlreadyVoted(question.get(), securityHelper.getPrincipal())) {
-            return ResponseEntity.ok("User already voted");
+        Question question = questionOptional.get();
+        User user = securityHelper.getPrincipal();
+
+        VoteQuestion voteQuestion;
+        try {
+            voteQuestion = voteQuestionService.questionUpVote(question, user);
+        }  catch (VoteException e) {
+            return ResponseEntity.ok(e.getMessage());
         }
+        voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
 
-        VoteQuestion voteQuestion = new VoteQuestion(securityHelper.getPrincipal(), question.get(), 1);
-        voteQuestionService.persist(voteQuestion);
-
-        return ResponseEntity.ok(voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion));
+        return ResponseEntity.ok("Correct vote");
     }
 
 
@@ -482,20 +540,45 @@ public class QuestionController {
             @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
             @PathVariable Long questionId) {
 
-
-        Optional<Question> question = questionService.getById(questionId);
-        if (!question.isPresent()) {
+        Optional<Question> questionOptional = questionService.getById(questionId);
+        if (!questionOptional.isPresent()) {
             return ResponseEntity.badRequest().body("Question was not found");
         }
 
-        if (voteQuestionService.isUserAlreadyVoted(question.get(), securityHelper.getPrincipal())) {
-            return ResponseEntity.ok("User already voted");
+        Question question = questionOptional.get();
+        User user = securityHelper.getPrincipal();
+
+        VoteQuestion voteQuestion;
+        try {
+            voteQuestion = voteQuestionService.questionDownVote(question, user);
+        }  catch (VoteException e) {
+            return ResponseEntity.ok(e.getMessage());
         }
+        voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
 
-        VoteQuestion voteQuestion = new VoteQuestion(securityHelper.getPrincipal(), question.get(), -1);
-        voteQuestionService.persist(voteQuestion);
+        return ResponseEntity.ok("Correct vote");
+    }
 
-        return ResponseEntity.ok(voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion));
+    @GetMapping(value = "/withoutAnswer/new", params = {"page", "size"})
+    @ApiOperation(value = "Return Questions without answers sorted by new")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDto>"),
+    })
+    public ResponseEntity<?> getQuestionsWithoutAnswerNew(
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    required = true,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationWithoutAnswersNew(page, size);
+        return ResponseEntity.ok(resultPage);
     }
 
 
@@ -523,5 +606,50 @@ public class QuestionController {
 
         questionViewedService.markQuestionAsViewed(question, user);
         return ResponseEntity.ok().body("Question was marked");
+    }
+
+
+    @GetMapping(value = "/withoutAnswer/trackedTag", params = {"page", "size"})
+    @ApiOperation(value = "Return Questions without answers sorted by trackedTag")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDto>"),
+    })
+    public ResponseEntity<?> getQuestionsWithoutAnswerTrackedTag(
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    required = true,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationWithoutAnswersTrackedTag(page, size, securityHelper.getPrincipal().getId() );
+        return ResponseEntity.ok(resultPage);
+    }
+
+    @GetMapping(value = "/withoutAnswer/ignoredTag", params = {"page", "size"})
+    @ApiOperation(value = "Return Questions without answers sorted by trackedTag")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDto>"),
+    })
+    public ResponseEntity<?> getQuestionsWithoutAnswerIgnoredTag(
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    required = true,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationWithoutAnswersIgnoredTags(page, size, securityHelper.getPrincipal().getId() );
+        return ResponseEntity.ok(resultPage);
     }
 }

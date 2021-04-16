@@ -1,19 +1,19 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
+import com.javamentor.qa.platform.exception.VoteException;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
+import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.VoteAnswerDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
-import com.javamentor.qa.platform.service.abstracts.model.CommentAnswerService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import com.javamentor.qa.platform.webapp.converters.CommentConverter;
 import com.javamentor.qa.platform.webapp.converters.VoteAnswerConverter;
@@ -24,7 +24,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +32,7 @@ import java.util.Optional;
 @RequestMapping("/api/question")
 @Api(value = "AnswerApi")
 public class AnswerController {
+
     private final AnswerService answerService;
     private final CommentAnswerService commentAnswerService;
     private final CommentConverter commentConverter;
@@ -44,7 +44,7 @@ public class AnswerController {
     private final AnswerConverter answerConverter;
     private final VoteAnswerService voteAnswerService;
     private final VoteAnswerConverter voteAnswerConverter;
-
+    private final ReputationService reputationService;
 
     @Autowired
     public AnswerController(AnswerService answerService,
@@ -56,7 +56,7 @@ public class AnswerController {
                             VoteAnswerDtoService voteAnswerDtoService,
                             AnswerDtoService answerDtoService,
                             AnswerConverter answerConverter,
-                            VoteAnswerService voteAnswerService, VoteAnswerConverter voteAnswerConverter) {
+                            VoteAnswerService voteAnswerService, VoteAnswerConverter voteAnswerConverter, ReputationService reputationService) {
         this.answerService = answerService;
         this.commentAnswerService = commentAnswerService;
         this.commentConverter = commentConverter;
@@ -68,6 +68,7 @@ public class AnswerController {
         this.answerConverter = answerConverter;
         this.voteAnswerService = voteAnswerService;
         this.voteAnswerConverter = voteAnswerConverter;
+        this.reputationService = reputationService;
     }
 
     @PostMapping("/{questionId}/answer/{answerId}/comment")
@@ -130,7 +131,7 @@ public class AnswerController {
     @ApiOperation(value = "Return List<AnswerDto> with answers for question", notes = "This method return List<AnswerDto> with answers with has presented questionId")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Return answers for question", response = AnswerDto.class, responseContainer = "List"),
-            @ApiResponse(code = 400, message = "Question not found", response = String.class)
+            @ApiResponse(code = 400, message = "Question was not found", response = String.class)
     })
 
     public ResponseEntity<?> getAnswerListByQuestionId(@ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
@@ -138,7 +139,7 @@ public class AnswerController {
 
         Optional<Question> question = questionService.getById(questionId);
         if (!question.isPresent()) {
-            return ResponseEntity.badRequest().body("Question not found");
+            return ResponseEntity.badRequest().body("Question was not found");
         }
 
         List<AnswerDto> answerDtoList = answerDtoService.getAllAnswersByQuestionId(questionId);
@@ -158,12 +159,12 @@ public class AnswerController {
                                                  @ApiParam(name = "questionId", value = "questionId. Type long", required = true, example = "1")
                                                  @PathVariable Long questionId) {
 
-
+        Integer count = 5;
         User user = securityHelper.getPrincipal();
 
         Optional<Question> question = questionService.getById(questionId);
         if (!question.isPresent()) {
-            return ResponseEntity.badRequest().body("Question not found");
+            return ResponseEntity.badRequest().body("Question was not found");
         }
 
         Answer answer = new Answer(question.get(), user, createAnswerDto.getHtmlBody(), false, false);
@@ -173,6 +174,11 @@ public class AnswerController {
 
         if (!everAnswered) {
             answerService.persist(answer);
+            Reputation reputation = new Reputation();
+            reputation.setCount(count);
+            reputation.setAnswer(answer);
+            reputation.setType(ReputationType.Answer);
+            reputationService.update(reputation);
             return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
         }
 
@@ -184,7 +190,7 @@ public class AnswerController {
     @ResponseBody
     @ApiResponses({
             @ApiResponse(code = 200, message = "Answer was up voted", response = VoteAnswerDto.class),
-            @ApiResponse(code = 400, message = "Question not found", response = String.class),
+            @ApiResponse(code = 400, message = "Question was not found", response = String.class),
             @ApiResponse(code = 400, message = "User already voted in this question ", response = String.class)
     })
     public ResponseEntity<?> answerUpVote(
@@ -193,32 +199,29 @@ public class AnswerController {
             @ApiParam(name = "answerId", value = "type Long", required = true, example = "0")
             @PathVariable Long answerId) {
 
-
-        Optional<Question> question = questionService.getById(questionId);
-        if (!question.isPresent()) {
+        Optional<Question> questionOptional = questionService.getById(questionId);
+        if (!questionOptional.isPresent()) {
             return ResponseEntity.badRequest().body("Question was not found");
         }
 
-        Optional<Answer> answer = answerService.getById(answerId);
-        if (!answer.isPresent()) {
+        Optional<Answer> answerOptional = answerService.getById(answerId);
+        if (!answerOptional.isPresent()) {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
 
-        if (voteAnswerService.isUserAlreadyVotedIsThisQuestion(question.get(), securityHelper.getPrincipal(), answer.get())) {
-            return ResponseEntity.ok("User already voted in this question");
+        Question question = questionOptional.get();
+        User user = securityHelper.getPrincipal();
+        Answer answer = answerOptional.get();
+
+        VoteAnswer voteAnswer;
+        try {
+            voteAnswer = voteAnswerService.answerUpVote(question, user, answer);
+        } catch (VoteException e) {
+            return ResponseEntity.ok(e.getMessage());
         }
+        voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer);
 
-
-        if (question.get().getUser().getId().equals(securityHelper.getPrincipal().getId())) {
-            answer.get().setIsHelpful(true);
-            answer.get().setDateAcceptTime(LocalDateTime.now());
-            answerService.update(answer.get());
-        }
-
-        VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), 1);
-        voteAnswerService.persist(voteAnswer);
-
-        return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
+        return ResponseEntity.ok("Correct vote");
     }
 
 
@@ -226,7 +229,7 @@ public class AnswerController {
     @ResponseBody
     @ApiResponses({
             @ApiResponse(code = 200, message = "Answer was up voted", response = VoteAnswerDto.class),
-            @ApiResponse(code = 400, message = "Question not found", response = String.class),
+            @ApiResponse(code = 400, message = "Question was not found", response = String.class),
             @ApiResponse(code = 400, message = "User already voted in this question ", response = String.class)
     })
     public ResponseEntity<?> answerDownVote(
@@ -235,27 +238,30 @@ public class AnswerController {
             @ApiParam(name = "answerId", value = "type Long", required = true, example = "0")
             @PathVariable Long answerId) {
 
-
-        Optional<Question> question = questionService.getById(questionId);
-        if (!question.isPresent()) {
+        Optional<Question> questionOptional = questionService.getById(questionId);
+        if (!questionOptional.isPresent()) {
             return ResponseEntity.badRequest().body("Question was not found");
         }
 
-        Optional<Answer> answer = answerService.getById(answerId);
-        if (!answer.isPresent()) {
+        Optional<Answer> answerOptional = answerService.getById(answerId);
+        if (!answerOptional.isPresent()) {
             return ResponseEntity.badRequest().body("Answer was not found");
         }
 
-        if (voteAnswerService.isUserAlreadyVotedIsThisQuestion(question.get(), securityHelper.getPrincipal(), answer.get())) {
-            return ResponseEntity.ok("User already voted in this question");
+        Question question = questionOptional.get();
+        User user = securityHelper.getPrincipal();
+        Answer answer = answerOptional.get();
+
+        VoteAnswer voteAnswer;
+        try {
+            voteAnswer = voteAnswerService.answerDownVote(question, user, answer);
+        } catch (VoteException e) {
+            return ResponseEntity.ok(e.getMessage());
         }
+        voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer);
 
-        VoteAnswer voteAnswer = new VoteAnswer(securityHelper.getPrincipal(), answer.get(), -1);
-        voteAnswerService.persist(voteAnswer);
-
-        return ResponseEntity.ok(voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer));
+        return ResponseEntity.ok("Correct vote");
     }
-
 
     @GetMapping("/{questionId}/isAnswerVoted")
     @ApiOperation(value = "Checks if user vote up answer to the question",
@@ -263,7 +269,7 @@ public class AnswerController {
             response = Boolean.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "True, if user voted; False, if not", response = Boolean.class),
-            @ApiResponse(code = 400, message = "Question not found", response = String.class),
+            @ApiResponse(code = 400, message = "Question was not found", response = String.class),
     })
     public ResponseEntity<?> isAnyAnswerVotedByCurrentUser(@ApiParam(name = "questionId", value = "ID value, for the question, the answer to which needs to be check", required = true, example = "1")
                                                            @PathVariable Long questionId) {
@@ -271,7 +277,7 @@ public class AnswerController {
         Optional<Question> question = questionService.getById(questionId);
 
         if (!question.isPresent()) {
-            return ResponseEntity.badRequest().body("Question not found");
+            return ResponseEntity.badRequest().body("Question was not found");
         }
 
         User user = securityHelper.getPrincipal();

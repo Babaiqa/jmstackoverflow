@@ -10,5 +10,4 @@ public interface QuestionDao extends ReadWriteDao<Question, Long> {
     List<Tag> getAllTagOfQuestion(Question question);
 
     List<Long> getPaginationQuestionIds(int page, int size);
-
 }

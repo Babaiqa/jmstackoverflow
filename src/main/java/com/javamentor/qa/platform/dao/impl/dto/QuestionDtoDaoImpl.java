@@ -3,9 +3,6 @@ package com.javamentor.qa.platform.dao.impl.dto;
 import com.javamentor.qa.platform.dao.abstracts.dto.QuestionDtoDao;
 import com.javamentor.qa.platform.dao.impl.dto.transformers.QuestionResultTransformer;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
-import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
-import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -46,5 +43,56 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 .setResultTransformer(new QuestionResultTransformer())
                 .uniqueResultOptional();
 
+    }
+
+    @Override
+    public List<Long> getPaginationQuestionIdsWithoutAnswerOrderByNew(int page, int size) {
+        return   (List<Long>) entityManager
+                .createQuery("select q.id from Question q left outer join Answer a on (q.id = a.question.id) where a.question.id is null order by q.persistDateTime desc")
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
+    }
+
+    @Override
+    public List<Long> getPaginationQuestionIdsWithoutAnswerWithIgnoredTags(int page, int size, long id) {
+        return  (List<Long>) entityManager.createQuery(
+                "select q.id " +
+                        "from Question q " +
+                        "join  q.tags tag " +
+                        "left outer join Answer a on (q.id = a.question.id) " +
+                        "join IgnoredTag ignoredTag on tag.id=ignoredTag.ignoredTag.id " +
+                        "inner join User user on user.id=ignoredTag.user.id " +
+                        "where  user.id in :id and a.question.id is null ")
+                .setParameter("id", id)
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
+    }
+
+    @Override
+    public List<Long> getPaginationQuestionIdsWithoutAnswer(int page, int size) {
+        return entityManager
+                .createQuery("select q.id from Question q left outer join Answer a on (q.id = a.question.id) where a.question.id is null")
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
+    }
+
+
+    @Override
+    public List<Long> getPaginationQuestionIdsWithoutAnswerWithTrackedTags(int page, int size, long id) {
+        return  (List<Long>) entityManager.createQuery(
+                "select q.id " +
+                        "from Question q " +
+                        "join  q.tags tag " +
+                        "left outer join Answer a on (q.id = a.question.id) " +
+                        "join TrackedTag trackedTag on tag.id=trackedTag.trackedTag.id " +
+                        "inner join User user on user.id=trackedTag.user.id " +
+                        "where  user.id in :id and a.question.id is null ")
+                .setParameter("id", id)
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
     }
 }
