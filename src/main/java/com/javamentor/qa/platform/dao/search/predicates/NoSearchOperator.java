@@ -15,28 +15,28 @@ public class NoSearchOperator extends SearchOperator {
     }
 
     @Override
-    public BooleanPredicateClausesStep<?> parse(StringBuilder query, SearchPredicateFactory factory, BooleanPredicateClausesStep<?> b) {
+    public BooleanPredicateClausesStep<?> parse(StringBuilder query, SearchPredicateFactory factory, BooleanPredicateClausesStep<?> booleanPredicate) {
 
         if (query.toString().trim().isEmpty()) {
-            return b;
+            return booleanPredicate;
         }
 
-        MatchPredicateOptionsStep<?> p1 = factory.match().field("description")
+        MatchPredicateOptionsStep<?> descriptionPredicateOption = factory.match().field("description")
                 .matching(query.toString());
 
-        MatchPredicateOptionsStep<?> p2 = factory.match().field("title")
+        MatchPredicateOptionsStep<?> titlePredicateOption = factory.match().field("title")
                 .matching(query.toString());
 
-        MatchPredicateOptionsStep<?> p3 = factory.match().field("htmlBody")
+        MatchPredicateOptionsStep<?> htmlBodyPredicateOption = factory.match().field("htmlBody")
                 .matching(query.toString());
 
-        BooleanPredicateClausesStep<?> bool = factory.bool()
-                .should(p1)
-                .should(p2)
-                .should(p3);
+        BooleanPredicateClausesStep<?> innerBooleanPredicate = factory.bool()
+                .should(descriptionPredicateOption)
+                .should(titlePredicateOption)
+                .should(htmlBodyPredicateOption);
 
-        b = b.must(bool);
+        booleanPredicate = booleanPredicate.must(innerBooleanPredicate);
 
-        return b;
+        return booleanPredicate;
     }
 }

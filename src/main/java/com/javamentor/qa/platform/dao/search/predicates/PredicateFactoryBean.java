@@ -18,15 +18,15 @@ public class PredicateFactoryBean {
     public SearchPredicate getPredicate(SearchScope scope, String query) {
         StringBuilder queryStringBuilder = new StringBuilder(query);
         SearchPredicateFactory factory = scope.predicate();
-        BooleanPredicateClausesStep<?> b = factory.bool();
+        BooleanPredicateClausesStep<?> booleanPredicate = factory.bool();
 
         Collections.sort(searchOperators);
 
         for (SearchOperator searchOperator: searchOperators) {
-            b = searchOperator.parse(queryStringBuilder, factory, b);
+            booleanPredicate = searchOperator.parse(queryStringBuilder, factory, booleanPredicate);
         }
 
-        return b.toPredicate();
+        return booleanPredicate.toPredicate();
     }
 
 }

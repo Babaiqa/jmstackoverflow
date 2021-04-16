@@ -17,27 +17,27 @@ public class IsSearchOperator extends SearchOperator {
     }
 
     @Override
-    public BooleanPredicateClausesStep<?> parse(StringBuilder query, SearchPredicateFactory factory, BooleanPredicateClausesStep<?> b) {
-        Pattern p = Pattern.compile("is:(question|answer)");
-        Matcher m = p.matcher(query);
+    public BooleanPredicateClausesStep<?> parse(StringBuilder query, SearchPredicateFactory factory, BooleanPredicateClausesStep<?> booleanPredicate) {
+        Pattern pattern = Pattern.compile("is:(question|answer)");
+        Matcher matcher = pattern.matcher(query);
 
         String operator = "";
 
-        while (m.find()) {
-           operator = m.group(1);
+        while (matcher.find()) {
+           operator = matcher.group(1);
         }
 
         switch (operator) {
             case "question":
-                b = b.must(factory.exists().field("id"));
+                booleanPredicate = booleanPredicate.must(factory.exists().field("id"));
                 break;
             case "answer":
-                b = b.must(factory.exists().field("answerId"));
+                booleanPredicate = booleanPredicate.must(factory.exists().field("answerId"));
                 break;
         }
 
-        query.replace(0, query.length(), m.replaceAll(""));
+        query.replace(0, query.length(), matcher.replaceAll(""));
 
-        return b;
+        return booleanPredicate;
     }
 }

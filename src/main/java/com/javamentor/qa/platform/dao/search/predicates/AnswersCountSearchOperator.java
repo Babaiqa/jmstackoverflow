@@ -16,30 +16,30 @@ public class AnswersCountSearchOperator extends SearchOperator {
     }
 
     @Override
-    public BooleanPredicateClausesStep<?> parse(StringBuilder query, SearchPredicateFactory factory, BooleanPredicateClausesStep<?> b) {
-        Pattern p = Pattern.compile("(answers:)([0-9]+)");
-        Matcher m = p.matcher(query);
+    public BooleanPredicateClausesStep<?> parse(StringBuilder query, SearchPredicateFactory factory, BooleanPredicateClausesStep<?> booleanPredicate) {
+        Pattern pattern = Pattern.compile("(answers:)([0-9]+)");
+        Matcher matcher = pattern.matcher(query);
 
-        if (!m.find()) {
-            return b;
+        if (!matcher.find()) {
+            return booleanPredicate;
         }
 
-        m.reset();
+        matcher.reset();
 
         long answersCount = 0L;
 
-        while (m.find()) {
-            answersCount = Long.parseLong(m.group(2));
+        while (matcher.find()) {
+            answersCount = Long.parseLong(matcher.group(2));
         }
 
         if (answersCount == 0) {
-            b = b.must(factory.match().field("answersCount").matching(answersCount));
+            booleanPredicate = booleanPredicate.must(factory.match().field("answersCount").matching(answersCount));
         } else {
-            b = b.must(factory.range().field("answersCount").atLeast(answersCount));
+            booleanPredicate = booleanPredicate.must(factory.range().field("answersCount").atLeast(answersCount));
         }
 
-        query.replace(0, query.length(), m.replaceAll(""));
+        query.replace(0, query.length(), matcher.replaceAll(""));
 
-        return b;
+        return booleanPredicate;
     }
 }

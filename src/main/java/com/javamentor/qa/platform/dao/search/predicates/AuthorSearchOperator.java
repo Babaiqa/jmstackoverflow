@@ -16,27 +16,27 @@ public class AuthorSearchOperator extends SearchOperator{
     }
 
     @Override
-    public BooleanPredicateClausesStep<?> parse(StringBuilder query, SearchPredicateFactory factory, BooleanPredicateClausesStep<?> b) {
-        Pattern p = Pattern.compile("(user:)([0-9]+)");
-        Matcher m = p.matcher(query);
+    public BooleanPredicateClausesStep<?> parse(StringBuilder query, SearchPredicateFactory factory, BooleanPredicateClausesStep<?> booleanPredicate) {
+        Pattern pattern = Pattern.compile("(user:)([0-9]+)");
+        Matcher matcher = pattern.matcher(query);
 
-        if (!m.find()) {
-            return b;
+        if (!matcher.find()) {
+            return booleanPredicate;
         }
 
-        m.reset();
+        matcher.reset();
 
-        BooleanPredicateClausesStep<?> bool = factory.bool();
+        BooleanPredicateClausesStep<?> innerBooleanPredicate = factory.bool();
 
-        while (m.find()) {
-           long userId = Long.parseLong(m.group(2));
-           bool = bool.should(factory.match().field("user.id").matching(userId));
+        while (matcher.find()) {
+           long userId = Long.parseLong(matcher.group(2));
+           innerBooleanPredicate = innerBooleanPredicate.should(factory.match().field("user.id").matching(userId));
         }
 
-        b = b.must(bool);
+        booleanPredicate = booleanPredicate.must(innerBooleanPredicate);
 
-        query.replace(0, query.length(), m.replaceAll(""));
+        query.replace(0, query.length(), matcher.replaceAll(""));
 
-        return b;
+        return booleanPredicate;
     }
 }

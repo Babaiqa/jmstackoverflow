@@ -28,10 +28,10 @@ public abstract class SearchOperator implements Comparable<SearchOperator> {
         this.order = order;
     }
 
-    public abstract BooleanPredicateClausesStep<?> parse(StringBuilder query, SearchPredicateFactory factory, BooleanPredicateClausesStep<?> b);
+    public abstract BooleanPredicateClausesStep<?> parse(StringBuilder query, SearchPredicateFactory factory, BooleanPredicateClausesStep<?> booleanPredicate);
 
     @Override
-    public int compareTo(SearchOperator o) {
-        return this.order - o.getOrder();
+    public int compareTo(SearchOperator searchOperator) {
+        return this.order - searchOperator.getOrder();
     }
 }

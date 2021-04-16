@@ -17,21 +17,21 @@ public class TagSearchOperator extends SearchOperator {
     }
 
     @Override
-    public BooleanPredicateClausesStep<?> parse(StringBuilder query, SearchPredicateFactory factory, BooleanPredicateClausesStep<?> b) {
-        Pattern p = Pattern.compile("(\\[)([a-zA-Z\\s\\-]+)(\\])");
-        Matcher m = p.matcher(query);
+    public BooleanPredicateClausesStep<?> parse(StringBuilder query, SearchPredicateFactory factory, BooleanPredicateClausesStep<?> booleanPredicate) {
+        Pattern pattern = Pattern.compile("(\\[)([a-zA-Z\\s\\-]+)(\\])");
+        Matcher matcher = pattern.matcher(query);
 
-        while (m.find()) {
+        while (matcher.find()) {
             BooleanPredicateClausesStep<?> bool = factory.bool()
-                    .should(factory.match().field("tags.name").matching(m.group(2)))
-                    .should(factory.match().field("question.tags.name").matching(m.group(2)));
-            b = b.must(bool);
+                    .should(factory.match().field("tags.name").matching(matcher.group(2)))
+                    .should(factory.match().field("question.tags.name").matching(matcher.group(2)));
+            booleanPredicate = booleanPredicate.must(bool);
         }
 
 
-        query.replace(0, query.length(), m.replaceAll(""));
+        query.replace(0, query.length(), matcher.replaceAll(""));
 
-        return b;
+        return booleanPredicate;
 
     }
 }

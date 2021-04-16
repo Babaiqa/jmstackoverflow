@@ -16,20 +16,20 @@ public class ExactSearchOperator extends SearchOperator {
     }
 
     @Override
-    public BooleanPredicateClausesStep<?> parse(StringBuilder query, SearchPredicateFactory factory, BooleanPredicateClausesStep<?> b) {
-        Pattern p = Pattern.compile("(\\\")([а-яА-Яa-zA-Z0-9\\s\\:\\?\\!\\$\\#\\_]+)(\\\")");
-        Matcher m = p.matcher(query);
+    public BooleanPredicateClausesStep<?> parse(StringBuilder query, SearchPredicateFactory factory, BooleanPredicateClausesStep<?> booleanPredicate) {
+        Pattern pattern = Pattern.compile("(\\\")([а-яА-Яa-zA-Z0-9\\s\\:\\?\\!\\$\\#\\_]+)(\\\")");
+        Matcher matcher = pattern.matcher(query);
 
-        if (m.find()) {
-            BooleanPredicateClausesStep<?> bool = factory.bool()
-                    .should(factory.phrase().field("title").matching(m.group(2)))
-                    .should(factory.phrase().field("description").matching(m.group(2)))
-                    .should(factory.phrase().field("htmlBody").matching(m.group(2)));
-            b = b.must(bool);
+        if (matcher.find()) {
+            BooleanPredicateClausesStep<?> innerBooleanPredicate = factory.bool()
+                    .should(factory.phrase().field("title").matching(matcher.group(2)))
+                    .should(factory.phrase().field("description").matching(matcher.group(2)))
+                    .should(factory.phrase().field("htmlBody").matching(matcher.group(2)));
+            booleanPredicate = booleanPredicate.must(innerBooleanPredicate);
         }
 
-        query.replace(0, query.length(), m.replaceAll(""));
+        query.replace(0, query.length(), matcher.replaceAll(""));
 
-        return b;
+        return booleanPredicate;
     }
 }

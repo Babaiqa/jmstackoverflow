@@ -18,18 +18,18 @@ public class AuthorMeSearchOperator extends SearchOperator {
     }
 
     @Override
-    public BooleanPredicateClausesStep<?> parse(StringBuilder query, SearchPredicateFactory factory, BooleanPredicateClausesStep<?> b) {
-        Pattern p = Pattern.compile("user:me");
-        Matcher m = p.matcher(query);
+    public BooleanPredicateClausesStep<?> parse(StringBuilder query, SearchPredicateFactory factory, BooleanPredicateClausesStep<?> booleanPredicate) {
+        Pattern pattern = Pattern.compile("user:me");
+        Matcher matcher = pattern.matcher(query);
 
-        if (m.find()) {
+        if (matcher.find()) {
             User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             long userId = currentUser.getId();
-            b = b.must(factory.match().field("user.id").matching(userId));
+            booleanPredicate = booleanPredicate.must(factory.match().field("user.id").matching(userId));
         }
 
-        query.replace(0, query.length(), m.replaceAll(""));
+        query.replace(0, query.length(), matcher.replaceAll(""));
 
-        return b;
+        return booleanPredicate;
     }
 }
