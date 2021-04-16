@@ -63,15 +63,29 @@ public class ChatController {
     }
 
     @GetMapping(path = "/byuser")
-    @ApiOperation(value = "Get Chats By User")
+    @ApiOperation(value = "Get Chats By User. MAX ITEMS ON PAGE=" + MAX_ITEMS_ON_PAGE)
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns the List<ChatDto>"),
+            @ApiResponse(code = 200, message = "Returns the pagination List<ChatDto>"),
     })
-    public ResponseEntity<?> getAllChatsByUser() {
+    public ResponseEntity<?> getAllChatsByUserPagination(
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    example = "10")
+            @RequestParam("size") int size
+    ) {
 
-        List<ChatDto> chatsByUser = chatDtoService.getAllChatsByUser(securityHelper.getPrincipal().getId());
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
 
-        return ResponseEntity.ok(chatsByUser);
+        Long userId = securityHelper.getPrincipal().getId();
+
+        PageDto<ChatDto, Object> allChatsByUser = chatDtoService.getAllChatsByUserPagination(userId, page, size);
+
+        return ResponseEntity.ok(allChatsByUser);
 
     }
 

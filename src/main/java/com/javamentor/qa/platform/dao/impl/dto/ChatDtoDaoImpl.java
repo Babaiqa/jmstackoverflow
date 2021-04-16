@@ -20,27 +20,26 @@ public class ChatDtoDaoImpl implements ChatDtoDao {
 
     @Override
     public List<ChatDto> getAllChatsByUser(Long userID) {
-        List<ChatDto> groupChats = (List<ChatDto>) entityManager.unwrap(Session.class)
-                .createQuery("SELECT gc.chat.id as id, " +
-                        "gc.chat.title as title, " +
-                        "gc.chat.persistDate as persistDate, " +
-                        "gc.chat.chatType as chatType " +
-                        "FROM GroupChat gc " +
-                        "JOIN gc.users u ON u.id = :id")
+        List<ChatDto> chats = (List<ChatDto>) entityManager.unwrap(Session.class)
+                .createNativeQuery("SELECT c.id as id, " +
+                        "c.title as title, " +
+                        "c.persist_date as persistDate, " +
+                        "c.chat_type as chatType " +
+                        "FROM group_chat as gc " +
+                        "JOIN chat c on c.id = gc.chat_id " +
+                        "JOIN groupchat_has_users u ON u.chat_id = gc.chat_id " +
+                        "WHERE u.user_id = :id " +
+                        "UNION ALL " +
+                        "SELECT c.id as id, " +
+                        "c.title as title, " +
+                        "c.persist_date as persistDate, " +
+                        "c.chat_type as chatType " +
+                        "FROM singel_chat as sc " +
+                        "JOIN chat c on c.id = sc.chat_id " +
+                        "WHERE sc.user_one_id = :id OR sc.use_two_id = :id")
                 .setParameter("id", userID)
                 .unwrap(Query.class)
                 .getResultList();
-        List<ChatDto> singleChat = (List<ChatDto>) entityManager.unwrap(Session.class)
-                .createQuery("SELECT sc.chat.id as id, " +
-                        "sc.chat.title as title, " +
-                        "sc.chat.persistDate as persistDate, " +
-                        "sc.chat.chatType as chatType " +
-                        "FROM SingleChat sc " +
-                        "WHERE sc.userOne.id = :id OR sc.useTwo.id = :id")
-                .setParameter("id", userID)
-                .unwrap(Query.class)
-                .getResultList();
-        return Stream.concat(singleChat.stream(), groupChats.stream())
-                .collect(Collectors.toList());
+        return chats;
     }
 }
