@@ -514,25 +514,25 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     public void testIsQuestionWithoutAnswers() throws Exception {
 
         LocalDateTime persistDateTime = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(0, 0, 0));
-        LocalDateTime lastUpdateDateTime = LocalDateTime.of(LocalDate.of(2020, 2, 1), LocalTime.of(13, 58, 56));
+        LocalDateTime lastUpdateDateTime = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(13, 58, 56));
 
         PageDto<QuestionDto, Object> expectPage = new PageDto<>();
         expectPage.setCurrentPageNumber(1);
         expectPage.setItemsOnPage(1);
-        expectPage.setTotalPageCount(7);
-        expectPage.setTotalResultCount(7);
+        expectPage.setTotalPageCount(2);
+        expectPage.setTotalResultCount(2);
 
         List<TagDto> tagsList = new ArrayList<>();
-        tagsList.add(new TagDto(1L, "java", "description"));
+        tagsList.add(new TagDto(1L, "java", "Java is a popular high-level programming language."));
 
         List<QuestionDto> itemsList = new ArrayList<>();
-        itemsList.add(new QuestionDto(14L,
-                "Question number three",
-                2L,
-                "Tot",
+        itemsList.add(new QuestionDto(10L,
+                "Question number one",
+                1L,
+                "Teat",
                 null,
-                "Swagger - add \"path variable\" in request url",
-                2,
+                "Stream filter on list keeping some of the filtered values",
+                3,
                 3,
                 1,
                 persistDateTime,
