@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.configs.initializer;
 
+import com.javamentor.qa.platform.service.abstracts.model.SearchQuestionService;
 import com.javamentor.qa.platform.service.impl.TestDataInitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,13 +13,15 @@ import org.springframework.stereotype.Component;
 public class TestEntityInit implements CommandLineRunner {
 
     private TestDataInitService testDataInitService;
+    private SearchQuestionService searchQuestionService;
 
     @Value("${spring.jpa.hibernate.ddl-auto}")
     private String ddlAuto;
 
     @Autowired
-    public TestEntityInit(TestDataInitService testDataInitService) {
+    public TestEntityInit(TestDataInitService testDataInitService, SearchQuestionService searchQuestionService) {
         this.testDataInitService = testDataInitService;
+        this.searchQuestionService = searchQuestionService;
     }
 
     @Override
@@ -26,5 +29,6 @@ public class TestEntityInit implements CommandLineRunner {
         if (ddlAuto.contains("create")) {
             testDataInitService.createEntity();
         }
+        searchQuestionService.index();
     }
 }

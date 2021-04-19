@@ -1,5 +1,8 @@
 package com.javamentor.qa.platform.models.entity.question;
 
+import com.javamentor.qa.platform.dao.search.bridge.AnswersCountBinder;
+import com.javamentor.qa.platform.dao.search.bridge.TagsBinder;
+import com.javamentor.qa.platform.dao.search.bridge.VotesQuestionCountBinder;
 import com.javamentor.qa.platform.exception.ConstrainException;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -8,11 +11,18 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.search.engine.backend.types.Projectable;
+import org.hibernate.search.engine.backend.types.Sortable;
+import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
+import org.hibernate.search.mapper.pojo.bridge.mapping.annotation.PropertyBinderRef;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,15 +33,18 @@ import java.util.Objects;
 @AllArgsConstructor
 @Builder
 @Table(name = "question")
+@Indexed
 public class Question implements Serializable {
 
     private static final long serialVersionUID = -4612026867697897418L;
     @Id
     @GeneratedValue(generator = "Question_seq")
+    @GenericField(projectable = Projectable.YES)
     private Long id;
 
     @Column
     @NotNull
+    @FullTextField(projectable = Projectable.YES, analyzer = "russian")
     private String title;
 
 
@@ -43,15 +56,19 @@ public class Question implements Serializable {
     @NotNull
     @Column
     @Type(type = "org.hibernate.type.TextType")
+    @FullTextField(projectable = Projectable.YES, analyzer = "russian")
     private String description;
 
     @CreationTimestamp
     @Column(name = "persist_date", updatable = false)
     @Type(type = "org.hibernate.type.LocalDateTimeType")
+    @GenericField(projectable = Projectable.YES, sortable = Sortable.YES)
     private LocalDateTime persistDateTime;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
+    @IndexedEmbedded(includePaths = { "id", "fullName"})
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     private User user;
 
     @NotNull
@@ -59,7 +76,8 @@ public class Question implements Serializable {
     @JoinTable(name = "question_has_tag",
             joinColumns = @JoinColumn(name = "question_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private  List<Tag> tags;
+    @PropertyBinding(binder = @PropertyBinderRef(type = TagsBinder.class))
+    private  List<Tag> tags = new ArrayList<>();
 
     @Column(name = "last_redaction_date", nullable = false)
     @Type(type = "org.hibernate.type.LocalDateTimeType")
@@ -70,7 +88,8 @@ public class Question implements Serializable {
     private Boolean isDeleted;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "question", orphanRemoval = true)
-    private List<Answer> answers;
+    @PropertyBinding(binder = @PropertyBinderRef(type = AnswersCountBinder.class))
+    private List<Answer> answers = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "question", orphanRemoval = true)
     private List<CommentQuestion> commentQuestions;
@@ -79,7 +98,8 @@ public class Question implements Serializable {
     private List<UserFavoriteQuestion> userFavoriteQuestions;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "question", orphanRemoval = true)
-    private List<VoteQuestion> voteQuestions;
+    @PropertyBinding(binder = @PropertyBinderRef(type = VotesQuestionCountBinder.class))
+    private List<VoteQuestion> voteQuestions = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "question", orphanRemoval = true)
     private List<QuestionViewed> userViewedQuestions;

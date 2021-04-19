@@ -4,6 +4,8 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.search.engine.backend.types.Projectable;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -36,6 +38,7 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(generator = "User_seq")
+    @GenericField(projectable = Projectable.YES)
     private Long id;
 
     @Column
@@ -47,6 +50,7 @@ public class User implements UserDetails {
     private String password;
 
     @Column
+    @GenericField(projectable = Projectable.YES)
     private String fullName;
 
     @Column(name = "persist_date", updatable = false)
