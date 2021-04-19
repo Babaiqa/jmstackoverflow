@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -657,5 +658,40 @@ class UserControllerTest extends AbstractIntegrationTest {
                 .setParameter("userId", newUser.getId())
                 .setParameter("chatId", chatId);
         Assertions.assertEquals(createdUser,addedToGroupChat);
+    }
+
+    @Test
+    @DataSet(value = "dataset/user/userAnswerApi.yml", disableConstraints = true, cleanBefore = true, cleanAfter = true)
+    void requestGetAnswerListPrincipalUser() throws Exception {
+        PageDto<AnswerDto, Object> expected = new PageDto<>();
+        expected.setCurrentPageNumber(1);
+        expected.setTotalPageCount(1);
+        expected.setTotalResultCount(3);
+        expected.setItemsOnPage(10);
+
+        List<AnswerDto> expectedItems = new ArrayList<>();
+        expectedItems.add(new com.javamentor.qa.platform.models.dto.AnswerDto(14L, 153L, 1L, "This is answer for question number one",  LocalDateTime.of(2020,1,1,13,58,56),
+                false, LocalDateTime.of(2020,1,1,13,58,56) , 0L, "https://www.google.com/search?q=D0", "Teat" ));
+        expectedItems.add(new AnswerDto(20L, 153L, 2L, "This is answer for question number two",  LocalDateTime.of(2020,1,1,13,58,56),
+                false, LocalDateTime.of(2020,1,1,13,58,56), 0L, "https://www.google.com/search?q=D0", "Teat" ));
+        expectedItems.add(new AnswerDto(30L, 153L, 3L, "This is answer for question number three",  LocalDateTime.of(2020,1,1,13,58,56),
+                false, LocalDateTime.of(2020,1,1,13,58,56), 0L, "https://www.google.com/search?q=D0", "Teat" ));
+        expected.setItems(expectedItems);
+
+        String resultContext = mockMvc.perform(get("/api/user/currentUser/answers")
+                .param("page", "1")
+                .param("size", "10"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
+                .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
+                .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
+                .andExpect(jsonPath("$.items").isNotEmpty())
+                .andExpect(jsonPath("$.itemsOnPage").isNotEmpty())
+                .andReturn().getResponse().getContentAsString();
+
+        PageDto<AnswerDto, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
+        Assertions.assertEquals(expected.toString(), actual.toString());
     }
 }
