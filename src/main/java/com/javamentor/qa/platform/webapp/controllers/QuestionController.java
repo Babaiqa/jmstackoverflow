@@ -523,10 +523,7 @@ public class QuestionController {
         }  catch (VoteException e) {
             return ResponseEntity.ok(e.getMessage());
         }
-        voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
-
-        JSONObject responseBody = new JSONObject();
-        responseBody.put("vote", 1);
+        VoteQuestionDto responseBody = voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
 
         return ResponseEntity.ok(responseBody);
     }
@@ -558,10 +555,7 @@ public class QuestionController {
         }  catch (VoteException e) {
             return ResponseEntity.ok(e.getMessage());
         }
-        voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
-
-        JSONObject responseBody = new JSONObject();
-        responseBody.put("vote", -1);
+        VoteQuestionDto responseBody = voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
 
         return ResponseEntity.ok(responseBody);
     }
