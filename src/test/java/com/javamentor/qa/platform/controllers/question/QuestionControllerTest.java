@@ -665,7 +665,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .patch("/api/question/1/answer/3/downVote")
                 .contentType("application/json;charset=UTF-8"))
                 .andDo(print())
-             //   .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.userId").isNumber())
