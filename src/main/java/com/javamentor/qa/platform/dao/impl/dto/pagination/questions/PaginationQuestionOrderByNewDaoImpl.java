@@ -37,7 +37,7 @@ public class PaginationQuestionOrderByNewDaoImpl implements PaginationDao<Questi
                         "INNER JOIN  question.user u" +
                         "  join question.tags tag" +
                         " where question.id IN :ids order by question.persistDateTime desc")
-                .setParameter("ids", parameters.get("questionIds"))
+                .setParameter("ids", parameters.get("ids"))
                 .unwrap(Query.class)
                 .setResultTransformer(new QuestionResultTransformer())
                 .getResultList();
