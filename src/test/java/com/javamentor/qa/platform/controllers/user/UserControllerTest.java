@@ -7,6 +7,7 @@ import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,6 +23,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -658,6 +660,49 @@ class UserControllerTest extends AbstractIntegrationTest {
                 .setParameter("userId", newUser.getId())
                 .setParameter("chatId", chatId);
         Assertions.assertEquals(createdUser,addedToGroupChat);
+    }
+
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestReputationHistory() throws Exception {
+
+        int id = 1;
+
+        PageDto<ReputationHistoryDtoList, Object> expected = new PageDto<>();
+        expected.setCurrentPageNumber(1);
+        expected.setTotalPageCount(5);
+        expected.setTotalResultCount(5);
+        expected.setItemsOnPage(1);
+
+        List<ReputationHistoryDtoList> expectedItems = new ArrayList<>();
+        expectedItems.add(new ReputationHistoryDtoList(1L, 2, ReputationType.Question, LocalDateTime.of(2021, Month.MARCH, 20, 21, 22, 13)));
+        expected.setItems(expectedItems);
+        String resultContext =
+                mockMvc.perform(get("/api/user/reputation/history/" + id)
+                        .param("page", "1")
+                        .param("size", "1"))
+                        .andDo(print())
+                        .andExpect(status().isOk())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
+                        .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
+                        .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
+                        .andExpect(jsonPath("$.items").isNotEmpty())
+                        .andExpect(jsonPath("$.itemsOnPage").isNotEmpty())
+                        .andReturn().getResponse().getContentAsString();
+
+        PageDto<ReputationHistoryDtoList, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
+        Assertions.assertEquals(expected.getClass(), actual.getClass());
+        Assertions.assertEquals(expected.getCurrentPageNumber(), actual.getCurrentPageNumber());
+        Assertions.assertEquals(expected.getTotalPageCount(), actual.getTotalPageCount());
+        Assertions.assertEquals(expected.getTotalResultCount(), actual.getTotalResultCount());
+        Assertions.assertEquals(expected.getItemsOnPage(), actual.getItemsOnPage());
+        Assertions.assertEquals(expected.getItems().size(), actual.getItems().size());
+
     }
 
     @Test

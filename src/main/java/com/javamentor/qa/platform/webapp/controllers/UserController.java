@@ -7,6 +7,7 @@ import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.models.util.OnUpdate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.ReputationDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
@@ -36,6 +37,7 @@ public class UserController {
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     private final ReputationService reputationService;
+    private final ReputationDtoService reputationDtoService;
 
     @Autowired
     public UserController(UserService userService,
@@ -44,6 +46,7 @@ public class UserController {
                           PasswordEncoder passwordEncoder,
                           SecurityHelper securityHelper,
                           ReputationService reputationService,
+                          ReputationDtoService reputationDtoService,
                           AnswerDtoService answerDtoService) {
 
         this.userService = userService;
@@ -52,6 +55,7 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
         this.securityHelper = securityHelper;
         this.reputationService = reputationService;
+        this.reputationDtoService = reputationDtoService;
         this.answerDtoService = answerDtoService;
     }
 
@@ -286,6 +290,32 @@ public class UserController {
         userService.persist(newUser);
 
         return ResponseEntity.ok(userConverter.userToDto(newUser));
+    }
+
+    @GetMapping("reputation/history/{id}")
+    @ApiOperation(value = "Get page List<RepitationHistoryDtoList>. " +
+            "Max size entries on page= " + MAX_ITEMS_ON_PAGE, response = List.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination List<RepitationHistoryDtoList>",
+                    response = List.class),
+            @ApiResponse(code = 400, message = "Wrong value of size, page or id", response = String.class)
+    })
+    public ResponseEntity<?> getReputationHistoryDtoListPagination(
+            @ApiParam(name = "page", value = "Number Page. Type int", required = true, example = "10")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of records per page.Type int." +
+                    "Maximum number of records per page"+ MAX_ITEMS_ON_PAGE , required = true,
+                    example = "10")
+            @RequestParam("size") int size,
+            @ApiParam(name="id",value="type Long(or other descriped)", required = true, example="0")
+            @PathVariable Long id) {
+        if (page <= 0 || size <= 0 || id <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы, id и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+        PageDto<ReputationHistoryDtoList, Object> resultPage = reputationDtoService.getPageReputationHistoryDto(page, size, id);
+
+        return ResponseEntity.ok(resultPage);
     }
 
     @GetMapping("currentUser/answers")
