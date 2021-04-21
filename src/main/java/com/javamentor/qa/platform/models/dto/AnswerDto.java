@@ -24,17 +24,17 @@ public class AnswerDto implements Serializable {
 
     @Override
     public String toString() {
-        return "AnswerDto{" +
+        return "{" +
                 "id=" + id +
                 ", userId=" + userId +
                 ", questionId=" + questionId +
-                ", body='" + body + '\'' +
+                ", body=" + body +
                 ", persistDate=" + persistDate +
                 ", isHelpful=" + isHelpful +
                 ", dateAccept=" + dateAccept +
-                ", countValuable=" +
-                ", image='" + image + '\'' +
-                ", nickName='" + nickName + '\'' +
+                ", countValuable=" + countValuable +
+                ", image=" + image +
+                ", nickName=" + nickName +
                 '}';
     }
 
