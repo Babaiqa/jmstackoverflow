@@ -271,9 +271,10 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
         String resultContext = mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/question/14/answer")
-                .contentType("application/json;charset=UTF-8")
+                .contentType("application/json")
                 .content(jsonRequest))
                 .andDo(print())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.body").value(createAnswerDto.getHtmlBody()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.questionId").value(14))
@@ -355,7 +356,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .param("page", "1")
                 .param("size", "10"))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Question not found"));
+                .andExpect(content().string("Question was not found"));
     }
 
     @Test
@@ -661,10 +662,9 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         int first = before.size();
 
         this.mockMvc.perform(MockMvcRequestBuilders
-                .patch("/api/question/10/answer/51/downVote")
+                .patch("/api/question/1/answer/3/downVote")
                 .contentType("application/json;charset=UTF-8"))
                 .andDo(print())
-                .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.userId").isNumber())
@@ -882,7 +882,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         Assert.assertEquals(questionViewedFirst.getQuestion().getId(), questionViewedSecond.getQuestion().getId());
 
     }
-
 
 
     @Test
