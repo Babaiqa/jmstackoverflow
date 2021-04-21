@@ -227,7 +227,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .contentType("application/json;charset=UTF-8"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string("User already voted in this question"));
+                .andExpect(content().string("Can't change vote"));
 
     }
     //тестирую возможность двойного голоса на ответ в одном вопросе
