@@ -448,7 +448,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         expect.setMeta(null);
 
         List<TagDto> tag = new ArrayList<>();
-        tag.add(new TagDto(5L, "sql", "description"));
+        tag.add(new TagDto(5L, "sql", "Structured Query Language (SQL) is a language for querying databases."));
 
         List<QuestionDto> items = new ArrayList<>();
         items.add(new QuestionDto(
