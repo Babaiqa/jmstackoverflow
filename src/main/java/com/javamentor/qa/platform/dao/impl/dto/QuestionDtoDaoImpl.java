@@ -95,4 +95,23 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 .setMaxResults(size)
                 .getResultList();
     }
+
+    @Override
+    public  List<Long> getPaginationQuestionIdsOrderByNew(int page, int size){
+        return   (List<Long>) entityManager
+                .createQuery("select q.id from Question q left outer join Answer a on (q.id = a.question.id) order by q.persistDateTime desc")
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
+    }
+
+    @Override
+    public  List<Long> getPaginationQuestionIdsWithoutAnswerOrderByVotes(int page, int size){
+        return   (List<Long>) entityManager
+                .createQuery("select q.id from Question q left outer join Answer a on (q.id = a.question.id) " +
+                        " full join VoteQuestion vq on(q.id = vq.question.id) where a.question.id is null or a.isHelpful = false group by q.id order by coalesce(sum(vq.vote), 0) desc ")
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
+    }
 }

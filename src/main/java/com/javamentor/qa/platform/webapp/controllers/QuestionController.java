@@ -15,6 +15,7 @@ import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converters.*;
 import io.swagger.annotations.*;
 import lombok.SneakyThrows;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -522,9 +523,9 @@ public class QuestionController {
         }  catch (VoteException e) {
             return ResponseEntity.ok(e.getMessage());
         }
-        voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
+        VoteQuestionDto responseBody = voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
 
-        return ResponseEntity.ok("Correct vote");
+        return ResponseEntity.ok(responseBody);
     }
 
 
@@ -554,9 +555,9 @@ public class QuestionController {
         }  catch (VoteException e) {
             return ResponseEntity.ok(e.getMessage());
         }
-        voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
+        VoteQuestionDto responseBody = voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
 
-        return ResponseEntity.ok("Correct vote");
+        return ResponseEntity.ok(responseBody);
     }
 
     @GetMapping(value = "/withoutAnswer/new", params = {"page", "size"})

@@ -39,9 +39,12 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
     }
 
     public PageDto<QuestionDto, Object> getPaginationOrderedNew(int page, int size) {
+        Map<String, Object> parameters = setPaginationParameters(page, size, Optional.empty(), Optional.empty());
+        List<Long> ids = questionDtoDao.getPaginationQuestionIdsOrderByNew(page, size);
+        parameters.put("ids", ids);
         return getPageDto(
                 "paginationQuestionOrderByNew",
-                setPaginationParameters(page, size, Optional.empty(), Optional.empty()));
+                parameters);
     }
 
     public PageDto<QuestionDto, Object> getPaginationWithoutAnswers(int page, int size) {
@@ -78,7 +81,7 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
     @Override
     public PageDto<QuestionDto, Object> getPaginationWithoutAnswerSortedByVotes(int page, int size) {
         Map<String, Object> parameters = setPaginationParameters(page, size, Optional.empty(), Optional.empty());
-        List<Long> ids = questionDtoDao.getPaginationQuestionIdsWithoutAnswer(page, size);
+        List<Long> ids = questionDtoDao.getPaginationQuestionIdsWithoutAnswerOrderByVotes(page, size);
         parameters.put("ids", ids);
         return getPageDto(
                 "paginationQuestionWithoutAnswerSortedByVotes",
