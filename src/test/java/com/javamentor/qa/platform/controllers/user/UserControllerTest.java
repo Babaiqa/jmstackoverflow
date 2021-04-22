@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -738,5 +739,20 @@ class UserControllerTest extends AbstractIntegrationTest {
 
         PageDto<AnswerDto, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
         Assertions.assertEquals(expected.toString(), actual.toString());
+    }
+
+    @Test
+    public void testUserQuestionsSortedByVotes() throws Exception {
+
+        this.mockMvc.perform(get("/api/user/order/questions/votes/1")
+                .param("page", "1")
+                .param("size", "10")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.currentPageNumber").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPageCount").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalResultCount").value(2))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.items").isArray())
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 }
