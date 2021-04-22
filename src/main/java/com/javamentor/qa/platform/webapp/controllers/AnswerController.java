@@ -213,12 +213,11 @@ public class AnswerController {
         User user = securityHelper.getPrincipal();
         Answer answer = answerOptional.get();
 
-        VoteAnswer voteAnswer;
-        try {
-            voteAnswer = voteAnswerService.answerUpVote(question, user, answer);
-        } catch (VoteException e) {
-            return ResponseEntity.ok(e.getMessage());
-        }
+        VoteAnswer voteAnswer = voteAnswerService.answerUpVote(question, user, answer);
+         if(voteAnswer == null){
+             throw new VoteException("Incorrect vote");
+         }
+
         voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer);
 
         return ResponseEntity.ok("Correct vote");
