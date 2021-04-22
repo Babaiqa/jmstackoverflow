@@ -826,7 +826,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-
+    @DataSet(value={"dataset/reputation/questionApi.yml", "dataset/reputation/userApi.yml"})
     public void shouldAddPositiveReputationByQuestionVoteUp() throws Exception {
 
         String string = "FROM Reputation WHERE question.id =: questionId AND sender.id =: senderId";

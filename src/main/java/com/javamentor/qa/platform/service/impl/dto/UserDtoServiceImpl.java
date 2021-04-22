@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.service.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.UserDtoDao;
 import com.javamentor.qa.platform.models.dto.PageDto;
+import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserDtoList;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
@@ -16,11 +17,13 @@ public class UserDtoServiceImpl implements UserDtoService {
 
     private final UserDtoDao userDtoDao;
     private final PaginationService<UserDtoList, Object> paginationService;
+    private final QuestionDtoServiceImpl questionDtoService;
 
     @Autowired
-    public UserDtoServiceImpl(UserDtoDao userDtoDao, PaginationService<UserDtoList, Object> paginationService) {
+    public UserDtoServiceImpl(UserDtoDao userDtoDao, PaginationService<UserDtoList, Object> paginationService, QuestionDtoServiceImpl questionDtoService) {
         this.userDtoDao = userDtoDao;
         this.paginationService = paginationService;
+        this.questionDtoService = questionDtoService;
     }
 
     @Override
@@ -61,6 +64,15 @@ public class UserDtoServiceImpl implements UserDtoService {
         return paginationService.getPageDto(
                 "paginationUserReputationByName",
                 setPaginationParameters(page, size, Optional.ofNullable(name), Optional.empty()));
+    }
+
+    @Override
+    public PageDto<QuestionDto, Object> getUserQuestionsSortedByVotes(int page, int size, long id) {
+        Map<String, Object> parameters = setPaginationParameters(page, size, Optional.empty(), Optional.empty());
+        parameters.put("page", page);
+        parameters.put("size", size);
+        parameters.put("userId", id);
+        return questionDtoService.getPageDto("userQuestionsOrderedByVotes", parameters);
     }
 
     private Map<String, Object> setPaginationParameters(int page, int size, Optional<String> name, Optional<Integer> days) {
