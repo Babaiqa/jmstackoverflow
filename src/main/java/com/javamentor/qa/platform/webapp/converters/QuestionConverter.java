@@ -2,19 +2,17 @@ package com.javamentor.qa.platform.webapp.converters;
 
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
+import com.javamentor.qa.platform.models.dto.QuestionUpdateDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
-import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public abstract class QuestionConverter {
-
 
     @Autowired
     private UserService userService;
@@ -32,7 +30,6 @@ public abstract class QuestionConverter {
     @Mapping(target = "countValuable", constant = "0")
     public abstract QuestionDto questionToQuestionDto(Question question);
 
-
     @Mapping(target = "user", source = "userId",qualifiedByName = "mapUser")
     public abstract Question questionCreateDtoToQuestion(QuestionCreateDto questionCreateDto);
 
@@ -40,5 +37,9 @@ public abstract class QuestionConverter {
     public User mapUser(Long id) {
         return userService.getById(id).get();
     }
+
+    @Mapping(source = "questionUpdateDto.title", target ="title")
+    @Mapping(source = "questionUpdateDto.description", target ="description")
+    public abstract Question questionUpdateDtoToQuestion(Question questionFromDB, QuestionUpdateDto questionUpdateDto);
 
 }
