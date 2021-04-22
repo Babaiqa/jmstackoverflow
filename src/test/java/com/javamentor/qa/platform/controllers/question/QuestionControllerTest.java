@@ -495,8 +495,8 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .param("size", "1")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.currentPageNumber").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPageCount").value(7))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.totalResultCount").value(7))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPageCount").value(2))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalResultCount").value(2))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.items").isArray())
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -534,7 +534,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 null,
                 "Stream filter on list keeping some of the filtered values",
                 3,
-                3,
+                2,
                 1,
                 persistDateTime,
                 lastUpdateDateTime,
