@@ -160,12 +160,8 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .contentType("application/json;charset=UTF-8"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.userId").isNumber())
-                .andExpect(jsonPath("$.answerId").isNumber())
-                .andExpect(jsonPath("$.persistDateTime").isNotEmpty())
-                .andExpect(jsonPath("$.vote").isNumber());
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Correct vote"));
 
         List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int second = after.size();
@@ -205,15 +201,9 @@ class AnswerControllerTest extends AbstractIntegrationTest {
 
         this.mockMvc.perform(MockMvcRequestBuilders
                 .patch("/api/question/10/answer/51/downVote")
-                .contentType("application/json;charset=UTF-8"))
+                .contentType("text/plain;charset=UTF-8"))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.userId").isNumber())
-                .andExpect(jsonPath("$.answerId").isNumber())
-                .andExpect(jsonPath("$.persistDateTime").isNotEmpty())
-                .andExpect(jsonPath("$.vote").isNumber());
+                .andExpect(status().isOk());
 
         List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int second = after.size();
@@ -227,7 +217,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .contentType("application/json;charset=UTF-8"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string("User already voted in this question"));
+                .andExpect(content().string("Can't change vote"));
 
     }
     //тестирую возможность двойного голоса на ответ в одном вопросе
@@ -319,7 +309,7 @@ class AnswerControllerTest extends AbstractIntegrationTest {
 
         JSONArray array = new JSONArray(result.getResponse().getContentAsString());
 
-        Assertions.assertEquals(2, array.length());
+        Assertions.assertEquals(1, array.length());
     }
 
     @Test
