@@ -36,7 +36,6 @@ public class PaginationAllAnswersPrincipalUserDaoImpl implements PaginationDao<A
                         "FROM Answer as a " +
                         "INNER JOIN a.user as u " +
                         "JOIN a.question as q " +
-//                        "LEFT JOIN  a.voteAnswers as avv on a.id  = avv.answer.id " +
                         "WHERE u.id = :userId order by answer_countValuable desc ")
                 .unwrap(Query.class)
                 .setParameter("userId", userId)
