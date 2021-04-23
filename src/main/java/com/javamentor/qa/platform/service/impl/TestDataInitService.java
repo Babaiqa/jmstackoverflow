@@ -48,6 +48,7 @@ public class TestDataInitService {
     List<Tag> tagList = new ArrayList<>();
     Role USER_ROLE = Role.builder().name("USER").build();
     Role ADMIN_ROLE = Role.builder().name("ADMIN").build();
+    Role MODER_ROLE = Role.builder().name("MODER").build();
     List<User> users = new ArrayList<>();
     List<Chat> chats = new ArrayList<>();
 
@@ -108,6 +109,7 @@ public class TestDataInitService {
         createTagEntity();
         roleService.persist(USER_ROLE);
         roleService.persist(ADMIN_ROLE);
+        roleService.persist(MODER_ROLE);
 
         for (int i = 0; i < numberOfUsers; i++) {
             User user = new User();
@@ -124,6 +126,7 @@ public class TestDataInitService {
             user.setImageLink("https://pbs.twimg.com/profile_images/1182694005408186375/i5xT6juJ_400x400.jpg");
             //user.setReputationCount(1);
             if (i == 0) user.setRole(ADMIN_ROLE);
+            else if (i == 1) user.setRole(MODER_ROLE);
             else user.setRole(USER_ROLE);
             userService.persist(user);
 
