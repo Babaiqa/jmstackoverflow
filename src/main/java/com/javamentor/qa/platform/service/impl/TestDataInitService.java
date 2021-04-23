@@ -188,7 +188,7 @@ public class TestDataInitService {
             answerService.persist(answer);
 
             Reputation reputation = new Reputation();
-            reputation.setUser(user);
+            reputation.setAuthor(user);
             reputation.setCount(random.nextInt(100) + 1);
             if (i % 4 == 0) {
                 reputation.setType(ReputationType.Question);

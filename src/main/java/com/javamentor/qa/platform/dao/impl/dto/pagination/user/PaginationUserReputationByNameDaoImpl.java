@@ -35,12 +35,12 @@ public class PaginationUserReputationByNameDaoImpl implements PaginationDao<User
                 .createQuery("select user.id as user_id, " +
                         "user.fullName as full_name, " +
                         "user.imageLink as link_image, " +
-                        "(select coalesce(sum(ra.count), 0) from Reputation ra where ra.user.id = user.id) as reputation, " +
+                        "(select coalesce(sum(ra.count), 0) from Reputation ra where ra.author.id = author.id) as reputation, " +
                         "tag.id as tag_id, " +
                         "tag.name as tag_name, " +
                         "tag.description as tag_description " +
                         "from User user " +
-                        "left join Reputation r on user.id = r.user.id " +
+                        "left join Reputation r on user.id = r.author.id " +
                         "left join Question question on user.id=question.user.id " +
                         "left join question.tags tag " +
                         "where user.id in (:ids) " +

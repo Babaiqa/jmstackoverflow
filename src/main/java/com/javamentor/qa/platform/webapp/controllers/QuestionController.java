@@ -505,6 +505,7 @@ public class QuestionController {
             @ApiResponse(code = 200, message = "Question was up voted", response = VoteQuestionDto.class),
             @ApiResponse(code = 400, message = "Question not found", response = String.class)
     })
+
     public ResponseEntity<?> questionUpVote(
             @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
             @PathVariable Long questionId) {
@@ -525,7 +526,11 @@ public class QuestionController {
         }
         VoteQuestionDto responseBody = voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
 
+        reputationService.increaseReputationByQuestionVoteUp(question, user);
+
         return ResponseEntity.ok(responseBody);
+
+
     }
 
 
@@ -556,6 +561,8 @@ public class QuestionController {
             return ResponseEntity.ok(e.getMessage());
         }
         VoteQuestionDto responseBody = voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
+
+        reputationService.decreaseReputationByQuestionVoteDown(question, user);
 
         return ResponseEntity.ok(responseBody);
     }
