@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
+import antlr.build.Tool;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -13,7 +14,9 @@ import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.converters.UserConverter;
 import io.swagger.annotations.*;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
@@ -341,6 +344,32 @@ public class UserController {
         User user = securityHelper.getPrincipal();
 
         PageDto<AnswerDto, Object> resultPage = answerDtoService.getAllAnswersOfPrincipalUserOrderByVotes(page,size, user.getId());
+
+        return  ResponseEntity.ok(resultPage);
+    }
+
+    @GetMapping("order/questions/votes/{userId}")
+    @ApiOperation(value = "Get page List<QuestionsDto> order by votes." +
+            "Max size entries on page= "+ MAX_ITEMS_ON_PAGE, response = List.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination List<UserDtoList> order by reputation over month",
+                    response = List.class),
+            @ApiResponse(code = 400, message = "Wrong ID", response = String.class)
+    })
+    public ResponseEntity<?> getUserQuestionsOrderedByVotesPagination(
+            @ApiParam(name = "page", value = "Number Page. Type int", required = true, example = "10")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице"+ MAX_ITEMS_ON_PAGE , required = true,
+                    example = "10")
+            @RequestParam("size") int size,
+            @PathVariable("userId") long id) {
+        if(page <= 0 || size <=0 || size > MAX_ITEMS_ON_PAGE ) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+
+        PageDto<QuestionDto, Object> resultPage = userDtoService.getUserQuestionsSortedByVotes(page,size, id);
 
         return  ResponseEntity.ok(resultPage);
     }

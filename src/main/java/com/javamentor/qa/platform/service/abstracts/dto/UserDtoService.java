@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.service.abstracts.dto;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
+import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.UserDto;
 import com.javamentor.qa.platform.models.dto.UserDtoList;
 
@@ -20,4 +21,5 @@ public interface UserDtoService {
 
     PageDto<UserDtoList,Object> getPageUserDtoListByName(int page, int size, String name);
 
+    PageDto<QuestionDto, Object> getUserQuestionsSortedByVotes(int page, int size, long id);
 }
