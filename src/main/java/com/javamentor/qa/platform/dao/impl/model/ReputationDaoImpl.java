@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.util.Optional;
 
@@ -22,8 +23,10 @@ public class ReputationDaoImpl extends ReadWriteDaoImpl<Reputation, Long> implem
 
     @Override
     public Optional<Reputation> getReputationByAuthorId(Long userId) { // transfer to dtodao?
+
         TypedQuery<Reputation> query = entityManager.createQuery("FROM Reputation WHERE author.id =: authorId", Reputation.class)
                 .setParameter("authorId", userId);
+
         return SingleResultUtil.getSingleResultOrNull(query);
     }
 

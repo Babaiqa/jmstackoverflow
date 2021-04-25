@@ -43,7 +43,7 @@ user_entity:
 reputation:
   - id: 1
     persist_date: "2021-02-20 21:22:13"
-    user_id: 1
+    author_id: 1
     count: 2
     type: 0
 #    question: 1
@@ -51,7 +51,7 @@ reputation:
 
   - id: 2
     persist_date: "2021-02-20 21:22:13"
-    user_id: 2
+    author_id: 2
     count: 2
     type: 1
 #    question: null
@@ -59,7 +59,7 @@ reputation:
 
   - id: 3
     persist_date: "2021-02-20 21:22:13"
-    user_id: 3
+    author_id: 3
     count: 2
     type: 2
 #    question: null
@@ -67,7 +67,7 @@ reputation:
 
   - id: 4
     persist_date: "2021-02-20 21:22:13"
-    user_id: 153
+    author_id: 153
     count: 2
     type: 3
 #    question: 2

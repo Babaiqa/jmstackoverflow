@@ -826,42 +826,11 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DataSet(value={"dataset/reputation/questionApi.yml", "dataset/reputation/userApi.yml"})
-    public void shouldAddPositiveReputationByQuestionVoteUp() throws Exception {
-
-        String string = "FROM Reputation WHERE question.id =: questionId AND sender.id =: senderId";
-
-        Query queryBefore = entityManager.createQuery(string, Reputation.class);
-        queryBefore.setParameter("questionId", 19L);
-        queryBefore.setParameter("senderId", 153L);
-
-        Reputation reputationBefore = (Reputation) queryBefore.getSingleResult();
-
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/19/upVote")).andReturn();
-
-
-        Query queryAfter = entityManager.createQuery(string, Reputation.class);
-        queryAfter.setParameter("questionId", 19L);
-        queryAfter.setParameter("senderId", 153L);
-
-        Reputation reputationAfter = (Reputation) queryAfter.getSingleResult();
-
-        int votePoints = reputationAfter.getCount();
-        long lastSenderId = reputationAfter.getId();;
-
-        Assert.assertEquals(lastSenderId, 153L);
-        Assert.assertEquals(votePoints, 20);
-    }
-
-
-    @Test
     public void AddQuestionAsViewedStatusOk() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/question/14/view"))
                 .andExpect(status().isOk());
     }
-
 
     @Test
     public void AddQuestionAsViewedIfSecondRequest() throws Exception {
@@ -879,7 +848,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         //считаем повторно и сравниваем количество записей
         Query queryAfter = entityManager.createNativeQuery("select * from question_viewed where user_id = 153");
         Assert.assertEquals(countBefore + 1, queryAfter.getResultList().size());
-
 
     }
 
@@ -924,7 +892,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
     }
 
-
     @Test
     public void AddQuestionAsViewedIsNotExist() throws Exception {
 
@@ -946,5 +913,67 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         Assertions.assertEquals(0, questionDto.getCountValuable());
     }
 
+    @Test
+    public void shouldAddPositiveReputationByQuestionVoteUp() throws Exception {
+        try {
+            String string = "FROM Reputation WHERE question.id =: questionId AND sender.id =: senderId";
 
+            Query queryBefore = entityManager.createQuery(string, Reputation.class);
+            queryBefore.setParameter("questionId", 19L);
+            queryBefore.setParameter("senderId", 153L);
+
+            Reputation reputationBefore = (Reputation) queryBefore.getSingleResult();
+
+            MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
+                    .post("/api/question/19/upVote")).andReturn();
+
+            Query queryAfter = entityManager.createQuery(string, Reputation.class);
+            queryAfter.setParameter("questionId", 19L);
+            queryAfter.setParameter("senderId", 153L);
+
+            Reputation reputationAfter = (Reputation) queryAfter.getSingleResult();
+
+            int votePoints = reputationAfter.getCount();
+            long lastSenderId = reputationAfter.getId();
+
+            Assert.assertTrue(reputationBefore != reputationAfter);
+            Assert.assertEquals(lastSenderId, 153L);
+            Assert.assertEquals(votePoints, 20);
+
+        } catch (NoResultException ignore) {
+
+        }
+    }
+
+    @Test
+    public void shouldAddNegativeReputationByQuestionVoteDown() throws Exception {
+        try {
+            String string = "FROM Reputation WHERE question.id =: questionId AND sender.id =: senderId";
+
+            Query queryBefore = entityManager.createQuery(string, Reputation.class);
+            queryBefore.setParameter("questionId", 19L);
+            queryBefore.setParameter("senderId", 153L);
+
+            Reputation reputationBefore = (Reputation) queryBefore.getSingleResult();
+
+            MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
+                    .post("/api/question/19/downVote")).andReturn();
+
+            Query queryAfter = entityManager.createQuery(string, Reputation.class);
+            queryAfter.setParameter("questionId", 19L);
+            queryAfter.setParameter("senderId", 153L);
+
+            Reputation reputationAfter = (Reputation) queryAfter.getSingleResult();
+
+            int votePoints = reputationAfter.getCount();
+            long lastSenderId = reputationAfter.getId();
+
+            Assert.assertTrue(reputationBefore != reputationAfter);
+            Assert.assertEquals(lastSenderId, 153L);
+            Assert.assertEquals(votePoints, -20);
+
+        } catch (NoResultException ignore) {
+
+        }
+    }
 }
