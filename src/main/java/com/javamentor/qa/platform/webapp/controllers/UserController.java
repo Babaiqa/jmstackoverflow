@@ -386,13 +386,14 @@ public class UserController {
             "Max size entries on page= "+ MAX_ITEMS_ON_PAGE, response = List.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "Request success",
-                    response = List.class),
-            @ApiResponse(code = 400, message = "Request wrong", response = String.class)
+                    response = List.class)
     })
     public ResponseEntity<?> getBookmarksByUserId(
             @PathVariable("userId") long id) {
 
-        Optional<BookmarkDto> resultBookmark = bookmarkDtoService.getBookmarkDtoByUserId(id);
+        User user = securityHelper.getPrincipal();
+
+        Optional<BookmarkDto> resultBookmark = bookmarkDtoService.getBookmarkDtoByUserId(user.getId());
 
         return  ResponseEntity.ok(resultBookmark);
     }
