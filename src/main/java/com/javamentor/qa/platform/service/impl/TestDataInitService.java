@@ -188,7 +188,7 @@ public class TestDataInitService {
             answer.setHtmlBody("Answer" + i + ":  Hello! There you can find an answer on your question: www.google.com.");
             answer.setIsHelpful(false);
             answer.setIsDeleted(false);
-            if(i <= 25){
+            if(i < 25){
                 answer.setIsDeletedByModerator(random.nextBoolean());
             }else{
                 answer.setIsDeletedByModerator(false);

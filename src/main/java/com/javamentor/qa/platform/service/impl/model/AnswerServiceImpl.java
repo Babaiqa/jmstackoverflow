@@ -15,9 +15,10 @@ import java.util.Optional;
 @Transactional
 public class AnswerServiceImpl extends ReadWriteServiceImpl<Answer, Long> implements AnswerService {
 
-    AnswerDao answerDao;
-
     @Autowired
+    private AnswerDao answerDao;
+
+
      public AnswerServiceImpl(AnswerDao answerDao) {
          super(answerDao);
      }
