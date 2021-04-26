@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.util.Optional;
 
@@ -21,9 +22,37 @@ public class ReputationDaoImpl extends ReadWriteDaoImpl<Reputation, Long> implem
     }
 
     @Override
-    public Optional<Reputation> getReputationByUserId(Long userId) { // transfer to dtodao?
-        TypedQuery<Reputation> query = entityManager.createQuery("FROM Reputation WHERE user.id =: userId", Reputation.class)
-                                                    .setParameter("userId", userId);
+    public Optional<Reputation> getReputationByAuthorId(Long userId) { // transfer to dtodao?
+
+        TypedQuery<Reputation> query = entityManager.createQuery("FROM Reputation WHERE author.id =: authorId", Reputation.class)
+                .setParameter("authorId", userId);
+
         return SingleResultUtil.getSingleResultOrNull(query);
     }
+
+    @Override
+    public Optional<Reputation> getReputationByQuestionVoteSenderId(Long userId, Long questionId) {
+        { // transfer to dtodao?
+            TypedQuery<Reputation> query = entityManager.createQuery(
+                    "FROM Reputation WHERE sender.id =: senderId" +
+                            " AND question.id =: quiestionId", Reputation.class)
+                    .setParameter("senderId", userId)
+                    .setParameter("questionId", questionId);
+            return SingleResultUtil.getSingleResultOrNull(query);
+        }
+    }
+
+    @Override
+    public Optional<Reputation> getReputationByAnswerVoteSenderId(Long userId, Long answerId) {
+        { // transfer to dtodao?
+            TypedQuery<Reputation> query = entityManager.createQuery(
+                    "FROM Reputation WHERE sender.id =: senderId" +
+                            " AND answer.id =: answerId", Reputation.class)
+                    .setParameter("senderId", userId)
+                    .setParameter("answerId", answerId);
+            return SingleResultUtil.getSingleResultOrNull(query);
+        }
+    }
+
+
 }

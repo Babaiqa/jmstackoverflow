@@ -222,6 +222,8 @@ public class AnswerController {
         }
         voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer);
 
+        reputationService.increaseReputationByAnswerVoteUp(answer, user);
+
         return ResponseEntity.ok("Correct vote");
     }
 
@@ -260,6 +262,8 @@ public class AnswerController {
             return ResponseEntity.ok(e.getMessage());
         }
         voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer);
+
+        reputationService.decreaseReputationByAnswerVoteDown(answer, user);
 
         return ResponseEntity.ok("Correct vote");
     }
