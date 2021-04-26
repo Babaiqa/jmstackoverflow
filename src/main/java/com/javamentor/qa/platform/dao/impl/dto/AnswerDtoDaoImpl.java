@@ -31,7 +31,7 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
                         "FROM Answer as a " +
                         "INNER JOIN a.user as u " +
                         "JOIN a.question as q " +
-                        "WHERE q.id = :questionId")
+                        "WHERE q.id = :questionId and a.isDeletedByModerator = false")
                 .setParameter("questionId", questionId)
                 .unwrap(org.hibernate.query.Query.class)
                 .getResultList();
