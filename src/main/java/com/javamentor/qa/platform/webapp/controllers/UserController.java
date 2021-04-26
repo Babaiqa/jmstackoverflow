@@ -2,14 +2,17 @@ package com.javamentor.qa.platform.webapp.controllers;
 
 import antlr.build.Tool;
 import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.models.util.OnUpdate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
+import com.javamentor.qa.platform.service.abstracts.dto.BookmarkDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.ReputationDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.BookMarksService;
 import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.converters.UserConverter;
@@ -42,6 +45,8 @@ public class UserController {
     private final ReputationService reputationService;
     private final ReputationDtoService reputationDtoService;
 
+    private final BookmarkDtoService bookmarkDtoService;
+
     @Autowired
     public UserController(UserService userService,
                           UserConverter userConverter,
@@ -50,7 +55,8 @@ public class UserController {
                           SecurityHelper securityHelper,
                           ReputationService reputationService,
                           ReputationDtoService reputationDtoService,
-                          AnswerDtoService answerDtoService) {
+                          AnswerDtoService answerDtoService,
+                          BookmarkDtoService bookmarkDtoService) {
 
         this.userService = userService;
         this.userConverter = userConverter;
@@ -60,6 +66,7 @@ public class UserController {
         this.reputationService = reputationService;
         this.reputationDtoService = reputationDtoService;
         this.answerDtoService = answerDtoService;
+        this.bookmarkDtoService = bookmarkDtoService;
     }
 
     // Examples for Swagger
@@ -299,7 +306,7 @@ public class UserController {
     @ApiOperation(value = "Get page List<RepitationHistoryDtoList>. " +
             "Max size entries on page= " + MAX_ITEMS_ON_PAGE, response = List.class)
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns the pagination List<RepitationHistoryDtoList>",
+            @ApiResponse(code = 200, message = "Returns the pagination List<ReputationHistoryDtoList>",
                     response = List.class),
             @ApiResponse(code = 400, message = "Wrong value of size, page or id", response = String.class)
     })
@@ -373,4 +380,23 @@ public class UserController {
 
         return  ResponseEntity.ok(resultPage);
     }
+
+    @GetMapping("bookmarks/{userId}")
+    @ApiOperation(value = "Get page List<BookmarkDto> order by userId." +
+            "Max size entries on page= "+ MAX_ITEMS_ON_PAGE, response = List.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Request success",
+                    response = List.class)
+    })
+    public ResponseEntity<?> getBookmarksByUserId(
+            @PathVariable("userId") long id) {
+
+        User user = securityHelper.getPrincipal();
+
+        Optional<BookmarkDto> resultBookmark = bookmarkDtoService.getBookmarkDtoByUserId(user.getId());
+
+        return  ResponseEntity.ok(resultBookmark);
+    }
+
+
 }
