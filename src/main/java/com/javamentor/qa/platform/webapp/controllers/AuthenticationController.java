@@ -28,7 +28,8 @@ import javax.validation.Valid;
 @Validated
 @RequestMapping("/api/auth/")
 @Api(value = "AuthenticationApi")
-public class AuthenticationController {
+public class
+AuthenticationController {
 
     private final JwtUtils jwtUtils;
     private final SecurityHelper securityHelper;

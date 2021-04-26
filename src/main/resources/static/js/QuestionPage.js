@@ -31,87 +31,94 @@ class QuestionPage {
                     "            </div>\n"
                 )
                 $('#question-area').children().remove()
-                $('#question-area').append(
-                    "                    <div class=\"row\">\n" +
-                    "                        <div vote-area-question class=\"col-1\">\n" +
-                    '                            <a class="btn  btn-sm m-0 p-0" onclick="new QuestionService().makeUpVoteQuestion(' + this.questionId + ')">' +
-                    "                               <svg width=\"36\" height=\"36\" >\n" +
-                    "                                  <path d=\"M2 26h32L18 10 2 26z\"></path>\n" +
-                    "                               </svg>\n" +
-                    '                             </a>' +
-                    '                            <div style=\"font-size: 200%\" id="count_question"> &nbsp;' + response.countValuable + '</div>\n' +
-                    '                              <a class="btn  btn-sm m-0 p-0" onclick="new QuestionService().makeDownVoteQuestion(' + this.questionId + ');">' +
-                    "                                 <svg  width=\"36\" height=\"36\" >\n" +
-                    "                                    <path d=\"M2 10h32L18 26 2 10z\"></path>\n" +
-                    "                                  </svg>\n" +
-                    '                               </a>' +
-                    "                        </div>\n" +
-                    "                        <div question-and-comments-area class=\"col-11\">\n" +
-                    "                            <div question-area class=\"col\">\n" +
-                    "                                <div id=\"question-describtion\" describlion class=\"s-prose js-post-body\" itemprop=\"text\">\n" +
-                    "<p>" + response.description + "</p>" +
-                    "                                </div>\n" +
-                    "                                <div id='question-tags' class=\"tags\">\n" +
+                $('#question-area').append(`
+                                        <div class="row">
+                                            <div vote-area-question class="col-1">
+                                                <a class="btn  btn-sm m-0 p-0" onclick="${new QuestionService().makeUpVoteQuestion(this.questionId)}">
+                                                   <svg width="36" height="36" >
+                                                      <path d="M2 26h32L18 10 2 26z"></path>
+                                                   </svg>
+                                                 </a>
+                                                <div style="font-size: 200%" id="count_question"> &nbsp;${response.countValuable}</div>
+                                                  <a class="btn  btn-sm m-0 p-0" onclick="${new QuestionService().makeDownVoteQuestion(this.questionId)}">
+                                                     <svg  width="36" height="36" >
+                                                        <path d="M2 10h32L18 26 2 10z"></path>
+                                                      </svg>
+                                                   </a>
+                                            </div>
+                                            <div question-and-comments-area class="col-11">
+                                                <div question-area class="col">
+                                                    <div id="question-describtion" describlion class="s-prose js-post-body" itemprop="text">
+                                                        <p>${response.description}</p>
+                                                    </div>
+                                                    <div id='question-tags' class="tags">
 
-                    "                                </div>\n" +
-                    "                                <div underquestion class=\"mb0 \">\n" +
-                    "                                    <div class=\"row justify-content-between px-3\">\n" +
-                    "                                        <div>\n" +
-                    "                                            <a href=\"#\">Поделиться</a>\n" +
-                    "                                            <a href=\"#\">Править</a>\n" +
-                    "                                            <a href=\"#\">Отслеживать</a>\n" +
-                    "                                        </div>\n" +
-                    "                                        <div>\n" +
-                    "                                            <div class=\"card\" style=\"width: 250px\">\n" +
-                    "                                                <div class=\"card-body p-2\" style=\"background: #e0ebf3\">\n" +
-                    "                                                    <div>\n" +
-                    "                                                        <span>Задан " + stringDate + "</span>\n" +
-                    "                                                    </div>\n" +
-                    "                                                    <div class=\"row\">\n" +
-                    "                                                        <div class=\"col-3\">\n" +
-                    "                                                            <img width=\"48\" height=\"48\" src=\"" + response.authorImage + "\" alt=\"...\">\n" +
-                    "                                                        </div>\n" +
-                    "                                                        <div class=\"col-8\">\n" +
-                    "                                                            <div>" + response.authorName + "</div>\n" +
-                    "                                                            <div><b>17</b>&nbsp;&nbsp;&nbsp;12</div>\n" +
-                    "                                                        </div>\n" +
-                    "                                                    </div>\n" +
-                    "                                                </div>\n" +
-                    "                                            </div>\n" +
-                    "                                        </div>\n" +
-                    "\n" +
-                    "                                    </div>\n" +
-                    "                                </div>\n" +
-                    "                            </div>\n" +
-                    "                            <div comments class=\"post-layout--right\">\n" +
-                    "                                <div id=\"comments-1237608\" class=\"comments js-comments-container bt bc-black-075 mt12  dno\" data-post-id=\"1237608\" data-min-length=\"15\">\n" +
-                    "                                    <ul class=\"comments-list js-comments-list\" data-remaining-comments-count=\"0\" data-canpost=\"false\" data-cansee=\"true\" data-comments-unavailable=\"false\" data-addlink-disabled=\"true\">\n" +
-                    "                                        <hr/>\n" +
-                    "                                        <li>\n" +
-                    "                                            <span>Что такое var_with_long_name ?</span>\n" +
-                    "                                            –\n" +
-                    "                                            <a href=\"#\">Alpensin</a>\n" +
-                    "                                            <span>1 час назад</span>\n" +
-                    "                                        </li>\n" +
-                    "                                        <hr/>\n" +
-                    "                                        <li>\n" +
-                    "                                            <span>Возможное имя переменной.</span>\n" +
-                    "                                            –\n" +
-                    "                                            <a href=\"#\">Алексей</a>\n" +
-                    "                                            <span>44 минуты назад</span>\n" +
-                    "                                        </li>\n" +
-                    "                                        <hr/>\n" +
-                    "                                    </ul>\n" +
-                    "                                </div>\n" +
-                    "\n" +
-                    "                                <div id=\"comments-link-1237608\" data-rep=\"50\" data-reg=\"true\">\n" +
-                    "                                    <a href=\"#\">добавить комментарий</a>\n" +
-                    "                                    <span >&nbsp;|&nbsp;</span>\n" +
-                    "                                </div>\n" +
-                    "                            </div>\n" +
-                    "                        </div>\n" +
-                    "                    </div>"
+                                                    </div>
+                                                    <div underquestion class="mb0 ">
+                                                        <div class="row justify-content-between px-3">
+                                                            <div>
+                                                                <a href="#">Поделиться</a>
+                                                                <a href="#">Править</a>
+                                                                <a href="#">Отслеживать</a>
+                                                            </div>
+                                                            <div>
+                                                                <div class="card" style="width: 250px">
+                                                                    <div class="card-body p-2" style="background: #e0ebf3">
+                                                                        <div>
+                                                                            <span>Задан ${stringDate}</span>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-3">
+                                                                                <img width="48" height="48" src="${response.authorImage}" alt="...">
+                                                                            </div>
+                                                                            <div class="col-8">
+                                                                                <div>${response.authorName}</div>
+                                                                                <div><b>17</b>&nbsp;&nbsp;&nbsp;12</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div comments class="post-layout-right">
+                                                    <div id="comments-1237608" class="comments js-comments-container bt bc-black-075 mt12  dno" data-post-id="1237608" data-min-length="15">
+                                                        <ul class="comments-list js-comments-list" data-remaining-comments-count="0" data-canpost="false" data-cansee="true" data-comments-unavailable="false" data-addlink-disabled="true">
+                                                            <hr/>
+                                                            <li>
+                                                                <span>Что такое var_with_long_name ?</span>
+                                                                -
+                                                                <a href="#">Alpensin</a>
+                                                                <span>1 час назад</span>
+                                                            </li>
+                                                            <hr/>
+                                                            <li>
+                                                                <span>Возможное имя переменной.</span>
+                                                                –
+                                                                <a href="#">Алексей</a>
+                                                                <span>44 минуты назад</span>
+                                                            </li>
+                                                            <hr/>
+                                                        </ul>
+                                                    </div>
+                                                    <div id="comments-link-1237608" data-rep="50" data-reg="true">
+                                                        <form name="commentForm" id="commentForm" style="display:none" onsubmit="return false">
+                                                        <textarea id="commentTextArea" name="commentTextArea" cols="20" rows="40"></textarea>
+                                                        <input type="submit" value="Введите содержимое комментария" name="submitComment" id="submitComment">
+                                                        </form>
+                                                        
+                                                        <a href="#" onclick="addCommentFunc();return false" id="addComment">Добавить комментарий</a>
+                                                        <span >&nbsp;|&nbsp;</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>`
                 )
+
+
+
+
                 response.listTagDto.forEach(tag => {
                     $('#question-tags').append(
                         "                                    <div class=\"mb-1\">\n" +
@@ -146,7 +153,7 @@ class QuestionPage {
                         + date.getFullYear();
 
                     let count = elem.countValuable;
-                    if(count == null) {
+                    if (count == null) {
                         count = 0;
                     }
                     let isHelpful = elem.isHelpful;
@@ -154,19 +161,19 @@ class QuestionPage {
                     $('#answer-area').append(
                         "<div answer1 class=\"row\">\n" +
                         "    <div vote-area-answer class=\"col-1\">\n" +
-                        '        <a  class="btn  btn-sm m-0 p-0" onclick="new AnswerService().getUpVoteAnswer(' + this.questionId + ',' + elem.id +','+ index +')">' +
+                        '        <a  class="btn  btn-sm m-0 p-0" onclick="new AnswerService().getUpVoteAnswer(' + this.questionId + ',' + elem.id + ',' + index + ')">' +
                         '             <svg   width=\"36\" height=\"36\" >\n' +
                         "                  <path d=\"M2 26h32L18 10 2 26z\"></path>\n" +
                         "              </svg>\n" +
                         '        </a>' +
                         '             <div class="countAnswer" style=\"font-size: 200%\">&nbsp;' + count + '</div>\n' +
-                        '        <a  class="btn  btn-sm m-0 p-0" onclick="new AnswerService().getDownVoteAnswer(' + this.questionId + ',' + elem.id +','+ index +')"> ' +
+                        '        <a  class="btn  btn-sm m-0 p-0" onclick="new AnswerService().getDownVoteAnswer(' + this.questionId + ',' + elem.id + ',' + index + ')"> ' +
                         "              <svg  width=\"36\" height=\"36\" >\n" +
                         "                   <path d=\"M2 10h32L18 26 2 10z\"></path>\n" +
                         "               </svg>\n" +
                         '        </a>     ' +
-                        '              <svg class="isHelpful" width="36" height="36">\n' + ( isHelpful == true ?
-                        '          <path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n': " ") +
+                        '              <svg class="isHelpful" width="36" height="36">\n' + (isHelpful == true ?
+                        '          <path d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path>\n' : " ") +
                         '       </svg>' +
                         "     </div>\n" +
                         "                      <div answer-and-comments-area class=\"col-11\">\n" +
@@ -221,7 +228,7 @@ class QuestionPage {
                         "                                    </ul>\n" +
                         "                                </div>\n" +
                         "                                <div id=\"comments-link-1237602\" data-rep=\"50\" data-reg=\"true\">\n" +
-                        "                                    <a href=\"#\" >добавить комментарий</a>\n" +
+                        "                                    <a href=\"#\" >добаВить комментарий</a>\n" +
                         "                                    <span>&nbsp;|&nbsp;</span>\n" +
                         "                                </div>\n" +
                         "                            </div>\n" +
