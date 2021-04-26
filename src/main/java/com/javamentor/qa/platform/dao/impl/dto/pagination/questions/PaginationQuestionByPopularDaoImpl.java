@@ -45,7 +45,7 @@ public class PaginationQuestionByPopularDaoImpl implements PaginationDao<Questio
                         "question.description AS question_description," +
                         " question.viewCount AS question_viewCount," +
                         "(SELECT COUNT (a.id) FROM Answer a WHERE a.question.id=question.id) AS question_countAnswer," +
-                        "(SELECT COUNT (v.id) FROM VoteQuestion v WHERE v.question.id=question.id) AS question_countValuable," +
+                        "coalesce((select sum(v.vote) from VoteQuestion v where v.question.id = question.id), 0) AS question_countValuable," +
                         "question.persistDateTime AS question_persistDateTime, " +
                         "question.lastUpdateDateTime AS question_lastUpdateDateTime, " +
                         "tag.id AS tag_id,tag.name AS tag_name, tag.description as tag_description " +
