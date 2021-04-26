@@ -618,12 +618,8 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .contentType("application/json;charset=UTF-8"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.userId").isNumber())
-                .andExpect(jsonPath("$.answerId").isNumber())
-                .andExpect(jsonPath("$.persistDateTime").isNotEmpty())
-                .andExpect(jsonPath("$.vote").isNumber());
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Correct vote"));
 
         List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers").getResultList();
         int second = after.size();
