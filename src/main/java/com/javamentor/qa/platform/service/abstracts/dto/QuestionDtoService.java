@@ -13,6 +13,8 @@ public interface QuestionDtoService {
 
     PageDto<QuestionDto, Object> getPaginationPopular(int page, int size, long days);
 
+    PageDto<QuestionDto, Object> getPaginationPopularTrackedTag(int page, int size, long id);
+
     PageDto<QuestionDto, Object> getPaginationWithoutAnswers(int page, int size);
 
     PageDto<QuestionDto, Object> getPaginationWithoutAnswersNoAnyAnswer(int page, int size);
