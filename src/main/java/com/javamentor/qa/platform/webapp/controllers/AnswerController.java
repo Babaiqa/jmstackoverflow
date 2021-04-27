@@ -177,7 +177,7 @@ public class AnswerController {
             Reputation reputation = new Reputation();
             reputation.setCount(count);
             reputation.setAnswer(answer);
-            reputation.setUser(user);
+            reputation.setAuthor(user);
             reputation.setType(ReputationType.Answer);
             reputationService.update(reputation);
             return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));

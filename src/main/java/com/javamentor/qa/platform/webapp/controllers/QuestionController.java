@@ -263,7 +263,7 @@ public class QuestionController {
         Reputation reputation = new Reputation();
         reputation.setCount(count);
         reputation.setQuestion(question);
-        reputation.setUser(user);
+        reputation.setAuthor(user);
         reputation.setType(ReputationType.Question);
         reputationService.update(reputation);
 

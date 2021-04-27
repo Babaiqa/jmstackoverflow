@@ -268,9 +268,11 @@ class QuestionService {
     }
 
     setCommentByQuestionId(questionId) {
-        let comment = {
-            text: $('#comment_summernote').summernote('code')
-        }
+
+        let comment = $("#commentTextArea").val();
+        console.log("Вот эта херь:" + comment);
+        alert(comment);
+
         fetch('/api/question/' + questionId + '/comment',
             {
                 method: 'POST',

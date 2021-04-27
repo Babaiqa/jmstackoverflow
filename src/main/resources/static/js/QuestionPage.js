@@ -104,19 +104,16 @@ class QuestionPage {
                                                     </div>
                                                     <div id="comments-link-1237608" data-rep="50" data-reg="true">
                                                         <form name="commentForm" id="commentForm" style="display:none" onsubmit="return false">
-                                                        <textarea id="commentTextArea" name="commentTextArea" cols="20" rows="40"></textarea>
-                                                        <input type="submit" value="Введите содержимое комментария" name="submitComment" id="submitComment">
+                                                        <textarea id="commentTextArea" name="commentTextArea" cols="70" rows="5" placeholder="Введите текст комментария"></textarea><br>
+                                                        <button class="btn btn-success" type="submit" onclick="return false" name="submitComment" id="submitComment">Сохранить</button>
                                                         </form>
                                                         
-                                                        <a href="#" onclick="addCommentFunc();return false" id="addComment">Добавить комментарий</a>
-                                                        <span >&nbsp;|&nbsp;</span>
+                                                        <a href="#" onclick="return false" id="addComment">Добавить комментарий</a>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>`
                 )
-
-
 
 
                 response.listTagDto.forEach(tag => {
