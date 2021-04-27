@@ -268,11 +268,9 @@ class QuestionService {
     }
 
     setCommentByQuestionId(questionId) {
-
-        let comment = $("#commentTextArea").val();
-        console.log("Вот эта херь:" + comment);
-        alert(comment);
-
+        let comment = {
+            text: $('#comment_summernote').summernote('code')
+        }
         fetch('/api/question/' + questionId + '/comment',
             {
                 method: 'POST',
@@ -284,6 +282,9 @@ class QuestionService {
             }).then(data => new QuestionPage().getCommentsById(questionId))
             .catch(error => console.log(error.message));
     }
+
+
+
 
     makeDownVoteQuestion(questionId) {
         fetch('/api/question/' + questionId + '/downVote',
