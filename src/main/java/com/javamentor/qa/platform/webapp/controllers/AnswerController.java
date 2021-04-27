@@ -167,7 +167,7 @@ public class AnswerController {
             return ResponseEntity.badRequest().body("Question was not found");
         }
 
-        Answer answer = new Answer(question.get(), user, createAnswerDto.getHtmlBody(), false, false);
+        Answer answer = new Answer(question.get(), user, createAnswerDto.getHtmlBody(), false, false, false);
         answer.setQuestion(question.get());
 
         boolean everAnswered = answerDtoService.isUserAlreadyAnsweredToQuestion(user.getId(), questionId);
