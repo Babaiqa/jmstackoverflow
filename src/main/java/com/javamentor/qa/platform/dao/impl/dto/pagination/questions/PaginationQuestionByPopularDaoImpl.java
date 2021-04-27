@@ -44,7 +44,7 @@ public class PaginationQuestionByPopularDaoImpl implements PaginationDao<Questio
                         "u.imageLink AS question_authorImage," +
                         "question.description AS question_description," +
                         " question.viewCount AS question_viewCount," +
-                        "(SELECT COUNT (a.id) FROM Answer a WHERE a.question.id=question.id) AS question_countAnswer," +
+                        "(SELECT COUNT (a.id) FROM Answer a WHERE a.question.id=question.id and a.isDeletedByModerator = false) AS question_countAnswer," +
                         "(SELECT COUNT (v.id) FROM VoteQuestion v WHERE v.question.id=question.id) AS question_countValuable," +
                         "question.persistDateTime AS question_persistDateTime, " +
                         "question.lastUpdateDateTime AS question_lastUpdateDateTime, " +
