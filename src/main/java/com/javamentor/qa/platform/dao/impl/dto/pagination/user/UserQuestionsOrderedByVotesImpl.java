@@ -43,7 +43,7 @@ public class UserQuestionsOrderedByVotesImpl implements PaginationDao<QuestionDt
                         "question.description AS question_description," +
                         " question.viewCount AS question_viewCount," +
                         "(SELECT COUNT (a.question.id) FROM Answer a WHERE a.question.id=question_id) AS question_countAnswer," +
-                        "(SELECT COUNT (v.question.id) FROM VoteQuestion v WHERE v.question.id=question.id) AS question_countValuable," +
+                        "coalesce((select sum(v.vote) from VoteQuestion v where v.question.id = question.id), 0) AS question_countValuable," +
                         "question.persistDateTime AS question_persistDateTime, " +
                         "question.lastUpdateDateTime AS question_lastUpdateDateTime, " +
                         "tag.id AS tag_id,tag.name AS tag_name, tag.description as tag_description " +
@@ -51,7 +51,7 @@ public class UserQuestionsOrderedByVotesImpl implements PaginationDao<QuestionDt
                         "INNER JOIN  question.user u " +
                         "JOIN question.tags tag " +
                         "WHERE question.id IN :ids "+
-                        "ORDER BY question.voteQuestions.size DESC")
+                        "ORDER BY coalesce((select sum(v.vote) from VoteQuestion v where v.question.id = question.id), 0) DESC")
                 .setParameter("ids", questionIds)
                 .unwrap(Query.class)
                 .setResultTransformer(new QuestionResultTransformer())
