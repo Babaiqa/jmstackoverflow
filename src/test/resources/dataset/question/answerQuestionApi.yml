@@ -5,7 +5,8 @@ answer:
     question_id: 10
     user_id: 3
     persist_date: "2020-01-01 13:58:56"
-    is_deleted: 0
+    is_deleted: false
+    is_deleted_by_moderator: false
     update_date: "2020-01-01 13:58:56"
 
   - id: 52
@@ -14,7 +15,8 @@ answer:
     question_id: 10
     user_id: 3
     persist_date: "2020-01-02 13:58:56"
-    is_deleted: 0
+    is_deleted: false
+    is_deleted_by_moderator: false
     update_date: "2020-01-01 13:58:56"
 
   - id: 53
@@ -23,5 +25,6 @@ answer:
     question_id: 13
     user_id: 3
     persist_date: "2020-01-11 13:58:56"
-    is_deleted: 0
+    is_deleted: false
+    is_deleted_by_moderator: false
     update_date: "2020-01-01 13:58:56"

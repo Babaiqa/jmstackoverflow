@@ -7,7 +7,7 @@ question:
     view_count: 3
     user_id: 1
     persist_date: "2020-01-02"
-    is_deleted: 0
+    is_deleted: false
     last_redaction_date: "2020-01-02 13:58:56"
 
   - id: 13
@@ -17,7 +17,7 @@ question:
     view_count: 5
     user_id: 1
     persist_date: "2020-01-02"
-    is_deleted: 0
+    is_deleted: false
     last_redaction_date: "2020-01-20 13:58:56"
 
   - id: 14
@@ -27,7 +27,7 @@ question:
     view_count: 2
     user_id: 2
     persist_date: "2020-01-02"
-    is_deleted: 0
+    is_deleted: false
     last_redaction_date: "2020-02-01 13:58:56"
 
   - id: 15
@@ -37,7 +37,7 @@ question:
     view_count: 2
     user_id: 2
     persist_date: "2020-01-02"
-    is_deleted: 1
+    is_deleted: true
     last_redaction_date: "2020-02-02 13:58:56"
 
   - id: 16
@@ -47,7 +47,7 @@ question:
     view_count: 2
     user_id: 1
     persist_date: "2020-01-02"
-    is_deleted: 0
+    is_deleted: false
     last_redaction_date: "2020-02-01 13:58:56"
 
   - id: 17
@@ -57,7 +57,7 @@ question:
     title: "Question number six"
     view_count: 1
     user_id: 2
-    is_deleted: 0
+    is_deleted: false
     last_redaction_date: "2020-05-01 13:58:56"
 
   - id: 18
@@ -67,7 +67,7 @@ question:
     title: "Question number seven"
     view_count: 1
     user_id: 3
-    is_deleted: 0
+    is_deleted: false
     last_redaction_date: "2020-05-02 13:58:56"
 
   - id: 19
@@ -77,7 +77,7 @@ question:
     title: "Question number eight"
     view_count: 1
     user_id: 3
-    is_deleted: 0
+    is_deleted: false
     last_redaction_date: "2020-05-03 13:58:56"
 
   - id: 20
@@ -87,5 +87,5 @@ question:
     title: "Question number nine"
     view_count: 1
     user_id: 2
-    is_deleted: 0
+    is_deleted: false
     last_redaction_date: "2020-05-04 13:58:56"
