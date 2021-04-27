@@ -3,7 +3,9 @@ package com.javamentor.qa.platform.service.impl.dto;
 import com.javamentor.qa.platform.dao.abstracts.dto.QuestionDtoDao;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
+import com.javamentor.qa.platform.models.dto.QuestionDtoPrincipal;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.pagination.PaginationService;
 import com.javamentor.qa.platform.service.impl.dto.pagination.question.PaginationQuestionDtoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,10 +17,12 @@ import java.util.*;
 public class QuestionDtoServiceImpl extends PaginationQuestionDtoService implements QuestionDtoService{
 
     private final QuestionDtoDao questionDtoDao;
+    private final PaginationService<QuestionDtoPrincipal, Object> paginationService;
 
     @Autowired
-    public QuestionDtoServiceImpl(QuestionDtoDao questionDtoDao) {
+    public QuestionDtoServiceImpl(QuestionDtoDao questionDtoDao, PaginationService<QuestionDtoPrincipal, Object> paginationService) {
         this.questionDtoDao = questionDtoDao;
+        this.paginationService = paginationService;
     }
 
     @Transactional
@@ -114,12 +118,27 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
                 parameters);
     }
 
+    @Override
+    public PageDto<QuestionDtoPrincipal, Object> getAllQuestionsOfPrincipalUserOrderByPersist(int page, int size, Long id) {
+        return paginationService.getPageDto(
+                "PaginationAllQuestionsPrincipalUserDao",
+                setPaginationParametersForPrincipal(page, size, Optional.of(id)));
+    }
+
     private Map<String, Object> setPaginationParameters(int page, int size, Optional<List<Long>> tagsIds, Optional<String> message) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("page", page);
         parameters.put("size", size);
         parameters.put("tagsIds", tagsIds.orElse(new ArrayList<>()));
         parameters.put("message", message.orElse(""));
+        return parameters;
+    }
+
+    private Map<String, Object> setPaginationParametersForPrincipal(int page, int size, Optional<Long> userId) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("page", page);
+        parameters.put("size", size);
+        parameters.put("userId", userId.orElse(0L));
         return parameters;
     }
 
