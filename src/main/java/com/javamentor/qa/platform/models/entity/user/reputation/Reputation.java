@@ -33,6 +33,7 @@ public class Reputation implements Serializable {
     private LocalDateTime persistDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     private User author;
 
