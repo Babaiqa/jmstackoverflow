@@ -17,20 +17,14 @@ public class AnswersCountSearchOperator extends SearchOperator {
 
     @Override
     public BooleanPredicateClausesStep<?> parse(StringBuilder query, SearchPredicateFactory factory, BooleanPredicateClausesStep<?> booleanPredicate) {
-        Pattern pattern = Pattern.compile("(answers:)([0-9]+)");
+        Pattern pattern = Pattern.compile("(?<=answers:).*([0-9])");
         Matcher matcher = pattern.matcher(query);
 
         if (!matcher.find()) {
             return booleanPredicate;
         }
 
-        matcher.reset();
-
-        long answersCount = 0L;
-
-        while (matcher.find()) {
-            answersCount = Long.parseLong(matcher.group(2));
-        }
+        long answersCount = Long.parseLong(matcher.group().trim());
 
         if (answersCount == 0) {
             booleanPredicate = booleanPredicate.must(factory.match().field("answersCount").matching(answersCount));
@@ -38,7 +32,7 @@ public class AnswersCountSearchOperator extends SearchOperator {
             booleanPredicate = booleanPredicate.must(factory.range().field("answersCount").atLeast(answersCount));
         }
 
-        query.replace(0, query.length(), matcher.replaceAll(""));
+        query.replace(0, query.length(), "");
 
         return booleanPredicate;
     }

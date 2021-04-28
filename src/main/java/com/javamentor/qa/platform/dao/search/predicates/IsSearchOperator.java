@@ -21,13 +21,11 @@ public class IsSearchOperator extends SearchOperator {
         Pattern pattern = Pattern.compile("is:(question|answer)");
         Matcher matcher = pattern.matcher(query);
 
-        String operator = "";
-
-        while (matcher.find()) {
-           operator = matcher.group(1);
+        if (!matcher.find()) {
+            return booleanPredicate;
         }
 
-        switch (operator) {
+        switch (matcher.group(1)) {
             case "question":
                 booleanPredicate = booleanPredicate.must(factory.exists().field("id"));
                 break;
@@ -36,7 +34,7 @@ public class IsSearchOperator extends SearchOperator {
                 break;
         }
 
-        query.replace(0, query.length(), matcher.replaceAll(""));
+        query.replace(0, query.length(), "");
 
         return booleanPredicate;
     }
