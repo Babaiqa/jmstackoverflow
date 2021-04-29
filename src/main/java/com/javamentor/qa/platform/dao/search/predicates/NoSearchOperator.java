@@ -21,21 +21,13 @@ public class NoSearchOperator extends SearchOperator {
             return booleanPredicate;
         }
 
-        MatchPredicateOptionsStep<?> descriptionPredicateOption = factory.match().field("description")
-                .matching(query.toString());
+        booleanPredicate = booleanPredicate.must(factory.match()
+                .fields("description", "title", "htmlBody")
+                .matching(query.toString())
+                .fuzzy(1)
+                .toPredicate());
 
-        MatchPredicateOptionsStep<?> titlePredicateOption = factory.match().field("title")
-                .matching(query.toString());
-
-        MatchPredicateOptionsStep<?> htmlBodyPredicateOption = factory.match().field("htmlBody")
-                .matching(query.toString());
-
-        BooleanPredicateClausesStep<?> innerBooleanPredicate = factory.bool()
-                .should(descriptionPredicateOption)
-                .should(titlePredicateOption)
-                .should(htmlBodyPredicateOption);
-
-        booleanPredicate = booleanPredicate.must(innerBooleanPredicate);
+        query.replace(0, query.length(), "");
 
         return booleanPredicate;
     }

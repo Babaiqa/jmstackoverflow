@@ -17,18 +17,19 @@ public class ExactSearchOperator extends SearchOperator {
 
     @Override
     public BooleanPredicateClausesStep<?> parse(StringBuilder query, SearchPredicateFactory factory, BooleanPredicateClausesStep<?> booleanPredicate) {
-        Pattern pattern = Pattern.compile("(\\\")([а-яА-Яa-zA-Z0-9\\s\\:\\?\\!\\$\\#\\_]+)(\\\")");
+        Pattern pattern = Pattern.compile("(?<=\").*(?=\")");
         Matcher matcher = pattern.matcher(query);
 
-        if (matcher.find()) {
-            BooleanPredicateClausesStep<?> innerBooleanPredicate = factory.bool()
-                    .should(factory.phrase().field("title").matching(matcher.group(2)))
-                    .should(factory.phrase().field("description").matching(matcher.group(2)))
-                    .should(factory.phrase().field("htmlBody").matching(matcher.group(2)));
-            booleanPredicate = booleanPredicate.must(innerBooleanPredicate);
+        if (!matcher.find()) {
+            return booleanPredicate;
         }
 
-        query.replace(0, query.length(), matcher.replaceAll(""));
+        booleanPredicate = booleanPredicate.must(factory.phrase()
+                .fields("title", "description", "htmlBody")
+                .matching(matcher.group())
+                .toPredicate());
+
+        query.replace(0, query.length(), "");
 
         return booleanPredicate;
     }
