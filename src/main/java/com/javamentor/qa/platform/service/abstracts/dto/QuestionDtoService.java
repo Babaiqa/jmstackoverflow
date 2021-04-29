@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.service.abstracts.dto;
 
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
+import com.javamentor.qa.platform.models.dto.QuestionDtoPrincipal;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,5 +35,7 @@ public interface QuestionDtoService {
     PageDto<QuestionDto, Object> getPaginationWithoutAnswerSortedByVotes(int page, int size);
 
     PageDto<QuestionDto, Object> getPaginationWithoutAnswersTrackedTag(int page, int size, long id);
+
+    PageDto<QuestionDtoPrincipal, Object> getAllQuestionsOfPrincipalUserOrderByPersist(int page, int size, Long id);
 
 }

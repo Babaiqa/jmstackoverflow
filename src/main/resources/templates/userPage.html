@@ -65,14 +65,14 @@
                     <div class="row user-information">
 
                         <div class="card">
-                            <div class="avatar">
-                                <img src="" alt="" width="164" height="164" class="avatar-user">
+                            <div class="avatar" id="userAvatar">
+
                             </div>
                             <div class="card-body">
                                 <div class="reputation">
                                     <div class="row">
                                         <div  class="reputation-number">
-                                            1
+
                                         </div>
                                         <div class="reputation-header fs-fine fc-light tt-uppercase">
                                             репутация
@@ -88,8 +88,8 @@
                         <div class="info-name-profile-user-about col-6">
                             <div class="profile-user-name">
                                 <h2 class="profile-user-name">
-                                    <div class="name">
-                                        Имя юзера
+                                    <div class="name" id="name">
+
                                     </div>
                                 </h2>
                             </div>
@@ -143,22 +143,22 @@
                                 <div class="user-profile-info">
                                     <ul class="list-reset grid gs8 gsy fd-column fc-medium">
                                         <li class="grid--cell ow-break-word">
-                                            <div class="grid gs8 gsx ai-center">
-                                                <div class="grid--cell fl1">Город</div>
+                                            <div class="grid gs8 gsx ai-center" id="city">
+
                                             </div>
                                         </li>
 
-                                        <li class="grid--cell ow-break-word">
-                                            <div class="grid gs8 gsx ai-center">
-                                                <div class="grid--cell fl1">Последнее посещение</div>
-                                            </div>
-                                        </li>
+<!--                                        <li class="grid&#45;&#45;cell ow-break-word">-->
+<!--                                            <div class="grid gs8 gsx ai-center">-->
+<!--                                                <div class="grid&#45;&#45;cell fl1">Последнее посещение</div>-->
+<!--                                            </div>-->
+<!--                                        </li>-->
 
-                                        <li class="grid--cell ow-break-word">
-                                            <div class="grid gs8 gsx ai-center">
-                                                <div class="grid--cell fl1">Просмотров</div>
-                                            </div>
-                                        </li>
+<!--                                        <li class="grid&#45;&#45;cell ow-break-word">-->
+<!--                                            <div class="grid gs8 gsx ai-center">-->
+<!--                                                <div class="grid&#45;&#45;cell fl1">Просмотров</div>-->
+<!--                                            </div>-->
+<!--                                        </li>-->
 
                                     </ul>
                                 </div>
@@ -675,5 +675,13 @@
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+            crossorigin="anonymous"></script>
+<script src="/static/js/fillProfile.js"></script>
 </body>
 </html>
