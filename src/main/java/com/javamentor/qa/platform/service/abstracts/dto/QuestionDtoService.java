@@ -16,6 +16,8 @@ public interface QuestionDtoService {
 
     PageDto<QuestionDto, Object> getPaginationPopularTrackedTag(int page, int size, long id);
 
+    PageDto<QuestionDto, Object> getPaginationPopularIgnoredTag(int page, int size, long id);
+
     PageDto<QuestionDto, Object> getPaginationWithoutAnswers(int page, int size);
 
     PageDto<QuestionDto, Object> getPaginationWithoutAnswersNoAnyAnswer(int page, int size);
