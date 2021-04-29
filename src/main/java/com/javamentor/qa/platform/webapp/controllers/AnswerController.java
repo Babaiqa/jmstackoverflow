@@ -214,13 +214,8 @@ public class AnswerController {
         User user = securityHelper.getPrincipal();
         Answer answer = answerOptional.get();
 
-         if(voteAnswerService.answerUpVote(question, user, answer) == null){
-             throw new VoteException("Incorrect vote");
-
-         }else{
-             VoteAnswer voteAnswer = voteAnswerService.answerUpVote(question, user, answer);
-             voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer);
-         }
+        VoteAnswer voteAnswer = voteAnswerService.answerUpVote(question, user, answer);
+        voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer);
 
         reputationService.increaseReputationByAnswerVoteUp(answer, user);
 
