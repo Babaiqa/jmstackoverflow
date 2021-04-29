@@ -33,8 +33,13 @@ public class Reputation implements Serializable {
     private LocalDateTime persistDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @NotNull
+    @JoinColumn(name = "author_id", referencedColumnName = "id")
+    private User author;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_id", referencedColumnName = "id")
+    private User sender;
 
     @Column(name = "count")
     private Integer count;
@@ -51,6 +56,7 @@ public class Reputation implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Answer.class, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "answer_id")
     private Answer answer;
+
 
     @Override
     public boolean equals(Object o) {

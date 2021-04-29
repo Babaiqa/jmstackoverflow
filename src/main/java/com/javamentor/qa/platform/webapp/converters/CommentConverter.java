@@ -41,7 +41,7 @@ public abstract class CommentConverter {
 
     @Named("getReputationCount")
     public Integer getReputationCountByUserId(Long userId) {
-        Optional<Reputation> rep = reputationService.getReputationByUserId(userId);
+        Optional<Reputation> rep = reputationService.getReputationByAuthorId(userId);
         if (rep.isPresent()) {
             return rep.get().getCount();
         }

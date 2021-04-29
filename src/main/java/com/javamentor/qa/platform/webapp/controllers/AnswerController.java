@@ -167,7 +167,7 @@ public class AnswerController {
             return ResponseEntity.badRequest().body("Question was not found");
         }
 
-        Answer answer = new Answer(question.get(), user, createAnswerDto.getHtmlBody(), false, false);
+        Answer answer = new Answer(question.get(), user, createAnswerDto.getHtmlBody(), false, false, false);
         answer.setQuestion(question.get());
 
         boolean everAnswered = answerDtoService.isUserAlreadyAnsweredToQuestion(user.getId(), questionId);
@@ -177,6 +177,7 @@ public class AnswerController {
             Reputation reputation = new Reputation();
             reputation.setCount(count);
             reputation.setAnswer(answer);
+            reputation.setAuthor(user);
             reputation.setType(ReputationType.Answer);
             reputationService.update(reputation);
             return ResponseEntity.ok(answerConverter.answerToAnswerDTO(answer));
@@ -221,6 +222,8 @@ public class AnswerController {
              voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer);
          }
 
+        reputationService.increaseReputationByAnswerVoteUp(answer, user);
+
         return ResponseEntity.ok("Correct vote");
     }
 
@@ -259,6 +262,8 @@ public class AnswerController {
             return ResponseEntity.ok(e.getMessage());
         }
         voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer);
+
+        reputationService.decreaseReputationByAnswerVoteDown(answer, user);
 
         return ResponseEntity.ok("Correct vote");
     }

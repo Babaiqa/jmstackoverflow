@@ -36,8 +36,7 @@ public class PaginationAllAnswersPrincipalUserDaoImpl implements PaginationDao<A
                         "FROM Answer as a " +
                         "INNER JOIN a.user as u " +
                         "JOIN a.question as q " +
-//                        "LEFT JOIN  a.voteAnswers as avv on a.id  = avv.answer.id " +
-                        "WHERE u.id = :userId order by answer_countValuable desc ")
+                        "WHERE u.id = :userId  and a.isDeletedByModerator = false order by answer_countValuable desc ")
                 .unwrap(Query.class)
                 .setParameter("userId", userId)
                 .setResultTransformer(new AnswerResultTransformer())
@@ -52,7 +51,7 @@ public class PaginationAllAnswersPrincipalUserDaoImpl implements PaginationDao<A
         long userId = (long) parameters.get("userId");
         return (int)(long) entityManager.createQuery("select count (a.id)" +
                 " from Answer a inner join a.user as u" +
-                " where u.id = :userId")
+                " where u.id = :userId and a.isDeletedByModerator = false")
                 .setParameter("userId", userId)
                 .getSingleResult();
     }

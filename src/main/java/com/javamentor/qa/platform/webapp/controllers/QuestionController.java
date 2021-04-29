@@ -193,6 +193,52 @@ public class QuestionController {
         return ResponseEntity.ok(resultPage);
     }
 
+    @GetMapping(value = "/popular/trackedTag", params = {"page", "size"})
+    @ApiOperation(value = "Return Questions sorted by trackedTag in descending order of popularity")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDto>"),
+    })
+    public ResponseEntity<?> getQuestionsPopularTrackedTag(
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    required = true,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+        PageDto<QuestionDto, Object> resultPage = questionDtoService
+                .getPaginationPopularTrackedTag(page, size, securityHelper.getPrincipal().getId());
+        return ResponseEntity.ok(resultPage);
+    }
+
+    @GetMapping(value = "/popular/ignoredTag", params = {"page", "size"})
+    @ApiOperation(value = "Return Questions sorted by ignoredTag in descending order of popularity")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDto>"),
+    })
+    public ResponseEntity<?> getQuestionPopularIgnoredTag(
+            @ApiParam(name = "page", value = "Number Page. type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    required = true,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+        PageDto<QuestionDto, Object> resultPage = questionDtoService
+                .getPaginationPopularIgnoredTag(page, size, securityHelper.getPrincipal().getId());
+        return ResponseEntity.ok(resultPage);
+    }
+
     @GetMapping(value = "/popular/week", params = {"page", "size"})
     @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
     @ApiResponses({
@@ -263,6 +309,7 @@ public class QuestionController {
         Reputation reputation = new Reputation();
         reputation.setCount(count);
         reputation.setQuestion(question);
+        reputation.setAuthor(user);
         reputation.setType(ReputationType.Question);
         reputationService.update(reputation);
 
@@ -505,6 +552,7 @@ public class QuestionController {
             @ApiResponse(code = 200, message = "Question was up voted", response = VoteQuestionDto.class),
             @ApiResponse(code = 400, message = "Question not found", response = String.class)
     })
+
     public ResponseEntity<?> questionUpVote(
             @ApiParam(name = "questionId", value = "type Long", required = true, example = "0")
             @PathVariable Long questionId) {
@@ -525,7 +573,11 @@ public class QuestionController {
         }
         VoteQuestionDto responseBody = voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
 
+        reputationService.increaseReputationByQuestionVoteUp(question, user);
+
         return ResponseEntity.ok(responseBody);
+
+
     }
 
 
@@ -556,6 +608,8 @@ public class QuestionController {
             return ResponseEntity.ok(e.getMessage());
         }
         VoteQuestionDto responseBody = voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
+
+        reputationService.decreaseReputationByQuestionVoteDown(question, user);
 
         return ResponseEntity.ok(responseBody);
     }

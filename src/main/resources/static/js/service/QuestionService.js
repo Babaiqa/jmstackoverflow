@@ -133,6 +133,44 @@ class QuestionService {
             }).catch( error => error.response.then(message => console.log(message)));
     }
 
+    getQuestionPopularTrackedTag(page, size) {
+        let query = '/api/question/popular/trackedTag?page=' + page + '&size=' + size;
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        }).then(response =>  {
+            if (response.ok) {
+                return response.json()
+            } else {
+                let error = new Error();
+                error.response = response.text();
+                throw error;
+            }
+        }).catch( error => error.response.then(message => console.log(message)));
+    }
+
+    getQuestionPopularIgnoredTag(page, size) {
+        let query = '/api/question/popular/ignoredTag?page=' + page + '&size=' + size;
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        }).then(response =>  {
+            if (response.ok) {
+                return response.json()
+            } else {
+                let error = new Error();
+                error.response = response.text();
+                throw error;
+            }
+        }).catch( error => error.response.then(message => console.log(message)));
+    }
+
     getQuestionsWithGivenTags(page, size, id) {
         let query = '/api/question/withTags?page=' + page + '&size=' + size + '&tagIds=' + id;
         return fetch(query, {
@@ -282,6 +320,9 @@ class QuestionService {
             }).then(data => new QuestionPage().getCommentsById(questionId))
             .catch(error => console.log(error.message));
     }
+
+
+
 
     makeDownVoteQuestion(questionId) {
         fetch('/api/question/' + questionId + '/downVote',

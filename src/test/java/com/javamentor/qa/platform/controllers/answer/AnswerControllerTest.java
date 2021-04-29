@@ -8,9 +8,11 @@ import com.javamentor.qa.platform.models.dto.VoteAnswerDto;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.CommentAnswer;
+import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -510,5 +514,69 @@ class AnswerControllerTest extends AbstractIntegrationTest {
         List<VoteAnswer> after = entityManager.createNativeQuery("select * from votes_on_answers where answer_id = 51").getResultList();
         int second = after.size();
         Assertions.assertEquals(first + 1, second);
+    }
+
+    @Test
+    public void shouldAddPositiveReputationByAnswerVoteUp() throws Exception {
+        try {
+            String string = "FROM Reputation WHERE answer.id =: answerId AND sender.id =: senderId";
+
+            Query queryBefore = entityManager.createQuery(string, Reputation.class);
+            queryBefore.setParameter("answerId", 51L);
+            queryBefore.setParameter("senderId", 153L);
+
+            Reputation reputationBefore = (Reputation) queryBefore.getSingleResult();
+
+            MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
+                    .post("/api/question/10/answer/51/upVote")).andReturn();
+
+            Query queryAfter = entityManager.createQuery(string, Reputation.class);
+            queryAfter.setParameter("answerId", 51L);
+            queryAfter.setParameter("senderId", 153L);
+
+            Reputation reputationAfter = (Reputation) queryAfter.getSingleResult();
+
+            int votePoints = reputationAfter.getCount();
+            long lastSenderId = reputationAfter.getId();
+
+            Assert.assertTrue(reputationBefore != reputationAfter);
+            Assert.assertEquals(lastSenderId, 153L);
+            Assert.assertEquals(votePoints, 20);
+
+        } catch (NoResultException ignore) {
+
+        }
+    }
+
+    @Test
+    public void shouldAddNegativeReputationByAnswerVoteDown() throws Exception {
+        try {
+            String string = "FROM Reputation WHERE answer.id =: answerId AND sender.id =: senderId";
+
+            Query queryBefore = entityManager.createQuery(string, Reputation.class);
+            queryBefore.setParameter("answerId", 51L);
+            queryBefore.setParameter("senderId", 153L);
+
+            Reputation reputationBefore = (Reputation) queryBefore.getSingleResult();
+
+            MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
+                    .post("/api/question/10/answer/51/upVote")).andReturn();
+
+            Query queryAfter = entityManager.createQuery(string, Reputation.class);
+            queryAfter.setParameter("answerId", 51L);
+            queryAfter.setParameter("senderId", 153L);
+
+            Reputation reputationAfter = (Reputation) queryAfter.getSingleResult();
+
+            int votePoints = reputationAfter.getCount();
+            long lastSenderId = reputationAfter.getId();
+
+            Assert.assertTrue(reputationBefore != reputationAfter);
+            Assert.assertEquals(lastSenderId, 153L);
+            Assert.assertEquals(votePoints, -20);
+
+        } catch (NoResultException ignore) {
+
+        }
     }
 }

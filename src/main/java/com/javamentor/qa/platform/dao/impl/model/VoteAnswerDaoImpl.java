@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.dao.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.VoteAnswerDao;
+import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import java.util.Optional;
 
 @Repository
 public class VoteAnswerDaoImpl extends ReadWriteDaoImpl<VoteAnswer, Long> implements VoteAnswerDao {
@@ -44,5 +47,14 @@ public class VoteAnswerDaoImpl extends ReadWriteDaoImpl<VoteAnswer, Long> implem
                 .setParameter("questionId", questionId)
                 .setParameter("userId", userId)
                 .getSingleResult();
+    }
+
+    @Override
+    public Optional<VoteAnswer> getVoteByAnswerIdAndUserId(Long answerId, Long userId) {
+        TypedQuery<VoteAnswer> query = entityManager.createQuery(
+                "FROM VoteAnswer WHERE user.id =: userId AND answer.id =: answerId", VoteAnswer.class)
+                .setParameter("userId", userId)
+                .setParameter("answerId", answerId);
+        return SingleResultUtil.getSingleResultOrNull(query);
     }
 }

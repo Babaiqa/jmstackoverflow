@@ -10,7 +10,8 @@ user_entity:
     role_id: 1
     id: 1
 
-  - email: "Test2@mail.ru"
+  - email: "
+  "
     password: "Test2@mail.ru"
     about: "description 2"
     full_name: "Tot"

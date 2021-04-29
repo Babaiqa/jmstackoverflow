@@ -16,4 +16,5 @@ public class PrincipalDto {
     private String fullName;
     private String avatarUrl;
     private String role;
+    private String city;
 }

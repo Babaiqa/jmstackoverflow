@@ -60,7 +60,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests()
                 .antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/**").authenticated()
+                .antMatchers("/api/*").authenticated()
+                .antMatchers("/api/moder/*").hasAnyAuthority("ADMIN", "MODER")
                 .antMatchers("/oauth2/**").permitAll()
                 .anyRequest().permitAll();
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);

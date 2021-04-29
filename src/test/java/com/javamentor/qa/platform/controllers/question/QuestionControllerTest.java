@@ -9,26 +9,34 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
+import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
+import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
 import com.javamentor.qa.platform.webapp.converters.AnswerConverter;
 import org.hamcrest.Matchers;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.math.BigInteger;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -247,22 +255,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void shouldAddAnswerToQuestionStatusOk() throws Exception {
-
-        CreateAnswerDto createAnswerDto = new CreateAnswerDto();
-        createAnswerDto.setHtmlBody("test answer");
-
-        String jsonRequest = objectMapper.writeValueAsString(createAnswerDto);
-
-        this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/14/answer")
-                .contentType("application/json;charset=UTF-8")
-                .content(jsonRequest))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
-
-    @Test
     public void shouldAddAnswerToQuestionResponseStatusOk() throws Exception {
         CreateAnswerDto createAnswerDto = new CreateAnswerDto();
         createAnswerDto.setHtmlBody("test answer");
@@ -305,7 +297,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .content(jsonRequest))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Question not found"));
+                .andExpect(content().string("Question was not found"));
     }
 
     @Test
@@ -342,7 +334,7 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .setParameter("questionId", 10L)
                 .getResultList();
 
-        Assert.assertEquals(answerDtoListFromResponse,answerList);
+        Assert.assertEquals(answerDtoListFromResponse, answerList);
 
 
     }
@@ -795,9 +787,9 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
     @Test
     public void shouldCreateVoteQuestionUp() throws Exception {
-
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/question/19/upVote")).andReturn();
+
 
         JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
 
@@ -808,7 +800,9 @@ class QuestionControllerTest extends AbstractIntegrationTest {
     public void shouldCreateVoteQuestionDown() throws Exception {
 
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/question/19/downVote")).andReturn();
+                .post("/api/question/19/downVote"))
+
+                .andReturn();
 
         JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
 
@@ -821,7 +815,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .post("/api/question/14/view"))
                 .andExpect(status().isOk());
     }
-
 
     @Test
     public void AddQuestionAsViewedIfSecondRequest() throws Exception {
@@ -840,8 +833,8 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         Query queryAfter = entityManager.createNativeQuery("select * from question_viewed where user_id = 153");
         Assert.assertEquals(countBefore + 1, queryAfter.getResultList().size());
 
-
     }
+
     @Test
     public void AddQuestionAsViewedIfSecondEqualRequest() throws Exception {
 
@@ -867,14 +860,14 @@ class QuestionControllerTest extends AbstractIntegrationTest {
                 .andExpect(status().isOk());
         //считаем количество записей повторно и сравниваем
         Query queryDoubleRequestAfter = entityManager.createNativeQuery("select * from question_viewed where " +
-                "user_id = 153",QuestionViewed.class );
+                "user_id = 153", QuestionViewed.class);
         int countAfter = queryDoubleRequestAfter.getResultList().size();
-        Assert.assertEquals(countBefore,countAfter);
+        Assert.assertEquals(countBefore, countAfter);
 
         //проверяем изменилась ли запись после попытки ее повторного внесения?
         Query query2 = entityManager.createNativeQuery("select * from question_viewed where user_id = 153 and " +
                 "question_id = ?", QuestionViewed.class);
-        query2.setParameter (1, 15L);
+        query2.setParameter(1, 15L);
         QuestionViewed questionViewedSecond = (QuestionViewed) query2.getSingleResult();
         Assert.assertEquals(questionViewedFirst.getId(), questionViewedSecond.getId());
         Assert.assertEquals(questionViewedFirst.getLocalDateTime(), questionViewedSecond.getLocalDateTime());
@@ -882,7 +875,6 @@ class QuestionControllerTest extends AbstractIntegrationTest {
         Assert.assertEquals(questionViewedFirst.getQuestion().getId(), questionViewedSecond.getQuestion().getId());
 
     }
-
 
     @Test
     public void AddQuestionAsViewedIsNotExist() throws Exception {
@@ -902,8 +894,70 @@ class QuestionControllerTest extends AbstractIntegrationTest {
 
         QuestionDto questionDto = objectMapper.readValue(resultContext, QuestionDto.class);
 
-        Assertions.assertEquals(0,questionDto.getCountValuable());
+        Assertions.assertEquals(0, questionDto.getCountValuable());
     }
 
+    @Test
+    public void shouldAddPositiveReputationByQuestionVoteUp() throws Exception {
+        try {
+            String string = "FROM Reputation WHERE question.id =: questionId AND sender.id =: senderId";
 
+            Query queryBefore = entityManager.createQuery(string, Reputation.class);
+            queryBefore.setParameter("questionId", 19L);
+            queryBefore.setParameter("senderId", 153L);
+
+            Reputation reputationBefore = (Reputation) queryBefore.getSingleResult();
+
+            MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
+                    .post("/api/question/19/upVote")).andReturn();
+
+            Query queryAfter = entityManager.createQuery(string, Reputation.class);
+            queryAfter.setParameter("questionId", 19L);
+            queryAfter.setParameter("senderId", 153L);
+
+            Reputation reputationAfter = (Reputation) queryAfter.getSingleResult();
+
+            int votePoints = reputationAfter.getCount();
+            long lastSenderId = reputationAfter.getId();
+
+            Assert.assertTrue(reputationBefore != reputationAfter);
+            Assert.assertEquals(lastSenderId, 153L);
+            Assert.assertEquals(votePoints, 20);
+
+        } catch (NoResultException ignore) {
+
+        }
+    }
+
+    @Test
+    public void shouldAddNegativeReputationByQuestionVoteDown() throws Exception {
+        try {
+            String string = "FROM Reputation WHERE question.id =: questionId AND sender.id =: senderId";
+
+            Query queryBefore = entityManager.createQuery(string, Reputation.class);
+            queryBefore.setParameter("questionId", 19L);
+            queryBefore.setParameter("senderId", 153L);
+
+            Reputation reputationBefore = (Reputation) queryBefore.getSingleResult();
+
+            MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
+                    .post("/api/question/19/downVote")).andReturn();
+
+            Query queryAfter = entityManager.createQuery(string, Reputation.class);
+            queryAfter.setParameter("questionId", 19L);
+            queryAfter.setParameter("senderId", 153L);
+
+            Reputation reputationAfter = (Reputation) queryAfter.getSingleResult();
+
+            int votePoints = reputationAfter.getCount();
+            long lastSenderId = reputationAfter.getId();
+
+            Assert.assertTrue(reputationBefore != reputationAfter);
+            Assert.assertEquals(lastSenderId, 153L);
+            Assert.assertEquals(votePoints, -20);
+
+        } catch (NoResultException ignore) {
+
+        }
+    }
 }

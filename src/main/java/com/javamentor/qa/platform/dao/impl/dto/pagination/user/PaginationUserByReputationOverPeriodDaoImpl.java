@@ -27,7 +27,7 @@ public class PaginationUserByReputationOverPeriodDaoImpl implements PaginationDa
         List<Long> usersIds = (List<Long>) em.unwrap(Session.class)
                 .createQuery("select user.id " +
                         "from User user " +
-                        "left outer join Reputation r on r.user.id=user.id " +
+                        "left outer join Reputation r on r.author.id=user.id " +
                         "where current_date - (:quantityOfDays)<date(r.persistDate)")
                 .setParameter("quantityOfDays", days)
                 .setFirstResult(page * size - size)
@@ -39,12 +39,12 @@ public class PaginationUserByReputationOverPeriodDaoImpl implements PaginationDa
                 .createQuery("select user.id as user_id, " +
                         "user.fullName as full_name, " +
                         "user.imageLink as link_image, " +
-                        "(select coalesce(sum(ra.count), 0) from Reputation ra where ra.user.id = user.id) as reputation, " +
+                        "(select coalesce(sum(ra.count), 0) from Reputation ra where ra.author.id = author.id) as reputation, " +
                         "tag.id as tag_id, " +
                         "tag.name as tag_name, " +
                         "tag.description as tag_description " +
                         "from User user " +
-                        "left join Reputation r on user.id = r.user.id " +
+                        "left join Reputation r on user.id = r.author.id " +
                         "left join Question question on user.id=question.user.id " +
                         "left join question.tags tag " +
                         "where user.id in (:ids) " +
@@ -62,7 +62,7 @@ public class PaginationUserByReputationOverPeriodDaoImpl implements PaginationDa
         return (int) (long) em.unwrap(Session.class).createQuery(
                 "select count(user.id) " +
                         "from User user " +
-                        "left outer join Reputation r on r.user.id=user.id " +
+                        "left outer join Reputation r on r.author.id=user.id " +
                         "where current_date - (:quantityOfDays)<date(r.persistDate)")
                 .setParameter("quantityOfDays", (int) parameters.get("days"))
                 .unwrap(org.hibernate.query.Query.class)
