@@ -38,6 +38,19 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
         return getPageDto("paginationQuestionByPopular", parameters);
     }
 
+    @Override
+    public PageDto<QuestionDto, Object> getPaginationPopularTrackedTag(int page, int size, long id){
+        List<Long> ids = questionDtoDao.getPaginationQuestionIdsPopularWithTrackedTags(page, size, id);
+        Map<String, Object> parameters = setPaginationParameters(page, size, Optional.empty(), Optional.empty());
+        parameters.put("page", page);
+        parameters.put("size", size);
+        parameters.put("ids", ids);
+        parameters.put("id", id);
+        return getPageDto(
+                "paginationQuestionByPopularTrackedTag",
+                parameters);
+    }
+
     public PageDto<QuestionDto, Object> getPaginationOrderedNew(int page, int size) {
         Map<String, Object> parameters = setPaginationParameters(page, size, Optional.empty(), Optional.empty());
         List<Long> ids = questionDtoDao.getPaginationQuestionIdsOrderByNew(page, size);
