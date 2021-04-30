@@ -1,25 +1,17 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
-import antlr.build.Tool;
 import com.javamentor.qa.platform.models.dto.*;
-import com.javamentor.qa.platform.models.entity.BookMarks;
-import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
+import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.models.util.OnUpdate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
-import com.javamentor.qa.platform.service.abstracts.dto.BookmarkDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.ReputationDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.BookMarksService;
+import com.javamentor.qa.platform.service.abstracts.dto.*;
 import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.converters.UserConverter;
 import io.swagger.annotations.*;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
@@ -47,6 +39,8 @@ public class UserController {
 
     private final BookmarkDtoService bookmarkDtoService;
 
+    private final TopUsersByTagDtoService topUsersByTagDtoService;
+
     @Autowired
     public UserController(UserService userService,
                           UserConverter userConverter,
@@ -56,7 +50,8 @@ public class UserController {
                           ReputationService reputationService,
                           ReputationDtoService reputationDtoService,
                           AnswerDtoService answerDtoService,
-                          BookmarkDtoService bookmarkDtoService) {
+                          BookmarkDtoService bookmarkDtoService,
+                          TopUsersByTagDtoService topUsersByTagDtoService) {
 
         this.userService = userService;
         this.userConverter = userConverter;
@@ -67,6 +62,7 @@ public class UserController {
         this.reputationDtoService = reputationDtoService;
         this.answerDtoService = answerDtoService;
         this.bookmarkDtoService = bookmarkDtoService;
+        this.topUsersByTagDtoService = topUsersByTagDtoService;
     }
 
     // Examples for Swagger
@@ -396,6 +392,21 @@ public class UserController {
         Optional<BookmarkDto> resultBookmark = bookmarkDtoService.getBookmarkDtoByUserId(user.getId());
 
         return  ResponseEntity.ok(resultBookmark);
+    }
+
+    @GetMapping("tag/{tagId}/topUsers")
+    @ApiOperation(value = "Get page List<UserDto> order by tagId." +
+            "Max size entries on page= "+ MAX_ITEMS_ON_PAGE, response = List.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Request success",
+                    response = List.class)
+    })
+    public ResponseEntity<?> getTopUsersByTagId(
+            @PathVariable("tagId") long id) {
+
+        Optional<UserDto> resultTopUser = topUsersByTagDtoService.getTopUsersDtoByTagId(id);
+
+        return  ResponseEntity.ok(resultTopUser);
     }
 
 
