@@ -12,8 +12,10 @@ import java.util.regex.Pattern;
 public class IsSearchOperator extends SearchOperator {
 
     public IsSearchOperator(@Value("is:question|answer search operator") String description,
-                            @Value("10") int order) {
-        super(description, order);
+                            @Value("10") int order,
+                            @Value("Найти только ответы, или только вопросы") String searchType,
+                            @Value("is:question, is:answer") String searchSyntax) {
+        super(description, order, searchType, searchSyntax);
     }
 
     @Override
