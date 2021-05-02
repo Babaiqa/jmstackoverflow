@@ -24,8 +24,11 @@ public class PredicateFactoryBean {
 
         for (SearchOperator searchOperator: searchOperators) {
             booleanPredicate = searchOperator.parse(queryStringBuilder, factory, booleanPredicate);
-        }
 
+            if (queryStringBuilder.length() == 0 ) {
+                break;
+            }
+        }
         return booleanPredicate.toPredicate();
     }
 

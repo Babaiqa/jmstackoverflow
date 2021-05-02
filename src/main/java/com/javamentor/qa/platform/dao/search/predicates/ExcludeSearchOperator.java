@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.dao.search.predicates;
 
+import org.hibernate.search.engine.search.predicate.SearchPredicate;
 import org.hibernate.search.engine.search.predicate.dsl.BooleanPredicateClausesStep;
 import org.hibernate.search.engine.search.predicate.dsl.SearchPredicateFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,13 +21,14 @@ public class ExcludeSearchOperator extends SearchOperator {
         Pattern pattern = Pattern.compile("(-)([а-яА-Яa-zA-Z0-9\\-]+)");
         Matcher matcher = pattern.matcher(query);
 
-        while (matcher.find()) {
-            BooleanPredicateClausesStep<?> innerBooleanPredicate = factory.bool()
-                    .should(factory.match().field("title").matching(matcher.group(2)))
-                    .should(factory.match().field("description").matching(matcher.group(2)))
-                    .should(factory.match().field("htmlBody").matching(matcher.group(2)));
-            booleanPredicate = booleanPredicate.mustNot(innerBooleanPredicate);
+        if (!matcher.find()) {
+            return booleanPredicate;
         }
+        String group = matcher.group(2);
+        booleanPredicate = booleanPredicate.mustNot(factory.match()
+                .fields("title", "description", "htmlBody")
+                .matching(group)
+                .toPredicate());
 
         query.replace(0, query.length(), matcher.replaceAll(""));
 

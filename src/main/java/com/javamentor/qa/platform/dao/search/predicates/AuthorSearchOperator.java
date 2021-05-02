@@ -17,25 +17,21 @@ public class AuthorSearchOperator extends SearchOperator{
 
     @Override
     public BooleanPredicateClausesStep<?> parse(StringBuilder query, SearchPredicateFactory factory, BooleanPredicateClausesStep<?> booleanPredicate) {
-        Pattern pattern = Pattern.compile("(user:)([0-9]+)");
+        Pattern pattern = Pattern.compile("(?<=user:).*([0-9])");
         Matcher matcher = pattern.matcher(query);
 
         if (!matcher.find()) {
             return booleanPredicate;
         }
 
-        matcher.reset();
+        long userId = Long.parseLong(matcher.group().trim());
 
-        BooleanPredicateClausesStep<?> innerBooleanPredicate = factory.bool();
+        booleanPredicate = booleanPredicate.must(factory.match()
+                .field("user.id")
+                .matching(userId)
+                .toPredicate());
 
-        while (matcher.find()) {
-           long userId = Long.parseLong(matcher.group(2));
-           innerBooleanPredicate = innerBooleanPredicate.should(factory.match().field("user.id").matching(userId));
-        }
-
-        booleanPredicate = booleanPredicate.must(innerBooleanPredicate);
-
-        query.replace(0, query.length(), matcher.replaceAll(""));
+        query.replace(0, query.length(), "");
 
         return booleanPredicate;
     }

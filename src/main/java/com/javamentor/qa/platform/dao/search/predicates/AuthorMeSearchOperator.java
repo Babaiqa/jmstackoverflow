@@ -22,14 +22,18 @@ public class AuthorMeSearchOperator extends SearchOperator {
         Pattern pattern = Pattern.compile("user:me");
         Matcher matcher = pattern.matcher(query);
 
-        if (matcher.find()) {
-            User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            long userId = currentUser.getId();
-            booleanPredicate = booleanPredicate.must(factory.match().field("user.id").matching(userId));
+        if (!matcher.find()) {
+            return booleanPredicate;
         }
 
-        query.replace(0, query.length(), matcher.replaceAll(""));
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        long userId = currentUser.getId();
 
-        return booleanPredicate;
+        query.replace(0, query.length(), "");
+
+        return booleanPredicate.must(factory.match()
+                .field("user.id")
+                .matching(userId)
+                .toPredicate());
     }
 }

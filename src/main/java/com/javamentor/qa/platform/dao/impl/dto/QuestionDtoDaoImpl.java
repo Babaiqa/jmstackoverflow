@@ -114,4 +114,34 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 .setMaxResults(size)
                 .getResultList();
     }
+
+    @Override
+    public List<Long> getPaginationQuestionIdsPopularWithTrackedTags(int page, int size, long id) {
+        return (List<Long>) entityManager.createQuery(
+                "select q.id " +
+                        "from Question q " +
+                        "join  q.tags tag " +
+                        "join TrackedTag trackedTag on tag.id=trackedTag.trackedTag.id " +
+                        "inner join User user on user.id=trackedTag.user.id " +
+                        "where  user.id in :id and q.viewCount is not null")
+                .setParameter("id", id)
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
+    }
+
+    @Override
+    public List<Long> getPaginationQuestionIdsPopularWithIgnoredTags(int page, int size, long id) {
+        return (List<Long>) entityManager.createQuery(
+                "select q.id " +
+                        "from Question q " +
+                        "join  q.tags tag " +
+                        "join IgnoredTag ignoredTag on tag.id=ignoredTag.ignoredTag.id " +
+                        "inner join User user on user.id=ignoredTag.user.id " +
+                        "where  user.id in :id and q.viewCount is not null")
+                .setParameter("id", id)
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
+                .getResultList();
+    }
 }
