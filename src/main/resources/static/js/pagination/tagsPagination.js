@@ -25,12 +25,11 @@ class PaginationTag {
         $('#tagsTable').children().remove()
 
         this.tags.then(function (response) {
-
             for (var i = 0; i < response.items.length; i++) {
                 $('#tagsTable').append(
                     " <div class=\"child\">"
                     + "<p class=\"media\">"
-                    + "<a href=\"#\" class=\"mb-1\">" + response.items[i].name + "</a>"
+                    + '<a href="http://localhost:5557/questionAria?tagId=' + response.items[i].id + '" class="mb-1">' + response.items[i].name + '</a>'
                     + "<div><small>" + response.items[i].description + "</small></div>"
                     + "<p>"
                     + "<div class=\"child2\"><small class=\"text-muted\">" + response.items[i].countQuestion + " вопросов" + "</small></div>"
