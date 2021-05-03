@@ -11,8 +11,10 @@ import java.util.regex.Pattern;
 @Component
 public class AnswersCountSearchOperator extends SearchOperator {
     protected AnswersCountSearchOperator(@Value("answers count (answers:3) search operator") String description,
-                                         @Value("20") int order) {
-        super(description, order);
+                                         @Value("20") int order,
+                                         @Value("Поиск по количеству ответов") String searchType,
+                                         @Value("answers:3, answer:0") String searchSyntax) {
+        super(description, order, searchType, searchSyntax);
     }
 
     @Override

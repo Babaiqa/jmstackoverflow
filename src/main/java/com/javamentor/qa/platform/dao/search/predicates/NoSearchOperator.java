@@ -10,8 +10,10 @@ import org.springframework.stereotype.Component;
 public class NoSearchOperator extends SearchOperator {
 
     public NoSearchOperator(@Value("clean query string without search operators") String description,
-                            @Value("100") int order) {
-        super(description, order);
+                            @Value("100") int order,  // этот оператор должен быть последним, всегда.
+                            @Value("Простой поиск") String searchType,
+                            @Value("Простой поисковый запрос") String searchSyntax) {
+        super(description, order, searchType, searchSyntax);
     }
 
     @Override
