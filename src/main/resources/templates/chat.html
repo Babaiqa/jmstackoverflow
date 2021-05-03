@@ -8,6 +8,9 @@
           integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
     <link rel="stylesheet" href="/static/css/chat.css">
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js" integrity="sha512-hsqWiVBsPC5Hz9/hy5uQX6W6rEtBjtI8vyOAR4LAFpZAbQjJ43uIdmKsA7baQjM318sf8BBqrMkcWsfSsaWCNg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js" integrity="sha512-iKDtgDyTHjAitUDdLljGhenhPwrbBfqTKWO1mkhSFH3A7blITC9MhYon6SjnMhp4o0rADGw9yAC6EW4t5a4K3g==" crossorigin="anonymous"></script>
+
 </head>
 <body>
 <div th:insert="~{fragment/header :: header}" class="nav-link-menu" ></div>
@@ -31,7 +34,7 @@
                 </div>
 
                 <div class="messages-box">
-                    <div class="list-group rounded-0">
+                    <div id="listChats" class="list-group rounded-0">
                         <a class="list-group-item list-group-item-action active text-white rounded-0">
                             <div class="media"><img src="https://pbs.twimg.com/profile_images/1182694005408186375/i5xT6juJ_400x400.jpg" alt="user" width="50" class="rounded-circle">
                                 <div class="media-body ml-4">
@@ -126,82 +129,48 @@
         </div>
         <!-- Chat Box-->
         <div class="col-7 px-0">
-            <div class="px-4 py-5 chat-box bg-white">
+            <div class="px-4 py-5 chat-box bg-white" id="chatBox">
                 <!-- Sender Message-->
-                <div class="media w-50 mb-3"><img src="https://pbs.twimg.com/profile_images/1182694005408186375/i5xT6juJ_400x400.jpg" alt="user" width="50" class="rounded-circle">
-                    <div class="media-body ml-3">
-                        <div class="bg-light rounded py-2 px-3 mb-2">
-                            <p class="text-small mb-0 text-muted">А какой strategy для postgres посоветуешь?</p>
-                        </div>
-                        <p class="small text-muted">12:00</p>
-                    </div>
-                </div>
 
-                <!-- Reciever Message-->
-                <div class="media w-50 ml-auto mb-3">
-                    <div class="media-body">
-                        <div class="bg-primary rounded py-2 px-3 mb-2">
-                            <p class="text-small mb-0 text-white">Sequence естественно</p>
-                        </div>
-                        <p class="small text-muted">12:15</p>
-                    </div>
-                </div>
 
-                <!-- Sender Message-->
-                <div class="media w-50 mb-3"><img src="https://pbs.twimg.com/profile_images/1182694005408186375/i5xT6juJ_400x400.jpg" alt="user" width="50" class="rounded-circle">
-                    <div class="media-body ml-3">
-                        <div class="bg-light rounded py-2 px-3 mb-2">
-                            <p class="text-small mb-0 text-muted">не всё так просто как кажется</p>
-                        </div>
-                        <p class="small text-muted">12:23</p>
-                    </div>
-                </div>
-
-                <!-- Reciever Message-->
-                <div class="media w-50 ml-auto mb-3">
-                    <div class="media-body">
-                        <div class="bg-primary rounded py-2 px-3 mb-2">
-                            <p class="text-small mb-0 text-white">Достаточно посмотреть транзакции и убрать идентити</p>
-                        </div>
-                        <p class="small text-muted">12:35</p>
-                    </div>
-                </div>
-
-                <!-- Sender Message-->
-                <div class="media w-50 mb-3"><img src="https://pbs.twimg.com/profile_images/1182694005408186375/i5xT6juJ_400x400.jpg" alt="user" width="50" class="rounded-circle">
-                    <div class="media-body ml-3">
-                        <div class="bg-light rounded py-2 px-3 mb-2">
-                            <p class="text-small mb-0 text-muted">достаточно поменять identity на sequence и приложение ляжет в многопоточке</p>
-                        </div>
-                        <p class="small text-muted">12:37</p>
-                    </div>
-                </div>
-
-                <!-- Reciever Message-->
-                <div class="media w-50 ml-auto mb-3">
-                    <div class="media-body">
-                        <div class="bg-primary rounded py-2 px-3 mb-2">
-                            <p class="text-small mb-0 text-white">При Identity hiber за один заход берет один id, а при sequence он за один заход берет целую охапку id (</p>
-                        </div>
-                        <p class="small text-muted">12:43</p>
-                    </div>
-                </div>
+            </div>
+            <div id="chatBox-footer" class="footer-social">
 
             </div>
 
             <!-- Typing area -->
-            <form action="#" class="bg-light">
-                <div class="input-group">
-                    <input type="text" placeholder="Type a message" aria-describedby="button-addon2" class="form-control rounded-0 border-0 py-4 bg-light">
-                    <div class="input-group-append">
-                        <button id="button-addon2" type="submit" class="btn btn-link"> <i class="bi bi-chat-dots"></i></button>
-                    </div>
-                </div>
-            </form>
+
 
         </div>
     </div>
 </div>
+
+<script id="message-template" type="text/x-handlebars-template">
+    <li class="clearfix">
+        <div class="message-data align-right">
+            <span class="message-data-time">{{time}}, Today</span> &nbsp; &nbsp;
+            <span class="message-data-name">You</span> <i class="fa fa-circle me"></i>
+        </div>
+        <div class="message other-message float-right">
+            {{messageOutput}}
+        </div>
+    </li>
+</script>
+
+<script id="message-response-template" type="text/x-handlebars-template">
+    <li>
+        <div class="message-data">
+            <span class="message-data-name"><i class="fa fa-circle online"></i> {{userName}}</span>
+            <span class="message-data-time">{{time}}, Today</span>
+        </div>
+        <div class="message my-message">
+            {{response}}
+        </div>
+    </li>
+</script>
+
+
+
 <div th:insert="~{fragment/footer :: footer}" ></div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
@@ -213,6 +182,9 @@
         integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
         crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 <script src="/static/js/service/chatService.js"></script>
+<script src="/static/js/chatMessaging.js"></script>
+
 </body>
 </html>
