@@ -2,6 +2,7 @@ fillProfile()
 fillAnswers()
 fillQuestions()
 fillTags()
+fillBookmarks()
 
 $(document).ready(function () {
 
@@ -53,11 +54,7 @@ function fillProfile() {
                 .then(response => response.json())
                 .then(function (data2) {
                     for (var i=0; i < 3; i++) {
-                        const date = new Date(data2.items[i].persistDate)
-                        const stringDate = ('0' + date.getDate()).slice(-2) + "."
-                            + ('0' + (date.getMonth() + 1)).slice(-2) + "."
-                            + date.getFullYear() + " " + ('0' + date.getHours()).slice(-2) + ":"
-                            + ('0' + date.getMinutes()).slice(-2)
+
 
                         $('#countRep' + (i + 1)).append(
                             "+" + data2.items[i].count + " <br/> репутации"
@@ -65,9 +62,7 @@ function fillProfile() {
                         $('#reasonRep' + (i + 1)).append(
                             data2.items[i].type
                         )
-                        $('#dateRep' + (i + 1)).append(
-                            stringDate
-                        )
+
                     }
                 })
         })
@@ -90,11 +85,7 @@ function fillAnswers() {
             )
             for (let i = 0; i < 3; i++){
 
-                const date = new Date(dat.items[i].persistDate)
-                const stringDate = ('0' + date.getDate()).slice(-2) + "."
-                    + ('0' + (date.getMonth() + 1)).slice(-2) + "."
-                    + date.getFullYear() + " " + ('0' + date.getHours()).slice(-2) + ":"
-                    + ('0' + date.getMinutes()).slice(-2)
+
 
                 $('#voices' + (i + 1)).append(
                     dat.items[i].countValuable + "<br/>" + " голосов"
@@ -102,9 +93,7 @@ function fillAnswers() {
                 $('#answer' + (i + 1)).append(
                     dat.items[i].body
                 )
-                $('#date' + (i + 1)).append(
-                    stringDate
-                )
+
             }
         })
 }
@@ -124,11 +113,6 @@ function fillQuestions() {
             )
             for (let i = 0; i < 3; i++){
 
-                const date = new Date(dat.items[i].persistDate)
-                const stringDate = ('0' + date.getDate()).slice(-2) + "."
-                    + ('0' + (date.getMonth() + 1)).slice(-2) + "."
-                    + date.getFullYear() + " " + ('0' + date.getHours()).slice(-2) + ":"
-                    + ('0' + date.getMinutes()).slice(-2)
 
                 $('#voicesQ' + (i + 1)).append(
                     dat.items[i].countValuable + "<br/>" + " голосов"
@@ -136,9 +120,7 @@ function fillQuestions() {
                 $('#question' + (i + 1)).append(
                     dat.items[i].title
                 )
-                $('#dateQ' + (i + 1)).append(
-                    stringDate
-                )
+
             }
 
         })
@@ -159,6 +141,25 @@ function fillTags() {
                     "<button type=\"button\" class=\"btn btn-sm\">" + data[i].name + "</button>"
                 )
             }
+        })
+}
+
+function fillBookmarks() {
+    fetch('/api/user/bookmarks', {
+        method: 'GET',
+        headers: new Headers({
+            'Content-Type': 'application/json',
+            'Authorization': $.cookie("token")
+        })
+    })
+        .then(response => response.json())
+        .then(function (data) {
+            $('#bmVotes1').append(
+                data.questionVotes + " <br/> голосов"
+            )
+            $('#bmQuestion1').append(
+                data.questionTitle
+            )
         })
 }
 

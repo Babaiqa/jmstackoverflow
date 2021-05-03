@@ -407,21 +407,20 @@ public class UserController {
         return  ResponseEntity.ok(resultPage);
     }
 
-    @GetMapping("bookmarks/{userId}")
-    @ApiOperation(value = "Get page List<BookmarkDto> order by userId." +
-            "Max size entries on page= "+ MAX_ITEMS_ON_PAGE, response = List.class)
+    @GetMapping("bookmarks")
+    @ApiOperation(value = "Return message(Object)", response = String.class)
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Request success",
-                    response = List.class)
+            @ApiResponse(code = 200, message = "Request success", response = BookmarkDto.class),
+            @ApiResponse(code = 400, message = "Something is wrong", response = String.class)
     })
-    public ResponseEntity<?> getBookmarksByUserId(
-            @PathVariable("userId") long id) {
+    public ResponseEntity<?> getBookmarksByUserId() {
 
         User user = securityHelper.getPrincipal();
 
         Optional<BookmarkDto> resultBookmark = bookmarkDtoService.getBookmarkDtoByUserId(user.getId());
 
-        return  ResponseEntity.ok(resultBookmark);
+        return  resultBookmark.isPresent() ? ResponseEntity.ok().body(resultBookmark.get()):
+                 ResponseEntity.badRequest().body("Bad request");
     }
 
 
