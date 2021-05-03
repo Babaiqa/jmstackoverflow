@@ -4,13 +4,14 @@ $(document).ready(function () {
     let paginationNav = document.getElementById('search-pagination');
     let sortButtons = document.querySelector('.btn-group.sort');
     let searchHelpBlock = document.getElementById("searchHelp");
+    let searchButtonsSort = document.getElementById('search-buttons-sort')
 
     searchQuery.addEventListener('focusin', (event) => {
         searchHelpBlock.classList.remove("d-none");
         let searchInputCoords = getCoords(searchQuery);
-        searchHelpBlock.style.width = searchQuery.offsetWidth+"px";
-        searchHelpBlock.style.top = searchInputCoords.bottom+"px";
-        searchHelpBlock.style.left = searchInputCoords.left+"px";
+        searchHelpBlock.style.width = searchQuery.offsetWidth + "px";
+        searchHelpBlock.style.top = searchInputCoords.bottom + "px";
+        searchHelpBlock.style.left = searchInputCoords.left + "px";
     })
 
     searchQuery.addEventListener('focusout', (event) => {
@@ -30,6 +31,24 @@ $(document).ready(function () {
         event.preventDefault();
 
         openContent("searchResult", "searchResult");
+
+        // если поле поиска не заполнено, то покажем список поисковых операторов
+        if (searchQuery.value.trim().length === 0) {
+            new SearchService().getDescriptionSearchOperators()
+                .then(items => {
+                    let resultTable = document.querySelector('.search-result-table');
+                    let pagination = document.getElementById('search-pagination').firstElementChild;
+                    let searchButtonsSort = document.getElementById('search-buttons-sort')
+
+                    console.log(items)
+
+                    pagination.innerHTML = '';
+                    searchButtonsSort.classList.add('invisible')
+                    resultTable.innerHTML = descriptionSearchOperatorsCard(items);
+                })
+
+            return false; // если ничего нет, то и незачем выполнять остальную часть метода
+        }
 
         new PaginationSearch(searchQuery.value, 1, 10).populateSearchResults();
 
@@ -86,8 +105,31 @@ $(document).ready(function () {
     }
 });
 
+function descriptionSearchOperatorsCard(items) {
+
+    const listItems = Object.values(items)
+        .map(item => {
+            return `<tr>
+                        <th>${item[0]}</th>
+                        <td>${item[1]}</td>
+                    </tr>`
+        }).join('')
+
+    return `<table class="table table-striped">
+                      <thead>
+                            <tr>
+                              <th scope="col">Тип поиска</th>
+                              <th scope="col">Синтаксис поиска</th>
+                            </tr>
+                      </thead>
+                      <tbody>
+                            ${listItems}
+                      </tbody>
+                </table>`
+}
+
 class PaginationSearch {
-    constructor(searchQuery, page, size, sort="score", order="desc") {
+    constructor(searchQuery, page, size, sort = "score", order = "desc") {
         this.searchQuery = searchQuery;
         this.page = page;
         this.size = size;
@@ -102,10 +144,10 @@ class PaginationSearch {
         let resultTable = document.querySelector('.search-result-table');
         let pagination = document.getElementById('search-pagination').firstElementChild;
 
+        let pages = await this.searchResults;
+
         resultTable.innerHTML = '';
         pagination.innerHTML = '';
-
-        let pages = await this.searchResults;
 
         let items = pages.items;
 
