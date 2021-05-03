@@ -12,8 +12,10 @@ import java.util.regex.Pattern;
 public class TagSearchOperator extends SearchOperator {
 
     public TagSearchOperator(@Value("[tag] search operator") String description,
-                            @Value("30") int order) {
-        super(description, order);
+                            @Value("30") int order,
+                             @Value("Поиск по меткам") String searchType,
+                             @Value("[Название метки]") String searchSyntax) {
+        super(description, order, searchType, searchSyntax);
     }
 
     @Override

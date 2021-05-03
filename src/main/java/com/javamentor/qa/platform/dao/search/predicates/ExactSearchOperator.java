@@ -11,8 +11,10 @@ import java.util.regex.Pattern;
 @Component
 public class ExactSearchOperator extends SearchOperator {
     protected ExactSearchOperator(@Value("exact search operator") String description,
-                                  @Value("6") int order) {
-        super(description, order);
+                                  @Value("6") int order,
+                                  @Value("Поиск по точному совпадению") String searchType,
+                                  @Value("\"Слова в кавычках\"") String searchSyntax) {
+        super(description, order, searchType, searchSyntax);
     }
 
     @Override
