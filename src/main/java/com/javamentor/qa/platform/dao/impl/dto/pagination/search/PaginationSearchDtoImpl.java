@@ -88,7 +88,9 @@ public class PaginationSearchDtoImpl implements PaginationDao<FoundEntryDto> {
                         f.field("user.id", Long.class),
                         f.field("user.fullName", String.class),
                         f.field("persistDateTime", LocalDateTime.class),
-                        f.field("votesCount", Long.class)
+                        f.field("votesCount", Long.class),
+
+                        f.field("viewCount", Integer.class)
 
                 ))
                 .where(predicateFactoryBean.getPredicate(scope, query))
