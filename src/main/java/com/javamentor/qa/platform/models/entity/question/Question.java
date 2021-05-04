@@ -71,11 +71,7 @@ public class Question implements Serializable {
     @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     private User user;
 
-    @NotNull
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "question_has_tag",
-            joinColumns = @JoinColumn(name = "question_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    @OneToMany(mappedBy ="questions", fetch = FetchType.LAZY)
     @PropertyBinding(binder = @PropertyBinderRef(type = TagsBinder.class))
     private  List<Tag> tags = new ArrayList<>();
 

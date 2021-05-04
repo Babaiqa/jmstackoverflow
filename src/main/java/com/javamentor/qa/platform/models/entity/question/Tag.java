@@ -36,7 +36,6 @@ public class Tag implements Serializable {
     @GenericField(projectable = Projectable.YES)
     private String name;
 
-
     @Column
     @FullTextField(projectable = Projectable.YES)
     private String description;
@@ -46,8 +45,8 @@ public class Tag implements Serializable {
     @Type(type = "org.hibernate.type.LocalDateTimeType")
     private LocalDateTime persistDateTime;
 
-    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
-    private List<Question> questions;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Question questions;
 
     @PrePersist
     private void prePersistFunction() {

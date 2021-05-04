@@ -23,7 +23,7 @@ public class TopUsersByTagDtoDaoImpl implements TopUsersByTagDtoDao {
     public Optional<UserDto> getTopUserByTagIdDto(Long id) {
         TypedQuery<UserDto> query = entityManager.createQuery(
                 "SELECT new com.javamentor.qa.platform.models.dto.UserDto(v.user.id, v.user.email, v.user.fullName, v.user.imageLink, v.vote)" +
-                        "FROM VoteAnswer v INNER JOIN QuestionHasTag q ON q.question.id = v.answer.question.id WHERE q.tag.id=:id ORDER BY v.vote", UserDto.class)
+                        "FROM VoteAnswer v INNER JOIN QuestionHasTag q ON q.question.id = v.answer.question.id WHERE q.tag.id=:id ORDER BY SUM(v.vote)", UserDto.class)
                 .setParameter("id", id);
         return SingleResultUtil.getSingleResultOrNull(query);
     }
