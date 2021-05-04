@@ -5,15 +5,18 @@ import com.javamentor.qa.platform.models.dto.ChatDto;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.chat.Chat;
+import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.MessageDtoService;
 import com.javamentor.qa.platform.models.entity.chat.Message;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.SingleChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.ChatService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.validation.annotation.Validated;
@@ -36,17 +39,19 @@ public class ChatController {
     private final SingleChatDtoService singleChatDtoService;
     private final MessageDtoService messageDtoService;
     private final SimpMessagingTemplate simpMessagingTemplate;
+    private final UserService userService;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
-    public ChatController(SingleChatDtoService singleChatDtoService, SecurityHelper securityHelper, ChatDtoService chatDtoService, ChatService chatService, MessageDtoService messageDtoService, SimpMessagingTemplate simpMessagingTemplate) {
+    public ChatController(SingleChatDtoService singleChatDtoService, SecurityHelper securityHelper, ChatDtoService chatDtoService, ChatService chatService, MessageDtoService messageDtoService, SimpMessagingTemplate simpMessagingTemplate, UserService userService) {
         this.singleChatDtoService = singleChatDtoService;
         this.securityHelper = securityHelper;
         this.chatDtoService = chatDtoService;
         this.chatService = chatService;
         this.messageDtoService = messageDtoService;
         this.simpMessagingTemplate = simpMessagingTemplate;
+        this.userService = userService;
     }
 
 
@@ -104,10 +109,10 @@ public class ChatController {
 
 
 
-    @MessageMapping("/message")
-    public Message proceedMessage(Map<String, String> message) throws Exception {
+    @MessageMapping("/message/{chatId}")
+    public Message proceedMessage(@DestinationVariable String chatId, Map<String, String> message) throws Exception {
         String messageText = message.get("message");
-        Long chatId = Long.parseLong(message.get("chatId"));
+        String currentUser = message.get("userSender");
 
         System.out.println(chatId);
         System.out.println(messageText);
@@ -116,13 +121,17 @@ public class ChatController {
         messageEntity.setMessage(messageText);
 
         if (chatId != null) {
-            Optional<Chat> chatOptional = chatService.getById(chatId);
+            Optional<Chat> chatOptional = chatService.getById(Long.parseLong(chatId));
             Chat chat = chatOptional.get();
-
             messageEntity.setChat(chat);
         }
 
-        simpMessagingTemplate.convertAndSend("/" + chatId +"/message", message);
+        if (currentUser != null) {
+            Optional<User> userOptional = userService.getById(Long.parseLong(currentUser));
+            User userSender = userOptional.get();
+            messageEntity.setUserSender(userSender);
+        }
+        simpMessagingTemplate.convertAndSend("/chat/" + chatId +"/message", message);
         return messageEntity;
     }
 

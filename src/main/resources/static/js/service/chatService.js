@@ -45,6 +45,8 @@ function getAllMessageSingleChat(id, page, size) {
 }
 
 function showAllMessage(id) {
+
+
     getAllMessageSingleChat(id, 1, 10).then(function (response) {
         console.log(response);
         var principal = response.meta[0];
@@ -85,15 +87,17 @@ function showAllMessage(id) {
                 );
             }
             $('#chatBox-footer').empty();
-            $('#chatBox-footer').append(
-                `<form id="form ${id}" class="bg-light">
-            <div class="input-group">
-                <input id="inputMessage" type="text" placeholder="Type a message" aria-describedby="sendBtn" class="form-control rounded-0 border-0 py-4 bg-light"/>
-                <div class="input-group-append">
-                    <button id="sendBtn" onclick="sendMsg(${id});return false" type="submit" class="btn btn-link"> <i class="bi bi-chat-dots"></i></button>
-                </div>
-            </div>
-        </form>`)
+            $('#chatBox-footer').append(`
+                
+                <form id="form ${id}" class="bg-light">
+                    <div class="input-group">
+                        <input id="inputMessage" type="text" placeholder="Type a message" aria-describedby="sendBtn" class="form-control rounded-0 border-0 py-4 bg-light"/>
+                        <div class="input-group-append">
+                            <button id="sendBtn" onclick="sendMessage(${id});return false" type="submit" class="btn btn-link"> <i class="bi bi-chat-dots"></i></button>
+                        </div>
+                    </div>
+                </form>
+            `)
         }
 
 
@@ -101,16 +105,14 @@ function showAllMessage(id) {
     $('.sh').removeClass('active');
     $('#sh' + id).addClass('active');
 
-
-    stompClient.subscribe("/" + id + "/message", function (response) {
-        let data = JSON.parse(response.body);
-    })
+    subscribeToChat(id);
 
 }
 
 
 $(document).ready(function () {
     connectToChat();
+
 
     getListSingleChat(1, 10).then(function (json) {
 
@@ -140,8 +142,22 @@ $(document).ready(function () {
         $('#sh' + json.items[0].id).click().addClass('active');
     })
 
-
 })
 
+function getCurrentUserId() {
+    let userId = "";
 
+
+    fetch('/api/auth/principal', {
+        method: 'GET',
+        headers: new Headers({
+            'Content-Type': 'application/json',
+            'Authorization': $.cookie("token")
+        })
+    })
+        .then(response => (response.json()))
+        .then(data => userId = data['id']);
+    console.log("внутри getCurrentUserId(): UserId =" + userId);
+    return userId;
+}
 
