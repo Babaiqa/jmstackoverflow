@@ -45,72 +45,85 @@ function getAllMessageSingleChat(id, page, size) {
 }
 
 function showAllMessage(id) {
-
+    subscribeToChat(id);
 
     getAllMessageSingleChat(id, 1, 10).then(function (response) {
         console.log(response);
         var principal = response.meta[0];
         console.log(principal);
         var nowDate = new Date();
-        $('#chatBox').children().remove();
+        // $('#chatBox').children().remove();
+        //
+        // for (let i = 0; i < response.totalPageCount; i++) {
+        //     let date = new Date(response.items[i].lastRedactionDate);
+        //     if (nowDate.getFullYear() == date.getFullYear() && nowDate.getMonth() == date.getMonth() && nowDate.getDate() == date.getDate()) {
+        //         date = ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2);
+        //     } else {
+        //         date = ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ' ' + ('0' + date.getDate()).slice(-2) + '.' + ('0' + (date.getMonth() + 1)).slice(-2) + '.' + date.getFullYear();
+        //     }
+        // if (principal == response.items[i].userSenderId) {
+        //     $('#chatBox').append(
+        //         '<div class="media w-50 ml-auto mb-3">'
+        //         + '    <div class="media-body">'
+        //         + '        <div class="bg-primary rounded py-2 px-3 mb-2">'
+        //         + '            <p class="text-small mb-0 text-white">' + response.items[i].message + '</p>'
+        //         + '        </div>'
+        //         + '        <p class="small text-muted">' + date + '</p>'
+        //         + '    </div>'
+        //         + '</div>'
+        //     )
+        // } else {
+        //     $('#chatBox').append(
+        //         '<div class="media w-50 mb-3"><img'
+        //         + '  src="' + response.items[i].imageLink + '" alt="user"'
+        //         + '  width="50" class="rounded-circle">'
+        //         + '      <div class="media-body ml-3">'
+        //         + '          <div class="bg-light rounded py-2 px-3 mb-2">'
+        //         + '              <p class="text-small mb-0 text-muted">' + response.items[i].message + '</p>'
+        //         + '          </div>'
+        //         + '          <p class="small text-muted">' + date + '</p>'
+        //         + '      </div>'
+        //         + '</div>'
+        //     );
+        // }
 
-        for (let i = 0; i < response.totalPageCount; i++) {
-            let date = new Date(response.items[i].lastRedactionDate);
-            if (nowDate.getFullYear() == date.getFullYear() && nowDate.getMonth() == date.getMonth() && nowDate.getDate() == date.getDate()) {
-                date = ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2);
-            } else {
-                date = ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ' ' + ('0' + date.getDate()).slice(-2) + '.' + ('0' + (date.getMonth() + 1)).slice(-2) + '.' + date.getFullYear();
-            }
-            if (principal == response.items[i].userSenderId) {
-                $('#chatBox').append(
-                    '<div class="media w-50 ml-auto mb-3">'
-                    + '    <div class="media-body">'
-                    + '        <div class="bg-primary rounded py-2 px-3 mb-2">'
-                    + '            <p class="text-small mb-0 text-white">' + response.items[i].message + '</p>'
-                    + '        </div>'
-                    + '        <p class="small text-muted">' + date + '</p>'
-                    + '    </div>'
-                    + '</div>'
-                )
-            } else {
-                $('#chatBox').append(
-                    '<div class="media w-50 mb-3"><img'
-                    + '  src="' + response.items[i].imageLink + '" alt="user"'
-                    + '  width="50" class="rounded-circle">'
-                    + '      <div class="media-body ml-3">'
-                    + '          <div class="bg-light rounded py-2 px-3 mb-2">'
-                    + '              <p class="text-small mb-0 text-muted">' + response.items[i].message + '</p>'
-                    + '          </div>'
-                    + '          <p class="small text-muted">' + date + '</p>'
-                    + '      </div>'
-                    + '</div>'
-                );
-            }
-            $('#chatBox-footer').empty();
-            $('#chatBox-footer').append(`
+
+        $('#chatBox-footer').empty();
+        $('#chatBox-footer').append(`
                 
-                <form id="form ${id}" class="bg-light">
-                    <div class="input-group">
-                        <input id="inputMessage" type="text" placeholder="Type a message" aria-describedby="sendBtn" class="form-control rounded-0 border-0 py-4 bg-light"/>
-                        <div class="input-group-append">
-                            <button id="sendBtn" onclick="sendMessage(${id});return false" type="submit" class="btn btn-link"> <i class="bi bi-chat-dots"></i></button>
-                        </div>
-                    </div>
-                </form>
-            `)
-        }
+            
+             <form id="form ${id}" class="bg-light">
+                  <div class="input-group">
+                      <input id="inputMessage" type="text" placeholder="Type a message" aria-describedby="sendBtn" class="form-control rounded-0 border-0 py-4 bg-light"/>
+                      <div class="input-group-append">
+                          <button id="sendBtn" onclick="sendMessage(${id});return false" type="submit" class="btn btn-link"> <i class="bi bi-chat-dots"></i></button>
+                      </div>
+                  </div>
+             </form>
+        `)
 
 
     })
     $('.sh').removeClass('active');
     $('#sh' + id).addClass('active');
 
-    subscribeToChat(id);
 
 }
 
 
 $(document).ready(function () {
+    fetch('/api/auth/principal', {
+        method: 'GET',
+        headers: new Headers({
+            'Content-Type': 'application/json',
+            'Authorization': $.cookie("token")
+        })
+    })
+        .then(response => (response.json()))
+        .then(user => {
+            $('#lovelyMe').attr('val', user.id);
+        });
+
     connectToChat();
 
 
@@ -144,20 +157,4 @@ $(document).ready(function () {
 
 })
 
-function getCurrentUserId() {
-    let userId = "";
-
-
-    fetch('/api/auth/principal', {
-        method: 'GET',
-        headers: new Headers({
-            'Content-Type': 'application/json',
-            'Authorization': $.cookie("token")
-        })
-    })
-        .then(response => (response.json()))
-        .then(data => userId = data['id']);
-    console.log("внутри getCurrentUserId(): UserId =" + userId);
-    return userId;
-}
 

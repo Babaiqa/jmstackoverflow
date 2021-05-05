@@ -1,11 +1,6 @@
-const url = 'http://localhost:8080/api/chat';
 let stompClient;
 let chatId;
-
-
-function init() {
-    bindEvents();
-}
+let $lovelyMe = "хз";
 
 function bindEvents() {
     $('#inputMessage').on('keyup', addMessageEnter.bind(this));
@@ -18,75 +13,71 @@ function connectToChat() {
     let socket = new SockJS("/message");
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
-        console.log("connected to: " + frame);
-
+    console.log("connected to: " + frame);
     });
 }
 
 function subscribeToChat(id) {
     chatId = id;
-    stompClient.subscribe("/chat/" + id + "/messages/", function (response) {
+    $lovelyMe = $('#lovelyMe').attr('val');
+    stompClient.subscribe("/chat/" + id + "/message", function (response) {
         let data = JSON.parse(response.body);
+        if (data.userSender != $lovelyMe) {
         render(data.message);
+        }
     });
 }
 
 function sendMsg(userSender, message, chatId) {
     stompClient.send("/app/message/" + chatId, {}, JSON.stringify({
-        userSender: userSender,
         message: message,
+        userSender: userSender,
         chat: chatId
     }));
 }
 
 function sendMessage(chatId) {
     let message = $('#inputMessage').val();
-    let currentUserId = getCurrentUserId();
+    $lovelyMe = $('#lovelyMe').attr('val');
+    sendMsg($lovelyMe, message, chatId)
 
-    console.log("Внутри sendMessage():");
-    console.log("id = " + chatId);
-    console.log(message);
-    console.log("User ID = " + currentUserId);
-
-    sendMsg(currentUserId, message, chatId);
     scrollToBottom();
     if (message !== '') {
-        $('#messageList').append(`
-            <li class="clearfix">
-                <div class="message other-message float-right">
-                    ${message}
+        $('#chatBox').append(`
+                <div class="media w-50 ml-auto mb-3">
+                    <div class="media-body">
+                        <div class="bg-primary rounded py-2 px-3 mb-2">
+                            <p class="text-small mb-0 text-white">${message}</p>
+                        </div>
+                            <p class="small text-muted text-right">${getCurrentTime()}</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="message-data align-right">
-                    <span class="message-data-time">${getCurrentTime()}</span> &nbsp; &nbsp;
-                </div>
-            </li>
-        `);
+            `);
         scrollToBottom();
         $('#inputMessage').val('');
     }
 }
 
-
-
-
 function render(message) {
     scrollToBottom();
     // responses
     setTimeout(function () {
-        $('#messageList').append(`
-            <li>
-                <div class="message my-message">
-                    ${message}
-                </div>
-                <div class="message-data">
-                    <span class="message-data-time">${getCurrentTime()}</span>
-                </div>
-            </li>
-        `);
-        scrollToBottom();
-    }.bind(this), 1500);
-}
 
+            $('#chatBox').append(`
+                   <div class="media w-50 ml-0 mb-3">
+                        <div class="media-body">
+                            <div class="bg-light rounded py-2 px-3 mb-2">
+                                <p class="text-small mb-0 text-dark">${message}</p>
+                            </div>
+                            <p class="small text-muted text-right">${getCurrentTime()}</p>
+                        </div>
+                   </div>
+        `);
+            scrollToBottom();
+
+    }.bind(this), 1000);
+}
 
 function scrollToBottom() {
     $('#chatBox').scrollTop($('#chatBox')[0].scrollHeight);
@@ -103,5 +94,5 @@ function addMessageEnter(event) {
     }
 }
 
-init();
+bindEvents();
 
