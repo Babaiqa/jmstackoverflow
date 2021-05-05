@@ -12,6 +12,7 @@ import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.SingleChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.ChatService;
+import com.javamentor.qa.platform.service.abstracts.model.MessageService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,18 +39,20 @@ public class ChatController {
     private final ChatService chatService;
     private final SingleChatDtoService singleChatDtoService;
     private final MessageDtoService messageDtoService;
+    private final MessageService messageService;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final UserService userService;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
-    public ChatController(SingleChatDtoService singleChatDtoService, SecurityHelper securityHelper, ChatDtoService chatDtoService, ChatService chatService, MessageDtoService messageDtoService, SimpMessagingTemplate simpMessagingTemplate, UserService userService) {
+    public ChatController(SingleChatDtoService singleChatDtoService, SecurityHelper securityHelper, ChatDtoService chatDtoService, ChatService chatService, MessageDtoService messageDtoService, MessageService messageService, SimpMessagingTemplate simpMessagingTemplate, UserService userService) {
         this.singleChatDtoService = singleChatDtoService;
         this.securityHelper = securityHelper;
         this.chatDtoService = chatDtoService;
         this.chatService = chatService;
         this.messageDtoService = messageDtoService;
+        this.messageService = messageService;
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.userService = userService;
     }
@@ -107,32 +110,30 @@ public class ChatController {
     }
 
 
-
-
     @MessageMapping("/message/{chatId}")
-    public Message proceedMessage(@DestinationVariable String chatId, Map<String, String> message) throws Exception {
+    public void proceedMessage(@DestinationVariable String chatId, Map<String, String> message) throws Exception {
         String messageText = message.get("message");
-        String currentUser = message.get("userSender");
+        String currentUserId = message.get("userSender");
 
-        System.out.println(chatId);
-        System.out.println(messageText);
+        User userSender;
+        Chat chat;
 
-        Message messageEntity = new Message();
-        messageEntity.setMessage(messageText);
+        Optional<Chat> chatOptional = chatService.getById(Long.parseLong(chatId));
+        Optional<User> userOptional = userService.getById(Long.parseLong(currentUserId));
 
-        if (chatId != null) {
-            Optional<Chat> chatOptional = chatService.getById(Long.parseLong(chatId));
-            Chat chat = chatOptional.get();
-            messageEntity.setChat(chat);
+        if (chatOptional.isPresent() && userOptional.isPresent()) {
+            chat = chatOptional.get();
+            userSender = userOptional.get();
+
+            Message messageEntity = new Message(messageText, userSender, chat);
+            messageService.persist(messageEntity);
+        } else {
+            throw new NullPointerException("В запросе отсутствуют данные: userSender или chatId" +
+                    "(см. com.javamentor.qa.platform.webapp.controllers.ChatController, метод proceedMessage())");
         }
 
-        if (currentUser != null) {
-            Optional<User> userOptional = userService.getById(Long.parseLong(currentUser));
-            User userSender = userOptional.get();
-            messageEntity.setUserSender(userSender);
-        }
-        simpMessagingTemplate.convertAndSend("/chat/" + chatId +"/message", message);
-        return messageEntity;
+            simpMessagingTemplate.convertAndSend("/chat/" + chatId + "/message", message);
+
     }
 
     @GetMapping(path = "/byuser")
