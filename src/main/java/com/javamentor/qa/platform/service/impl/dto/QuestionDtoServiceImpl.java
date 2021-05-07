@@ -181,4 +181,16 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
                 parameters);
     }
 
+    @Override
+    public PageDto<QuestionDto, Object> getPaginationWithFollowAndWithoutIgnoreTags(int page, int size, long id) {
+        List<Long> ids = questionDtoDao.getPaginationQuestionIdsWithFollowAndWithoutIgnoreTags(page, size, id);
+        Map<String, Object> parameters = setPaginationParameters(page, size, Optional.empty(), Optional.empty());
+        parameters.put("page", page);
+        parameters.put("size", size);
+        parameters.put("ids", ids);
+        parameters.put("id", id);
+        return getPageDto(
+                "paginationWithoutAnswersIgnoredTag", // Зачем столько одинаковых ?????????
+                parameters);
+    }
 }
