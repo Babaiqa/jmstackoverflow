@@ -469,14 +469,6 @@ public class QuestionController {
         return ResponseEntity.ok(resultPage);
     }
 
-
-
-
-
-
-
-
-
     @GetMapping("/tracked-ignored")
     @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
     @ApiResponses({
@@ -501,19 +493,6 @@ public class QuestionController {
         PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationWithFollowAndWithoutIgnoreTags(page, size, userId);
         return ResponseEntity.ok(resultPage);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @GetMapping(value = "/search", params = {"page", "size"})
     @ApiOperation(value = "Return Questions by search value")

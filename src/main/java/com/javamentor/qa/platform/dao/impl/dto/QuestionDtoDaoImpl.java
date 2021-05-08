@@ -153,10 +153,10 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                         "join q.tags tag " +
                         "join TrackedTag trackedTag on tag.id = trackedTag.trackedTag.id " +
                         "where trackedTag.user.id in :id and q.id not in (" +
-                        "select distinct q_ignor.id from Question q_ignor " +
-                        "join q_ignor.tags tag_ignor " +
-                        "join IgnoredTag ignoredTag on tag_ignor.id = ignoredTag.ignoredTag.id " +
-                        "where ignoredTag.user.id in :id)", Long.class)
+                            "select distinct q_ignor.id from Question q_ignor " +
+                            "join q_ignor.tags tag_ignor " +
+                            "join IgnoredTag ignoredTag on tag_ignor.id = ignoredTag.ignoredTag.id " +
+                            "where ignoredTag.user.id in :id)", Long.class)
                 .setParameter("id", id)
                 .setFirstResult(page * size - size)
                 .setMaxResults(size)
