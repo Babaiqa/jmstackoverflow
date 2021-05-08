@@ -190,7 +190,7 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
         parameters.put("ids", ids);
         parameters.put("id", id);
         return getPageDto(
-                "paginationWithoutAnswersIgnoredTag", // Зачем столько одинаковых ?????????
+                "paginationWithTrackedWithoutIgnoredTag",
                 parameters);
     }
 }
