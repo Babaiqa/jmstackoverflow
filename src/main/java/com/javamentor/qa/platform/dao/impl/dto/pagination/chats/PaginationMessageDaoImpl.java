@@ -25,19 +25,22 @@ public class PaginationMessageDaoImpl implements PaginationDao<MessageDto> {
         long chatId = (long) parameters.get("chatId");
 
 
-        return (List<MessageDto>) entityManager.unwrap(Session.class)
+        return entityManager.unwrap(Session.class)
                 .createQuery("SELECT new com.javamentor.qa.platform.models.dto.MessageDto(" +
                         "ms.id," +
                         "ms.message," +
-                        "ms.persistDate," +
                         "ms.lastRedactionDate," +
+                        "ms.persistDate," +
                         "ms.userSender.id," +
-                        "ms.chat.id )" +
-                        "from Message ms  where ms.chat.id =: chatId order by ms.persistDate desc")
+                        "ms.chat.id," +
+                        "ms.userSender.imageLink )" +
+                        "from Message ms  " +
+                        "join User u on ms.userSender.id = u.id " +
+                        "where ms.chat.id =: chatId order by ms.lastRedactionDate asc ")
                 .unwrap(Query.class)
                 .setParameter("chatId", chatId)
-                .setFirstResult(page * size - size)
-                .setMaxResults(size)
+                //.setFirstResult(page * size - size)
+                //.setMaxResults(size)
                 .getResultList();
 
     }
@@ -45,6 +48,9 @@ public class PaginationMessageDaoImpl implements PaginationDao<MessageDto> {
 
     @Override
     public int getCount(Map<String, Object> parameters) {
-        return (int) (long) entityManager.createQuery("select count(ms) from Message ms").getSingleResult();
+        long chatId = (long) parameters.get("chatId");
+        return (int) (long) entityManager.createQuery("select count(ms) from Message ms where ms.chat.id = :chatId ")
+                .setParameter("chatId", chatId)
+                .getSingleResult();
     }
 }

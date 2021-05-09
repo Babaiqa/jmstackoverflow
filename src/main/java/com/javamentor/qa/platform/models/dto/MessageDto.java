@@ -18,6 +18,7 @@ public class MessageDto  implements Serializable {
     private LocalDateTime persistDate;
     private Long userSenderId;
     private Long chatId;
+    private String imageLink;
 
     @Override
     public String toString() {
@@ -28,6 +29,7 @@ public class MessageDto  implements Serializable {
                 ", persistDate=" + persistDate +
                 ", userSenderId=" + userSenderId +
                 ", chatId=" + chatId +
+                ", imageLink=" + imageLink +
                 '}';
     }
 

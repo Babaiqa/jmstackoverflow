@@ -36,17 +36,17 @@ public class SingleChatDtoServiceImpl implements SingleChatDtoService {
     }
 
     @Override
-    public PageDto<SingleChatDto, Object> getAllSingleChatDtoPagination(int page, int size) {
+    public PageDto<SingleChatDto, Object> getAllSingleChatDtoPagination(int page, int size, long userId) {
         return paginationServiceSingleChatDto.getPageDto(
-                "paginationSingleChat", setPaginationParameters(page, size)
+                "paginationSingleChat", setPaginationParameters(page, size, userId)
         );
     }
 
-    private Map<String, Object> setPaginationParameters(int page, int size) {
+    private Map<String, Object> setPaginationParameters(int page, int size, long userId) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("page", page);
         parameters.put("size", size);
-
+        parameters.put("userId", userId);
         return parameters;
     }
 

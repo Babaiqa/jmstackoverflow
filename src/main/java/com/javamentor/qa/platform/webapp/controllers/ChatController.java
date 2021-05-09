@@ -17,6 +17,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -59,8 +60,8 @@ public class ChatController {
             return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
-
-        PageDto<SingleChatDto, Object> allSingleChats = singleChatDtoService.getAllSingleChatDtoPagination(page, size);
+        Long userId = securityHelper.getPrincipal().getId();
+        PageDto<SingleChatDto, Object> allSingleChats = singleChatDtoService.getAllSingleChatDtoPagination(page, size, userId);
 
         return ResponseEntity.ok(allSingleChats);
     }
@@ -86,8 +87,9 @@ public class ChatController {
         }
 
         PageDto<MessageDto, Object> allMessage = messageDtoService.getAllMessageDtoByChatIdPagination(page, size, chatId);
-
-
+        List<Object> id = new ArrayList<>();
+        id.add(securityHelper.getPrincipal().getId());
+        allMessage.setMeta(id);
         return ResponseEntity.ok(allMessage);
     }
 
