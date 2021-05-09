@@ -53,6 +53,9 @@ function fillProfile() {
             })
                 .then(response => response.json())
                 .then(function (data2) {
+                    if (data2.items.length < 4) {
+                        document.querySelector('#reputationMore').innerHTML = '';
+                    }
                     for (var i=0; i < 3; i++) {
 
 
@@ -83,6 +86,9 @@ function fillAnswers() {
             $('#countAnswers').append(
                 dat.totalResultCount
             )
+            if (dat.items.length < 4) {
+                document.querySelector('#answersMore').innerHTML = '';
+            }
             for (let i = 0; i < 3; i++){
 
 
@@ -108,11 +114,14 @@ function fillQuestions() {
     })
         .then(response => response.json())
         .then(function (dat) {
+            if (dat.items.length < 4) {
+                document.querySelector('#questionMore').innerHTML = '';
+            }
             $('#countQuestions').append(
                 dat.totalResultCount
             )
             for (let i = 0; i < 3; i++){
-
+                document.getElementById("questionLink" + (i + 1)).href="/question/" + dat.items[i].id
 
                 $('#voicesQ' + (i + 1)).append(
                     dat.items[i].countValuable + "<br/>" + " голосов"
@@ -136,6 +145,9 @@ function fillTags() {
     })
         .then(response => response.json())
         .then(function (data) {
+            if (data.length < 6) {
+                document.querySelector('#tagsMore').innerHTML = '';
+            }
             for (var i=0; i < data.length; i++) {
                 $('#tags').append(
                     "<button type=\"button\" class=\"btn btn-sm\">" + data[i].name + "</button>"
@@ -154,6 +166,7 @@ function fillBookmarks() {
     })
         .then(response => response.json())
         .then(function (data) {
+            document.querySelector('#bookmarksMore').innerHTML = '';
             $('#bmVotes1').append(
                 data.questionVotes + " <br/> голосов"
             )
