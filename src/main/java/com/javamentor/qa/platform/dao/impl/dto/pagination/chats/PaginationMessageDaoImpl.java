@@ -25,7 +25,7 @@ public class PaginationMessageDaoImpl implements PaginationDao<MessageDto> {
         long chatId = (long) parameters.get("chatId");
 
 
-        return entityManager.unwrap(Session.class)
+        return (List<MessageDto>) entityManager.unwrap(Session.class)
                 .createQuery("SELECT new com.javamentor.qa.platform.models.dto.MessageDto(" +
                         "ms.id," +
                         "ms.message," +
