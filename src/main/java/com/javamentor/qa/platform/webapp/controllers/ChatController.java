@@ -16,6 +16,7 @@ import com.javamentor.qa.platform.service.abstracts.model.MessageService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -111,29 +112,26 @@ public class ChatController {
 
 
     @MessageMapping("/message/{chatId}")
-    public void proceedMessage(@DestinationVariable String chatId, Map<String, String> message) throws Exception {
+    public ResponseEntity proceedMessage(@DestinationVariable String chatId, Map<String, String> message) throws Exception {
         String messageText = message.get("message");
         String currentUserId = message.get("userSender");
 
-        User userSender;
-        Chat chat;
+
 
         Optional<Chat> chatOptional = chatService.getById(Long.parseLong(chatId));
         Optional<User> userOptional = userService.getById(Long.parseLong(currentUserId));
 
-        if (chatOptional.isPresent() && userOptional.isPresent()) {
-            chat = chatOptional.get();
-            userSender = userOptional.get();
-
-            Message messageEntity = new Message(messageText, userSender, chat);
-            messageService.persist(messageEntity);
-        } else {
-            throw new NullPointerException("В запросе отсутствуют данные: userSender или chatId" +
-                    "(см. com.javamentor.qa.platform.webapp.controllers.ChatController, метод proceedMessage())");
+        if (!(chatOptional.isPresent() && userOptional.isPresent())) {
+            return ResponseEntity.badRequest().body("В запросе отсутствуют данные: userSender или chatId");
         }
+        Chat chat = chatOptional.get();
+        User userSender = userOptional.get();
 
-            simpMessagingTemplate.convertAndSend("/chat/" + chatId + "/message", message);
+        Message messageEntity = new Message(messageText, userSender, chat);
+        messageService.persist(messageEntity);
 
+        simpMessagingTemplate.convertAndSend("/chat/" + chatId + "/message", message);
+        return ResponseEntity.ok(message);
     }
 
     @GetMapping(path = "/byuser")
