@@ -13,6 +13,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,8 +46,11 @@ public class Tag implements Serializable {
     @Type(type = "org.hibernate.type.LocalDateTimeType")
     private LocalDateTime persistDateTime;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Question questions;
+    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
+    private List<Question> questions;
+
+    @OneToMany(mappedBy = "tag",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<QuestionHasTag> questionHasTags = new ArrayList<>();
 
     @PrePersist
     private void prePersistFunction() {

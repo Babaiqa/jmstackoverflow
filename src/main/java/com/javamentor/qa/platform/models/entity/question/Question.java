@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.dao.search.bridge.TagsBinder;
 import com.javamentor.qa.platform.dao.search.bridge.VotesQuestionCountBinder;
 import com.javamentor.qa.platform.exception.ConstrainException;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.UserFavoriteQuestion;
 import lombok.*;
@@ -70,9 +71,13 @@ public class Question implements Serializable {
     @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     private User user;
 
-    @OneToMany(mappedBy ="questions", fetch = FetchType.LAZY)
+    @NotNull
+    @ManyToMany(fetch = FetchType.LAZY)
     @PropertyBinding(binder = @PropertyBinderRef(type = TagsBinder.class))
     private  List<Tag> tags = new ArrayList<>();
+
+    @OneToMany(mappedBy = "question",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<QuestionHasTag> questionHasTags = new ArrayList<>();
 
     @Column(name = "last_redaction_date", nullable = false)
     @Type(type = "org.hibernate.type.LocalDateTimeType")
