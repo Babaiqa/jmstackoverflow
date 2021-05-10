@@ -213,6 +213,8 @@ public class AnswerController {
         Question question = questionOptional.get();
         User user = securityHelper.getPrincipal();
         Answer answer = answerOptional.get();
+        answer.setIsHelpful(true);
+        answerService.update(answer);
 
         VoteAnswer voteAnswer = voteAnswerService.answerUpVote(question, user, answer);
         voteAnswerConverter.voteAnswerToVoteAnswerDto(voteAnswer);
