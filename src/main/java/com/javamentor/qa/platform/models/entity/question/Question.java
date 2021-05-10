@@ -47,11 +47,10 @@ public class Question implements Serializable {
     @FullTextField(projectable = Projectable.YES, analyzer = "russian")
     private String title;
 
-
     @Min(0)
     @Column(name = "view_count")
+    @GenericField(projectable = Projectable.YES, sortable = Sortable.YES)
     private Integer viewCount = 0;
-
 
     @NotNull
     @Column
