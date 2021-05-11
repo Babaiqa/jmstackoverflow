@@ -326,12 +326,9 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .patch("/api/question/77/answer/40/upVote"))
                 .andReturn();
 
-        JSONObject object = new JSONObject(result.getResponse().getContentAsString());
-
         Answer afterAnswer = (Answer) entityManager.createQuery("from Answer Where id=40").getSingleResult();
 
         Assertions.assertFalse(beforeAnswer.getIsHelpful());
-        Assertions.assertEquals(4, object.get("userId"));
         Assertions.assertTrue(afterAnswer.getIsHelpful());
     }
 
