@@ -12,8 +12,10 @@ import java.util.regex.Pattern;
 @Component
 public class ExcludeSearchOperator extends SearchOperator {
     protected ExcludeSearchOperator(@Value("exclude (-) search operator") String description,
-                                    @Value("5") int order) {
-        super(description, order);
+                                    @Value("5") int order,
+                                    @Value("Исключить из поиска") String searchType,
+                                    @Value("-яблоки") String searchSyntax) {
+        super(description, order, searchType, searchSyntax);
     }
 
     @Override
@@ -30,7 +32,7 @@ public class ExcludeSearchOperator extends SearchOperator {
                 .matching(group)
                 .toPredicate());
 
-        query.replace(0, query.length(), matcher.replaceAll(""));
+        query.replace(0, query.length(), "");
 
         return booleanPredicate;
     }

@@ -1,31 +1,35 @@
 package com.javamentor.qa.platform.dao.search.predicates;
 
 import org.hibernate.search.engine.search.predicate.dsl.BooleanPredicateClausesStep;
-import org.hibernate.search.engine.search.predicate.dsl.MatchPredicateOptionsStep;
 import org.hibernate.search.engine.search.predicate.dsl.SearchPredicateFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-@Component
-public class NoSearchOperator extends SearchOperator {
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-    public NoSearchOperator(@Value("clean query string without search operators") String description,
-                            @Value("100") int order,  // этот оператор должен быть последним, всегда.
-                            @Value("Простой поиск") String searchType,
-                            @Value("Простой поисковый запрос") String searchSyntax) {
+@Component
+public class BodySearchOperator extends SearchOperator {
+    protected BodySearchOperator(@Value("body search operator") String description,
+                                 @Value("14") int order,
+                                 @Value("Поиск по описанию вопроса") String searchType,
+                                 @Value("body:ищу пример Java-кода") String searchSyntax) {
         super(description, order, searchType, searchSyntax);
     }
 
     @Override
     public BooleanPredicateClausesStep<?> parse(StringBuilder query, SearchPredicateFactory factory, BooleanPredicateClausesStep<?> booleanPredicate) {
+        Pattern pattern = Pattern.compile("(?<=body:).*");
+        Matcher matcher = pattern.matcher(query);
 
-        if (query.toString().trim().isEmpty()) {
+        if (!matcher.find()) {
             return booleanPredicate;
         }
 
+        String searchStr = matcher.group().trim();
         booleanPredicate = booleanPredicate.must(factory.match()
-                .fields("description", "title", "htmlBody")
-                .matching(query.toString())
+                .field("description")
+                .matching(searchStr)
                 .fuzzy(1)
                 .toPredicate());
 

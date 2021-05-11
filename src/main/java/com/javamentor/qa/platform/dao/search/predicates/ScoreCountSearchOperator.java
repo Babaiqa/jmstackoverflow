@@ -9,31 +9,29 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
-public class IsSearchOperator extends SearchOperator {
-
-    public IsSearchOperator(@Value("is:question|answer search operator") String description,
-                            @Value("10") int order,
-                            @Value("Найти только ответы, или только вопросы") String searchType,
-                            @Value("is:question, is:answer") String searchSyntax) {
+public class ScoreCountSearchOperator extends SearchOperator {
+    protected ScoreCountSearchOperator(@Value("answers count (answers:3) search operator") String description,
+                                       @Value("20") int order,
+                                       @Value("Поиск по количеству ответов") String searchType,
+                                       @Value("score:3, score:0") String searchSyntax) {
         super(description, order, searchType, searchSyntax);
     }
 
     @Override
     public BooleanPredicateClausesStep<?> parse(StringBuilder query, SearchPredicateFactory factory, BooleanPredicateClausesStep<?> booleanPredicate) {
-        Pattern pattern = Pattern.compile("is:(question|answer)");
+        Pattern pattern = Pattern.compile("(?<=score:).*([0-9])");
         Matcher matcher = pattern.matcher(query);
 
         if (!matcher.find()) {
             return booleanPredicate;
         }
 
-        switch (matcher.group(1)) {
-            case "question":
-                booleanPredicate = booleanPredicate.must(factory.exists().field("id"));
-                break;
-            case "answer":
-                booleanPredicate = booleanPredicate.must(factory.exists().field("answerId"));
-                break;
+        long scoreCount = Long.parseLong(matcher.group().trim());
+
+        if (scoreCount == 0) {
+            booleanPredicate = booleanPredicate.must(factory.match().field("answersCount").matching(scoreCount));
+        } else {
+            booleanPredicate = booleanPredicate.must(factory.range().field("answersCount").atLeast(scoreCount));
         }
 
         query.replace(0, query.length(), "");

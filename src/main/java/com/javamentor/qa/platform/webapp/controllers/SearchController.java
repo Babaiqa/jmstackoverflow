@@ -1,11 +1,11 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
+import com.javamentor.qa.platform.dao.search.predicates.SearchOperator;
 import com.javamentor.qa.platform.models.dto.FoundEntryDto;
 import com.javamentor.qa.platform.models.dto.PageDto;
-import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.service.abstracts.model.SearchQuestionService;
 import com.javamentor.qa.platform.service.impl.dto.SearchDtoServiceImpl;
 import io.swagger.annotations.*;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 @RestController
 @Validated
@@ -24,6 +26,11 @@ import java.util.stream.Collectors;
 public class SearchController {
 
     private SearchDtoServiceImpl searchDtoService;
+    private final List<SearchOperator> searchOperators;
+
+    public SearchController(List<SearchOperator> searchOperators) {
+        this.searchOperators = searchOperators;
+    }
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
@@ -59,7 +66,23 @@ public class SearchController {
 
         PageDto<FoundEntryDto, Object> allFoundEntries = searchDtoService.getSearchDtoPagination(query, page, size, sort, order);
 
-
         return ResponseEntity.ok(allFoundEntries);
     }
+
+    @GetMapping("/search-operators")
+    @ApiOperation(value = "Get descriptions of search operators")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the HashMap<Integer, String[]>"),
+    })
+    public ResponseEntity<?> getListSearchOperators() {
+        HashMap<Integer, String[]> listSearchOperators = new HashMap<>();
+
+        searchOperators.forEach(searchOperator -> {
+            String[] operator = new String[] {searchOperator.getSearchType(),searchOperator.getSearchSyntax()};
+            listSearchOperators.put(searchOperator.getOrder(), operator);
+        });
+
+        return ResponseEntity.ok(listSearchOperators);
+    }
+
 }

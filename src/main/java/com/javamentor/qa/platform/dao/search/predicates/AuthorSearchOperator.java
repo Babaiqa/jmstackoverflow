@@ -11,8 +11,10 @@ import java.util.regex.Pattern;
 @Component
 public class AuthorSearchOperator extends SearchOperator{
     protected AuthorSearchOperator(@Value("author search operator") String description,
-                                   @Value("40") int order) {
-        super(description, order);
+                                   @Value("40") int order,
+                                   @Value("Найти по id пользователя") String searchType,
+                                   @Value("user:1234") String searchSyntax) {
+        super(description, order, searchType, searchSyntax);
     }
 
     @Override
