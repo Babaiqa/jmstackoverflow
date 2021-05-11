@@ -1,4 +1,24 @@
 class QuestionService {
+
+    getVoteById(questionId) {
+        let query = '/api/question/vote/'+questionId;
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        }).then(response =>{
+            if (response.ok) {
+                return response.json()
+            } else {
+                let error = new Error();
+                error.response = response.text();
+                throw error;
+            }
+        }).catch(error => console.log(error.message))
+    }
+
     getQuestionById(questionId) {
         let query = '/api/question/'+questionId;
         return fetch(query, {
@@ -281,7 +301,16 @@ class QuestionService {
             this.getQuestionById(questionId).then(response => {
                 count = response.countValuable;
             }).then(data => {
+                document.getElementById('downvote_btn').style.fill = "#000000"
                 document.getElementById('count_question').innerHTML ="&nbsp;" + count;
+                this.getVoteById(questionId)
+                    .then(vote => {
+                        if(vote === 0) {
+                            document.getElementById('upvote_btn').style.fill = "#000000"
+                        } else if(vote === 1){
+                            document.getElementById('upvote_btn').style.fill = "#105ac7"
+                        }
+                    })
             })
         }).catch(error => console.log(error.message));
     }
@@ -337,7 +366,16 @@ class QuestionService {
             this.getQuestionById(questionId).then(response => {
                count = response.countValuable;
             }).then(data => {
+                document.getElementById('upvote_btn').style.fill = "#000000"
                 document.getElementById('count_question').innerHTML ="&nbsp;" + count;
+                this.getVoteById(questionId)
+                    .then(vote => {
+                        if(vote === 0) {
+                            document.getElementById('downvote_btn').style.fill = "#000000"
+                        } else if(vote === -1){
+                            document.getElementById('downvote_btn').style.fill = "#105ac7"
+                        }
+                    })
             })
         }).catch(error => console.log(error.message));
     }

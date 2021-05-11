@@ -18,7 +18,9 @@ $( document ).ready(function() {
         }
         document.getElementById("question").style.display = "block";
         let questionId = window.location.pathname.replace(/\D/g, '')
-        new QuestionPage(questionId).populateQuestionPage()
+        let questionPage = new QuestionPage(questionId)
+        questionPage.populateQuestionPage()
+        questionPage.getColorForButtons(questionId)
     } else {
         switch (location.pathname) {
             case "/users": openContent("areaUsersLink", "areaUsers")
