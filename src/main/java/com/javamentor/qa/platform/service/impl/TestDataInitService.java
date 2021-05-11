@@ -23,6 +23,7 @@ public class TestDataInitService {
 
     final UserService userService;
     final QuestionService questionService;
+    final QuestionViewedService questionViewedService;
     final CommentService commentService;
     final ReputationService reputationService;
     final UserBadgesService userBadgesService;
@@ -55,7 +56,7 @@ public class TestDataInitService {
 
     @Autowired
     public TestDataInitService(UserService userService, BadgeService badgeService, QuestionService questionService,
-                               CommentService commentService, ReputationService reputationService, UserBadgesService userBadgesService,
+                               QuestionViewedService questionViewedService, CommentService commentService, ReputationService reputationService, UserBadgesService userBadgesService,
                                TagService tagService, UserFavoriteQuestionService userFavoriteQuestionService,
                                RelatedTagService relatedTagService, CommentQuestionService commentQuestionService,
                                CommentAnswerService commentAnswerService, AnswerService answerService,
@@ -64,6 +65,7 @@ public class TestDataInitService {
         this.userService = userService;
         this.badgeService = badgeService;
         this.questionService = questionService;
+        this.questionViewedService = questionViewedService;
         this.commentService = commentService;
         this.reputationService = reputationService;
         this.userBadgesService = userBadgesService;
@@ -143,7 +145,6 @@ public class TestDataInitService {
 
             Integer viewCountQuestion = random.nextInt(1000) + 1;
             question.setTitle("Question Title" + i);
-            question.setViewCount(viewCountQuestion);
             question.setDescription("Question Description" + i);
             question.setUser(user);
             question.setTags(randomQuestionTagList.stream().limit(5).collect(Collectors.toList()));
@@ -163,7 +164,6 @@ public class TestDataInitService {
 
             Integer viewCountQuestionNoAnswer = random.nextInt(1000) + 1;
             questionNoAnswer.setTitle("Question NoAnswer " + i);
-            questionNoAnswer.setViewCount(viewCountQuestionNoAnswer);
             questionNoAnswer.setDescription("Question NoAnswer Description" + i);
             questionNoAnswer.setUser(user);
             questionNoAnswer.setTags(randomQuestionNoAnsTagList.stream().limit(5).collect(Collectors.toList()));
@@ -175,12 +175,17 @@ public class TestDataInitService {
             userFavoriteQuestion.setQuestion(question);
             userFavoriteQuestionService.persist(userFavoriteQuestion);
 
-
             VoteQuestion voteQuestion = new VoteQuestion();
             voteQuestion.setUser(user);
             voteQuestion.setQuestion(question);
             voteQuestion.setVote(1);
             voteQuestionService.persist(voteQuestion);
+
+            QuestionViewed questionViewed = new QuestionViewed();
+            questionViewed.setQuestion(question);
+            questionViewed.setUser(user);
+            questionViewedService.persist(questionViewed);
+
 
             Answer answer = new Answer();
             answer.setUser(user);
@@ -188,9 +193,9 @@ public class TestDataInitService {
             answer.setHtmlBody("Answer" + i + ":  Hello! There you can find an answer on your question: www.google.com.");
             answer.setIsHelpful(false);
             answer.setIsDeleted(false);
-            if(i < 25){
+            if (i < 25) {
                 answer.setIsDeletedByModerator(random.nextBoolean());
-            }else{
+            } else {
                 answer.setIsDeletedByModerator(false);
             }
             answerService.persist(answer);

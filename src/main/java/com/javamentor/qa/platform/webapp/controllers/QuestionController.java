@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.exception.VoteException;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
@@ -138,6 +139,7 @@ public class QuestionController {
             @PathVariable Long id) {
 
         Optional<QuestionDto> questionDto = questionDtoService.getQuestionDtoById(id);
+
 
         return questionDto.isPresent() ? ResponseEntity.ok(questionDto.get()) :
                 ResponseEntity.badRequest().body("Question not found");
@@ -658,8 +660,8 @@ public class QuestionController {
         if (!question.isPresent()) {
             return ResponseEntity.badRequest().body("Question not found");
         }
+        questionViewedService.markQuestionAsViewed(question.get(), user);
 
-        questionViewedService.markQuestionAsViewed(question, user);
         return ResponseEntity.ok().body("Question was marked");
     }
 

@@ -28,7 +28,6 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                         " u.id as question_authorId, " +
                         "u.imageLink as question_authorImage," +
                         "question.description as question_description," +
-                        " question.viewCount as question_viewCount," +
                         "(select count(a.question.id) from Answer a where a.question.id=:id) as question_countAnswer," +
                         "(select coalesce(sum(v.vote), 0) from VoteQuestion v where v.question.id=:id) as question_countValuable," +
                         "question.persistDateTime as question_persistDateTime," +
@@ -123,7 +122,7 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                         "join  q.tags tag " +
                         "join TrackedTag trackedTag on tag.id=trackedTag.trackedTag.id " +
                         "inner join User user on user.id=trackedTag.user.id " +
-                        "where  user.id in :id and q.viewCount is not null")
+                        "where  user.id in :id")
                 .setParameter("id", id)
                 .setFirstResult(page * size - size)
                 .setMaxResults(size)
@@ -138,7 +137,7 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                         "join  q.tags tag " +
                         "join IgnoredTag ignoredTag on tag.id=ignoredTag.ignoredTag.id " +
                         "inner join User user on user.id=ignoredTag.user.id " +
-                        "where  user.id in :id and q.viewCount is not null")
+                        "where  user.id in :id")
                 .setParameter("id", id)
                 .setFirstResult(page * size - size)
                 .setMaxResults(size)

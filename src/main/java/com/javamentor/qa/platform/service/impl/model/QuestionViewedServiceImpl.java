@@ -24,23 +24,17 @@ public class QuestionViewedServiceImpl extends ReadWriteServiceImpl<QuestionView
 
     @Transactional
     @Override
-    public void markQuestionAsViewed(Optional<Question> question, User user) {
+    public void markQuestionAsViewed(Question question, User user) {
 
-        Question CurrentQuestion = question.get();
-        List<QuestionViewed> listOfUserViewedQuestion = CurrentQuestion.getUserViewedQuestions();
-        boolean isQuestionAlreadyMarked = false;
-        for (QuestionViewed questionViewed : listOfUserViewedQuestion) {
-            if (questionViewed.getUser().equals(user)) {
-                isQuestionAlreadyMarked = true;
-            }
-        }
-        if (!isQuestionAlreadyMarked) {
+        Optional<QuestionViewed> optionalQuestionViewed =
+                questionViewedDao.getByQuestionIdAndUserId(question.getId(), user.getId());
+
+        if (!optionalQuestionViewed.isPresent()) {
             QuestionViewed questionViewed = new QuestionViewed();
-            questionViewed.setQuestion(question.get());
+            questionViewed.setQuestion(question);
             questionViewed.setUser(user);
-            questionViewedDao.persist(questionViewed);
 
+            questionViewedDao.persist(questionViewed);
         }
     }
-
 }
