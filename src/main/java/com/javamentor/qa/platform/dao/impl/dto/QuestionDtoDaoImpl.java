@@ -28,7 +28,7 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                         " u.id as question_authorId, " +
                         "u.imageLink as question_authorImage," +
                         "question.description as question_description," +
-                        "(select count(a.question.id) from Answer a where a.question.id=:id) as question_countAnswer," +
+//                        "(select count(a.question.id) from Answer a where a.question.id=:id) as question_countAnswer," +
                         "(select coalesce(sum(v.vote), 0) from VoteQuestion v where v.question.id=:id) as question_countValuable," +
                         "question.persistDateTime as question_persistDateTime," +
                         "question.lastUpdateDateTime as question_lastUpdateDateTime, " +

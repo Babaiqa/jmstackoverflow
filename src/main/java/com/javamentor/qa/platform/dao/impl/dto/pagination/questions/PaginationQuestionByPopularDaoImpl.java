@@ -25,10 +25,11 @@ public class PaginationQuestionByPopularDaoImpl implements PaginationDao<Questio
         int size = (int) parameters.get("size");
         long days = (long) parameters.get("days");
 
+
         List<Long> questionIds = (List<Long>) em.unwrap(Session.class)
                 .createQuery("SELECT question.id " +
                         "FROM Question question " +
-                        "WHERE question.persistDateTime BETWEEN :startDate AND :endDate ORDER BY question.viewCount DESC")
+                        "WHERE question.persistDateTime BETWEEN :startDate AND :endDate"/* ORDER BY question.viewCount DESC*/)
                 .setFirstResult(page * size - size)
                 .setParameter("startDate", LocalDateTime.now().minusDays(days))
                 .setParameter("endDate", LocalDateTime.now())
@@ -43,7 +44,7 @@ public class PaginationQuestionByPopularDaoImpl implements PaginationDao<Questio
                         "u.id AS question_authorId, " +
                         "u.imageLink AS question_authorImage," +
                         "question.description AS question_description," +
-                        " question.viewCount AS question_viewCount," +
+                        "(SELECT COUNT (q.id) FROM QuestionViewed q WHERE q.question.id = question.id) AS question_viewCount," +
                         "(SELECT COUNT (a.id) FROM Answer a WHERE a.question.id=question.id and a.isDeletedByModerator = false) AS question_countAnswer," +
                         "coalesce((select sum(v.vote) from VoteQuestion v where v.question.id = question.id), 0) AS question_countValuable," +
                         "question.persistDateTime AS question_persistDateTime, " +
@@ -52,8 +53,8 @@ public class PaginationQuestionByPopularDaoImpl implements PaginationDao<Questio
                         "FROM Question question " +
                         "INNER JOIN  question.user u " +
                         "JOIN question.tags tag " +
-                        "WHERE question.id IN :ids "+
-                        "ORDER BY question.viewCount DESC")
+                        "WHERE question.id IN :ids "
+                        /*"ORDER BY question_viewCount DESC"*/)
                 .setParameter("ids", questionIds)
                 .unwrap(Query.class)
                 .setResultTransformer(new QuestionResultTransformer())

@@ -32,7 +32,7 @@ public class PaginationQuestionByPopularTrackedTagDaoImpl implements PaginationD
                         "u.id as question_authorId, " +
                         "u.imageLink as question_authorImage," +
                         "question.description as question_description," +
-                        " question.viewCount as question_viewCount," +
+                        "(SELECT COUNT (q.id) FROM QuestionViewed q WHERE q.question.id = question.id) AS question_viewCount," +
                         "(select count(a.question.id) from Answer a where a.question.id=question_id) as question_countAnswer," +
                         "(select count(v.question.id) from VoteQuestion v where v.question.id=question_id) as question_countValuable," +
                         "question.persistDateTime as question_persistDateTime," +
@@ -41,7 +41,7 @@ public class PaginationQuestionByPopularTrackedTagDaoImpl implements PaginationD
                         "from Question question  " +
                         "INNER JOIN  question.user u" +
                         "  join question.tags tag" +
-                        " where question_id IN :ids order by question.viewCount DESC")
+                        " where question_id IN :ids" /* order by question.viewCount DESC*/)
                 .setParameter("ids", questionIds)
                 .unwrap(Query.class)
                 .setResultTransformer(new QuestionResultTransformer())
@@ -57,7 +57,7 @@ public class PaginationQuestionByPopularTrackedTagDaoImpl implements PaginationD
                         "join  q.tags tag " +
                         "join TrackedTag trackedTag on tag.id=trackedTag.trackedTag.id " +
                         "inner join User user on user.id=trackedTag.user.id " +
-                        "where  user.id in :id and q.viewCount is not null")
+                        "where  user.id in :id" /* and q.viewCount is not null*/)
                 .setParameter("id", id)
                 .getSingleResult();
     }

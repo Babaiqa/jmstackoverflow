@@ -73,7 +73,7 @@ public class PaginationQuestionBySearchValueDaoImpl implements PaginationDao<Que
                 "u.id as question_authorId, " +
                 "u.imageLink as question_authorImage," +
                 "question.description as question_description," +
-                "question.viewCount as question_viewCount," +
+                "(SELECT COUNT (q.id) FROM QuestionViewed q WHERE q.question.id = question.id) AS question_viewCount," +
                 "(select count(a.question.id) from Answer a where a.question.id=question_id) as question_countAnswer," +
                 "coalesce((select sum(v.vote) from VoteQuestion v where v.question.id = question.id), 0) as question_countValuable," +
                 "question.persistDateTime as question_persistDateTime," +
@@ -83,7 +83,7 @@ public class PaginationQuestionBySearchValueDaoImpl implements PaginationDao<Que
                 "INNER JOIN  question.user u " +
                 "join question.tags tag " +
                 "where u.id >= :userId " +
-                "and question.viewCount >= :views " +
+//                "and question.viewCount >= :views " +
                 "and (select count(a.question.id) from Answer a where a.question.id=question_id) >= :answers " +
                 "and question.description like :exactly ";
         

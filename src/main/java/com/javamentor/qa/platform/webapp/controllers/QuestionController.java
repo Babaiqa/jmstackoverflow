@@ -138,6 +138,12 @@ public class QuestionController {
             @ApiParam(name = "id", value = "type Long", required = true, example = "0")
             @PathVariable Long id) {
 
+        User principal = securityHelper.getPrincipal();
+        Question question = questionService.getById(id).get();
+
+        questionViewedService.markQuestionAsViewed(question, principal);
+
+        System.out.println("Начало метода");
         Optional<QuestionDto> questionDto = questionDtoService.getQuestionDtoById(id);
 
 

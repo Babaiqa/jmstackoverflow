@@ -109,6 +109,7 @@ public class TestDataInitService {
     @Transactional
     public void createEntity() {
         createTagEntity();
+
         roleService.persist(USER_ROLE);
         roleService.persist(ADMIN_ROLE);
         roleService.persist(MODER_ROLE);
@@ -185,7 +186,6 @@ public class TestDataInitService {
             questionViewed.setQuestion(question);
             questionViewed.setUser(user);
             questionViewedService.persist(questionViewed);
-
 
             Answer answer = new Answer();
             answer.setUser(user);
@@ -306,6 +306,9 @@ public class TestDataInitService {
         }
 
     }
+
+
+
 
 
 }

@@ -41,7 +41,7 @@ public class PaginationQuestionByPopularIgnoredTagDaoImpl implements PaginationD
                         "from Question question  " +
                         "INNER JOIN  question.user u" +
                         "  join question.tags tag" +
-                        " where question_id IN :ids order by question.viewCount DESC")
+                        " where question_id IN :ids" /* order by question.viewCount DESC*/)
                 .setParameter("ids", questionIds)
                 .unwrap(Query.class)
                 .setResultTransformer(new QuestionResultTransformer())
@@ -57,7 +57,7 @@ public class PaginationQuestionByPopularIgnoredTagDaoImpl implements PaginationD
                         "join  q.tags tag " +
                         "join IgnoredTag ignoredTag on tag.id=ignoredTag.ignoredTag.id " +
                         "inner join User user on user.id=ignoredTag.user.id " +
-                        "where  user.id in :id and q.viewCount is not null")
+                        "where  user.id in :id " /*and q.viewCount is not null*/)
                 .setParameter("id", id)
                 .getSingleResult();
     }

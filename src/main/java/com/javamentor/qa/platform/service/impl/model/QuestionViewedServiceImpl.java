@@ -29,7 +29,7 @@ public class QuestionViewedServiceImpl extends ReadWriteServiceImpl<QuestionView
         Optional<QuestionViewed> optionalQuestionViewed =
                 questionViewedDao.getByQuestionIdAndUserId(question.getId(), user.getId());
 
-        if (!optionalQuestionViewed.isPresent()) {
+        if (!(optionalQuestionViewed.isPresent())) {
             QuestionViewed questionViewed = new QuestionViewed();
             questionViewed.setQuestion(question);
             questionViewed.setUser(user);

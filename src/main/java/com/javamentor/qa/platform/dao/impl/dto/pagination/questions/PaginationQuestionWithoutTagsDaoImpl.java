@@ -40,7 +40,7 @@ public class PaginationQuestionWithoutTagsDaoImpl implements PaginationDao<Quest
                         " u.id as question_authorId, " +
                         "u.imageLink as question_authorImage," +
                         "question.description as question_description," +
-                        " question.viewCount as question_viewCount," +
+                        "(SELECT COUNT (q.id) FROM QuestionViewed q WHERE q.question.id = question.id) AS question_viewCount," +
                         "(select count(a.id) from Answer a where a.question.id=question.id and a.isDeletedByModerator = false) as question_countAnswer," +
                         "coalesce((select sum(v.vote) from VoteQuestion v where v.question.id = question.id), 0) as question_countValuable," +
                         "question.persistDateTime as question_persistDateTime," +
@@ -49,7 +49,7 @@ public class PaginationQuestionWithoutTagsDaoImpl implements PaginationDao<Quest
                         "from Question question  " +
                         "INNER JOIN  question.user u" +
                         "  join question.tags tag" +
-                        " where question_id IN :ids order by question.viewCount desc")
+                        " where question_id IN :ids" /* order by question.viewCount desc*/)
                 .setParameter("ids", questionIds)
                 .unwrap(Query.class)
                 .setResultTransformer(new QuestionResultTransformer())
