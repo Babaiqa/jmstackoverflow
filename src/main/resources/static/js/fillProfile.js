@@ -1,8 +1,12 @@
-
+fillProfile()
+fillAnswers()
+fillQuestions()
+fillTags()
+fillBookmarks()
 
 $(document).ready(function () {
-    fillProfile();
-    
+
+
 });
 
 function fillProfile() {
@@ -39,11 +43,137 @@ function fillProfile() {
                         data1['reputation']
                     )
                 })
+
+            fetch('http://localhost:5557/api/user/reputation/history/' + data['id'] + '?page=1&size=1', {
+                method: 'GET',
+                headers: new Headers({
+                    'Content-Type': 'application/json',
+                    'Authorization': $.cookie("token")
+                })
+            })
+                .then(response => response.json())
+                .then(function (data2) {
+                    if (data2.items.length < 4) {
+                        document.querySelector('#reputationMore').innerHTML = '';
+                    }
+                    for (var i=0; i < 3; i++) {
+
+
+                        $('#countRep' + (i + 1)).append(
+                            "+" + data2.items[i].count + " <br/> репутации"
+                        )
+                        $('#reasonRep' + (i + 1)).append(
+                            data2.items[i].type
+                        )
+
+                    }
+                })
         })
+
 
 }
 
+function fillAnswers() {
+    fetch('/api/user/currentUser/answers?page=1&size=3', {
+        method: 'GET',
+        headers: new Headers({
+            'Content-Type': 'application/json',
+            'Authorization': $.cookie("token")
+        })
+    })
+        .then(response => response.json())
+        .then(function (dat) {
+            $('#countAnswers').append(
+                dat.totalResultCount
+            )
+            if (dat.items.length < 4) {
+                document.querySelector('#answersMore').innerHTML = '';
+            }
+            for (let i = 0; i < 3; i++){
 
 
+
+                $('#voices' + (i + 1)).append(
+                    dat.items[i].countValuable + "<br/>" + " голосов"
+                )
+                $('#answer' + (i + 1)).append(
+                    dat.items[i].body
+                )
+
+            }
+        })
+}
+
+function fillQuestions() {
+    fetch('/api/user/currentUser/questions?page=1&size=3', {
+        method: 'GET',
+        headers: new Headers({
+            'Content-Type': 'application/json',
+            'Authorization': $.cookie("token")
+        })
+    })
+        .then(response => response.json())
+        .then(function (dat) {
+            if (dat.items.length < 4) {
+                document.querySelector('#questionMore').innerHTML = '';
+            }
+            $('#countQuestions').append(
+                dat.totalResultCount
+            )
+            for (let i = 0; i < 3; i++){
+                document.getElementById("questionLink" + (i + 1)).href="/question/" + dat.items[i].id
+
+                $('#voicesQ' + (i + 1)).append(
+                    dat.items[i].countValuable + "<br/>" + " голосов"
+                )
+                $('#question' + (i + 1)).append(
+                    dat.items[i].title
+                )
+
+            }
+
+        })
+}
+
+function fillTags() {
+    fetch('/api/tag/tracked', {
+        method: 'GET',
+        headers: new Headers({
+            'Content-Type': 'application/json',
+            'Authorization': $.cookie("token")
+        })
+    })
+        .then(response => response.json())
+        .then(function (data) {
+            if (data.length < 6) {
+                document.querySelector('#tagsMore').innerHTML = '';
+            }
+            for (var i=0; i < data.length; i++) {
+                $('#tags').append(
+                    "<button type=\"button\" class=\"btn btn-sm\">" + data[i].name + "</button>"
+                )
+            }
+        })
+}
+
+function fillBookmarks() {
+    fetch('/api/user/bookmarks', {
+        method: 'GET',
+        headers: new Headers({
+            'Content-Type': 'application/json',
+            'Authorization': $.cookie("token")
+        })
+    })
+        .then(response => response.json())
+        .then(function (data) {
+            document.querySelector('#bookmarksMore').innerHTML = '';
+            $('#bmVotes1').append(
+                data.questionVotes + " <br/> голосов"
+            )
+            $('#bmQuestion1').append(
+                data.questionTitle
+            )
+        })
+}
 
 
