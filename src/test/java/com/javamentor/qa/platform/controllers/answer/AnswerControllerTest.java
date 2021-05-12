@@ -326,12 +326,9 @@ class AnswerControllerTest extends AbstractIntegrationTest {
                 .patch("/api/question/77/answer/40/upVote"))
                 .andReturn();
 
-        JSONObject object = new JSONObject(result.getResponse().getContentAsString());
-
         Answer afterAnswer = (Answer) entityManager.createQuery("from Answer Where id=40").getSingleResult();
 
         Assertions.assertFalse(beforeAnswer.getIsHelpful());
-        Assertions.assertEquals(4, object.get("userId"));
         Assertions.assertTrue(afterAnswer.getIsHelpful());
     }
 
@@ -361,17 +358,19 @@ class AnswerControllerTest extends AbstractIntegrationTest {
     @Test
 
     public void shouldAddSecondCommentToAnswerResponseBadRequest() throws Exception {
+        JSONObject commentFirst = new JSONObject("{\"text\":\"This is the first comment to answer!\"}");
         this.mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/question/10/answer/51/comment")
-                .content("This is the first comment to answer!")
-                .accept(MediaType.TEXT_PLAIN_VALUE))
+                .content(commentFirst.toString())
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
 
+        JSONObject commentSecond = new JSONObject("{\"text\":\"This is the second comment to answer from the same user!\"}");
         this.mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/question/10/answer/51/comment")
-                .content("This is the second comment to answer from the same user!")
-                .accept(MediaType.TEXT_PLAIN_VALUE))
+                .content(commentSecond.toString())
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("You have already commented this answer"));

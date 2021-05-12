@@ -15,15 +15,17 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class BookmarkDto implements Serializable {
     private Long id;
-    private User user;
-    private Question question;
+    private Long userId;
+    private String questionTitle;
+    private Integer questionVotes;
 
     @Override
     public String toString() {
         return "BookmarkDto{" +
                 "id=" + id +
-                ", user=" + user +
-                ", question=" + question +
+                ", userId=" + userId +
+                ", questionTitle='" + questionTitle + '\'' +
+                ", questionVotes=" + questionVotes +
                 '}';
     }
 }
