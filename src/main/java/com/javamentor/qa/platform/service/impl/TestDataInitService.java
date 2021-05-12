@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.service.impl;
 
 import com.javamentor.qa.platform.models.entity.Badge;
+import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.Comment;
 import com.javamentor.qa.platform.models.entity.CommentType;
 import com.javamentor.qa.platform.models.entity.chat.*;
@@ -43,6 +44,7 @@ public class TestDataInitService {
     final SingleChatService singleChatService;
     final GroupChatService groupChatService;
     final MessageService messageService;
+    final BookMarksService bookMarksService;
     final Random random;
 
     int numberOfUsers = 50;
@@ -61,7 +63,7 @@ public class TestDataInitService {
                                RelatedTagService relatedTagService, CommentQuestionService commentQuestionService,
                                CommentAnswerService commentAnswerService, AnswerService answerService,
                                VoteAnswerService voteAnswerService, VoteQuestionService voteQuestionService, RoleService roleService,
-                               IgnoredTagService ignoredTagService, TrackedTagService trackedTagService, ChatService chatService, SingleChatService singleChatService, GroupChatService groupChatService, MessageService messageService) {
+                               IgnoredTagService ignoredTagService, TrackedTagService trackedTagService, ChatService chatService, SingleChatService singleChatService, GroupChatService groupChatService, MessageService messageService, BookMarksService bookMarksService) {
         this.userService = userService;
         this.badgeService = badgeService;
         this.questionService = questionService;
@@ -84,6 +86,7 @@ public class TestDataInitService {
         this.singleChatService = singleChatService;
         this.groupChatService = groupChatService;
         this.messageService = messageService;
+        this.bookMarksService = bookMarksService;
         random = new Random();
     }
 
@@ -258,6 +261,11 @@ public class TestDataInitService {
                 trackedTag.setTrackedTag(tagList.get(randomTrackedTagNum));
                 trackedTagService.persist(trackedTag);
             }
+
+            BookMarks bookMarks = new BookMarks();
+            bookMarks.setUser(user);
+            bookMarks.setQuestion(question);
+            bookMarksService.persist(bookMarks);
 
             users.add(user);
         }
