@@ -23,8 +23,12 @@ public class BookmarkDtoDaoImpl implements BookmarkDtoDao {
     @Override
     public Optional<BookmarkDto> getBookmarkByUserId(Long id) {
         TypedQuery<BookmarkDto> query = entityManager.createQuery(
-                "SELECT new com.javamentor.qa.platform.models.dto.BookmarkDto(b.id, b.user, b.question)" +
-                        "FROM BookMarks b WHERE b.user.id =: userId", BookmarkDto.class)
+                "SELECT new com.javamentor.qa.platform.models.dto.BookmarkDto(b.id, b.user.id, b.question.title, b.question.viewCount) " +
+                        "FROM BookMarks as b " +
+                        "INNER JOIN User u ON u.id = b.user.id " +
+                        "INNER JOIN Question q ON q.title = b.question.title " +
+                        "AND q.viewCount = b.question.viewCount " +
+                        "WHERE u.id =: userId", BookmarkDto.class)
                 .setParameter("userId", id);
         return SingleResultUtil.getSingleResultOrNull(query);
     }
