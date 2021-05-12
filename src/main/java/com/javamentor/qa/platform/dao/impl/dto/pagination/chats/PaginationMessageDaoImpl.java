@@ -36,11 +36,11 @@ public class PaginationMessageDaoImpl implements PaginationDao<MessageDto> {
                         "ms.userSender.imageLink )" +
                         "from Message ms  " +
                         "join User u on ms.userSender.id = u.id " +
-                        "where ms.chat.id =: chatId order by ms.lastRedactionDate asc ")
+                        "where ms.chat.id =: chatId order by ms.lastRedactionDate desc ")
                 .unwrap(Query.class)
                 .setParameter("chatId", chatId)
-                //.setFirstResult(page * size - size)
-                //.setMaxResults(size)
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
                 .getResultList();
 
     }
