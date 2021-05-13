@@ -77,8 +77,8 @@ public class ChatController {
             return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
-
-        PageDto<SingleChatDto, Object> allSingleChats = singleChatDtoService.getAllSingleChatDtoPagination(page, size);
+        Long userId = securityHelper.getPrincipal().getId();
+        PageDto<SingleChatDto, Object> allSingleChats = singleChatDtoService.getAllSingleChatDtoPagination(page, size, userId);
 
         return ResponseEntity.ok(allSingleChats);
     }
