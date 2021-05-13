@@ -36,3 +36,6 @@ build/
 
 ### Apache Lucene Search Index
 searchIndex/
+
+### Logging ###
+*.log*
