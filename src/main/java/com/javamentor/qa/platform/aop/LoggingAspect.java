@@ -29,7 +29,7 @@ public class LoggingAspect
         Object result = proceedingJoinPoint.proceed();
         stopWatch.stop();
 
-        LOGGER.info("Execution time of " + className + "." + methodName + " :: " + stopWatch.getTotalTimeMillis() + " ms");
+        LOGGER.info("Execution time of {}.{} :: {} ms. Method return: {}", className, methodName, stopWatch.getTotalTimeMillis(), result);
 
         return result;
     }
