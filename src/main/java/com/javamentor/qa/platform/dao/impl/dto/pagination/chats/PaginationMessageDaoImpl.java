@@ -29,14 +29,14 @@ public class PaginationMessageDaoImpl implements PaginationDao<MessageDto> {
                 .createQuery("SELECT new com.javamentor.qa.platform.models.dto.MessageDto(" +
                         "ms.id," +
                         "ms.message," +
-                        "ms.persistDate," +
                         "ms.lastRedactionDate," +
+                        "ms.persistDate," +
                         "ms.userSender.id," +
                         "ms.chat.id," +
                         "ms.userSender.imageLink )" +
                         "from Message ms  " +
                         "join User u on ms.userSender.id = u.id " +
-                        "where ms.chat.id =: chatId order by ms.persistDate desc")
+                        "where ms.chat.id =: chatId order by ms.lastRedactionDate desc ")
                 .unwrap(Query.class)
                 .setParameter("chatId", chatId)
                 .setFirstResult(page * size - size)
@@ -48,6 +48,9 @@ public class PaginationMessageDaoImpl implements PaginationDao<MessageDto> {
 
     @Override
     public int getCount(Map<String, Object> parameters) {
-        return (int) (long) entityManager.createQuery("select count(ms) from Message ms").getSingleResult();
+        long chatId = (long) parameters.get("chatId");
+        return (int) (long) entityManager.createQuery("select count(ms) from Message ms where ms.chat.id = :chatId ")
+                .setParameter("chatId", chatId)
+                .getSingleResult();
     }
 }
