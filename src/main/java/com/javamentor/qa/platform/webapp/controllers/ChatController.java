@@ -1,11 +1,12 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
-import com.javamentor.qa.platform.models.dto.MessageDto;
-import com.javamentor.qa.platform.models.dto.ChatDto;
-import com.javamentor.qa.platform.models.dto.PageDto;
-import com.javamentor.qa.platform.models.dto.SingleChatDto;
+import com.javamentor.qa.platform.dao.abstracts.model.SingleChatDao;
+import com.javamentor.qa.platform.dao.impl.model.SingleChatDaoImpl;
+import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.chat.Chat;
+import com.javamentor.qa.platform.models.entity.chat.SingleChat;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.service.abstracts.dto.MessageDtoService;
 import com.javamentor.qa.platform.models.entity.chat.Message;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
@@ -13,10 +14,11 @@ import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.SingleChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.ChatService;
 import com.javamentor.qa.platform.service.abstracts.model.MessageService;
+import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.webapp.converters.SingleChatConverter;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -24,6 +26,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,21 +44,25 @@ public class ChatController {
     private final SingleChatDtoService singleChatDtoService;
     private final MessageDtoService messageDtoService;
     private final MessageService messageService;
+    private final SingleChatConverter singleChatConverter;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final UserService userService;
+    private final SingleChatService singleChatService;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
-    public ChatController(SingleChatDtoService singleChatDtoService, SecurityHelper securityHelper, ChatDtoService chatDtoService, ChatService chatService, MessageDtoService messageDtoService, MessageService messageService, SimpMessagingTemplate simpMessagingTemplate, UserService userService) {
+    public ChatController(SingleChatDtoService singleChatDtoService, SecurityHelper securityHelper, ChatDtoService chatDtoService, ChatService chatService, MessageDtoService messageDtoService, MessageService messageService, SingleChatConverter singleChatConverter, SimpMessagingTemplate simpMessagingTemplate, UserService userService, SingleChatService singleChatService) {
         this.singleChatDtoService = singleChatDtoService;
         this.securityHelper = securityHelper;
         this.chatDtoService = chatDtoService;
         this.chatService = chatService;
         this.messageDtoService = messageDtoService;
         this.messageService = messageService;
+        this.singleChatConverter = singleChatConverter;
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.userService = userService;
+        this.singleChatService = singleChatService;
     }
 
 
@@ -161,4 +168,25 @@ public class ChatController {
 
     }
 
+    @PostMapping("/single/add")
+    @Validated(OnCreate.class)
+    @ResponseBody
+    @ApiOperation(value = "add single chat", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "adds single chat", response = SingleChat.class),
+            @ApiResponse(code = 400, message = "single chat was not added", response = String.class)
+    })
+    public ResponseEntity<?> addSingleChat(@Valid @RequestBody CreateSingleChatDto createSingleChatDto){
+        User user = securityHelper.getPrincipal();
+
+        if(!userService.existsById(createSingleChatDto.getUserTwoId())){
+            ResponseEntity.badRequest().body("userTwoId doesn't exist");
+        }
+        SingleChat singleChat = new SingleChat();
+        singleChat.getChat().setTitle(createSingleChatDto.getTitle());
+        singleChat.setUserOne(userService.getById(user.getId()).get());
+        singleChat.setUseTwo(userService.getById(createSingleChatDto.getUserTwoId()).get());
+        singleChatService.persist(singleChat);
+        return ResponseEntity.ok(singleChatConverter.singleChatToSingleChatDto(singleChat));
+    }
 }
