@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
+import com.javamentor.qa.platform.dao.abstracts.dto.VoteQuestionDtoDao;
 import com.javamentor.qa.platform.exception.VoteException;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
@@ -15,7 +16,6 @@ import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converters.*;
 import io.swagger.annotations.*;
 import lombok.SneakyThrows;
-import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -46,6 +46,7 @@ public class QuestionController {
     private final QuestionViewedService questionViewedService;
     private final ReputationService reputationService;
     private final VoteQuestionConverter voteQuestionConverter;
+    private final VoteQuestionDtoDao voteQuestionDtoDao;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
@@ -62,7 +63,7 @@ public class QuestionController {
                               VoteQuestionService voteQuestionService,
                               QuestionViewedService questionViewedService,
                               ReputationService reputationService,
-                              VoteQuestionConverter voteQuestionConverter) {
+                              VoteQuestionConverter voteQuestionConverter, VoteQuestionDtoDao voteQuestionDtoDao) {
         this.questionService = questionService;
         this.tagService = tagService;
         this.securityHelper = securityHelper;
@@ -76,6 +77,7 @@ public class QuestionController {
         this.questionViewedService = questionViewedService;
         this.reputationService = reputationService;
         this.voteQuestionConverter = voteQuestionConverter;
+        this.voteQuestionDtoDao = voteQuestionDtoDao;
     }
 
     @DeleteMapping("/{id}/delete")
@@ -706,5 +708,30 @@ public class QuestionController {
         }
         PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationWithoutAnswersIgnoredTags(page, size, securityHelper.getPrincipal().getId() );
         return ResponseEntity.ok(resultPage);
+    }
+
+    @GetMapping("/vote/{questionId}")
+    @ApiOperation(value = "Returns value of user's vote on question")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns user's vote on question"),
+            @ApiResponse(code = 400, message = "User or question not found")
+    })
+    public ResponseEntity<?> getUserVoteOnQuestion(
+            @ApiParam(name = "questionId", value = "QuestionId, type Long", required = true, example = "1")
+            @PathVariable("questionId") Long questionId) {
+        Optional<Question> question = questionService.getById(questionId);
+
+        if (!question.isPresent()) {
+            return ResponseEntity.badRequest().body("Question was not found");
+        }
+        Long userId;
+        int vote;
+        if(voteQuestionService.isUserAlreadyVoted(questionService.getById(questionId).get(), securityHelper.getPrincipal()) == true) {
+            userId = securityHelper.getPrincipal().getId();
+            vote = voteQuestionDtoDao.getVoteByQuestionIdAndUserId(questionId, userId).get().getVote();
+        } else {
+            vote = 0;
+        }
+        return ResponseEntity.ok(vote);
     }
 }
