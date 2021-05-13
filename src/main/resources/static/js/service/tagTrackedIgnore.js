@@ -1,4 +1,4 @@
-window.onload = function() {
+document.addEventListener('DOMContentLoaded', function () {
     addListenersForTagBarElems('main','tracked')
     populateTagBar('main','tracked')
     addListenersForTagBarElems('main','ignored')
@@ -7,7 +7,7 @@ window.onload = function() {
     populateTagBar('question-area','tracked')
     addListenersForTagBarElems('question-area','ignored')
     populateTagBar('question-area','ignored')
-}
+})
 
 // ----------------Functions------------------
 function getCoords(elem) {
