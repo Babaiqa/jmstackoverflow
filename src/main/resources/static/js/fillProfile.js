@@ -1,12 +1,10 @@
-fillProfile()
-fillAnswers()
-fillQuestions()
-fillTags()
-fillBookmarks()
 
 $(document).ready(function () {
-
-
+    fillProfile()
+    fillAnswers()
+    fillQuestions()
+    fillTags()
+    fillBookmarks()
 });
 
 function fillProfile() {
