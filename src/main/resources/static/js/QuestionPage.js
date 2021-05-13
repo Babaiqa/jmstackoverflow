@@ -1,9 +1,9 @@
 class QuestionPage {
-
     constructor(questionId) {
         this.questionId = questionId;
         this.questionService = new QuestionService();
         this.answerService = new AnswerService();
+        this.indexMap = new Map()
     }
 
     populateQuestionPage() {
@@ -36,13 +36,13 @@ class QuestionPage {
                     "                        <div vote-area-question class=\"col-1\">\n" +
                     '                            <a class="btn  btn-sm m-0 p-0" onclick="new QuestionService().makeUpVoteQuestion(' + this.questionId + ')">' +
                     "                               <svg width=\"36\" height=\"36\" >\n" +
-                    "                                  <path d=\"M2 26h32L18 10 2 26z\"></path>\n" +
+                    "                                  <path id='upvote_btn' d=\"M2 26h32L18 10 2 26z\"></path>\n" +
                     "                               </svg>\n" +
                     '                             </a>' +
                     '                            <div style=\"font-size: 200%\" id="count_question"> &nbsp;' + response.countValuable + '</div>\n' +
                     '                              <a class="btn  btn-sm m-0 p-0" onclick="new QuestionService().makeDownVoteQuestion(' + this.questionId + ');">' +
                     "                                 <svg  width=\"36\" height=\"36\" >\n" +
-                    "                                    <path d=\"M2 10h32L18 26 2 10z\"></path>\n" +
+                    "                                    <path id='downvote_btn' d=\"M2 10h32L18 26 2 10z\"></path>\n" +
                     "                                  </svg>\n" +
                     '                               </a>' +
                     "                        </div>\n" +
@@ -129,6 +129,9 @@ class QuestionPage {
 
                 let index = 0;
                 response.forEach(elem => {
+                    if(this.indexMap.has(elem.id) === false) {
+                        this.indexMap.set(elem.id, index)
+                    }
                     const date = new Date(elem.persistDate)
                     const stringDate = ('0' + date.getDate()).slice(-2) + "."
                         + ('0' + (date.getMonth() + 1)).slice(-2) + "."
@@ -142,13 +145,13 @@ class QuestionPage {
                         "    <div vote-area-answer class=\"col-1\">\n" +
                         '        <a  class="btn  btn-sm m-0 p-0" onclick="new AnswerService().getUpVoteAnswer(' + this.questionId + ',' + elem.id + ',' + index + ')">' +
                         '             <svg   width=\"36\" height=\"36\" >\n' +
-                        "                  <path d=\"M2 26h32L18 10 2 26z\"></path>\n" +
+                        "                  <path name='answer_upvote' d=\"M2 26h32L18 10 2 26z\"></path>\n" +
                         "              </svg>\n" +
                         '        </a>' +
                         '             <div class="countAnswer" style=\"font-size: 200%\">&nbsp;' + count + '</div>\n' +
                         '        <a  class="btn  btn-sm m-0 p-0" onclick="new AnswerService().getDownVoteAnswer(' + this.questionId + ',' + elem.id + ',' + index + ')"> ' +
                         "              <svg  width=\"36\" height=\"36\" >\n" +
-                        "                   <path d=\"M2 10h32L18 26 2 10z\"></path>\n" +
+                        "                   <path name='answer_downvote' d=\"M2 10h32L18 26 2 10z\"></path>\n" +
                         "               </svg>\n" +
                         '        </a>     ' +
                         '              <svg class="isHelpful" width="36" height="36">\n' + (isHelpful == true ?
@@ -222,6 +225,29 @@ class QuestionPage {
                 })
             })
     }
+
+    getColorForButtons(id){
+        this.questionService.getVoteById(id)
+            .then(vote => {
+                if(vote === 1) {
+                    document.getElementById('upvote_btn').style.fill = "#105ac7"
+                } else if(vote === -1){
+                    document.getElementById('downvote_btn').style.fill = "#105ac7"
+                }
+            })
+      this.answerService.getAnswerListByQuestionId(id).then(response => {
+            response.forEach(answer => {
+                this.answerService.getVoteById(answer.id).then(aVote =>{
+                    if(aVote === 1){
+                        document.getElementsByName('answer_upvote')[this.indexMap.get(answer.id)].style.fill = "#105ac7"
+                    } else if(aVote === -1){
+                        document.getElementsByName('answer_downvote')[this.indexMap.get(answer.id)].style.fill = "#105ac7"
+                    }
+                })
+            })
+        })
+    }
+
     getCommentsById(id) {
         new QuestionService().getCommentsByQuestionId(id)
             .then(comments => {

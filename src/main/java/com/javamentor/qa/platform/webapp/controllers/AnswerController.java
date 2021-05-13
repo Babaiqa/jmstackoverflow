@@ -84,9 +84,7 @@ public class AnswerController {
             @PathVariable Long questionId,
             @ApiParam(name = "text", value = "Text of comment. Type string", required = true, example = "Some comment")
             @RequestBody String commentText) {
-
         User user = securityHelper.getPrincipal();
-
         Optional<Answer> answer = answerService.getById(answerId);
         if (!answer.isPresent()) {
             return ResponseEntity.badRequest().body("Answer not found");
@@ -293,4 +291,24 @@ public class AnswerController {
         return ResponseEntity.ok(false);
     }
 
+    @GetMapping("/{answerId}/answer/vote")
+    @ApiOperation(value = "returns user's vote on answer",
+            notes = "Provide questionId to get user's vote on answer")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "return user's vote on answer"),
+            @ApiResponse(code = 400, message = "Question was not found"),
+    })
+    public ResponseEntity<?> getUserVoteOnAnswer(@ApiParam(name = "answerId", value = "answerId, type Long", required = true, example = "1")
+                                                 @PathVariable Long answerId) {
+
+        Long userId = securityHelper.getPrincipal().getId();
+
+        Optional<VoteAnswerDto> vote = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answerId, userId);
+
+        if (vote.isPresent()) {
+            return ResponseEntity.ok(vote.get().getVote());
+        }
+
+        return ResponseEntity.ok(0);
+    }
 }

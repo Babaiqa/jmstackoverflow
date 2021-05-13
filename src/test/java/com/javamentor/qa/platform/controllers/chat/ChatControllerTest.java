@@ -50,7 +50,7 @@ class ChatControllerTest extends AbstractIntegrationTest {
                 LocalDateTime.of(2020, 01, 02, 13, 58, 59), 4L, 4L, "https://pbs.twimg.com/profile_images/1182694005408186375/i5xT6juJ_400x400.jpg"));
         items.add(new MessageDto(3L, "Text group message 3",
                 LocalDateTime.of(2020, 10, 25, 13, 58, 57),
-                LocalDateTime.of(2020, 01, 02, 13, 58, 57), 2L, 4L, "https://pbs.twimg.com/profile_images/1182694005408186375/i5xT6juJ_400x400.jpg"));
+                LocalDateTime.of(2020, 01, 02, 13, 58, 57), 2L, 4L, "https://www.java-mentor.com/images/jm-logo-sq.png"));
 
         expect.setItems(items);
 

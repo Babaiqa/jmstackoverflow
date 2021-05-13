@@ -40,23 +40,7 @@ function sendMessage(chatId) {
     let message = $('#inputMessage').val();
     $lovelyMe = $('#lovelyMe').attr('val');
     sendMsg($lovelyMe, message, chatId)
-
-    scrollToBottom();
-    if (message !== '') {
-        $('#chatBox').append(`
-                <div class="media w-50 ml-auto mb-3">
-                    <div class="media-body">
-                        <div class="bg-primary rounded py-2 px-3 mb-2">
-                            <p class="text-small mb-0 text-white">${message}</p>
-                        </div>
-                            <p class="small text-muted text-right">${getCurrentTime()}</p>
-                        </div>
-                    </div>
-                </div>
-            `);
-        scrollToBottom();
-        $('#inputMessage').val('');
-    }
+    showFirstPageMessage(chatId);                   // chatPage.js
 }
 
 function render(message) {

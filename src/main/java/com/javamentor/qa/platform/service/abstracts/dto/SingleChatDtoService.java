@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface SingleChatDtoService {
     Optional<SingleChatDto> findSingleChatDtoById(Long id);
     List<SingleChatDto> getAllSingleChatDto();
-    PageDto<SingleChatDto, Object> getAllSingleChatDtoPagination(int page, int size);
+    PageDto<SingleChatDto, Object> getAllSingleChatDtoPagination(int page, int size, long userId);
 }
