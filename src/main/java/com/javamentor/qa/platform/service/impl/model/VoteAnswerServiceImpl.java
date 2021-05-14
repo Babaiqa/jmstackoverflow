@@ -60,9 +60,7 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
 
         VoteAnswer voteAnswer = null;
 
-        boolean userAlreadyVotedIsThisQuestion = isUserAlreadyVotedIsThisQuestion(question, user, answer);
-
-        if (userAlreadyVotedIsThisQuestion) {
+        if (isUserAlreadyVotedIsThisQuestion(question, user, answer)) {
             Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answer.getId(), user.getId());
             if (optionalVoteAnswer.isPresent()) {
                 int voteValue = optionalVoteAnswer.get().getVote();
