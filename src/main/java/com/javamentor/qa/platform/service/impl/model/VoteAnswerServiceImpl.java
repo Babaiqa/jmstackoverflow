@@ -60,7 +60,9 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
 
         VoteAnswer voteAnswer = null;
 
-        if (isUserAlreadyVotedIsThisQuestion(question, user, answer)) {
+        boolean userAlreadyVotedIsThisQuestion = isUserAlreadyVotedIsThisQuestion(question, user, answer);
+
+        if (userAlreadyVotedIsThisQuestion) {
             Optional<VoteAnswerDto> optionalVoteAnswer = voteAnswerDtoService.getVoteByAnswerIdAndUserId(answer.getId(), user.getId());
             if (optionalVoteAnswer.isPresent()) {
                 int voteValue = optionalVoteAnswer.get().getVote();
@@ -82,9 +84,6 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
         voteAnswer = new VoteAnswer(user, answer, 1);
         voteAnswerDao.persist(voteAnswer);
 
-        if (answerUpVote(question, user, answer) == null) {
-            throw new VoteException("Can't change vote");
-        }
         return voteAnswer;
     }
 
