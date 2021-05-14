@@ -1,8 +1,12 @@
 package com.javamentor.qa.platform.dao.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.TopUsersByTagDtoDao;
+import com.javamentor.qa.platform.dao.impl.dto.transformers.QuestionResultTransformer;
+import com.javamentor.qa.platform.dao.impl.dto.transformers.UserDtoListTranformer;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
+import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.UserDto;
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -21,10 +25,20 @@ public class TopUsersByTagDtoDaoImpl implements TopUsersByTagDtoDao {
 
     @Override
     public Optional<UserDto> getTopUserByTagIdDto(Long id) {
-        TypedQuery<UserDto> query = entityManager.createQuery(
-                "SELECT new com.javamentor.qa.platform.models.dto.UserDto(v.user.id, v.user.email, v.user.fullName, v.user.imageLink, v.vote)" +
-                        "FROM VoteAnswer v INNER JOIN QuestionHasTag q ON q.question.id = v.answer.question.id WHERE q.tag.id=:id ORDER BY SUM(v.vote)", UserDto.class)
-                .setParameter("id", id);
-        return SingleResultUtil.getSingleResultOrNull(query);
+
+        return (Optional<UserDto>) entityManager.unwrap(Session.class)
+                .createQuery("SELECT v.user.id as user_id," +
+                        "v.user.email as user_email," +
+                        "v.user.fullName as user_fullName," +
+                        "v.user.imageLink as user_image " +
+                        "FROM VoteAnswer v " +
+                        "INNER JOIN question_has_tag t ON t.question_id = v.answer.question.id " +
+                        "WHERE t.tag_id=:id" +
+                        " ORDER BY SUM(v.vote)")
+                .setParameter("id", id)
+                .unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(new UserDtoListTranformer())
+                .uniqueResultOptional();
+
     }
 }

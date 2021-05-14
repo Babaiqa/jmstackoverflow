@@ -49,9 +49,6 @@ public class Tag implements Serializable {
     @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
     private List<Question> questions;
 
-    @OneToMany(mappedBy = "tag",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<QuestionHasTag> questionHasTags = new ArrayList<>();
-
     @PrePersist
     private void prePersistFunction() {
         checkConstraints();

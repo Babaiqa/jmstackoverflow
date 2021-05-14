@@ -73,11 +73,11 @@ public class Question implements Serializable {
 
     @NotNull
     @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "question_has_tag",
+            joinColumns = @JoinColumn(name = "question_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
     @PropertyBinding(binder = @PropertyBinderRef(type = TagsBinder.class))
     private  List<Tag> tags = new ArrayList<>();
-
-    @OneToMany(mappedBy = "question",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<QuestionHasTag> questionHasTags = new ArrayList<>();
 
     @Column(name = "last_redaction_date", nullable = false)
     @Type(type = "org.hibernate.type.LocalDateTimeType")
