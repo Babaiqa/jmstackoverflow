@@ -40,4 +40,5 @@ public interface QuestionDtoService {
 
     PageDto<QuestionDtoPrincipal, Object> getAllQuestionsOfPrincipalUserOrderByPersist(int page, int size, Long id);
 
+    PageDto<QuestionDto, Object> getPaginationWithFollowAndWithoutIgnoreTags(int page, int size, long id);
 }
