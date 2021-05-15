@@ -32,16 +32,17 @@ public class PaginationQuestionByPopularTrackedTagDaoImpl implements PaginationD
                         "u.id as question_authorId, " +
                         "u.imageLink as question_authorImage," +
                         "question.description as question_description," +
-                        "(SELECT COUNT (q.id) FROM QuestionViewed q WHERE q.question.id = question.id) AS question_viewCount," +
+                        "COUNT (qv.question.id) AS question_viewCount," +
                         "(select count(a.question.id) from Answer a where a.question.id=question_id) as question_countAnswer," +
                         "(select count(v.question.id) from VoteQuestion v where v.question.id=question_id) as question_countValuable," +
                         "question.persistDateTime as question_persistDateTime," +
                         "question.lastUpdateDateTime as question_lastUpdateDateTime, " +
                         " tag.id as tag_id,tag.name as tag_name, tag.description as tag_description " +
                         "from Question question  " +
+                        "left join QuestionViewed qv on question.id = qv.question.id " +
                         "INNER JOIN  question.user u" +
-                        "  join question.tags tag" +
-                        " where question_id IN :ids" /* order by question.viewCount DESC*/)
+                        "  join question.tags tag " +
+                        "where question_id IN :ids ORDER BY question_viewCount DESC")
                 .setParameter("ids", questionIds)
                 .unwrap(Query.class)
                 .setResultTransformer(new QuestionResultTransformer())
