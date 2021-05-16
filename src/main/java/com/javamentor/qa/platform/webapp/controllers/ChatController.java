@@ -5,6 +5,8 @@ import com.javamentor.qa.platform.models.dto.ChatDto;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.chat.Chat;
+import com.javamentor.qa.platform.models.entity.chat.ChatType;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.MessageDtoService;
 import com.javamentor.qa.platform.models.entity.chat.Message;
@@ -12,6 +14,7 @@ import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.SingleChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.ChatService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
 import com.javamentor.qa.platform.service.abstracts.model.MessageService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.*;
@@ -43,11 +46,12 @@ public class ChatController {
     private final MessageService messageService;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final UserService userService;
+    private final GroupChatService groupChatService;
 
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
-    public ChatController(SingleChatDtoService singleChatDtoService, SecurityHelper securityHelper, ChatDtoService chatDtoService, ChatService chatService, MessageDtoService messageDtoService, MessageService messageService, SimpMessagingTemplate simpMessagingTemplate, UserService userService) {
+    public ChatController(SingleChatDtoService singleChatDtoService, SecurityHelper securityHelper, ChatDtoService chatDtoService, ChatService chatService, MessageDtoService messageDtoService, MessageService messageService, SimpMessagingTemplate simpMessagingTemplate, UserService userService, GroupChatService groupChatService) {
         this.singleChatDtoService = singleChatDtoService;
         this.securityHelper = securityHelper;
         this.chatDtoService = chatDtoService;
@@ -56,6 +60,7 @@ public class ChatController {
         this.messageService = messageService;
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.userService = userService;
+        this.groupChatService = groupChatService;
     }
 
 
@@ -159,6 +164,25 @@ public class ChatController {
 
         return ResponseEntity.ok(allChatsByUser);
 
+    }
+
+    @PostMapping(path = "/addGroupChat")
+    @ApiOperation(value = "add Group chat", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Add group chat"),
+            @ApiResponse(code = 400, message = "Title don`t exists")
+    })
+    public ResponseEntity<?> createGroupChat(@RequestParam String title){
+        if(!groupChatService.existsGroupChatByTitle(title)){
+            return ResponseEntity.badRequest().body("Title don`t exists");
+        }
+        GroupChat groupChat = new GroupChat();
+        groupChat.setChat(Chat.builder()
+                .title(title)
+                .chatType(ChatType.GROUP)
+                .build());
+        groupChatService.persist(groupChat);
+        return ResponseEntity.ok().body("Add group chat");
     }
 
 }
