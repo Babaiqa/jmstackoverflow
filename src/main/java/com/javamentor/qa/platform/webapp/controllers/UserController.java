@@ -450,7 +450,7 @@ public class UserController {
     }
 
     @PostMapping("bookmarks/{questionId}")
-    @ApiOperation(value = "Return message(Object)", response = String.class)
+    @ApiOperation(value = "Return message(String)", response = String.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "Bookmark added successfully", response = String.class),
             @ApiResponse(code = 400, message = "There is no such question", response = String.class)
