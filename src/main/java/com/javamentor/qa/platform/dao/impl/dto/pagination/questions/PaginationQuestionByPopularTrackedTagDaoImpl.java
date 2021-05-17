@@ -32,16 +32,17 @@ public class PaginationQuestionByPopularTrackedTagDaoImpl implements PaginationD
                         "u.id as question_authorId, " +
                         "u.imageLink as question_authorImage," +
                         "question.description as question_description," +
-                        " question.viewCount as question_viewCount," +
+                        "COUNT (qv.question.id) AS question_viewCount," +
                         "(select count(a.question.id) from Answer a where a.question.id=question_id) as question_countAnswer," +
                         "(select count(v.question.id) from VoteQuestion v where v.question.id=question_id) as question_countValuable," +
                         "question.persistDateTime as question_persistDateTime," +
                         "question.lastUpdateDateTime as question_lastUpdateDateTime, " +
                         " tag.id as tag_id,tag.name as tag_name, tag.description as tag_description " +
                         "from Question question  " +
+                        "left join QuestionViewed qv on question.id = qv.question.id " +
                         "INNER JOIN  question.user u" +
-                        "  join question.tags tag" +
-                        " where question_id IN :ids order by question.viewCount DESC")
+                        "  join question.tags tag " +
+                        "where question_id IN :ids ORDER BY question_viewCount DESC")
                 .setParameter("ids", questionIds)
                 .unwrap(Query.class)
                 .setResultTransformer(new QuestionResultTransformer())
@@ -57,7 +58,7 @@ public class PaginationQuestionByPopularTrackedTagDaoImpl implements PaginationD
                         "join  q.tags tag " +
                         "join TrackedTag trackedTag on tag.id=trackedTag.trackedTag.id " +
                         "inner join User user on user.id=trackedTag.user.id " +
-                        "where  user.id in :id and q.viewCount is not null")
+                        "where  user.id in :id" /* and q.viewCount is not null*/)
                 .setParameter("id", id)
                 .getSingleResult();
     }

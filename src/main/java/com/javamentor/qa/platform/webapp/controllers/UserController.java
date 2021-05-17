@@ -46,6 +46,8 @@ public class UserController {
 
     private final QuestionService questionService;
 
+    private final TopUsersByTagDtoService topUsersByTagDtoService;
+
     @Autowired
     public UserController(UserService userService,
                           UserConverter userConverter,
@@ -55,6 +57,7 @@ public class UserController {
                           ReputationService reputationService,
                           ReputationDtoService reputationDtoService,
                           AnswerDtoService answerDtoService,
+                          QuestionDtoService questionDtoService, BookmarkDtoService bookmarkDtoService, TopUsersByTagDtoService topUsersByTagDtoService) {
                           BookmarkDtoService bookmarkDtoService,
                           QuestionDtoService questionDtoService,
                           BookMarksService bookMarksService, QuestionService questionService) {
@@ -67,10 +70,11 @@ public class UserController {
         this.reputationService = reputationService;
         this.reputationDtoService = reputationDtoService;
         this.answerDtoService = answerDtoService;
-        this.bookmarkDtoService = bookmarkDtoService;
         this.questionDtoService = questionDtoService;
         this.bookMarksService = bookMarksService;
         this.questionService = questionService;
+        this.bookmarkDtoService = bookmarkDtoService;
+        this.topUsersByTagDtoService = topUsersByTagDtoService;
     }
 
     // Examples for Swagger
@@ -447,6 +451,21 @@ public class UserController {
         }
 
         return  ResponseEntity.ok().body("The bookmark exists");
+    }
+
+    @GetMapping("tag/{tagId}/topUsers")
+    @ApiOperation(value = "Get page List<UserDto> order by tagId." +
+            "Max size entries on page= "+ MAX_ITEMS_ON_PAGE, response = List.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Request success",
+                    response = List.class)
+    })
+    public ResponseEntity<?> getTopUsersByTagId(
+            @PathVariable("tagId") long id) {
+
+        Optional<UserDto> resultTopUser = topUsersByTagDtoService.getTopUsersDtoByTagId(id);
+
+        return  ResponseEntity.ok(resultTopUser);
     }
 
     @PostMapping("bookmarks/{questionId}")

@@ -31,17 +31,18 @@ public class PaginationQuestionByPopularIgnoredTagDaoImpl implements PaginationD
                         "u.fullName as question_authorName," +
                         "u.id as question_authorId, " +
                         "u.imageLink as question_authorImage," +
-                        "question.description as question_description," +
-                        " question.viewCount as question_viewCount," +
+                        "question.description as question_description, " +
+                        "COUNT (qv.question.id) AS question_viewCount, " +
                         "(select count(a.question.id) from Answer a where a.question.id=question_id) as question_countAnswer," +
                         "(select count(v.question.id) from VoteQuestion v where v.question.id=question_id) as question_countValuable," +
                         "question.persistDateTime as question_persistDateTime," +
                         "question.lastUpdateDateTime as question_lastUpdateDateTime, " +
                         " tag.id as tag_id,tag.name as tag_name, tag.description as tag_description " +
                         "from Question question  " +
-                        "INNER JOIN  question.user u" +
-                        "  join question.tags tag" +
-                        " where question_id IN :ids order by question.viewCount DESC")
+                        "left join QuestionViewed qv on question.id = qv.question.id " +
+                        "INNER JOIN  question.user u " +
+                        "join question.tags tag " +
+                        "where question.id IN :ids ORDER BY question_viewCount DESC")
                 .setParameter("ids", questionIds)
                 .unwrap(Query.class)
                 .setResultTransformer(new QuestionResultTransformer())
@@ -51,13 +52,13 @@ public class PaginationQuestionByPopularIgnoredTagDaoImpl implements PaginationD
     @Override
     public int getCount(Map<String, Object> parameters) {
         long id = (long) parameters.get("id");
-        return (int)(long)em.createQuery(
+        return (int) (long) em.createQuery(
                 "select count(q.id) " +
                         "from Question q " +
                         "join  q.tags tag " +
                         "join IgnoredTag ignoredTag on tag.id=ignoredTag.ignoredTag.id " +
                         "inner join User user on user.id=ignoredTag.user.id " +
-                        "where  user.id in :id and q.viewCount is not null")
+                        "where  user.id in :id " /*and q.viewCount is not null*/)
                 .setParameter("id", id)
                 .getSingleResult();
     }

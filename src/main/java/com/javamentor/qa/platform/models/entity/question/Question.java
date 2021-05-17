@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.dao.search.bridge.TagsBinder;
 import com.javamentor.qa.platform.dao.search.bridge.VotesQuestionCountBinder;
 import com.javamentor.qa.platform.exception.ConstrainException;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.UserFavoriteQuestion;
 import lombok.*;
@@ -47,11 +48,6 @@ public class Question implements Serializable {
     @FullTextField(projectable = Projectable.YES, analyzer = "russian")
     private String title;
 
-    @Min(0)
-    @Column(name = "view_count")
-    @GenericField(projectable = Projectable.YES, sortable = Sortable.YES)
-    private Integer viewCount = 0;
-
     @NotNull
     @Column
     @Type(type = "org.hibernate.type.TextType")
@@ -66,7 +62,7 @@ public class Question implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
-    @IndexedEmbedded(includePaths = { "id", "fullName"})
+    @IndexedEmbedded(includePaths = {"id", "fullName"})
     @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     private User user;
 
@@ -76,7 +72,7 @@ public class Question implements Serializable {
             joinColumns = @JoinColumn(name = "question_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     @PropertyBinding(binder = @PropertyBinderRef(type = TagsBinder.class))
-    private  List<Tag> tags = new ArrayList<>();
+    private List<Tag> tags = new ArrayList<>();
 
     @Column(name = "last_redaction_date", nullable = false)
     @Type(type = "org.hibernate.type.LocalDateTimeType")
@@ -99,9 +95,6 @@ public class Question implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "question", orphanRemoval = true)
     @PropertyBinding(binder = @PropertyBinderRef(type = VotesQuestionCountBinder.class))
     private List<VoteQuestion> voteQuestions = new ArrayList<>();
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "question", orphanRemoval = true)
-    private List<QuestionViewed> userViewedQuestions;
 
     @PrePersist
     private void prePersistFunction() {
@@ -136,7 +129,6 @@ public class Question implements Serializable {
         Question question = (Question) o;
         return Objects.equals(id, question.id) &&
                 Objects.equals(title, question.title) &&
-                Objects.equals(viewCount, question.viewCount) &&
                 Objects.equals(description, question.description) &&
                 Objects.equals(persistDateTime, question.persistDateTime) &&
                 Objects.equals(user, question.user) &&
@@ -147,6 +139,6 @@ public class Question implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, viewCount, description, persistDateTime, user, tags, lastUpdateDateTime, isDeleted);
+        return Objects.hash(id, title, description, persistDateTime, user, tags, lastUpdateDateTime, isDeleted);
     }
 }

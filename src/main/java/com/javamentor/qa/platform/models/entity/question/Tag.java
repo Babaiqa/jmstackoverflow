@@ -13,6 +13,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,7 +36,6 @@ public class Tag implements Serializable {
     @Column
     @GenericField(projectable = Projectable.YES)
     private String name;
-
 
     @Column
     @FullTextField(projectable = Projectable.YES)
