@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.converters;
 
+import com.javamentor.qa.platform.dao.abstracts.model.QuestionViewedDao;
 import com.javamentor.qa.platform.models.dto.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.QuestionUpdateDto;
@@ -16,6 +17,8 @@ public abstract class QuestionConverter {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private QuestionViewedDao questionViewedDao;
 
     @Mapping(source = "question.id", target = "id")
     @Mapping(source = "question.user.id", target = "authorId")
@@ -23,7 +26,7 @@ public abstract class QuestionConverter {
     @Mapping(source = "question.description", target = "description")
     @Mapping(source = "question.user.fullName", target = "authorName")
     @Mapping(source = "question.user.imageLink", target = "authorImage")
-    @Mapping(source = "question.viewCount", target = "viewCount")
+    @Mapping(expression = "java(this.getViewsAmount(question))", target = "viewCount")
     @Mapping(source = "question.tags", target = "listTagDto")
     @Mapping(source = "question.persistDateTime", target = "persistDateTime")
     @Mapping(source = "question.lastUpdateDateTime", target = "lastUpdateDateTime")
@@ -42,4 +45,8 @@ public abstract class QuestionConverter {
     @Mapping(source = "questionUpdateDto.description", target ="description")
     public abstract Question questionUpdateDtoToQuestion(Question questionFromDB, QuestionUpdateDto questionUpdateDto);
 
+    public int getViewsAmount (Question question) {
+        return questionViewedDao.getQuestionViewedListByQuestionId(question.getId()).size();
+    }
 }
+
