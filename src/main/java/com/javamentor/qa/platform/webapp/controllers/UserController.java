@@ -57,10 +57,11 @@ public class UserController {
                           ReputationService reputationService,
                           ReputationDtoService reputationDtoService,
                           AnswerDtoService answerDtoService,
-                          QuestionDtoService questionDtoService, BookmarkDtoService bookmarkDtoService, TopUsersByTagDtoService topUsersByTagDtoService) {
-                          BookmarkDtoService bookmarkDtoService,
                           QuestionDtoService questionDtoService,
-                          BookMarksService bookMarksService, QuestionService questionService) {
+                          BookmarkDtoService bookmarkDtoService,
+                          TopUsersByTagDtoService topUsersByTagDtoService,
+                          BookMarksService bookMarksService,
+                          QuestionService questionService) {
 
         this.userService = userService;
         this.userConverter = userConverter;
@@ -416,6 +417,21 @@ public class UserController {
         return  ResponseEntity.ok(resultPage);
     }
 
+    @GetMapping("tag/{tagId}/topUsers")
+    @ApiOperation(value = "Get page List<UserDto> order by tagId." +
+            "Max size entries on page= "+ MAX_ITEMS_ON_PAGE, response = List.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Request success",
+                    response = List.class)
+    })
+    public ResponseEntity<?> getTopUsersByTagId(
+            @PathVariable("tagId") long id) {
+
+        Optional<UserDto> resultTopUser = topUsersByTagDtoService.getTopUsersDtoByTagId(id);
+
+        return  ResponseEntity.ok(resultTopUser);
+    }
+
     @GetMapping("bookmarks")
     @ApiOperation(value = "Return message(Object)", response = String.class)
     @ApiResponses({
@@ -451,21 +467,6 @@ public class UserController {
         }
 
         return  ResponseEntity.ok().body("The bookmark exists");
-    }
-
-    @GetMapping("tag/{tagId}/topUsers")
-    @ApiOperation(value = "Get page List<UserDto> order by tagId." +
-            "Max size entries on page= "+ MAX_ITEMS_ON_PAGE, response = List.class)
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Request success",
-                    response = List.class)
-    })
-    public ResponseEntity<?> getTopUsersByTagId(
-            @PathVariable("tagId") long id) {
-
-        Optional<UserDto> resultTopUser = topUsersByTagDtoService.getTopUsersDtoByTagId(id);
-
-        return  ResponseEntity.ok(resultTopUser);
     }
 
     @PostMapping("bookmarks/{questionId}")
