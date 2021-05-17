@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.dao.search.bridge.TagsBinder;
 import com.javamentor.qa.platform.dao.search.bridge.VotesQuestionCountBinder;
 import com.javamentor.qa.platform.exception.ConstrainException;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.UserFavoriteQuestion;
 import lombok.*;
