@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.models.entity.BookMarks;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.Optional;
 
@@ -24,4 +25,16 @@ public class BookMarksDaoImpl extends ReadWriteDaoImpl<BookMarks, Long> implemen
                 .setParameter("userId", userId);
         return SingleResultUtil.getSingleResultOrNull(query);
     }
+
+    @Override
+    public Optional<BookMarks> getBookmarkByQuestionId(Long questionId, Long userId) {
+
+        TypedQuery<BookMarks> query = entityManager.createQuery(
+                "from BookMarks where question.id = :qId and user.id = :uId", BookMarks.class)
+                .setParameter("qId", questionId)
+                .setParameter("uId", userId);
+
+        return SingleResultUtil.getSingleResultOrNull(query);
+    }
+
 }
