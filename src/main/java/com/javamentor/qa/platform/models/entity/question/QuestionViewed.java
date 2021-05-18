@@ -21,7 +21,6 @@ public class QuestionViewed implements Serializable {
 
 
     @Id
-
     @GeneratedValue(generator = "QuestionViewed_seq")
     private Long id;
 
@@ -37,11 +36,6 @@ public class QuestionViewed implements Serializable {
     @Type(type = "org.hibernate.type.LocalDateTimeType")
     private LocalDateTime localDateTime = LocalDateTime.now();
 
-    public QuestionViewed(Long id, User user, Question question) {
-        this.id = id;
-        this.user = user;
-        this.question = question;
-    }
 
     @Override
     public boolean equals(Object o) {

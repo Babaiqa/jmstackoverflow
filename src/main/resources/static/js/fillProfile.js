@@ -1,12 +1,10 @@
-fillProfile()
-fillAnswers()
-fillQuestions()
-fillTags()
-fillBookmarks()
 
 $(document).ready(function () {
-
-
+    fillProfile()
+    fillAnswers()
+    fillQuestions()
+    fillTags()
+    fillBookmarks()
 });
 
 function fillProfile() {
@@ -56,8 +54,7 @@ function fillProfile() {
                     if (data2.items.length < 4) {
                         document.querySelector('#reputationMore').innerHTML = '';
                     }
-                    for (var i=0; i < 3; i++) {
-
+                    for (var i=0; i < data2.items.length; i++) {
 
                         $('#countRep' + (i + 1)).append(
                             "+" + data2.items[i].count + " <br/> репутации"
@@ -89,9 +86,7 @@ function fillAnswers() {
             if (dat.items.length < 4) {
                 document.querySelector('#answersMore').innerHTML = '';
             }
-            for (let i = 0; i < 3; i++){
-
-
+            for (let i = 0; i < dat.items.length; i++){
 
                 $('#voices' + (i + 1)).append(
                     dat.items[i].countValuable + "<br/>" + " голосов"
@@ -114,13 +109,14 @@ function fillQuestions() {
     })
         .then(response => response.json())
         .then(function (dat) {
+
             if (dat.items.length < 4) {
                 document.querySelector('#questionMore').innerHTML = '';
             }
             $('#countQuestions').append(
                 dat.totalResultCount
             )
-            for (let i = 0; i < 3; i++){
+            for (let i = 0; i < dat.items.length; i++){
                 document.getElementById("questionLink" + (i + 1)).href="/question/" + dat.items[i].id
 
                 $('#voicesQ' + (i + 1)).append(

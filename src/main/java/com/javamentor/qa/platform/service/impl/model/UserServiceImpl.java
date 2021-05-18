@@ -36,6 +36,11 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
     }
 
     @Override
+    public Optional<User> getUserById(Long id) {
+        return userDao.getUserById(id);
+    }
+
+    @Override
     public void persist(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         super.persist(user);
