@@ -82,9 +82,6 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
         voteAnswer = new VoteAnswer(user, answer, 1);
         voteAnswerDao.persist(voteAnswer);
 
-        if (answerUpVote(question, user, answer) == null) {
-            throw new VoteException("Can't change vote");
-        }
         return voteAnswer;
     }
 
