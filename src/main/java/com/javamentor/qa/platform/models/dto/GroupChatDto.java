@@ -5,23 +5,26 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GroupChatDto {
+public class GroupChatDto implements Serializable {
 
     private Long id;
     private Long chatId;
+    private String title;
     private Set<UserDto> users;
 
     @Override
     public String toString() {
-        return "{" +
+        return "GroupChatDto{" +
                 "id=" + id +
-                ", chat=" + chatId +
+                ", chatId=" + chatId +
+                ", title='" + title + '\'' +
                 ", users=" + users +
                 '}';
     }

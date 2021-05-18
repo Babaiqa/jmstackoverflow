@@ -16,10 +16,15 @@ public class GroupChatDaoImpl extends ReadWriteDaoImpl<GroupChat, Long> implemen
     private EntityManager entityManager;
 
     @Override
-    public boolean existsGroupChatByTitle(String title) {
+    public boolean existsGroupChatByTitleAndId(String title, Long userId) {
         return (entityManager.unwrap(Session.class)
-                .createQuery("select gc.chat.title from GroupChat gc where gc.chat.title = :title")
+                .createNativeQuery("select ch.title, gu.user_id " +
+                        "from Chat ch " +
+                        "join groupchat_has_users gu on gu.chat_id = ch.id and gu.user_id = :userId " +
+                        "join group_chat gc on ch.id = gc.chat_id " +
+                        "where ch.title = :title and gu.user_id = :userId")
                 .setParameter("title", title)
+                .setParameter("userId", userId)
                 .unwrap(Query.class)
                 .getResultList()).isEmpty();
     }

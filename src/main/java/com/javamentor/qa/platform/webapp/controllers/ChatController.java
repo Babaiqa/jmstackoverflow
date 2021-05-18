@@ -1,9 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
-import com.javamentor.qa.platform.models.dto.MessageDto;
-import com.javamentor.qa.platform.models.dto.ChatDto;
-import com.javamentor.qa.platform.models.dto.PageDto;
-import com.javamentor.qa.platform.models.dto.SingleChatDto;
+import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.chat.Chat;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
@@ -17,6 +14,7 @@ import com.javamentor.qa.platform.service.abstracts.model.ChatService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
 import com.javamentor.qa.platform.service.abstracts.model.MessageService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.webapp.converters.GroupChatConverter;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.RequestEntity;
@@ -27,10 +25,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @Validated
@@ -47,11 +43,11 @@ public class ChatController {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final UserService userService;
     private final GroupChatService groupChatService;
-
+    private final GroupChatConverter groupChatConverter;
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
-    public ChatController(SingleChatDtoService singleChatDtoService, SecurityHelper securityHelper, ChatDtoService chatDtoService, ChatService chatService, MessageDtoService messageDtoService, MessageService messageService, SimpMessagingTemplate simpMessagingTemplate, UserService userService, GroupChatService groupChatService) {
+    public ChatController(SingleChatDtoService singleChatDtoService, SecurityHelper securityHelper, ChatDtoService chatDtoService, ChatService chatService, MessageDtoService messageDtoService, MessageService messageService, SimpMessagingTemplate simpMessagingTemplate, UserService userService, GroupChatService groupChatService, GroupChatConverter groupChatConverter) {
         this.singleChatDtoService = singleChatDtoService;
         this.securityHelper = securityHelper;
         this.chatDtoService = chatDtoService;
@@ -61,6 +57,7 @@ public class ChatController {
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.userService = userService;
         this.groupChatService = groupChatService;
+        this.groupChatConverter = groupChatConverter;
     }
 
 
@@ -167,22 +164,27 @@ public class ChatController {
     }
 
     @PostMapping(path = "/addGroupChat")
-    @ApiOperation(value = "add Group chat", response = String.class)
+    @ApiOperation(value = "add Group chat")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Add group chat"),
-            @ApiResponse(code = 400, message = "Title don`t exists")
+            @ApiResponse(code = 200, message = "Add group chat", response = GroupChatDto.class),
+            @ApiResponse(code = 400, message = "Title don`t exists", response = String.class)
     })
     public ResponseEntity<?> createGroupChat(@RequestParam String title){
-        if(!groupChatService.existsGroupChatByTitle(title)){
+        Long userId = securityHelper.getPrincipal().getId();
+        if(!groupChatService.existsGroupChatByTitleAndId(title, userId)){
             return ResponseEntity.badRequest().body("Title don`t exists");
         }
+        Set<User> userSet = new HashSet<>();
+        userSet.add(userService.getById(userId).get());
+
         GroupChat groupChat = new GroupChat();
         groupChat.setChat(Chat.builder()
                 .title(title)
                 .chatType(ChatType.GROUP)
                 .build());
-        groupChatService.persist(groupChat);
-        return ResponseEntity.ok().body("Add group chat");
-    }
+        groupChat.setUsers(userSet);
 
+        groupChatService.persist(groupChat);
+        return ResponseEntity.ok(groupChatConverter.groupChatToGroupChatDto(groupChat));
+    }
 }

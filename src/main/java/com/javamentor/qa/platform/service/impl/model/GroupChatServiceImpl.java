@@ -17,8 +17,8 @@ public class GroupChatServiceImpl extends ReadWriteServiceImpl<GroupChat, Long> 
     private GroupChatDao groupChatDao;
 
     @Override
-    public boolean existsGroupChatByTitle(String title) {
-        return groupChatDao.existsGroupChatByTitle(title);
+    public boolean existsGroupChatByTitleAndId(String title, Long userId) {
+        return groupChatDao.existsGroupChatByTitleAndId(title, userId);
     }
 
 }
