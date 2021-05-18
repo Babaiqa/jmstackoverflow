@@ -36,4 +36,12 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
                 .getResultList().stream().findFirst();
         return resultList;
     }
+
+    @Override
+    public Optional<User> getUserById(Long id) {
+        return entityManager.unwrap(Session.class)
+                .createQuery("SELECT u FROM User as u WHERE u.id = :id", User.class)
+                .setParameter("id", id)
+                .getResultList().stream().findFirst();
+    }
 }

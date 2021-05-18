@@ -30,6 +30,7 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addViewController("/question/{questionId}").setViewName(HEADER_SIDEBAR_FOOTER);
         registry.addViewController("/user/profile").setViewName("userPage");
         registry.addViewController("/search").setViewName(HEADER_SIDEBAR_FOOTER);
+        registry.addViewController("/user/edit-profile").setViewName("edit-profile");
     }
 
     @Override
