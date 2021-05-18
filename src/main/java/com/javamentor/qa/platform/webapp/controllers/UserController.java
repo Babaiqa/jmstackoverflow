@@ -229,20 +229,40 @@ public class UserController {
     }
 
 
-    @PostMapping("public/info")
+    @GetMapping("public-info")
+    @ApiOperation(value = "Get user public info", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "User public info", response = String.class),
+            @ApiResponse(code = 400, message = "User not found", response = String.class)
+    })
+    @Validated(OnUpdate.class)
+    public ResponseEntity<?> getInfo() {
+
+        Optional<User> optionalUser = userService.getUserById(securityHelper.getPrincipal().getId());
+
+        if(!optionalUser.isPresent()) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        UserPublicInfoDto userPublicInfoDto = userConverter.userToUserPublicInfoDto(optionalUser.get());
+
+        return ResponseEntity.ok(userPublicInfoDto);
+    }
+
+
+    @PostMapping("public-info")
     @ApiOperation(value = "Update user public info", response = String.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "User public info updated successfully", response = String.class),
             @ApiResponse(code = 400, message = "Something goes wrong", response = String.class)
     })
-    @Validated(OnUpdate.class)
-    public ResponseEntity<?> updateUserDtoPublicInfo(@Valid @RequestBody UserPublicInfoDto userPublicInfoDto) {
+    public ResponseEntity<?> updateUserDtoPublicInfo(@RequestBody UserPublicInfoDto userPublicInfoDto) {
 
         User user = userConverter.userPublicInfoDtoToUser(userPublicInfoDto);
         user.setId(securityHelper.getPrincipal().getId());
         userService.updateUserPublicInfo(user);
 
-        return ResponseEntity.ok(userConverter.userToUserPublicInfoDto(user));
+        return ResponseEntity.ok("User public info updated successfully");
     }
 
 
