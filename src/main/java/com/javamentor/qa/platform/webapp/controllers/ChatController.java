@@ -27,10 +27,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @Validated
@@ -176,17 +173,23 @@ public class ChatController {
             @ApiResponse(code = 200, message = "adds single chat", response = SingleChat.class),
             @ApiResponse(code = 400, message = "single chat was not added", response = String.class)
     })
-    public ResponseEntity<?> addSingleChat(@Valid @RequestBody CreateSingleChatDto createSingleChatDto){
+    public ResponseEntity<?> addSingleChat(@Valid @RequestBody CreateSingleChatDto createSingleChatDto, @RequestParam String message){
         User user = securityHelper.getPrincipal();
 
         if(!userService.existsById(createSingleChatDto.getUserTwoId())){
             ResponseEntity.badRequest().body("userTwoId doesn't exist");
         }
-        SingleChat singleChat = new SingleChat();
-        singleChat.getChat().setTitle(createSingleChatDto.getTitle());
-        singleChat.setUserOne(userService.getById(user.getId()).get());
-        singleChat.setUseTwo(userService.getById(createSingleChatDto.getUserTwoId()).get());
+
+        createSingleChatDto.setUserOneId(user.getId());
+        SingleChat singleChat = singleChatConverter.createSingleChatDtoToSingleChat(createSingleChatDto);
         singleChatService.persist(singleChat);
-        return ResponseEntity.ok(singleChatConverter.singleChatToSingleChatDto(singleChat));
+        messageService.persist(new Message(message, user, singleChat.getChat()));
+        Map<String, String> messageMap = new HashMap<>();
+        messageMap.put("message", message);
+        messageMap.put("userSender", user.getId().toString());
+        simpMessagingTemplate.convertAndSend("/chat/" + singleChat.getId() + "/message", messageMap);
+        SingleChatDto singleChatDto = singleChatConverter.singleChatToSingleChatDto(singleChat);
+        singleChatDto.setMessage(message);
+        return ResponseEntity.ok(singleChatDto);
     }
 }
