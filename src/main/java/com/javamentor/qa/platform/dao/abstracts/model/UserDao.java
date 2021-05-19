@@ -8,4 +8,6 @@ public interface UserDao extends ReadWriteDao<User, Long> {
     Optional<User> getUserByEmail(String email);
 
     Optional<User> getUserByName(String name);
+
+    Optional<User> getUserById(Long id);
 }

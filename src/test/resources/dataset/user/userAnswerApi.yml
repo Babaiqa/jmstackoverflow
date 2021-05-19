@@ -15,7 +15,6 @@ question:
   - id: 1
     description: "some description for first question"
     title: "Question number one"
-    view_count: 3
     user_id: 1
     persist_date: "2020-10-25 13:58:56"
     is_deleted: false
@@ -24,7 +23,6 @@ question:
   - id: 2
     description: "some description for second question"
     title: "Question number two"
-    view_count: 3
     user_id: 1
     persist_date: "2020-10-25 13:58:56"
     is_deleted: false
@@ -33,7 +31,6 @@ question:
   - id: 3
     description: "some description for third question"
     title: "Question number three"
-    view_count: 3
     user_id: 1
     persist_date: "2020-10-25 13:58:56"
     is_deleted: false

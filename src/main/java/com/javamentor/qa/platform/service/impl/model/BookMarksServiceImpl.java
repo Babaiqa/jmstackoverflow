@@ -21,4 +21,10 @@ public class BookMarksServiceImpl extends ReadWriteServiceImpl<BookMarks, Long> 
     public Optional<BookMarks> getBookmarkByUserId(Long userId) {
         return bookMarksDao.getBookmarkByUserId(userId);
     }
+
+    @Override
+    public Optional<BookMarks> getBookmarkByQuestionId(Long questionId, Long userId) {
+        return bookMarksDao.getBookmarkByQuestionId(questionId, userId);
+    }
+
 }

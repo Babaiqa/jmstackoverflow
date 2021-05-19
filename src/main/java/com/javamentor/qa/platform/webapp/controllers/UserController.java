@@ -1,22 +1,20 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
-import antlr.build.Tool;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.BookMarks;
-import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
+import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.models.util.OnUpdate;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.*;
 import com.javamentor.qa.platform.service.abstracts.model.BookMarksService;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.converters.UserConverter;
 import io.swagger.annotations.*;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
@@ -44,6 +42,11 @@ public class UserController {
     private final ReputationDtoService reputationDtoService;
 
     private final BookmarkDtoService bookmarkDtoService;
+    private final BookMarksService bookMarksService;
+
+    private final QuestionService questionService;
+
+    private final TopUsersByTagDtoService topUsersByTagDtoService;
 
     @Autowired
     public UserController(UserService userService,
@@ -54,7 +57,11 @@ public class UserController {
                           ReputationService reputationService,
                           ReputationDtoService reputationDtoService,
                           AnswerDtoService answerDtoService,
-                          BookmarkDtoService bookmarkDtoService, QuestionDtoService questionDtoService) {
+                          QuestionDtoService questionDtoService,
+                          BookmarkDtoService bookmarkDtoService,
+                          TopUsersByTagDtoService topUsersByTagDtoService,
+                          BookMarksService bookMarksService,
+                          QuestionService questionService) {
 
         this.userService = userService;
         this.userConverter = userConverter;
@@ -64,8 +71,11 @@ public class UserController {
         this.reputationService = reputationService;
         this.reputationDtoService = reputationDtoService;
         this.answerDtoService = answerDtoService;
-        this.bookmarkDtoService = bookmarkDtoService;
         this.questionDtoService = questionDtoService;
+        this.bookMarksService = bookMarksService;
+        this.questionService = questionService;
+        this.bookmarkDtoService = bookmarkDtoService;
+        this.topUsersByTagDtoService = topUsersByTagDtoService;
     }
 
     // Examples for Swagger
@@ -219,20 +229,40 @@ public class UserController {
     }
 
 
-    @PostMapping("public/info")
+    @GetMapping("public-info")
+    @ApiOperation(value = "Get user public info", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "User public info", response = String.class),
+            @ApiResponse(code = 400, message = "User not found", response = String.class)
+    })
+    @Validated(OnUpdate.class)
+    public ResponseEntity<?> getInfo() {
+
+        Optional<User> optionalUser = userService.getUserById(securityHelper.getPrincipal().getId());
+
+        if(!optionalUser.isPresent()) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        UserPublicInfoDto userPublicInfoDto = userConverter.userToUserPublicInfoDto(optionalUser.get());
+
+        return ResponseEntity.ok(userPublicInfoDto);
+    }
+
+
+    @PostMapping("public-info")
     @ApiOperation(value = "Update user public info", response = String.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "User public info updated successfully", response = String.class),
             @ApiResponse(code = 400, message = "Something goes wrong", response = String.class)
     })
-    @Validated(OnUpdate.class)
-    public ResponseEntity<?> updateUserDtoPublicInfo(@Valid @RequestBody UserPublicInfoDto userPublicInfoDto) {
+    public ResponseEntity<?> updateUserDtoPublicInfo(@RequestBody UserPublicInfoDto userPublicInfoDto) {
 
         User user = userConverter.userPublicInfoDtoToUser(userPublicInfoDto);
         user.setId(securityHelper.getPrincipal().getId());
         userService.updateUserPublicInfo(user);
 
-        return ResponseEntity.ok(userConverter.userToUserPublicInfoDto(user));
+        return ResponseEntity.ok("User public info updated successfully");
     }
 
 
@@ -407,6 +437,21 @@ public class UserController {
         return  ResponseEntity.ok(resultPage);
     }
 
+    @GetMapping("tag/{tagId}/topUsers")
+    @ApiOperation(value = "Get page List<UserDto> order by tagId." +
+            "Max size entries on page= "+ MAX_ITEMS_ON_PAGE, response = List.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Request success",
+                    response = List.class)
+    })
+    public ResponseEntity<?> getTopUsersByTagId(
+            @PathVariable("tagId") long id) {
+
+        Optional<UserDto> resultTopUser = topUsersByTagDtoService.getTopUsersDtoByTagId(id);
+
+        return  ResponseEntity.ok(resultTopUser);
+    }
+
     @GetMapping("bookmarks")
     @ApiOperation(value = "Return message(Object)", response = String.class)
     @ApiResponses({
@@ -419,9 +464,76 @@ public class UserController {
 
         Optional<BookmarkDto> resultBookmark = bookmarkDtoService.getBookmarkDtoByUserId(user.getId());
 
-        return  resultBookmark.isPresent() ? ResponseEntity.ok().body(resultBookmark.get()):
-                 ResponseEntity.badRequest().body("Bad request");
+        return  resultBookmark.isPresent()
+                    ? ResponseEntity.ok().body(resultBookmark.get())
+                    : ResponseEntity.badRequest().body("Bad request");
     }
 
+    @GetMapping("bookmarks/{questionId}")
+    @ApiOperation(value = "Return message(string)", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "The bookmark exists", response = String.class),
+            @ApiResponse(code = 400, message = "There is no such bookmark", response = String.class)
+    })
+    public ResponseEntity<?> getBookmarkByQuestionId(
+            @ApiParam(name = "questionId", value = "Question id. Type long", required = true, example = "10")
+            @PathVariable("questionId") long questionId) {
+
+        User user = securityHelper.getPrincipal();
+        Optional<BookMarks> bookmarkByQuestionId = bookMarksService.getBookmarkByQuestionId(questionId, user.getId());
+
+        if (!bookmarkByQuestionId.isPresent()) {
+            return ResponseEntity.badRequest().body("There is no such bookmark");
+        }
+
+        return  ResponseEntity.ok().body("The bookmark exists");
+    }
+
+    @PostMapping("bookmarks/{questionId}")
+    @ApiOperation(value = "Return message(String)", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Bookmark added successfully", response = String.class),
+            @ApiResponse(code = 400, message = "There is no such question", response = String.class)
+    })
+    public ResponseEntity<?> addBookmark(
+            @ApiParam(name = "questionId", value = "Question id. Type long", required = true, example = "10")
+            @PathVariable("questionId") long questionId) {
+
+        Optional<Question> optionalQuestion = questionService.getById(questionId);
+        if (!optionalQuestion.isPresent()) {
+            return ResponseEntity.badRequest().body("There is no such question");
+        }
+        User user = securityHelper.getPrincipal();
+
+        BookMarks bookMarks = new BookMarks();
+        bookMarks.setQuestion(optionalQuestion.get());
+        bookMarks.setUser(user);
+
+        bookMarksService.persist(bookMarks);
+
+        return  ResponseEntity.ok().body("Bookmark added successfully");
+    }
+
+    @DeleteMapping("bookmarks/{questionId}")
+    @ApiOperation(value = "Return message(string)", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "The bookmark deleted", response = String.class),
+            @ApiResponse(code = 400, message = "There is no such bookmark", response = String.class)
+    })
+    public ResponseEntity<?> removeBookmark(
+            @ApiParam(name = "questionId", value = "Question id. Type long", required = true, example = "10")
+            @PathVariable("questionId") long questionId) {
+
+        User user = securityHelper.getPrincipal();
+        Optional<BookMarks> bookmarkByQuestionId = bookMarksService.getBookmarkByQuestionId(questionId, user.getId());
+
+        if (!bookmarkByQuestionId.isPresent()) {
+            return ResponseEntity.badRequest().body("There is no such question");
+        }
+
+        bookMarksService.delete(bookmarkByQuestionId.get());
+
+        return  ResponseEntity.ok().body("The bookmark deleted");
+    }
 
 }
