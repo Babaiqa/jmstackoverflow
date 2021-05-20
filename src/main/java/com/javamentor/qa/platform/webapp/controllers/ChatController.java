@@ -3,8 +3,11 @@ package com.javamentor.qa.platform.webapp.controllers;
 import com.javamentor.qa.platform.dao.abstracts.model.SingleChatDao;
 import com.javamentor.qa.platform.dao.impl.model.SingleChatDaoImpl;
 import com.javamentor.qa.platform.models.dto.*;
+import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.chat.Chat;
 import com.javamentor.qa.platform.models.entity.chat.SingleChat;
+import com.javamentor.qa.platform.models.entity.chat.ChatType;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.service.abstracts.dto.MessageDtoService;
@@ -13,12 +16,15 @@ import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.SingleChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.ChatService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
 import com.javamentor.qa.platform.service.abstracts.model.MessageService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.converters.SingleChatConverter;
+import com.javamentor.qa.platform.webapp.converters.GroupChatConverter;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -26,6 +32,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.*;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import java.util.*;
 
@@ -46,9 +54,12 @@ public class ChatController {
     private final UserService userService;
     private final SingleChatService singleChatService;
 
+    private final GroupChatService groupChatService;
+    private final GroupChatConverter groupChatConverter;
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
+    public ChatController(SingleChatDtoService singleChatDtoService, SecurityHelper securityHelper, ChatDtoService chatDtoService, ChatService chatService, MessageDtoService messageDtoService, MessageService messageService, SimpMessagingTemplate simpMessagingTemplate, UserService userService, GroupChatService groupChatService, GroupChatConverter groupChatConverter) {
     public ChatController(SingleChatDtoService singleChatDtoService, SecurityHelper securityHelper, ChatDtoService chatDtoService, ChatService chatService, MessageDtoService messageDtoService, MessageService messageService, SingleChatConverter singleChatConverter, SimpMessagingTemplate simpMessagingTemplate, UserService userService, SingleChatService singleChatService) {
         this.singleChatDtoService = singleChatDtoService;
         this.securityHelper = securityHelper;
@@ -59,6 +70,8 @@ public class ChatController {
         this.singleChatConverter = singleChatConverter;
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.userService = userService;
+        this.groupChatService = groupChatService;
+        this.groupChatConverter = groupChatConverter;
         this.singleChatService = singleChatService;
     }
 
@@ -165,6 +178,30 @@ public class ChatController {
 
     }
 
+    @PostMapping(path = "/addGroupChat")
+    @ApiOperation(value = "add Group chat")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Add group chat", response = GroupChatDto.class),
+            @ApiResponse(code = 400, message = "Title don`t exists", response = String.class)
+    })
+    public ResponseEntity<?> createGroupChat(@RequestParam String title){
+        Long userId = securityHelper.getPrincipal().getId();
+        if(!groupChatService.existsGroupChatByTitleAndId(title, userId)){
+            return ResponseEntity.badRequest().body("Title don`t exists");
+        }
+        Set<User> userSet = new HashSet<>();
+        userSet.add(userService.getById(userId).get());
+
+        GroupChat groupChat = new GroupChat();
+        groupChat.setChat(Chat.builder()
+                .title(title)
+                .chatType(ChatType.GROUP)
+                .build());
+        groupChat.setUsers(userSet);
+
+        groupChatService.persist(groupChat);
+        return ResponseEntity.ok(groupChatConverter.groupChatToGroupChatDto(groupChat));
+    }
     @PostMapping("/single/add")
     @Validated(OnCreate.class)
     @ResponseBody

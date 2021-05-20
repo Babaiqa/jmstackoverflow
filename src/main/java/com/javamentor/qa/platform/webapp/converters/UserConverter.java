@@ -64,4 +64,8 @@ public abstract class UserConverter {
     @Mapping(source = "imageLink", target = "avatarUrl")
     @Mapping(source = "role.name", target = "role")
     public abstract PrincipalDto userToPrincipalDto(User user);
+
+    @Mapping(source = "user.imageLink", target = "linkImage")
+    public abstract UserDto userToUserDto(User user);
 }
+
