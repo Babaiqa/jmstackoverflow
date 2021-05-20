@@ -1,10 +1,15 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
+import com.javamentor.qa.platform.dao.abstracts.model.SingleChatDao;
+import com.javamentor.qa.platform.dao.impl.model.SingleChatDaoImpl;
+import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.chat.Chat;
+import com.javamentor.qa.platform.models.entity.chat.SingleChat;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.service.abstracts.dto.MessageDtoService;
 import com.javamentor.qa.platform.models.entity.chat.Message;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
@@ -13,7 +18,9 @@ import com.javamentor.qa.platform.service.abstracts.dto.SingleChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.ChatService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
 import com.javamentor.qa.platform.service.abstracts.model.MessageService;
+import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.webapp.converters.SingleChatConverter;
 import com.javamentor.qa.platform.webapp.converters.GroupChatConverter;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +34,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import javax.validation.Valid;
+import java.util.*;
 
 @RestController
 @Validated
@@ -40,24 +49,30 @@ public class ChatController {
     private final SingleChatDtoService singleChatDtoService;
     private final MessageDtoService messageDtoService;
     private final MessageService messageService;
+    private final SingleChatConverter singleChatConverter;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final UserService userService;
+    private final SingleChatService singleChatService;
+
     private final GroupChatService groupChatService;
     private final GroupChatConverter groupChatConverter;
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
     public ChatController(SingleChatDtoService singleChatDtoService, SecurityHelper securityHelper, ChatDtoService chatDtoService, ChatService chatService, MessageDtoService messageDtoService, MessageService messageService, SimpMessagingTemplate simpMessagingTemplate, UserService userService, GroupChatService groupChatService, GroupChatConverter groupChatConverter) {
+    public ChatController(SingleChatDtoService singleChatDtoService, SecurityHelper securityHelper, ChatDtoService chatDtoService, ChatService chatService, MessageDtoService messageDtoService, MessageService messageService, SingleChatConverter singleChatConverter, SimpMessagingTemplate simpMessagingTemplate, UserService userService, SingleChatService singleChatService) {
         this.singleChatDtoService = singleChatDtoService;
         this.securityHelper = securityHelper;
         this.chatDtoService = chatDtoService;
         this.chatService = chatService;
         this.messageDtoService = messageDtoService;
         this.messageService = messageService;
+        this.singleChatConverter = singleChatConverter;
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.userService = userService;
         this.groupChatService = groupChatService;
         this.groupChatConverter = groupChatConverter;
+        this.singleChatService = singleChatService;
     }
 
 
@@ -186,5 +201,32 @@ public class ChatController {
 
         groupChatService.persist(groupChat);
         return ResponseEntity.ok(groupChatConverter.groupChatToGroupChatDto(groupChat));
+    }
+    @PostMapping("/single/add")
+    @Validated(OnCreate.class)
+    @ResponseBody
+    @ApiOperation(value = "add single chat", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "adds single chat", response = SingleChat.class),
+            @ApiResponse(code = 400, message = "single chat was not added", response = String.class)
+    })
+    public ResponseEntity<?> addSingleChat(@Valid @RequestBody CreateSingleChatDto createSingleChatDto, @RequestParam String message){
+        User user = securityHelper.getPrincipal();
+
+        if(!userService.existsById(createSingleChatDto.getUserTwoId())){
+            ResponseEntity.badRequest().body("userTwoId doesn't exist");
+        }
+
+        createSingleChatDto.setUserOneId(user.getId());
+        SingleChat singleChat = singleChatConverter.createSingleChatDtoToSingleChat(createSingleChatDto);
+        singleChatService.persist(singleChat);
+        messageService.persist(new Message(message, user, singleChat.getChat()));
+        Map<String, String> messageMap = new HashMap<>();
+        messageMap.put("message", message);
+        messageMap.put("userSender", user.getId().toString());
+        simpMessagingTemplate.convertAndSend("/chat/" + singleChat.getId() + "/message", messageMap);
+        SingleChatDto singleChatDto = singleChatConverter.singleChatToSingleChatDto(singleChat);
+        singleChatDto.setMessage(message);
+        return ResponseEntity.ok(singleChatDto);
     }
 }
