@@ -90,13 +90,13 @@ class PaginationQuestion {
                     "           </div>" +
                     //дивы с инфой юзера
                     "           <div class=\"user-info-gravatar d-flex\">" +
-                    "               <a href=\"#\" class=\"user-info-gravatar-link\">" +
+                    "               <a href=\"user/profile/" + response.items[i].authorId + "\" class=\"user-info-gravatar-link\">" +
                     "                   <div class=\"user-info-gravatar-wrapper\">" +
                     "                       <img src=\"" + response.items[i].authorImage + "\" alt=\"\" width=\"32\" height=\"32\" class=\"user-info-img\">" +
                     "                   </div>" +
                     "               </a>" +
                     "               <div class=\"user-info-details-wrapper\">" +
-                    "                   <a class=\"user-info-details-name\" href=\"#\">" + response.items[i].authorName + "</a>" +
+                    "                   <a class=\"user-info-details-name\" href=\"user/profile/" + response.items[i].authorId + "\">" + response.items[i].authorName + "</a>" +
                     "                   <div class=\"user-info-stats\">" +
                     "                       <span class=\"user-reputation\">" + "!!!" + "</span>" +
                     "                       <span class=\"user-gold active-stats\">" + "###" + "</span>" +

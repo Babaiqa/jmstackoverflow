@@ -3,7 +3,6 @@ package com.javamentor.qa.platform.webapp.controllers;
 import com.javamentor.qa.platform.dao.abstracts.model.SingleChatDao;
 import com.javamentor.qa.platform.dao.impl.model.SingleChatDaoImpl;
 import com.javamentor.qa.platform.models.dto.*;
-import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.chat.Chat;
 import com.javamentor.qa.platform.models.entity.chat.SingleChat;
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
@@ -35,7 +34,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
-import java.util.*;
+
 
 @RestController
 @Validated
@@ -53,14 +52,13 @@ public class ChatController {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final UserService userService;
     private final SingleChatService singleChatService;
-
     private final GroupChatService groupChatService;
     private final GroupChatConverter groupChatConverter;
+
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     @Autowired
-    public ChatController(SingleChatDtoService singleChatDtoService, SecurityHelper securityHelper, ChatDtoService chatDtoService, ChatService chatService, MessageDtoService messageDtoService, MessageService messageService, SimpMessagingTemplate simpMessagingTemplate, UserService userService, GroupChatService groupChatService, GroupChatConverter groupChatConverter) {
-    public ChatController(SingleChatDtoService singleChatDtoService, SecurityHelper securityHelper, ChatDtoService chatDtoService, ChatService chatService, MessageDtoService messageDtoService, MessageService messageService, SingleChatConverter singleChatConverter, SimpMessagingTemplate simpMessagingTemplate, UserService userService, SingleChatService singleChatService) {
+    public ChatController(SingleChatDtoService singleChatDtoService, SecurityHelper securityHelper, ChatDtoService chatDtoService, ChatService chatService, MessageDtoService messageDtoService, MessageService messageService, SimpMessagingTemplate simpMessagingTemplate, UserService userService, GroupChatService groupChatService, GroupChatConverter groupChatConverter, SingleChatConverter singleChatConverter, SingleChatService singleChatService) {
         this.singleChatDtoService = singleChatDtoService;
         this.securityHelper = securityHelper;
         this.chatDtoService = chatDtoService;

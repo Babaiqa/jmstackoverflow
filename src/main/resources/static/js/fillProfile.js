@@ -1,26 +1,41 @@
 
 $(document).ready(function () {
     fillProfile()
-    fillAnswers()
-    fillQuestions()
-    fillTags()
-    fillBookmarks()
 });
 
-function fillProfile() {
+function showPrincipalProperties(){
+    $('#mainBar').append(`
+        <a href="/user/edit-profile" class="s-navigation--item" data-shortcut="A">Редактировать</a>
+    `)
+    $('#userInfoAbout').append(`
+     <p>
+        <a href="/users/edit/{id}">Нажмите здесь для редактирования</a>
+     </p>
+    `)
+    $('#profileButton').remove()
 
-    fetch('/api/auth/principal', {
+}
+
+function fillProfile() {
+    let url = new URL(window.location.href)
+    let id = Number(url.pathname.split("/")[3])
+    if(id == 0){
+        showPrincipalProperties()
+    }
+    fetch('/api/user/userProfile/' + id, {
         method: 'GET',
         headers: new Headers({
             'Content-Type': 'application/json',
             'Authorization': $.cookie("token")
         })
     })
-        .then(response => (response.json()))
+        .then(response => response.json())
         .then(data => {
-
+            $('.reputation-number').append(
+                data['reputation']
+            )
             $('.avatar').append(
-                "<img src=\"" + data['avatarUrl'] + "\" alt=\"\" width=\"164\" height=\"164\" class=\"avatar-user\">"
+                "<img src=\"" + data['linkImage'] + "\" alt=\"\" width=\"164\" height=\"164\" class=\"avatar-user\">"
             )
             $('#name').append(
                 data['fullName']
@@ -28,19 +43,6 @@ function fillProfile() {
             $('#city').append(
                 "<div class=\"grid--cell fl1\">" + "Город: " + data['city'] + "</div>"
             )
-            fetch('/api/user/' + data['id'], {
-                method: 'GET',
-                headers: new Headers({
-                    'Content-Type': 'application/json',
-                    'Authorization': $.cookie("token")
-                })
-            })
-                .then(response => response.json())
-                .then(data1 => {
-                    $('.reputation-number').append(
-                        data1['reputation']
-                    )
-                })
 
             fetch('http://localhost:5557/api/user/reputation/history/' + data['id'] + '?page=1&size=1', {
                 method: 'GET',
@@ -54,7 +56,7 @@ function fillProfile() {
                     if (data2.items.length < 4) {
                         document.querySelector('#reputationMore').innerHTML = '';
                     }
-                    for (var i=0; i < data2.items.length; i++) {
+                    for (var i = 0; i < data2.items.length; i++) {
 
                         $('#countRep' + (i + 1)).append(
                             "+" + data2.items[i].count + " <br/> репутации"
@@ -65,13 +67,15 @@ function fillProfile() {
 
                     }
                 })
+            fillAnswers(data['id'])
+            fillQuestions(data['id'])
+            fillTags(data['id'])
+            fillBookmarks(data['id'])
         })
-
-
 }
 
-function fillAnswers() {
-    fetch('/api/user/currentUser/answers?page=1&size=3', {
+function fillAnswers(id) {
+    fetch('/api/user/userAnswers/' + id + '?page=1&size=3', {
         method: 'GET',
         headers: new Headers({
             'Content-Type': 'application/json',
@@ -99,8 +103,8 @@ function fillAnswers() {
         })
 }
 
-function fillQuestions() {
-    fetch('/api/user/currentUser/questions?page=1&size=3', {
+function fillQuestions(id) {
+    fetch('/api/user/userQuestions/'+ id +'?page=1&size=3', {
         method: 'GET',
         headers: new Headers({
             'Content-Type': 'application/json',
@@ -131,8 +135,8 @@ function fillQuestions() {
         })
 }
 
-function fillTags() {
-    fetch('/api/tag/tracked', {
+function fillTags(id) {
+    fetch('/api/tag/tracked/' + id, {
         method: 'GET',
         headers: new Headers({
             'Content-Type': 'application/json',
@@ -152,8 +156,8 @@ function fillTags() {
         })
 }
 
-function fillBookmarks() {
-    fetch('/api/user/bookmarks', {
+function fillBookmarks(id) {
+    fetch('/api/user/bookmarks/' + id, {
         method: 'GET',
         headers: new Headers({
             'Content-Type': 'application/json',
@@ -171,5 +175,6 @@ function fillBookmarks() {
             )
         })
 }
+
 
 

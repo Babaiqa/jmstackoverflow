@@ -257,13 +257,26 @@ public class TagController {
     }
 
     @GetMapping(value = "tracked")
-    @ApiOperation(value = "get list to tracked tags", response = TagDto.class)
+    @ApiOperation(value = "get list to tracked tags principal user", response = TagDto.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the List<TrackedTagDto> list", response = TagDto.class)
     })
     public ResponseEntity<?> getUserTrackedTags() {
         List<TrackedTagDto> tags =
                 tagDtoService.getTrackedTagsByPrincipal(securityHelper.getPrincipal().getId());
+        return ResponseEntity.ok(tags);
+    }
+
+    @GetMapping(value = "tracked/{id}")
+    @ApiOperation(value = "get list to tracked tags by user id", response = TagDto.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the List<TrackedTagDto> list", response = TagDto.class)
+    })
+    public ResponseEntity<?> getUserTrackedTagsById(
+            @ApiParam(name="id",value="type Long(or other described)", required = true, example="0")
+            @PathVariable Long id) {
+        List<TrackedTagDto> tags =
+                tagDtoService.getTrackedTagsByPrincipal(id);
         return ResponseEntity.ok(tags);
     }
 
