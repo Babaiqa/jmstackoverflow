@@ -10,18 +10,8 @@
     <div th:fragment="userPage" class="snippet-hidden align-self-start" id="userPage">
 
         <!-- HEADER START-->
-        <div th:fragment="header">
-            <nav class="navbar navbar-expand-sm  navbar-dark bg-dark text-white">
-                <div class="collapse navbar-collapse " id=upNavBar>
-                    <a href="/logout" class="btn btn-primary">LOGOUT</a>
-                </div>
-
-                <input class="form-control mr-sm-2 w-25 p-3" type="search" placeholder="Search" aria-label="Search">
-                <input type="button" class="btn btn-primary" value="Мой профиль"/>
-            </nav>
-        </div>
-        <!-- HEADER FINISH-->
-
+        <div th:insert="~{fragment/header :: header}" class="nav-link-menu"></div>
+        <!--HEADER FINISH-->
         <div class="Page">
             <div class="row">
                 <div class="left-sidebar col-md-2">
@@ -49,12 +39,10 @@
                     <!--MAINBAR START-->
                     <div id="mainbar-full" class="user-show-new">
                         <div class="grid ai-center jc-space-between mb16 js-user-header">
-                            <div class="grid--cell s-navigation">
+                            <div class="grid--cell s-navigation" id="mainBar">
                                 <a href="/users" class="s-navigation--item is-selected" data-shortcut="P">Профиль
                                 </a>
                                 <a href="/users" class="s-navigation--item" data-shortcut="A">Активность
-                                </a>
-                                <a href="/user/edit-profile" class="s-navigation--item" data-shortcut="A">Редактировать
                                 </a>
                             </div>
                         </div>
@@ -93,12 +81,9 @@
                                     </div>
                                 </h2>
                             </div>
-                            <div class="user-info-about col-md-5">
+                            <div class="user-info-about col-md-5" id="userInfoAbout">
                                 <p>
                                     "Тестовая заметка"
-                                </p>
-                                <p>
-                                    <a href="/users/edit/{id}">Нажмите здесь для редактирования</a>
                                 </p>
                             </div>
                         </div>

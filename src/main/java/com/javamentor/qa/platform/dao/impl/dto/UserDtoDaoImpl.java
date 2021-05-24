@@ -23,7 +23,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
     public Optional<UserDto> getUserById(long id) {
         TypedQuery<UserDto> q = entityManager.createQuery(
                 "SELECT new com.javamentor.qa.platform.models.dto.UserDto(u.id, u.email, u.fullName," +
-                        "u.imageLink, r.count)  " +
+                        "u.imageLink, u.city, r.count)  " +
                         "FROM User u INNER JOIN Reputation r ON u.id = r.author.id " +
                         "WHERE u.id = :userId", UserDto.class)
                 .setParameter("userId", id);

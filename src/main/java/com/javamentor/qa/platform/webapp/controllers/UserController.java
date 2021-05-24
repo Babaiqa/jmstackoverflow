@@ -36,6 +36,7 @@ public class UserController {
     private final SecurityHelper securityHelper;
     private final AnswerDtoService answerDtoService;
     private final QuestionDtoService questionDtoService;
+
     private static final int MAX_ITEMS_ON_PAGE = 100;
 
     private final ReputationService reputationService;
@@ -86,7 +87,7 @@ public class UserController {
             @ApiResponse(code = 400, message = "Wrong ID",response = String.class)
     })
     public  ResponseEntity<?> getUserById(
-        @ApiParam(name="id",value="type Long(or other descriped)", required = true, example="0")
+        @ApiParam(name="id",value="type Long(or other described)", required = true, example="0")
         @PathVariable Long id){
         Optional<UserDto> userDto = userDtoService.getUserDtoById(id);
         return userDto.isPresent() ? ResponseEntity.ok().body(userDto.get()):
@@ -332,7 +333,7 @@ public class UserController {
     }
 
     @GetMapping("reputation/history/{id}")
-    @ApiOperation(value = "Get page List<RepitationHistoryDtoList>. " +
+    @ApiOperation(value = "Get page List<ReputationHistoryDtoList>. " +
             "Max size entries on page= " + MAX_ITEMS_ON_PAGE, response = List.class)
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the pagination List<ReputationHistoryDtoList>",
@@ -346,7 +347,7 @@ public class UserController {
                     "Maximum number of records per page"+ MAX_ITEMS_ON_PAGE , required = true,
                     example = "10")
             @RequestParam("size") int size,
-            @ApiParam(name="id",value="type Long(or other descriped)", required = true, example="0")
+            @ApiParam(name="id",value="type Long(or other described)", required = true, example="0")
             @PathVariable Long id) {
         if (page <= 0 || size <= 0 || id <= 0 || size > MAX_ITEMS_ON_PAGE) {
             return ResponseEntity.badRequest().body("Номер страницы, id и размер должны быть " +
@@ -392,7 +393,7 @@ public class UserController {
                     response = List.class),
             @ApiResponse(code = 400, message = "Request wrong", response = String.class)
     })
-    public ResponseEntity<?> getQustionListPrincipalUser(
+    public ResponseEntity<?> getQuestionListPrincipalUser(
             @ApiParam(name = "page", value = "Number Page. Type int", required = true, example = "10")
             @RequestParam("page") int page,
             @ApiParam(name = "size", value = "Number of entries per page.Type int." +
@@ -536,4 +537,92 @@ public class UserController {
         return  ResponseEntity.ok().body("The bookmark deleted");
     }
 
+    @GetMapping("/userProfile/{id}")
+    @ApiOperation(value = "Get user or principal", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the object.", response = UserDto.class),
+            @ApiResponse(code = 400, message = "Wrong ID",response = String.class)
+    })
+    public  ResponseEntity<?> getUserProfileById(
+            @ApiParam(name="id",value="type Long(or other described), if id = 0, return principal user", required = true, example="0")
+            @PathVariable Long id){
+        if(id == 0){
+            id = securityHelper.getPrincipal().getId();
+        }
+        Optional<UserDto> userDto = userDtoService.getUserDtoById(id);
+        return userDto.isPresent() ? ResponseEntity.ok().body(userDto.get()):
+                ResponseEntity.badRequest()
+                        .body("User with id " + id + " not found");
+    }
+
+    @GetMapping("userAnswers/{id}")
+    @ApiOperation(value = "Get page List<AnswerDto> User order by votes." +
+            "Max size entries on page= "+ MAX_ITEMS_ON_PAGE, response = AnswerDto.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination List<AnswerDto> principal user order by votes",
+                    response = List.class),
+            @ApiResponse(code = 400, message = "Request wrong", response = String.class)
+    })
+    public ResponseEntity<?> getAnswerListUserById(
+            @ApiParam(name = "page", value = "Number Page. Type int", required = true, example = "10")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице"+ MAX_ITEMS_ON_PAGE , required = true,
+                    example = "10")
+            @RequestParam("size") int size,
+            @ApiParam(name="id",value="type Long(or other described)", required = true, example="0")
+            @PathVariable Long id) {
+        if(page <= 0 || size <=0 || size > MAX_ITEMS_ON_PAGE ) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+
+        PageDto<AnswerDto, Object> resultPage = answerDtoService.getAllAnswersOfPrincipalUserOrderByVotes(page,size, id);
+
+        return  ResponseEntity.ok(resultPage);
+    }
+
+    @GetMapping("userQuestions/{id}")
+    @ApiOperation(value = "Get page List<QuestionDtoPrincipal> user order by persist." +
+            "Max size entries on page= "+ MAX_ITEMS_ON_PAGE, response = AnswerDto.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination List<QuestionDtoPrincipal> principal user order by persist",
+                    response = List.class),
+            @ApiResponse(code = 400, message = "Request wrong", response = String.class)
+    })
+    public ResponseEntity<?> getQuestionListUserById(
+            @ApiParam(name = "page", value = "Number Page. Type int", required = true, example = "10")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    " Максимальное количество записей на странице"+ MAX_ITEMS_ON_PAGE , required = true,
+                    example = "10")
+            @RequestParam("size") int size,
+            @ApiParam(name="id",value="type Long(or other described)", required = true, example="0")
+            @PathVariable Long id) {
+        if(page <= 0 || size <=0 || size > MAX_ITEMS_ON_PAGE ) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+
+        PageDto<QuestionDtoPrincipal, Object> resultPage = questionDtoService.getAllQuestionsOfPrincipalUserOrderByPersist(page, size, id);
+
+        return  ResponseEntity.ok(resultPage);
+    }
+
+    @GetMapping("bookmarks/{id}")
+    @ApiOperation(value = "Get bookmarks by user id", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Request success", response = BookmarkDto.class),
+            @ApiResponse(code = 400, message = "Something is wrong", response = String.class)
+    })
+    public ResponseEntity<?> getBookmarksUserById(
+            @ApiParam(name="id",value="type Long(or other described)", required = true, example="0")
+            @PathVariable Long id) {
+
+        Optional<BookmarkDto> resultBookmark = bookmarkDtoService.getBookmarkDtoByUserId(id);
+
+        return  resultBookmark.isPresent()
+                ? ResponseEntity.ok().body(resultBookmark.get())
+                : ResponseEntity.badRequest().body("Bad request");
+    }
 }
