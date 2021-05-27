@@ -167,12 +167,14 @@ function fillBookmarks(id) {
         .then(response => response.json())
         .then(function (data) {
             document.querySelector('#bookmarksMore').innerHTML = '';
-            $('#bmVotes1').append(
-                data.questionVotes + " <br/> голосов"
-            )
-            $('#bmQuestion1').append(
-                data.questionTitle
-            )
+            for (let i = 0; i < data.length; i++) {
+                $('#bmVotes' + (i + 1)).append(
+                    data[i].questionVotes + " <br/> голосов"
+                )
+                $('#bmQuestion' + (i + 1)).append(
+                    data[i].questionTitle
+                )
+            }
         })
 }
 

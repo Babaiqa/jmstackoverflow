@@ -463,32 +463,32 @@ public class UserController {
 
         User user = securityHelper.getPrincipal();
 
-        Optional<BookmarkDto> resultBookmark = bookmarkDtoService.getBookmarkDtoByUserId(user.getId());
+        List<BookmarkDto> resultBookmark = bookmarkDtoService.getBookmarkDtoByUserId(user.getId());
 
-        return  resultBookmark.isPresent()
-                    ? ResponseEntity.ok().body(resultBookmark.get())
+        return  !resultBookmark.isEmpty()
+                    ? ResponseEntity.ok().body(resultBookmark)
                     : ResponseEntity.badRequest().body("Bad request");
     }
 
-    @GetMapping("bookmarks/{questionId}")
-    @ApiOperation(value = "Return message(string)", response = String.class)
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "The bookmark exists", response = String.class),
-            @ApiResponse(code = 400, message = "There is no such bookmark", response = String.class)
-    })
-    public ResponseEntity<?> getBookmarkByQuestionId(
-            @ApiParam(name = "questionId", value = "Question id. Type long", required = true, example = "10")
-            @PathVariable("questionId") long questionId) {
-
-        User user = securityHelper.getPrincipal();
-        Optional<BookMarks> bookmarkByQuestionId = bookMarksService.getBookmarkByQuestionId(questionId, user.getId());
-
-        if (!bookmarkByQuestionId.isPresent()) {
-            return ResponseEntity.badRequest().body("There is no such bookmark");
-        }
-
-        return  ResponseEntity.ok().body("The bookmark exists");
-    }
+//    @GetMapping("bookmarks/{questionId}")
+//    @ApiOperation(value = "Return message(string)", response = String.class)
+//    @ApiResponses({
+//            @ApiResponse(code = 200, message = "The bookmark exists", response = String.class),
+//            @ApiResponse(code = 400, message = "There is no such bookmark", response = String.class)
+//    })
+//    public ResponseEntity<?> getBookmarkByQuestionId(
+//            @ApiParam(name = "questionId", value = "Question id. Type long", required = true, example = "10")
+//            @PathVariable("questionId") long questionId) {
+//
+//        User user = securityHelper.getPrincipal();
+//        Optional<BookMarks> bookmarkByQuestionId = bookMarksService.getBookmarkByQuestionId(questionId, user.getId());
+//
+//        if (!bookmarkByQuestionId.isPresent()) {
+//            return ResponseEntity.badRequest().body("There is no such bookmark");
+//        }
+//
+//        return  ResponseEntity.ok().body("The bookmark exists");
+//    }
 
     @PostMapping("bookmarks/{questionId}")
     @ApiOperation(value = "Return message(String)", response = String.class)
@@ -619,10 +619,10 @@ public class UserController {
             @ApiParam(name="id",value="type Long(or other described)", required = true, example="0")
             @PathVariable Long id) {
 
-        Optional<BookmarkDto> resultBookmark = bookmarkDtoService.getBookmarkDtoByUserId(id);
+        List<BookmarkDto> resultBookmark = bookmarkDtoService.getBookmarkDtoByUserId(id);
 
-        return  resultBookmark.isPresent()
-                ? ResponseEntity.ok().body(resultBookmark.get())
+        return  !resultBookmark.isEmpty()
+                ? ResponseEntity.ok().body(resultBookmark)
                 : ResponseEntity.badRequest().body("Bad request");
     }
 }
