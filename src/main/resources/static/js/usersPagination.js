@@ -14,6 +14,12 @@ class PaginationUser {
             this.users = this.userService.getUserDtoPaginationByReputationOverWeek(this.page, this.size);
         } else if (this.timeInterval == 'month') {
             this.users = this.userService.getUserDtoPaginationByReputationOverMonth(this.page, this.size);
+        } else if (this.timeInterval == 'quarter') {
+            this.users = this.userService.getUserDtoPaginationByReputationOverQuarter(this.page, this.size);
+        } else if (this.timeInterval == 'year') {
+            this.users = this.userService.getUserDtoPaginationByReputationOverYear(this.page, this.size);
+        } else if (this.timeInterval == 'all') {
+            this.users = this.userService.getUserDtoPaginationByReputationOverAllTime(this.page, this.size);
         } else if (this.timeInterval === 'search') {
             this.users = this.userService.getUserListByName(this.name, this.page, this.size);
         }

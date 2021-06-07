@@ -23,6 +23,66 @@ class UserService {
         }).catch(error => error.response.then(message => console.log(message)));
     }
 
+    getUserDtoPaginationByReputationOverAllTime(page, size) {
+        let query = '/api/user/order/reputation/allTime?page=' + page + '&size=' + size;
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        })
+            .then(response =>  {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    let error = new Error();
+                    error.response = response.text();
+                    throw error;
+                }
+            }).catch( error => error.response.then(message => console.log(message)));
+    }
+
+    getUserDtoPaginationByReputationOverYear(page, size) {
+        let query = '/api/user/order/reputation/year?page=' + page + '&size=' + size;
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        })
+            .then(response =>  {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    let error = new Error();
+                    error.response = response.text();
+                    throw error;
+                }
+            }).catch( error => error.response.then(message => console.log(message)));
+    }
+
+    getUserDtoPaginationByReputationOverQuarter(page, size) {
+        let query = '/api/user/order/reputation/quarter?page=' + page + '&size=' + size;
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        })
+            .then(response =>  {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    let error = new Error();
+                    error.response = response.text();
+                    throw error;
+                }
+            }).catch( error => error.response.then(message => console.log(message)));
+    }
+
     getUserDtoPaginationByReputationOverMonth(page, size) {
         let query = '/api/user/order/reputation/month?page=' + page + '&size=' + size;
         return fetch(query, {
