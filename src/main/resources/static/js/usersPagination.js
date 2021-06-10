@@ -40,7 +40,7 @@ class PaginationUser {
                     + "<div class=\"media\">"
                     + "<img width='48' height='48' src=" + response.items[i].linkImage + " class=\"mr-3\"  alt=\"...\">"
                     + "<div class=\"media-body\">"
-                    + "<a class=\"mt-0\" href=\"#\">" + response.items[i].fullName + "</a>"
+                    + "<a class=\"mt-0\" href=\"/user/profile/" + response.items[i].id + "\">" + response.items[i].fullName + "</a>"
                     + "<div>" + response.items[i].reputation + "</div>"
                     + "</div> </div> </div>");
             }
