@@ -32,10 +32,31 @@ public class UserDtoServiceImpl implements UserDtoService {
     }
 
     @Override
+    public PageDto<UserDtoList, Object> getPageUserDtoListByReputationOverAllTime(int page, int size) {
+        return paginationService.getPageDto(
+                "paginationUserByReputationOverPeriod",
+                setPaginationParameters(page, size, Optional.empty(), Optional.of(3650)));
+    }
+
+    @Override
     public PageDto<UserDtoList, Object> getPageUserDtoListByReputationOverYear(int page, int size) {
         return paginationService.getPageDto(
                 "paginationUserByReputationOverPeriod",
                 setPaginationParameters(page, size, Optional.empty(), Optional.of(365)));
+    }
+
+    @Override
+    public PageDto<UserDtoList, Object> getPageUserDtoListByReputationOverQuarter(int page, int size) {
+        return paginationService.getPageDto(
+                "paginationUserByReputationOverPeriod",
+                setPaginationParameters(page, size, Optional.empty(), Optional.of(120)));
+    }
+
+    @Override
+    public PageDto<UserDtoList, Object> getPageUserDtoListByReputationOverMonth(int page, int size) {
+        return paginationService.getPageDto(
+                "paginationUserByReputationOverPeriod",
+                setPaginationParameters(page, size, Optional.empty(), Optional.of(30)));
     }
 
     @Override
@@ -52,12 +73,7 @@ public class UserDtoServiceImpl implements UserDtoService {
                 setPaginationParameters(page, size, Optional.empty(), Optional.empty()));
     }
 
-    @Override
-    public PageDto<UserDtoList, Object> getPageUserDtoListByReputationOverMonth(int page, int size) {
-        return paginationService.getPageDto(
-                "paginationUserByReputationOverPeriod",
-                setPaginationParameters(page, size, Optional.empty(), Optional.of(30)));
-    }
+
 
     @Override
     public PageDto<UserDtoList, Object> getPageUserDtoListByName(int page, int size, String name) {
