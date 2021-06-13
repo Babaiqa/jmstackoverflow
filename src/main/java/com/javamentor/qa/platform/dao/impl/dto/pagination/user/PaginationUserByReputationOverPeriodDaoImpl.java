@@ -24,22 +24,23 @@ public class PaginationUserByReputationOverPeriodDaoImpl implements PaginationDa
         int size = (int) parameters.get("size");
         int days = (int) parameters.get("days");
 
+        int fromIndex = page * size - size;
+        int toIndex = page * size;
+
         List<Long> usersIds = (List<Long>) em.unwrap(Session.class)
                 .createQuery("select user.id " +
                         "from User user " +
                         "left outer join Reputation r on r.author.id=user.id " +
                         "where current_date - (:quantityOfDays)<date(r.persistDate)")
                 .setParameter("quantityOfDays", days)
-                .setFirstResult(page * size - size)
-                .setMaxResults(size)
                 .unwrap(org.hibernate.query.Query.class)
                 .getResultList();
 
-        return (List<UserDtoList>) em.unwrap(Session.class)
+        List<UserDtoList> userDtoLists = (List<UserDtoList>) em.unwrap(Session.class)
                 .createQuery("select user.id as user_id, " +
                         "user.fullName as full_name, " +
                         "user.imageLink as link_image, " +
-                        "(select coalesce(sum(ra.count), 0) from Reputation ra where ra.author.id = author.id) as reputation, " +
+                        "(select coalesce(sum(ra.count), 0) from Reputation ra where ra.author.id = user.id) as reputation, " +
                         "tag.id as tag_id, " +
                         "tag.name as tag_name, " +
                         "tag.description as tag_description " +
@@ -49,12 +50,19 @@ public class PaginationUserByReputationOverPeriodDaoImpl implements PaginationDa
                         "left join question.tags tag " +
                         "where user.id in (:ids) " +
                         "group by user.id, user.fullName, user.imageLink, tag.id, tag.name " +
-                        "order by user.id, tag.id"
+                        "order by reputation DESC"
+//                        "order by user.id, tag.id"
                 )
                 .setParameter("ids", usersIds)
                 .unwrap(org.hibernate.query.Query.class)
                 .setResultTransformer(new UserDtoListTranformer())
                 .getResultList();
+
+        if (toIndex > userDtoLists.size()){
+            toIndex = userDtoLists.size();
+        }
+
+        return userDtoLists.subList(fromIndex, toIndex);
     }
 
     @Override
