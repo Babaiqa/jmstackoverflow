@@ -86,21 +86,6 @@ function addListenersForTagBarElems(pageName, tagType) {
         sendRequest('POST', "http://localhost:5557/api/tag/"+tagType+"/add?name=" + input.value, tagType, pageName)
             .then( data => {set
                 populateTagBar(pageName, tagType)
-                let tagTypeForDelete = tagType === 'tracked' ? 'ignored' : 'tracked';
-                let elem = document.getElementById('list-' + tagTypeForDelete + '-tag-' + pageName);
-
-                if (elem.childNodes != null) {
-                    for (let i = 0; i < elem.childElementCount; i++) {
-
-                        if (elem.childNodes[i].childNodes[0].textContent.replace(/\s/g, '') === input.value
-
-                            .replace(/\s/g, '')) {
-                            deleteTagById(elem.childNodes[i].childNodes[1].dataset.id, tagTypeForDelete);
-                            elem.childNodes[i].parentNode.removeChild(elem.childNodes[i]);
-
-                        }
-                    }
-                }
 
                 //new PaginationQuestionForMainPage(1,10,"newSortedByTrackedTag").setQuestions();
                 input.value=""
@@ -108,7 +93,29 @@ function addListenersForTagBarElems(pageName, tagType) {
                 searchList.innerHTML = ""
             })
             .catch(err=>console.log(err))
+
+        let tagTypeForDelete = tagType === 'tracked' ? 'ignored' : 'tracked';
+        let elem = document.getElementById('list-' + tagTypeForDelete + '-tag-' + pageName);
+
+        if (elem.childNodes != null) {
+            for (let i = 0; i < elem.childElementCount; i++) {
+
+                if (elem.childNodes[i].childNodes[0].textContent.replace(/\s/g, '') === input.value
+
+                    .replace(/\s/g, '')) {
+                    deleteTagById(elem.childNodes[i].childNodes[1].dataset.id, tagTypeForDelete);
+                    elem.childNodes[i].parentNode.removeChild(elem.childNodes[i]);
+
+                }
+            }
+        }
+
     })
+}
+
+function deleteTagById(id, tagType) {
+    sendRequest('DELETE', 'http://localhost:5557/api/tag/' + tagType + '/delete?tagId=' + id)
+        .catch(err => console.log(err))
 }
 
 function deleteTag(tagType) {
