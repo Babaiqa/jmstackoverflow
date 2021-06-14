@@ -77,6 +77,19 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
                 parameters);
     }
 
+    ///////////////////////////////////////////////////////// new /////////////////////////////////////////////
+
+    public PageDto<QuestionDto, Object> getPadinationQuestionIdsTrackedTagByUserOrderByNew(int page, int size, long id) {
+        Map<String, Object> parameters = setPaginationParameters(page, size, Optional.empty(), Optional.empty());
+        List<Long> ids = questionDtoDao.getPadinationQuestionIdsTrackedTagByUserOrderByNew(page, size, id);
+        parameters.put("page", page);
+        parameters.put("size", size);
+        parameters.put("ids", ids);
+        parameters.put("id", id);
+        return getPageDto("getPadinationQuestionIdsTrackedTagByUserOrderByNew",
+                parameters);
+    }
+
     public PageDto<QuestionDto, Object> getPaginationWithoutAnswers(int page, int size) {
         return getPageDto(
                 "paginationQuestionWithoutAnswers",

@@ -84,8 +84,25 @@ function addListenersForTagBarElems(pageName, tagType) {
     }
     button.addEventListener('click', function (){
         sendRequest('POST', "http://localhost:5557/api/tag/"+tagType+"/add?name=" + input.value, tagType, pageName)
-            .then( data => {
+            .then( data => {set
                 populateTagBar(pageName, tagType)
+                let tagTypeForDelete = tagType === 'tracked' ? 'ignored' : 'tracked';
+                let elem = document.getElementById('list-' + tagTypeForDelete + '-tag-' + pageName);
+
+                if (elem.childNodes != null) {
+                    for (let i = 0; i < elem.childElementCount; i++) {
+
+                        if (elem.childNodes[i].childNodes[0].textContent.replace(/\s/g, '') === input.value
+
+                            .replace(/\s/g, '')) {
+                            deleteTagById(elem.childNodes[i].childNodes[1].dataset.id, tagTypeForDelete);
+                            elem.childNodes[i].parentNode.removeChild(elem.childNodes[i]);
+
+                        }
+                    }
+                }
+
+                //new PaginationQuestionForMainPage(1,10,"newSortedByTrackedTag").setQuestions();
                 input.value=""
                 searchList.setAttribute("style", "display: none;")
                 searchList.innerHTML = ""

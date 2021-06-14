@@ -353,6 +353,33 @@ public class QuestionController {
 
         return ResponseEntity.ok(resultPage);
     }
+    ////////////////////////////////////////////////////////////////////new////////////////////////////////////////////////
+    @GetMapping(value = "order/new/byTrackedTag", params = {"page", "size"})
+    @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination sorted by Tracted tag List<QuestionDto>"),
+            })
+    public ResponseEntity<?> getPadinationQuestionIdsTrackedTagByUserOrderByNew(
+            @ApiParam(name = "page", value = "Number Page. Type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    "Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    example ="10")
+            @RequestParam("size") int size) {
+
+        long userID= securityHelper.getPrincipal().getId();
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+
+        PageDto <QuestionDto, Object> resultPage = questionDtoService.getPadinationQuestionIdsTrackedTagByUserOrderByNew(page, size, userID);
+
+        return ResponseEntity.ok(resultPage);
+    }
+
+
 
     @GetMapping(value = "/withoutAnswer", params = {"page", "size"})
     @ApiOperation(value = "Return Questions without answers (where the author did not mark is_helpful)")

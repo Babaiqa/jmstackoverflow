@@ -22,6 +22,8 @@ class PaginationQuestionForMainPage {
             this.questions = this.questionService.findPaginationPopularOverPeriod(this.page, this.size, "month");
         } else if (this.type == 'withTags') {
             this.questions = this.questionService.getQuestionsWithGivenTags(this.page, this.size, this.id);
+        } else if(this.type == 'newSortedByTrackedTag') {
+            this.questions = this.questionService.findPaginationdNewQuestionSortByTrackedTag(this.page, this.size);
         } else {
             this.questions = this.questionService.findPagination(this.page, this.size);
         }

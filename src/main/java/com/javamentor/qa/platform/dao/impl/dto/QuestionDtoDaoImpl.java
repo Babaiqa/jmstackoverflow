@@ -104,6 +104,20 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 .setMaxResults(size)
                 .getResultList();
     }
+/////////////////////////////////////////////////////////////////////////////// new controller/////////////////////////////
+
+
+
+
+    @Override
+    public List<Long> getPadinationQuestionIdsTrackedTagByUserOrderByNew (int page, int size, long id) {
+        return (List<Long>) entityManager
+                .createQuery("select q.id from Question q join q.tags tag join TrackedTag tt on tag.id = tt.trackedTag.id where tt.user in :id order by q.persistDateTime")
+                .setParameter("id", id)
+                .setFirstResult(page*size - size)
+                .setMaxResults(size)
+                .getResultList();
+    }
 
     @Override
     public  List<Long> getPaginationQuestionIdsWithoutAnswerOrderByVotes(int page, int size){
