@@ -52,38 +52,31 @@ user_entity:
 
 reputation:
   - id: 1
-    persist_date: "2021-03-20 21:22:13"
+    persist_date: js:new Date().getFullYear() +"-"+ (Number(new Date().getMonth())+ Number(1)) +"-"+ new Date().getDate() + " 00:00:00"
     author_id: 1
-    count: 2
+    count: 5
     type: 0
-#    question: 1
-#    answer: null
 
   - id: 2
-    persist_date: "2021-03-20 21:22:13"
+    persist_date: js:new Date().getFullYear() +"-"+ (Number(new Date().getMonth())+ Number(1)) +"-"+ new Date().getDate() + " 00:00:00"
     author_id: 2
-    count: 2
+    count: 4
     type: 1
-#    question: null
-#    answer: 1
 
   - id: 3
-    persist_date: "2021-03-20 21:22:13"
+    persist_date: js:new Date().getFullYear() +"-"+ (Number(new Date().getMonth())+ Number(1)) +"-"+ new Date().getDate() + " 00:00:00"
     author_id: 3
-    count: 2
+    count: 3
     type: 2
-#    question: null
-#    answer: 2
 
   - id: 4
-    persist_date: "2021-03-20 21:22:13"
+    persist_date: js:new Date().getFullYear() +"-"+ (Number(new Date().getMonth())+ Number(1)) +"-"+ new Date().getDate() + " 00:00:00"
     author_id: 4
     count: 2
     type: 3
-#    question: 2
-#    answer: null
+
   - id: 5
-    persist_date: "2021-03-20 21:22:13"
+    persist_date: js:new Date().getFullYear() +"-"+ (Number(new Date().getMonth())+ Number(1)) +"-"+ new Date().getDate() + " 00:00:00"
     author_id: 5
-    count: 2
+    count: 1
     type: 3

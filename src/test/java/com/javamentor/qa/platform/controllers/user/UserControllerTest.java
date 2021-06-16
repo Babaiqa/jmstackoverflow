@@ -4,25 +4,26 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.javamentor.qa.platform.AbstractIntegrationTest;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.*;
-import com.javamentor.qa.platform.models.entity.chat.GroupChat;
-import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
@@ -245,6 +246,108 @@ class UserControllerTest extends AbstractIntegrationTest {
 
     //---------------------------------------------------------------
     @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionReputationApi.yml"},
+            cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestUserReputationOverWeek() throws Exception {
+
+        PageDto<UserDtoList, Object> expected = new PageDto<>();
+        expected.setCurrentPageNumber(1);
+        expected.setTotalPageCount(1);
+        expected.setTotalResultCount(2);
+        expected.setItemsOnPage(10);
+
+        List<UserDtoList> expectedItems = new ArrayList<>();
+        expectedItems.add(new UserDtoList(2L, "TestWeek2", null, 50, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(1L, "TestWeek1", null, 40, new ArrayList<>()));
+        expected.setItems(expectedItems);
+
+        String resultContext =
+                mockMvc.perform(get("/api/user/order/reputation/week")
+                        .param("page", "1")
+                        .param("size", "10"))
+                        .andDo(print())
+                        .andExpect(status().isOk())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
+                        .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
+                        .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
+                        .andExpect(jsonPath("$.items").isNotEmpty())
+                        .andExpect(jsonPath("$.itemsOnPage").isNotEmpty())
+                        .andReturn().getResponse().getContentAsString();
+
+        PageDto<UserDtoList, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
+        Assertions.assertEquals(expected.toString(), actual.toString());
+    }
+
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestNegativePageUserTagReputationOverWeek() throws Exception {
+        mockMvc.perform(get("/api/user/order/reputation/week")
+                .param("page", "-1")
+                .param("size", "10"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
+    }
+
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestNegativeSizeUserTagReputationOverWeek() throws Exception {
+        mockMvc.perform(get("/api/user/order/reputation/week")
+                .param("page", "1")
+                .param("size", "0"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
+    }
+
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestIncorrectSizeUserTagReputationOverWeek() throws Exception {
+        mockMvc.perform(get("/api/user/order/reputation/week")
+                .param("page", "1")
+                .param("size", "101"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
+    }
+
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestPageDontExistsUserTagReputationOverWeek() throws Exception {
+        mockMvc.perform(get("/api/user/order/reputation/week")
+                .param("page", "1")
+                .param("size", "100"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
+                .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
+                .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
+                .andExpect(jsonPath("$.items").isArray());
+    }
+
+
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
             "dataset/user/usersQuestionApi.yml",
             "dataset/question/questionQuestionApi.yml",
             "dataset/question/tagQuestionApi.yml",
@@ -259,11 +362,11 @@ class UserControllerTest extends AbstractIntegrationTest {
         expected.setItemsOnPage(10);
 
         List<UserDtoList> expectedItems = new ArrayList<>();
-        expectedItems.add(new UserDtoList(1L, "Teat", null, 2, Arrays.asList(new TagDto[]{new TagDto(1L, "java", "Java is a popular high-level programming language."), new TagDto(3L, "html", "HTML (HyperText Markup Language) is the markup language for creating web pages and other information to be displayed in a web browser.")})));
-        expectedItems.add(new UserDtoList(2L, "Tot", null, 2, Arrays.asList(new TagDto[]{new TagDto(1L, "java", "Java is a popular high-level programming language."), new TagDto(2L, "javaScript", "For questions regarding programming in ECMAScript (JavaScript/JS) and its various dialects/implementations (excluding ActionScript)."), new TagDto(5L, "sql", "Structured Query Language (SQL) is a language for querying databases.")})));
-        expectedItems.add(new UserDtoList(3L, "Tot", null, 2, Arrays.asList(new TagDto[]{new TagDto(5L, "sql", "Structured Query Language (SQL) is a language for querying databases.")})));
+        expectedItems.add(new UserDtoList(1L, "Teat", null, 5, Arrays.asList(new TagDto[]{new TagDto(3L, "html", "HTML (HyperText Markup Language) is the markup language for creating web pages and other information to be displayed in a web browser."), new TagDto(1L, "java", "Java is a popular high-level programming language.")})));
+        expectedItems.add(new UserDtoList(2L, "Tot", null, 4, Arrays.asList(new TagDto[]{new TagDto(1L, "java", "Java is a popular high-level programming language."), new TagDto(2L, "javaScript", "For questions regarding programming in ECMAScript (JavaScript/JS) and its various dialects/implementations (excluding ActionScript)."), new TagDto(5L, "sql", "Structured Query Language (SQL) is a language for querying databases.")})));
+        expectedItems.add(new UserDtoList(3L, "Tot", null, 3, Arrays.asList(new TagDto[]{new TagDto(5L, "sql", "Structured Query Language (SQL) is a language for querying databases.")})));
         expectedItems.add(new UserDtoList(4L, "Tot", null, 2, Arrays.asList(new TagDto[]{})));
-        expectedItems.add(new UserDtoList(5L, "Tot", null, 2, Arrays.asList(new TagDto[]{})));
+        expectedItems.add(new UserDtoList(5L, "Tot", null, 1, Arrays.asList(new TagDto[]{})));
         expected.setItems(expectedItems);
         String resultContext =
                 mockMvc.perform(get("/api/user/order/reputation/month")
@@ -286,6 +389,43 @@ class UserControllerTest extends AbstractIntegrationTest {
         Assertions.assertEquals(expected.getTotalResultCount(), actual.getTotalResultCount());
         Assertions.assertEquals(expected.getItemsOnPage(), actual.getItemsOnPage());
         Assertions.assertEquals(expected.getItems().size(), actual.getItems().size());
+        Assertions.assertEquals(expected.toString(), actual.toString());
+    }
+
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionReputationApi.yml"},
+            cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestUserReputationOverMonth() throws Exception {
+
+        PageDto<UserDtoList, Object> expected = new PageDto<>();
+        expected.setCurrentPageNumber(1);
+        expected.setTotalPageCount(1);
+        expected.setTotalResultCount(4);
+        expected.setItemsOnPage(10);
+
+        List<UserDtoList> expectedItems = new ArrayList<>();
+        expectedItems.add(new UserDtoList(4L, "TestMonth2", null, 55, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(2L, "TestWeek2", null, 50, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(1L, "TestWeek1", null, 40, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(3L, "TestMonth1", null, 35, new ArrayList<>()));
+        expected.setItems(expectedItems);
+
+        String resultContext =
+                mockMvc.perform(get("/api/user/order/reputation/month")
+                        .param("page", "1")
+                        .param("size", "10"))
+                        .andDo(print())
+                        .andExpect(status().isOk())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
+                        .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
+                        .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
+                        .andExpect(jsonPath("$.items").isNotEmpty())
+                        .andExpect(jsonPath("$.itemsOnPage").isNotEmpty())
+                        .andReturn().getResponse().getContentAsString();
+
+        PageDto<UserDtoList, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
         Assertions.assertEquals(expected.toString(), actual.toString());
     }
 
@@ -345,59 +485,327 @@ class UserControllerTest extends AbstractIntegrationTest {
     @Test
     void requestPageDontExistsUserTagReputationOverMonth() throws Exception {
         mockMvc.perform(get("/api/user/order/reputation/month")
-                .param("page", "99")
-                .param("size", "99"))
+                .param("page", "1")
+                .param("size", "100"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
                 .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
                 .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
-                .andExpect(jsonPath("$.items").isEmpty());
+                .andExpect(jsonPath("$.items").isArray());
     }
 
-    //------------------- UserOrderReputationYear --------------------//
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionReputationApi.yml"},
+            cleanBefore = true, cleanAfter = true)
     @Test
-    void requestPageUserReputationOverYearWithStatusOk() throws Exception {
-        mockMvc.perform(get("/api/user/order/reputation/year")
+    void requestUserReputationOverQuarter() throws Exception {
+
+        PageDto<UserDtoList, Object> expected = new PageDto<>();
+        expected.setCurrentPageNumber(1);
+        expected.setTotalPageCount(1);
+        expected.setTotalResultCount(6);
+        expected.setItemsOnPage(10);
+
+        List<UserDtoList> expectedItems = new ArrayList<>();
+        expectedItems.add(new UserDtoList(6L, "TestQuarter2", null, 60, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(4L, "TestMonth2", null, 55, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(2L, "TestWeek2", null, 50, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(1L, "TestWeek1", null, 40, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(3L, "TestMonth1", null, 35, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(5L, "TestQuarter1", null, 30, new ArrayList<>()));
+        expected.setItems(expectedItems);
+
+        String resultContext =
+                mockMvc.perform(get("/api/user/order/reputation/quarter")
+                        .param("page", "1")
+                        .param("size", "10"))
+                        .andDo(print())
+                        .andExpect(status().isOk())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
+                        .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
+                        .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
+                        .andExpect(jsonPath("$.items").isNotEmpty())
+                        .andExpect(jsonPath("$.itemsOnPage").isNotEmpty())
+                        .andReturn().getResponse().getContentAsString();
+
+        PageDto<UserDtoList, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
+        Assertions.assertEquals(expected.toString(), actual.toString());
+    }
+
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestNegativePageUserTagReputationOverQuarter() throws Exception {
+        mockMvc.perform(get("/api/user/order/reputation/quarter")
+                .param("page", "-1")
+                .param("size", "10"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
+    }
+
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestNegativeSizeUserTagReputationOverQuarter() throws Exception {
+        mockMvc.perform(get("/api/user/order/reputation/quarter")
+                .param("page", "1")
+                .param("size", "0"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
+    }
+
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestIncorrectSizeUserTagReputationOverQuarter() throws Exception {
+        mockMvc.perform(get("/api/user/order/reputation/quarter")
+                .param("page", "1")
+                .param("size", "101"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
+    }
+
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestPageDontExistsUserTagReputationOverQuarter() throws Exception {
+        mockMvc.perform(get("/api/user/order/reputation/quarter")
                 .param("page", "1")
                 .param("size", "100"))
-                .andExpect(status().isOk());
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
+                .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
+                .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
+                .andExpect(jsonPath("$.items").isArray());
     }
 
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionReputationApi.yml"},
+            cleanBefore = true, cleanAfter = true)
     @Test
-    void requestNegativePageUserReputationOverYear() throws Exception {
+    void requestUserReputationOverYear() throws Exception {
+
+        PageDto<UserDtoList, Object> expected = new PageDto<>();
+        expected.setCurrentPageNumber(1);
+        expected.setTotalPageCount(1);
+        expected.setTotalResultCount(8);
+        expected.setItemsOnPage(10);
+
+        List<UserDtoList> expectedItems = new ArrayList<>();
+        expectedItems.add(new UserDtoList(8L, "TestYear2", null, 65, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(6L, "TestQuarter2", null, 60, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(4L, "TestMonth2", null, 55, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(2L, "TestWeek2", null, 50, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(1L, "TestWeek1", null, 40, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(3L, "TestMonth1", null, 35, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(5L, "TestQuarter1", null, 30, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(7L, "TestYear1", null, 25, new ArrayList<>()));
+        expected.setItems(expectedItems);
+
+        String resultContext =
+                mockMvc.perform(get("/api/user/order/reputation/year")
+                        .param("page", "1")
+                        .param("size", "10"))
+                        .andDo(print())
+                        .andExpect(status().isOk())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
+                        .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
+                        .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
+                        .andExpect(jsonPath("$.items").isNotEmpty())
+                        .andExpect(jsonPath("$.itemsOnPage").isNotEmpty())
+                        .andReturn().getResponse().getContentAsString();
+
+        PageDto<UserDtoList, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
+        Assertions.assertEquals(expected.toString(), actual.toString());
+    }
+
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestNegativePageUserTagReputationOverYear() throws Exception {
         mockMvc.perform(get("/api/user/order/reputation/year")
                 .param("page", "-1")
-                .param("size", "100"))
+                .param("size", "10"))
+                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
                 .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
     }
 
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    void requestNegativeSizeUserReputationOverYear() throws Exception {
+    void requestNegativeSizeUserTagReputationOverYear() throws Exception {
         mockMvc.perform(get("/api/user/order/reputation/year")
                 .param("page", "1")
-                .param("size", "-100"))
+                .param("size", "0"))
+                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
                 .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
     }
 
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    void requestIncorrectSizeUserReputationOverYear() throws Exception {
+    void requestIncorrectSizeUserTagReputationOverYear() throws Exception {
         mockMvc.perform(get("/api/user/order/reputation/year")
                 .param("page", "1")
                 .param("size", "101"))
+                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
                 .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
     }
 
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
     @Test
-    void requestUserReputationOverYear() throws Exception {
+    void requestPageDontExistsUserTagReputationOverYear() throws Exception {
         mockMvc.perform(get("/api/user/order/reputation/year")
+                .param("page", "1")
+                .param("size", "100"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
+                .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
+                .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
+                .andExpect(jsonPath("$.items").isArray());
+    }
+
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionReputationApi.yml"},
+            cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestUserReputationOverAllTime() throws Exception {
+
+        PageDto<UserDtoList, Object> expected = new PageDto<>();
+        expected.setCurrentPageNumber(1);
+        expected.setTotalPageCount(1);
+        expected.setTotalResultCount(10);
+        expected.setItemsOnPage(10);
+
+        List<UserDtoList> expectedItems = new ArrayList<>();
+        expectedItems.add(new UserDtoList(10L, "TestAll2", null, 70, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(8L, "TestYear2", null, 65, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(6L, "TestQuarter2", null, 60, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(4L, "TestMonth2", null, 55, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(2L, "TestWeek2", null, 50, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(1L, "TestWeek1", null, 40, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(3L, "TestMonth1", null, 35, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(5L, "TestQuarter1", null, 30, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(7L, "TestYear1", null, 25, new ArrayList<>()));
+        expectedItems.add(new UserDtoList(9L, "TestAll1", null, 20, new ArrayList<>()));
+        expected.setItems(expectedItems);
+
+        String resultContext =
+                mockMvc.perform(get("/api/user/order/reputation/allTime")
+                        .param("page", "1")
+                        .param("size", "10"))
+                        .andDo(print())
+                        .andExpect(status().isOk())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.currentPageNumber").isNotEmpty())
+                        .andExpect(jsonPath("$.totalPageCount").isNotEmpty())
+                        .andExpect(jsonPath("$.totalResultCount").isNotEmpty())
+                        .andExpect(jsonPath("$.items").isNotEmpty())
+                        .andExpect(jsonPath("$.itemsOnPage").isNotEmpty())
+                        .andReturn().getResponse().getContentAsString();
+
+        PageDto<UserDtoList, Object> actual = objectMapper.readValue(resultContext, PageDto.class);
+        Assertions.assertEquals(expected.toString(), actual.toString());
+    }
+
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestNegativePageUserTagReputationOverAllTime() throws Exception {
+        mockMvc.perform(get("/api/user/order/reputation/allTime")
+                .param("page", "-1")
+                .param("size", "10"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
+    }
+
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestNegativeSizeUserTagReputationOverAllTime() throws Exception {
+        mockMvc.perform(get("/api/user/order/reputation/allTime")
+                .param("page", "1")
+                .param("size", "0"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
+    }
+
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestIncorrectSizeUserTagReputationOverAllTime() throws Exception {
+        mockMvc.perform(get("/api/user/order/reputation/allTime")
+                .param("page", "1")
+                .param("size", "101"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("text/plain;charset=UTF-8"))
+                .andExpect(content().string("Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100"));
+    }
+
+    @DataSet(value = {"dataset/question/roleQuestionApi.yml",
+            "dataset/user/usersQuestionApi.yml",
+            "dataset/question/questionQuestionApi.yml",
+            "dataset/question/tagQuestionApi.yml",
+            "dataset/question/question_has_tagQuestionApi.yml"}, cleanBefore = true, cleanAfter = true)
+    @Test
+    void requestPageDontExistsUserTagReputationOverAllTime() throws Exception {
+        mockMvc.perform(get("/api/user/order/reputation/allTime")
                 .param("page", "1")
                 .param("size", "100"))
                 .andDo(print())
