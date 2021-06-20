@@ -42,5 +42,7 @@ public interface QuestionDtoService {
 
     PageDto<QuestionDto, Object> getPaginationWithFollowAndWithoutIgnoreTags(int page, int size, long id);
 
-    PageDto<QuestionDto, Object> getPadinationQuestionIdsTrackedTagByUserOrderByNew(int page, int size, long id);
+    PageDto<QuestionDto, Object> getPaginationQuestionIdsTrackedTagByUserOrderByNew(int page, int size, long id);
+
+    PageDto<QuestionDto, Object> getPaginationQuestionIdsIgnoreTagByUserOrderByNew(int page, int size, long id);
 }

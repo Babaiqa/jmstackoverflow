@@ -111,16 +111,16 @@ class QuestionService {
             }
         }).catch( error => error.response.then(message => console.log(message)));
     }
+/////////////////////////////////////////////////////////////////////////////////////////////
 
-    //////////////////////////////////////////new///////////////////////////////////////////////
-
-    findPaginationdNewQuestionSortByTrackedTag (page, size) {
-       let query = '/api/question/order/new/byTrackedTag?page=' + page +'&size=' + size;
+//////////////////////////////////////////////////////////////////////////////////////////////////
+    findPaginationdNewQuestionSortByTrackedAndIgnoreTags (page, size) {
+       let query = '/api/question/order/new/byTracked&IgnoreTags?page=' + page +'&size=' + size;
        return fetch(query,{
            method: 'GET',
            headers: new Headers({
                'Content-Type': 'application/json',
-               'Authorization':$.cookie("token")
+               'Authorization': $.cookie("token")
            })
        }).then(response => {
            if (response.ok) {
@@ -132,6 +132,26 @@ class QuestionService {
            }
        }).catch( error => error.response.then(message => console.log(message)));
     }
+
+    findPaginationdNewQuestionSortByIgnoreTagsOnly (page, size) {
+        let query = '/api/question/order/new/byIgnoreTags?page=' + page +'&size=' + size;
+        return fetch(query,{
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        }).then(response => {
+            if (response.ok) {
+                return response.json()
+            } else {
+                let error = new Error();
+                error.response = response.text();
+                throw error;
+            }
+        }).catch( error => error.response.then(message => console.log(message)));
+    }
+
 
     findPaginationPopularOverPeriod(page, size, period='') {
         let query = '/api/question/popular/' + period + '?page=' + page + '&size=' + size;

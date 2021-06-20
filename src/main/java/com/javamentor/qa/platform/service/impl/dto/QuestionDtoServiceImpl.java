@@ -79,14 +79,25 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
 
     ///////////////////////////////////////////////////////// new /////////////////////////////////////////////
 
-    public PageDto<QuestionDto, Object> getPadinationQuestionIdsTrackedTagByUserOrderByNew(int page, int size, long id) {
-        Map<String, Object> parameters = setPaginationParameters(page, size, Optional.empty(), Optional.empty());
-        List<Long> ids = questionDtoDao.getPadinationQuestionIdsTrackedTagByUserOrderByNew(page, size, id);
+    public PageDto<QuestionDto, Object> getPaginationQuestionIdsTrackedTagByUserOrderByNew(int page, int size, long id) {
+        Map<String, Object> parameters = setPaginationParametersForPrincipal(page, size, Optional.of(id));
+        List<Long> ids = questionDtoDao.getPaginationQuestionIdsTrackedTagByUserOrderByNew(page, size, id);
         parameters.put("page", page);
         parameters.put("size", size);
         parameters.put("ids", ids);
-        parameters.put("id", id);
-        return getPageDto("getPadinationQuestionIdsTrackedTagByUserOrderByNew",
+
+        return getPageDto("paginationQuestionTrackedTagByUserOrderByNew",
+                parameters);
+    }
+
+    @Override
+    public PageDto<QuestionDto, Object> getPaginationQuestionIdsIgnoreTagByUserOrderByNew(int page, int size, long id) {
+        Map<String, Object> parameters = setPaginationParametersForPrincipal(page, size, Optional.of(id));
+        List<Long> ids = questionDtoDao.getPaginationQuestionIdsIgnoreTagByUserOrderByNew(page, size, id);
+        parameters.put("page", page);
+        parameters.put("size", size);
+        parameters.put("ids", ids);
+        return getPageDto("paginationQuestionIgnoreTagByUserOrderByNew",
                 parameters);
     }
 

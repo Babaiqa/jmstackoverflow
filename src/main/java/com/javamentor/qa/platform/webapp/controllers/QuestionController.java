@@ -354,12 +354,13 @@ public class QuestionController {
         return ResponseEntity.ok(resultPage);
     }
     ////////////////////////////////////////////////////////////////////new////////////////////////////////////////////////
-    @GetMapping(value = "order/new/byTrackedTag", params = {"page", "size"})
+
+    @GetMapping(value = "order/new/byTracked&IgnoreTags", params = {"page", "size"})
     @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns the pagination sorted by Tracted tag List<QuestionDto>"),
+            @ApiResponse(code = 200, message = "Returns the pagination sorted by Tracked&Ignore tag List<QuestionDto>"),
             })
-    public ResponseEntity<?> getPadinationQuestionIdsTrackedTagByUserOrderByNew(
+    public ResponseEntity<?> getPaginationQuestionIdsTrackedAndIgnoreTagByUserOrderByNew(
             @ApiParam(name = "page", value = "Number Page. Type int", required = true, example = "1")
             @RequestParam("page") int page,
             @ApiParam(name = "size", value = "Number of entries per page.Type int." +
@@ -367,18 +368,39 @@ public class QuestionController {
                     example ="10")
             @RequestParam("size") int size) {
 
-        long userID= securityHelper.getPrincipal().getId();
-
         if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
             return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
 
-        PageDto <QuestionDto, Object> resultPage = questionDtoService.getPadinationQuestionIdsTrackedTagByUserOrderByNew(page, size, userID);
+        PageDto <QuestionDto, Object> resultPage = questionDtoService.getPaginationQuestionIdsTrackedTagByUserOrderByNew(page, size, securityHelper.getPrincipal().getId());
 
         return ResponseEntity.ok(resultPage);
     }
 
+    @GetMapping(value = "order/new/byIgnoreTags", params = {"page", "size"})
+    @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination sorted by Tracked tag only List<QuestionDto>"),
+    })
+    public ResponseEntity<?> getPaginationQuestionIdsTrackedTagByUserOrderByNew(
+            @ApiParam(name = "page", value = "Number Page. Type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    "Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    example ="10")
+            @RequestParam("size") int size
+    ) {
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+
+        PageDto <QuestionDto, Object> resultPage = questionDtoService.getPaginationQuestionIdsIgnoreTagByUserOrderByNew(page, size, securityHelper.getPrincipal().getId());
+
+        return ResponseEntity.ok(resultPage);
+
+    }
 
 
     @GetMapping(value = "/withoutAnswer", params = {"page", "size"})

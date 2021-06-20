@@ -107,18 +107,32 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
 /////////////////////////////////////////////////////////////////////////////// new controller/////////////////////////////
 
 
-
-
     @Override
-    public List<Long> getPadinationQuestionIdsTrackedTagByUserOrderByNew (int page, int size, long id) {
+    public List<Long> getPaginationQuestionIdsTrackedTagByUserOrderByNew (int page, int size, long id) {
         return (List<Long>) entityManager
-                .createQuery("select q.id from Question q join q.tags tag join TrackedTag tt on tag.id = tt.trackedTag.id where tt.user in :id order by q.persistDateTime")
+               .createQuery("select q.id from Question q join q.tags tag join TrackedTag tt on tag.id = tt.trackedTag.id and tt.user.id in :id " +
+                       "where q.id not in (select q.id from Question q join q.tags tag join IgnoredTag it on tag.id = it.ignoredTag.id where it.user.id in :id)")
                 .setParameter("id", id)
                 .setFirstResult(page*size - size)
                 .setMaxResults(size)
                 .getResultList();
     }
 
+    @Override
+    public List<Long> getPaginationQuestionIdsIgnoreTagByUserOrderByNew(int page, int size, long id) {
+        return (List<Long>) entityManager
+                .createQuery("select distinct q.id from Question  q join q.tags tag where q.id not in " +
+                        "(select q.id from Question q join q.tags tag join IgnoredTag it on tag.id = it.ignoredTag.id where it.user.id in :id)")
+                .setParameter("id", id)
+                .setFirstResult(page*size - size)
+                .setMaxResults(size)
+                .getResultList();
+    }
+//    select * from question q
+//    join question_has_tag qht on (q.id = qht.question_id)
+//    where q.id not in (select q.id from question q
+//            join question_has_tag qht on (q.id = qht.question_id)
+//    join tag_ignore ti on (qht.tag_id = ti.ignored_tag_id) where ti.user_id = 51);
     @Override
     public  List<Long> getPaginationQuestionIdsWithoutAnswerOrderByVotes(int page, int size){
         return   (List<Long>) entityManager
@@ -176,4 +190,6 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 .setMaxResults(size)
                 .getResultList();
     }
+
+
 }

@@ -84,10 +84,9 @@ function addListenersForTagBarElems(pageName, tagType) {
     }
     button.addEventListener('click', function (){
         sendRequest('POST', "http://localhost:5557/api/tag/"+tagType+"/add?name=" + input.value, tagType, pageName)
-            .then( data => {set
+            .then( data => {
                 populateTagBar(pageName, tagType)
 
-                //new PaginationQuestionForMainPage(1,10,"newSortedByTrackedTag").setQuestions();
                 input.value=""
                 searchList.setAttribute("style", "display: none;")
                 searchList.innerHTML = ""
@@ -108,9 +107,34 @@ function addListenersForTagBarElems(pageName, tagType) {
 
                 }
             }
+
+        }
+
+        //console.log("elemChildNodes - " + elem.childNodes.length)
+        if (tagType === 'ignored' && elem.childNodes.length == 0) {
+            setTimeout(paginationSortedByIgnoreTagOnly,100)
+        } else {
+            setTimeout(paginationSortedByTrackedTag, 100);
         }
 
     })
+}
+function checkRedirectPaginationType (tagType) {
+    console.log(("elemChildNodesFromCheckedRedirect - " + (document.getElementById('list-tracked-tag-main')).childNodes.length))
+    console.log("tagType - " + tagType)
+    if ((document.getElementById('list-tracked-tag-main')).childNodes.length == 0) {
+        setTimeout(paginationSortedByIgnoreTagOnly,100);
+        console.log("Method ignorTagOnly");
+    } else {
+        setTimeout(paginationSortedByTrackedTag, 100);
+        console.log("Method-TrackTag")
+    }
+}
+function paginationSortedByTrackedTag(){
+    new PaginationQuestionForMainPage(1,10,"newSortedByTrackedTag").setQuestions();
+}
+function paginationSortedByIgnoreTagOnly(){
+    new PaginationQuestionForMainPage(1,10,"newSortedByIgnoreTagsOnly").setQuestions()
 }
 
 function deleteTagById(id, tagType) {
@@ -119,15 +143,18 @@ function deleteTagById(id, tagType) {
 }
 
 function deleteTag(tagType) {
+
     event.target.parentNode.remove()
     sendRequest('DELETE', 'http://localhost:5557/api/tag/'+tagType+'/delete?tagId=' + event.target.dataset.id)
         .catch(err => console.log(err))
+    checkRedirectPaginationType(tagType)
 }
 
 function populateTagBar(pageName, tagType) {
     sendRequest('GET', 'http://localhost:5557/api/tag/'+tagType)
         .then(response=> {
             document.getElementById('list-'+tagType+'-tag-'+pageName).innerHTML=""
+            //console.log("length JSON - " + (response.json()).length)
             response.forEach(elem => {
                 document.getElementById('list-'+tagType+'-tag-'+pageName).innerHTML +=
                     "<div class=\"mb-1\">" +
