@@ -1,0 +1,168 @@
+
+user_entity:
+#-----------today------------------
+  - email: "x"
+    password: "x"
+    about: "x"
+    full_name: "TestWeek1"
+    is_enabled: 1
+    last_redaction_date: "2020-05-28 13:58:56"
+    persist_date: "2020-05-28 13:58:56"
+    role_id: 1
+    id: 1
+
+  - email: "x"
+    password: "x"
+    about: "x"
+    full_name: "TestWeek2"
+    is_enabled: 1
+    last_redaction_date: "2020-05-28 13:58:56"
+    persist_date: "2020-05-28 13:58:56"
+    role_id: 1
+    id: 2
+#-----------a week ago------------------
+  - email: "x"
+    password: "x"
+    about: "x"
+    full_name: "TestMonth1"
+    is_enabled: 1
+    last_redaction_date: "2020-05-28 13:58:56"
+    persist_date: "2020-05-28 13:58:56"
+    role_id: 1
+    id: 3
+
+  - email: "x"
+    password: "x"
+    about: "x"
+    full_name: "TestMonth2"
+    is_enabled: 1
+    last_redaction_date: "2020-05-28 13:58:56"
+    persist_date: "2020-05-28 13:58:56"
+    role_id: 1
+    id: 4
+#-----------a month ago------------------
+  - email: "x"
+    password: "x"
+    about: "x"
+    full_name: "TestQuarter1"
+    is_enabled: 1
+    last_redaction_date: "2020-05-28 13:58:56"
+    persist_date: "2020-05-28 13:58:56"
+    role_id: 1
+    id: 5
+
+  - email: "x"
+    password: "x"
+    about: "x"
+    full_name: "TestQuarter2"
+    is_enabled: 1
+    last_redaction_date: "2020-05-28 13:58:56"
+    persist_date: "2020-05-28 13:58:56"
+    role_id: 1
+    id: 6
+#-----------a quarter ago------------------
+  - email: "x"
+    password: "x"
+    about: "x"
+    full_name: "TestYear1"
+    is_enabled: 1
+    last_redaction_date: "2020-05-28 13:58:56"
+    persist_date: "2020-05-28 13:58:56"
+    role_id: 1
+    id: 7
+
+  - email: "x"
+    password: "x"
+    about: "x"
+    full_name: "TestYear2"
+    is_enabled: 1
+    last_redaction_date: "2020-05-28 13:58:56"
+    persist_date: "2020-05-28 13:58:56"
+    role_id: 1
+    id: 8
+#-----------a 2 year ago------------------
+  - email: "x"
+    password: "x"
+    about: "x"
+    full_name: "TestAll1"
+    is_enabled: 1
+    last_redaction_date: "2020-05-28 13:58:56"
+    persist_date: "2020-05-28 13:58:56"
+    role_id: 1
+    id: 9
+
+  - email: "x"
+    password: "x"
+    about: "x"
+    full_name: "TestAll2"
+    is_enabled: 1
+    last_redaction_date: "2020-05-28 13:58:56"
+    persist_date: "2020-05-28 13:58:56"
+    role_id: 1
+    id: 10
+
+reputation:
+  #-----------today------------------
+  - id: "1"
+    persist_date: js:new Date().getFullYear() +"-"+ (Number(new Date().getMonth()) + Number(1)) +"-"+ new Date().getDate() + " 00:00:00"
+#    в js месяцы начинаются с 0, а не с 1
+    author_id: 1
+    count: 40
+    type: 1
+
+  - id: "2"
+    persist_date: js:new Date().getFullYear() +"-"+ (Number(new Date().getMonth()) + Number(1)) +"-"+ new Date().getDate() + " 00:00:00"
+    author_id: 2
+    count: 50
+    type: 1
+#-----------a week ago------------------
+  - id: "3"
+    persist_date: js:new Date().getDate() > 8 ? new Date().getFullYear() +"-"+ (Number(new Date().getMonth()) + Number(1)) +"-"+ (Number(new Date().getDate()) - Number(8)) + " 00:00:00":new Date().getMonth() > 0 ? new Date().getFullYear() +"-"+ new Date().getMonth() +"-"+ "15" + " 00:00:00":(Number(new Date().getFullYear()) - Number(1)) +"-"+ "12" +"-"+ "15" + " 00:00:00"
+# если день месяца больше 8 возвращаем дату 8дней назад, иначе, если месяц не январь, возвращаем 15 число предыдущего месяца, иначе возвращаем 15 декабря предыдущего года
+    author_id: 3
+    count: 35
+    type: 1
+
+  - id: "4"
+    persist_date: js:new Date().getDate() > 8 ? new Date().getFullYear() +"-"+ (Number(new Date().getMonth()) + Number(1)) +"-"+ (Number(new Date().getDate()) - Number(8)) + " 00:00:00":new Date().getMonth() > 0 ? new Date().getFullYear() +"-"+ new Date().getMonth() +"-"+ "15" + " 00:00:00":(Number(new Date().getFullYear()) - Number(1)) +"-"+ "12" +"-"+ "15" + " 00:00:00"
+    author_id: 4
+    count: 55
+    type: 1
+#-----------a month ago------------------
+  - id: "5"
+    persist_date: js:(Number(new Date().getMonth()) + Number(1)) > 2 ? new Date().getFullYear() +"-"+ (Number(new Date().getMonth()) + Number(1) - Number(2)) +"-"+ new Date().getDate() + " 00:00:00":(Number(new Date().getFullYear()) - Number(1))+"-"+ "11" +"-"+ "15" + " 00:00:00"
+# если если месяц > 2 (март и далее), возвращаем дату на 2 месяца назад, иначе возвращаем 15 ноября предыдущего года
+    author_id: 5
+    count: 30
+    type: 1
+
+  - id: "6"
+    persist_date: js:(Number(new Date().getMonth()) + Number(1)) > 2 ? new Date().getFullYear() +"-"+ (Number(new Date().getMonth()) + Number(1) - Number(2)) +"-"+ new Date().getDate() + " 00:00:00":(Number(new Date().getFullYear()) - Number(1))+"-"+ "11" +"-"+ "15" + " 00:00:00"
+    author_id: 6
+    count: 60
+    type: 1
+  #-----------a quarter ago------------------
+  - id: "7"
+    persist_date: js:(Number(new Date().getMonth()) + Number(1)) > 5 ? new Date().getFullYear() +"-"+ (Number(new Date().getMonth()) + Number(1) - Number(5)) +"-"+ new Date().getDate() + " 00:00:00":(Number(new Date().getFullYear()) - Number(1))+"-"+ "07" +"-"+ "15" + " 00:00:00"
+# если если месяц > 5 (июнь и далее), возвращаем дату на 2 месяца назад, иначе возвращаем 15 ноября предыдущего года
+    author_id: 7
+    count: 25
+    type: 1
+
+  - id: "8"
+    persist_date: js:(Number(new Date().getMonth()) + Number(1)) > 5 ? new Date().getFullYear() +"-"+ (Number(new Date().getMonth()) + Number(1) - Number(5)) +"-"+ new Date().getDate() + " 00:00:00":(Number(new Date().getFullYear()) - Number(1))+"-"+ "07" +"-"+ "15" + " 00:00:00"
+    author_id: 8
+    count: 65
+    type: 1
+#-----------a 2 year ago------------------
+  - id: "9"
+    persist_date: js:(Number(new Date().getFullYear()) - Number(2)) +"-"+ (Number(new Date().getMonth()) + Number(1)) +"-"+ new Date().getDate() + " 00:00:00"
+    author_id: 9
+    count: 20
+    type: 1
+
+  - id: "10"
+    persist_date: js:(Number(new Date().getFullYear()) - Number(2)) +"-"+ (Number(new Date().getMonth()) + Number(1)) +"-"+ new Date().getDate() + " 00:00:00"
+    author_id: 10
+    count: 70
+    type: 1
