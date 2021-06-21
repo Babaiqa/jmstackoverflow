@@ -1,14 +1,14 @@
 class QuestionService {
 
     getVoteById(questionId) {
-        let query = '/api/question/vote/'+questionId;
+        let query = '/api/question/vote/' + questionId;
         return fetch(query, {
             method: 'GET',
             headers: new Headers({
                 'Content-Type': 'application/json',
                 'Authorization': $.cookie("token")
             })
-        }).then(response =>{
+        }).then(response => {
             if (response.ok) {
                 return response.json()
             } else {
@@ -20,14 +20,14 @@ class QuestionService {
     }
 
     getQuestionById(questionId) {
-        let query = '/api/question/'+questionId;
+        let query = '/api/question/' + questionId;
         return fetch(query, {
             method: 'GET',
             headers: new Headers({
                 'Content-Type': 'application/json',
                 'Authorization': $.cookie("token")
             })
-        }).then(response =>{
+        }).then(response => {
             if (response.ok) {
                 return response.json()
             } else {
@@ -45,7 +45,7 @@ class QuestionService {
                 'Content-Type': 'application/json',
                 'Authorization': $.cookie("token")
             })
-        }).then(function(response) {
+        }).then(function (response) {
             if (!response.ok) {
                 let error = new Error();
                 error.response = response.text();
@@ -64,7 +64,7 @@ class QuestionService {
                 'Authorization': $.cookie("token")
             },
             body: JSON.stringify(tagDto)
-        }).then(function(response) {
+        }).then(function (response) {
             if (!response.ok) {
                 let error = new Error();
                 error.response = response.text();
@@ -82,7 +82,7 @@ class QuestionService {
                 'Content-Type': 'application/json',
                 'Authorization': $.cookie("token")
             })
-        }).then(response =>  {
+        }).then(response => {
             if (response.ok) {
                 return response.json()
             } else {
@@ -90,52 +90,12 @@ class QuestionService {
                 error.response = response.text();
                 throw error;
             }
-        }).catch( error => error.response.then(message => console.log(message)));
+        }).catch(error => error.response.then(message => console.log(message)));
     }
 
     findPaginationNew(page, size) {
         let query = '/api/question/order/new?page=' + page + '&size=' + size;
         return fetch(query, {
-            method: 'GET',
-            headers: new Headers({
-                'Content-Type': 'application/json',
-                'Authorization': $.cookie("token")
-            })
-        }).then(response =>  {
-            if (response.ok) {
-                return response.json()
-            } else {
-                let error = new Error();
-                error.response = response.text();
-                throw error;
-            }
-        }).catch( error => error.response.then(message => console.log(message)));
-    }
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
-    findPaginationdNewQuestionSortByTrackedAndIgnoreTags (page, size) {
-       let query = '/api/question/order/new/byTracked&IgnoreTags?page=' + page +'&size=' + size;
-       return fetch(query,{
-           method: 'GET',
-           headers: new Headers({
-               'Content-Type': 'application/json',
-               'Authorization': $.cookie("token")
-           })
-       }).then(response => {
-           if (response.ok) {
-               return response.json()
-           } else {
-               let error = new Error();
-               error.response = response.text();
-               throw error;
-           }
-       }).catch( error => error.response.then(message => console.log(message)));
-    }
-
-    findPaginationdNewQuestionSortByIgnoreTagsOnly (page, size) {
-        let query = '/api/question/order/new/byIgnoreTags?page=' + page +'&size=' + size;
-        return fetch(query,{
             method: 'GET',
             headers: new Headers({
                 'Content-Type': 'application/json',
@@ -149,11 +109,48 @@ class QuestionService {
                 error.response = response.text();
                 throw error;
             }
-        }).catch( error => error.response.then(message => console.log(message)));
+        }).catch(error => error.response.then(message => console.log(message)));
     }
 
+    findPaginationdNewQuestionSortByTrackedAndIgnoreTags(page, size) {
+        let query = '/api/question/order/new/byTracked&IgnoreTags?page=' + page + '&size=' + size;
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        }).then(response => {
+            if (response.ok) {
+                return response.json()
+            } else {
+                let error = new Error();
+                error.response = response.text();
+                throw error;
+            }
+        }).catch(error => error.response.then(message => console.log(message)));
+    }
 
-    findPaginationPopularOverPeriod(page, size, period='') {
+    findPaginationdNewQuestionSortByIgnoreTagsOnly(page, size) {
+        let query = '/api/question/order/new/byIgnoreTags?page=' + page + '&size=' + size;
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        }).then(response => {
+            if (response.ok) {
+                return response.json()
+            } else {
+                let error = new Error();
+                error.response = response.text();
+                throw error;
+            }
+        }).catch(error => error.response.then(message => console.log(message)));
+    }
+
+    findPaginationPopularOverPeriod(page, size, period = '') {
         let query = '/api/question/popular/' + period + '?page=' + page + '&size=' + size;
 
         return fetch(query, {
@@ -163,7 +160,7 @@ class QuestionService {
                 'Authorization': $.cookie("token")
             })
         })
-            .then(response =>  {
+            .then(response => {
                 if (response.ok) {
                     return response.json()
                 } else {
@@ -171,19 +168,19 @@ class QuestionService {
                     error.response = response.text();
                     throw error;
                 }
-            }).catch( error => error.response.then(message => console.log(message)));
+            }).catch(error => error.response.then(message => console.log(message)));
     }
 
     findPaginationPopular(page, size) {
         let query = '/api/question/popular/?page=' + page + '&size=' + size;
-        return fetch(query,{
+        return fetch(query, {
             method: 'GET',
             headers: new Headers({
                 'Content-Type': 'application/json',
                 'Authorization': $.cookie("token")
             })
         })
-            .then(response =>  {
+            .then(response => {
                 if (response.ok) {
                     return response.json()
                 } else {
@@ -191,7 +188,7 @@ class QuestionService {
                     error.response = response.text();
                     throw error;
                 }
-            }).catch( error => error.response.then(message => console.log(message)));
+            }).catch(error => error.response.then(message => console.log(message)));
     }
 
     getQuestionPopularTrackedTag(page, size) {
@@ -202,7 +199,7 @@ class QuestionService {
                 'Content-Type': 'application/json',
                 'Authorization': $.cookie("token")
             })
-        }).then(response =>  {
+        }).then(response => {
             if (response.ok) {
                 return response.json()
             } else {
@@ -210,7 +207,7 @@ class QuestionService {
                 error.response = response.text();
                 throw error;
             }
-        }).catch( error => error.response.then(message => console.log(message)));
+        }).catch(error => error.response.then(message => console.log(message)));
     }
 
     getQuestionPopularIgnoredTag(page, size) {
@@ -221,7 +218,7 @@ class QuestionService {
                 'Content-Type': 'application/json',
                 'Authorization': $.cookie("token")
             })
-        }).then(response =>  {
+        }).then(response => {
             if (response.ok) {
                 return response.json()
             } else {
@@ -229,7 +226,7 @@ class QuestionService {
                 error.response = response.text();
                 throw error;
             }
-        }).catch( error => error.response.then(message => console.log(message)));
+        }).catch(error => error.response.then(message => console.log(message)));
     }
 
     getQuestionsWithGivenTags(page, size, id) {
@@ -240,7 +237,7 @@ class QuestionService {
                 'Content-Type': 'application/json',
                 'Authorization': $.cookie("token")
             })
-        }).then(response =>  {
+        }).then(response => {
             if (response.ok) {
                 return response.json()
             } else {
@@ -248,7 +245,7 @@ class QuestionService {
                 error.response = response.text();
                 throw error;
             }
-        }).catch( error => error.response.then(message => console.log(message)));
+        }).catch(error => error.response.then(message => console.log(message)));
     }
 
     getQuestionsWithoutAnswers(page, size) {
@@ -259,7 +256,7 @@ class QuestionService {
                 'Content-Type': 'application/json',
                 'Authorization': $.cookie("token")
             })
-        }).then(response =>  {
+        }).then(response => {
             if (response.ok) {
                 return response.json()
             } else {
@@ -267,7 +264,7 @@ class QuestionService {
                 error.response = response.text();
                 throw error;
             }
-        }).catch( error => error.response.then(message => console.log(message)));
+        }).catch(error => error.response.then(message => console.log(message)));
     }
 
     getResponseQuestion(query) {
@@ -310,7 +307,7 @@ class QuestionService {
                 throw error;
             }
         }).catch(error => error.response.then(message => console.log(message)));
-        return fetch(query,{
+        return fetch(query, {
             method: 'GET',
             headers: new Headers({
                 'Content-Type': 'application/json',
@@ -343,12 +340,12 @@ class QuestionService {
                 count = response.countValuable;
             }).then(data => {
                 document.getElementById('downvote_btn').style.fill = "#000000"
-                document.getElementById('count_question').innerHTML ="&nbsp;" + count;
+                document.getElementById('count_question').innerHTML = "&nbsp;" + count;
                 this.getVoteById(questionId)
                     .then(vote => {
-                        if(vote === 0) {
+                        if (vote === 0) {
                             document.getElementById('upvote_btn').style.fill = "#000000"
-                        } else if(vote === 1){
+                        } else if (vote === 1) {
                             document.getElementById('upvote_btn').style.fill = "#105ac7"
                         }
                     })
@@ -364,7 +361,7 @@ class QuestionService {
                 'Content-Type': 'application/json',
                 'Authorization': $.cookie("token")
             })
-        }).then(response =>{
+        }).then(response => {
             if (response.ok) {
                 return response.json()
             } else {
@@ -392,8 +389,6 @@ class QuestionService {
     }
 
 
-
-
     makeDownVoteQuestion(questionId) {
         fetch('/api/question/' + questionId + '/downVote',
             {
@@ -405,15 +400,15 @@ class QuestionService {
             }).then(data => {
             let count = 0;
             this.getQuestionById(questionId).then(response => {
-               count = response.countValuable;
+                count = response.countValuable;
             }).then(data => {
                 document.getElementById('upvote_btn').style.fill = "#000000"
-                document.getElementById('count_question').innerHTML ="&nbsp;" + count;
+                document.getElementById('count_question').innerHTML = "&nbsp;" + count;
                 this.getVoteById(questionId)
                     .then(vote => {
-                        if(vote === 0) {
+                        if (vote === 0) {
                             document.getElementById('downvote_btn').style.fill = "#000000"
-                        } else if(vote === -1){
+                        } else if (vote === -1) {
                             document.getElementById('downvote_btn').style.fill = "#105ac7"
                         }
                     })
@@ -429,7 +424,7 @@ class QuestionService {
                 'Content-Type': 'application/json',
                 'Authorization': $.cookie("token")
             })
-        }).then(response =>  {
+        }).then(response => {
             if (response.ok) {
                 return response.json()
             } else {
@@ -437,7 +432,7 @@ class QuestionService {
                 error.response = response.text();
                 throw error;
             }
-        }).catch( error => error.response.then(message => console.log(message)));
+        }).catch(error => error.response.then(message => console.log(message)));
     }
 
     getQuestionOrderedNew(page, size) {
@@ -448,7 +443,7 @@ class QuestionService {
                 'Content-Type': 'application/json',
                 'Authorization': $.cookie("token")
             })
-        }).then(response =>  {
+        }).then(response => {
             if (response.ok) {
                 return response.json()
             } else {
@@ -456,7 +451,7 @@ class QuestionService {
                 error.response = response.text();
                 throw error;
             }
-        }).catch( error => error.response.then(message => console.log(message)));
+        }).catch(error => error.response.then(message => console.log(message)));
     }
 
     getQuestionWithoutAnswerSortedByVotes(page, size) {
@@ -467,7 +462,7 @@ class QuestionService {
                 'Content-Type': 'application/json',
                 'Authorization': $.cookie("token")
             })
-        }).then(response =>  {
+        }).then(response => {
             if (response.ok) {
                 return response.json()
             } else {
@@ -475,7 +470,7 @@ class QuestionService {
                 error.response = response.text();
                 throw error;
             }
-        }).catch( error => error.response.then(message => console.log(message)));
+        }).catch(error => error.response.then(message => console.log(message)));
     }
 
     getQuestionWithoutAnswersNoAnyAnswer(page, size) {
@@ -486,7 +481,7 @@ class QuestionService {
                 'Content-Type': 'application/json',
                 'Authorization': $.cookie("token")
             })
-        }).then(response =>  {
+        }).then(response => {
             if (response.ok) {
                 return response.json()
             } else {
@@ -494,6 +489,6 @@ class QuestionService {
                 error.response = response.text();
                 throw error;
             }
-        }).catch( error => error.response.then(message => console.log(message)));
+        }).catch(error => error.response.then(message => console.log(message)));
     }
 }

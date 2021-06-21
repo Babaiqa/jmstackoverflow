@@ -104,8 +104,6 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 .setMaxResults(size)
                 .getResultList();
     }
-/////////////////////////////////////////////////////////////////////////////// new controller/////////////////////////////
-
 
     @Override
     public List<Long> getPaginationQuestionIdsTrackedTagByUserOrderByNew (int page, int size, long id) {
@@ -128,11 +126,7 @@ public class QuestionDtoDaoImpl implements QuestionDtoDao {
                 .setMaxResults(size)
                 .getResultList();
     }
-//    select * from question q
-//    join question_has_tag qht on (q.id = qht.question_id)
-//    where q.id not in (select q.id from question q
-//            join question_has_tag qht on (q.id = qht.question_id)
-//    join tag_ignore ti on (qht.tag_id = ti.ignored_tag_id) where ti.user_id = 51);
+
     @Override
     public  List<Long> getPaginationQuestionIdsWithoutAnswerOrderByVotes(int page, int size){
         return   (List<Long>) entityManager

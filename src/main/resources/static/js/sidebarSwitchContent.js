@@ -2,7 +2,6 @@ $( document ).ready(function() {
     $('#inputFilter').on('keyup', delay(function (e) {
         new PaginationTag(1,12,'search',document.getElementById('inputFilter').value).writeTags()
     }, 500));
-    //checkRedirect()
     checkRedirect1()
     new PaginationTag(1, 12, 'popular').writeTags()
     new PaginationTag(1, 10, 'popular').writeTopTenTags()
@@ -64,18 +63,6 @@ $( document ).ready(function() {
 
         document.getElementById(contentName).style.display = "block";
         document.getElementById(evt).className += " active";
-    }
-
-    function checkRedirect(){
-        let url = new URL(window.location.href)
-        let tagId = url.searchParams.get("tagId")
-        if(tagId != null){
-            new PaginationQuestion(1,10, "withTags", tagId).setQuestions()
-        } else {
-            new PaginationQuestion(1,10,'normal').setQuestions()
-            new PaginationQuestionForMainPage(1,10, 'new').setQuestions()
-
-        }
     }
 
     function checkRedirect1(){

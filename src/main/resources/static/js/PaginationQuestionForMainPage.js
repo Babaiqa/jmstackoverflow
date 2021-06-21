@@ -30,8 +30,6 @@ class PaginationQuestionForMainPage {
             this.questions = this.questionService.findPagination(this.page, this.size);
         }
 
-        // this.questions = this.questionService.findPaginationNew(this.page, this.size);
-        //newSortedByIgnoreTagsOnly
     }
 
     setQuestions() {

@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 @Service
-public class QuestionDtoServiceImpl extends PaginationQuestionDtoService implements QuestionDtoService{
+public class QuestionDtoServiceImpl extends PaginationQuestionDtoService implements QuestionDtoService {
 
     private final QuestionDtoDao questionDtoDao;
     private final PaginationService<QuestionDtoPrincipal, Object> paginationService;
@@ -43,7 +43,7 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
     }
 
     @Override
-    public PageDto<QuestionDto, Object> getPaginationPopularTrackedTag(int page, int size, long id){
+    public PageDto<QuestionDto, Object> getPaginationPopularTrackedTag(int page, int size, long id) {
         List<Long> ids = questionDtoDao.getPaginationQuestionIdsPopularWithTrackedTags(page, size, id);
         Map<String, Object> parameters = setPaginationParameters(page, size, Optional.empty(), Optional.empty());
         parameters.put("page", page);
@@ -56,7 +56,7 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
     }
 
     @Override
-    public PageDto<QuestionDto, Object> getPaginationPopularIgnoredTag(int page, int size, long id){
+    public PageDto<QuestionDto, Object> getPaginationPopularIgnoredTag(int page, int size, long id) {
         List<Long> ids = questionDtoDao.getPaginationQuestionIdsPopularWithIgnoredTags(page, size, id);
         Map<String, Object> parameters = setPaginationParameters(page, size, Optional.empty(), Optional.empty());
         parameters.put("page", page);
@@ -68,6 +68,7 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
                 parameters);
     }
 
+    @Override
     public PageDto<QuestionDto, Object> getPaginationOrderedNew(int page, int size) {
         Map<String, Object> parameters = setPaginationParameters(page, size, Optional.empty(), Optional.empty());
         List<Long> ids = questionDtoDao.getPaginationQuestionIdsOrderByNew(page, size);
@@ -77,8 +78,7 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
                 parameters);
     }
 
-    ///////////////////////////////////////////////////////// new /////////////////////////////////////////////
-
+    @Override
     public PageDto<QuestionDto, Object> getPaginationQuestionIdsTrackedTagByUserOrderByNew(int page, int size, long id) {
         Map<String, Object> parameters = setPaginationParametersForPrincipal(page, size, Optional.of(id));
         List<Long> ids = questionDtoDao.getPaginationQuestionIdsTrackedTagByUserOrderByNew(page, size, id);
@@ -143,7 +143,7 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
     }
 
     @Override
-    public PageDto<QuestionDto, Object> getPaginationWithoutAnswersNew(int page, int size){
+    public PageDto<QuestionDto, Object> getPaginationWithoutAnswersNew(int page, int size) {
         List<Long> ids = questionDtoDao.getPaginationQuestionIdsWithoutAnswerOrderByNew(page, size);
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("page", page);
@@ -156,7 +156,7 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
     }
 
     @Override
-    public PageDto<QuestionDto, Object> getPaginationWithoutAnswersTrackedTag(int page, int size, long id){
+    public PageDto<QuestionDto, Object> getPaginationWithoutAnswersTrackedTag(int page, int size, long id) {
         List<Long> ids = questionDtoDao.getPaginationQuestionIdsWithoutAnswerWithTrackedTags(page, size, id);
         Map<String, Object> parameters = setPaginationParameters(page, size, Optional.empty(), Optional.empty());
         parameters.put("page", page);
@@ -193,7 +193,7 @@ public class QuestionDtoServiceImpl extends PaginationQuestionDtoService impleme
     }
 
     @Override
-    public PageDto<QuestionDto, Object> getPaginationWithoutAnswersIgnoredTags(int page, int size, long id){
+    public PageDto<QuestionDto, Object> getPaginationWithoutAnswersIgnoredTags(int page, int size, long id) {
         List<Long> ids = questionDtoDao.getPaginationQuestionIdsWithoutAnswerWithIgnoredTags(page, size, id);
         Map<String, Object> parameters = setPaginationParameters(page, size, Optional.empty(), Optional.empty());
         parameters.put("page", page);
