@@ -22,11 +22,13 @@ class PaginationQuestionForMainPage {
             this.questions = this.questionService.findPaginationPopularOverPeriod(this.page, this.size, "month");
         } else if (this.type == 'withTags') {
             this.questions = this.questionService.getQuestionsWithGivenTags(this.page, this.size, this.id);
+        } else if (this.type == 'newSortedByTrackedTag') {
+            this.questions = this.questionService.findPaginationdNewQuestionSortByTrackedAndIgnoreTags(this.page, this.size);
+        } else if (this.type == "newSortedByIgnoreTagsOnly") {
+            this.questions = this.questionService.findPaginationdNewQuestionSortByIgnoreTagsOnly(this.page, this.size);
         } else {
             this.questions = this.questionService.findPagination(this.page, this.size);
         }
-
-        // this.questions = this.questionService.findPaginationNew(this.page, this.size);
 
     }
 
@@ -40,40 +42,40 @@ class PaginationQuestionForMainPage {
             for (var i = 0; i < response.items.length; i++) {
                 const date = new Date(response.items[i].persistDateTime)
                 const stringDate = ('0' + date.getDate()).slice(-2) + "."
-                                 + ('0' + (date.getMonth() + 1)).slice(-2) + "."
-                                 + date.getFullYear()
+                    + ('0' + (date.getMonth() + 1)).slice(-2) + "."
+                    + date.getFullYear()
                 let tagsView = response.items[i].listTagDto.map(i => i.name);
-                let allTagsView  = tagsView.map(i => `<a href="#" class="mb-1"> ${i} </a>`).join('');
+                let allTagsView = tagsView.map(i => `<a href="#" class="mb-1"> ${i} </a>`).join('');
 
                 $('#questionsAll').append(
                     "        <div class=\"list-group-item list-group-item-action h-100\">\n" +
                     "            <div class=\"row align-items-center h-100\">\n" +
                     "                <div style='width: 180px;' class='pl-3'>\n" +
-                    "                    <a style='color: #6a737c; font-size:115%;' class=\"row\" id=\"questionLink"+ response.items[i].id +"\" href=\"/question/"+ response.items[i].id +"\" onclick=\"openContent(id, 'question')\">\n" +
+                    "                    <a style='color: #6a737c; font-size:115%;' class=\"row\" id=\"questionLink" + response.items[i].id + "\" href=\"/question/" + response.items[i].id + "\" onclick=\"openContent(id, 'question')\">\n" +
                     "                        <div class=\"col-sm-4 p-0\">\n" +
                     "                            <div style=\"text-align: center;\">\n" +
-                    "                                <small style=\"display: inline-block;\">" + response.items[i].countValuable +"<br /> голосов</small>\n" +
+                    "                                <small style=\"display: inline-block;\">" + response.items[i].countValuable + "<br /> голосов</small>\n" +
                     "                            </div>\n" +
                     "                        </div>\n" +
                     "                        <div class=\"col-sm-4 p-0\">\n" +
                     "                            <div style=\"text-align: center;\">\n" +
-                    "                                <small style=\"display: inline-block;\">" + response.items[i].countAnswer +"<br /> ответов</small>\n" +
+                    "                                <small style=\"display: inline-block;\">" + response.items[i].countAnswer + "<br /> ответов</small>\n" +
                     "                            </div>\n" +
                     "                        </div>\n" +
                     "                        <div class=\"col-sm-4 p-0\">\n" +
                     "                            <div style=\"text-align: center;\">\n" +
-                    "                                <small style=\"display: inline-block;\">" + response.items[i].viewCount +"<br /> показов</small>\n" +
+                    "                                <small style=\"display: inline-block;\">" + response.items[i].viewCount + "<br /> показов</small>\n" +
                     "                            </div>\n" +
                     "                        </div>\n" +
                     "                    </a>\n" +
                     "                </div>\n" +
                     "                <div class=\"col-9\">\n" +
-                    "                    <a class=\"d-flex w-100 justify-content-between\" id=\"questionLink"+ response.items[i].id +"\" href=\"/question/"+ response.items[i].id +"\" onclick=\"openContent(id, 'question')\" >\n" +
+                    "                    <a class=\"d-flex w-100 justify-content-between\" id=\"questionLink" + response.items[i].id + "\" href=\"/question/" + response.items[i].id + "\" onclick=\"openContent(id, 'question')\" >\n" +
                     "                        <p style=\"color:#0077cb; font-size: 125% \" >" + response.items[i].title + "</p>\n" +
-                    "                        <small style='color: #6a737c'> задан "+ stringDate + "</small>\n" +
+                    "                        <small style='color: #6a737c'> задан " + stringDate + "</small>\n" +
                     "                    </a>\n" +
                     "                    <div class=\"nav-col btn-group  btn-block mr-0   \">\n" +
-                                            allTagsView +
+                    allTagsView +
                     "                    </div>\n" +
                     "                </div>\n" +
                     "            </div>\n" +

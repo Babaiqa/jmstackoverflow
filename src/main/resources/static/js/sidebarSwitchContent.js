@@ -2,12 +2,13 @@ $( document ).ready(function() {
     $('#inputFilter').on('keyup', delay(function (e) {
         new PaginationTag(1,12,'search',document.getElementById('inputFilter').value).writeTags()
     }, 500));
-    checkRedirect()
+    checkRedirect1()
     new PaginationTag(1, 12, 'popular').writeTags()
     new PaginationTag(1, 10, 'popular').writeTopTenTags()
     new PaginationUser(1,20,'week').writeUsers()
     new PaginationQuestionWithoutAnswer(1,10, 'noSort').writeQuestionWithoutAnswer()
     new PaginationQuestionWithoutAnswer(1,10).totalResultCountView()
+
     if(/^\/question\//.test(window.location.pathname)){
         let tabcontent
         tabcontent = document.getElementsByClassName("tabcontent");
@@ -64,15 +65,16 @@ $( document ).ready(function() {
         document.getElementById(evt).className += " active";
     }
 
-    function checkRedirect(){
-        let url = new URL(window.location.href)
-        let tagId = url.searchParams.get("tagId")
-        if(tagId != null){
-            console.log(tagId)
-            new PaginationQuestion(1,10, "withTags", tagId).setQuestions()
-        } else {
-            new PaginationQuestion(1,10,'normal').setQuestions()
-            new PaginationQuestionForMainPage(1,10, 'new').setQuestions()
-        }
+    function checkRedirect1(){
+    sendRequest('GET', 'http://localhost:5557/api/tag/tracked')
+            .then(result => {
+                if (result.length > 0) {
+                    new PaginationQuestionForMainPage(1,10,'newSortedByTrackedTag').setQuestions();
+                    //console.log("resultLength From if - " + result.length);
+            } else {
+                    //console.log("resultLength out if - " + result.length);
+                    new PaginationQuestionForMainPage(1,10,"newSortedByIgnoreTagsOnly").setQuestions();}
+            })
     }
-})
+
+   })

@@ -353,6 +353,54 @@ public class QuestionController {
 
         return ResponseEntity.ok(resultPage);
     }
+    ////////////////////////////////////////////////////////////////////new////////////////////////////////////////////////
+
+    @GetMapping(value = "order/new/byTracked&IgnoreTags", params = {"page", "size"})
+    @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination sorted by Tracked&Ignore tag List<QuestionDto>"),
+    })
+    public ResponseEntity<?> getPaginationQuestionIdsTrackedAndIgnoreTagByUserOrderByNew(
+            @ApiParam(name = "page", value = "Number Page. Type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    "Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    example = "10")
+            @RequestParam("size") int size) {
+
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationQuestionIdsTrackedTagByUserOrderByNew(page, size, securityHelper.getPrincipal().getId());
+
+        return ResponseEntity.ok(resultPage);
+    }
+
+    @GetMapping(value = "order/new/byIgnoreTags", params = {"page", "size"})
+    @ApiOperation(value = "Return object(PageDto<QuestionDto, Object>)")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the pagination sorted by Tracked tag only List<QuestionDto>"),
+    })
+    public ResponseEntity<?> getPaginationQuestionIdsTrackedTagByUserOrderByNew(
+            @ApiParam(name = "page", value = "Number Page. Type int", required = true, example = "1")
+            @RequestParam("page") int page,
+            @ApiParam(name = "size", value = "Number of entries per page.Type int." +
+                    "Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE,
+                    example = "10")
+            @RequestParam("size") int size
+    ) {
+        if (page <= 0 || size <= 0 || size > MAX_ITEMS_ON_PAGE) {
+            return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
+                    "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
+        }
+
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationQuestionIdsIgnoreTagByUserOrderByNew(page, size, securityHelper.getPrincipal().getId());
+
+        return ResponseEntity.ok(resultPage);
+
+    }
 
     @GetMapping(value = "/withoutAnswer", params = {"page", "size"})
     @ApiOperation(value = "Return Questions without answers (where the author did not mark is_helpful)")
@@ -584,7 +632,7 @@ public class QuestionController {
 
     @PostMapping("/{questionId}/upVote")
     @ResponseBody
-    @ApiOperation(value ="Up vote for question")
+    @ApiOperation(value = "Up vote for question")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Question was up voted", response = VoteQuestionDto.class),
             @ApiResponse(code = 400, message = "Question not found", response = String.class)
@@ -605,7 +653,7 @@ public class QuestionController {
         VoteQuestion voteQuestion;
         try {
             voteQuestion = voteQuestionService.questionUpVote(question, user);
-        }  catch (VoteException e) {
+        } catch (VoteException e) {
             return ResponseEntity.ok(e.getMessage());
         }
         VoteQuestionDto responseBody = voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
@@ -618,10 +666,9 @@ public class QuestionController {
     }
 
 
-
     @PostMapping("/{questionId}/downVote")
     @ResponseBody
-    @ApiOperation(value ="Down vote for question")
+    @ApiOperation(value = "Down vote for question")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Question was up voted", response = VoteQuestionDto.class),
             @ApiResponse(code = 400, message = "Question not found", response = String.class)
@@ -641,7 +688,7 @@ public class QuestionController {
         VoteQuestion voteQuestion;
         try {
             voteQuestion = voteQuestionService.questionDownVote(question, user);
-        }  catch (VoteException e) {
+        } catch (VoteException e) {
             return ResponseEntity.ok(e.getMessage());
         }
         VoteQuestionDto responseBody = voteQuestionConverter.voteQuestionToVoteQuestionDto(voteQuestion);
@@ -719,7 +766,7 @@ public class QuestionController {
             return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
-        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationWithoutAnswersTrackedTag(page, size, securityHelper.getPrincipal().getId() );
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationWithoutAnswersTrackedTag(page, size, securityHelper.getPrincipal().getId());
         return ResponseEntity.ok(resultPage);
     }
 
@@ -741,7 +788,7 @@ public class QuestionController {
             return ResponseEntity.badRequest().body("Номер страницы и размер должны быть " +
                     "положительными. Максимальное количество записей на странице " + MAX_ITEMS_ON_PAGE);
         }
-        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationWithoutAnswersIgnoredTags(page, size, securityHelper.getPrincipal().getId() );
+        PageDto<QuestionDto, Object> resultPage = questionDtoService.getPaginationWithoutAnswersIgnoredTags(page, size, securityHelper.getPrincipal().getId());
         return ResponseEntity.ok(resultPage);
     }
 
@@ -761,7 +808,7 @@ public class QuestionController {
         }
         Long userId;
         int vote;
-        if(voteQuestionService.isUserAlreadyVoted(questionService.getById(questionId).get(), securityHelper.getPrincipal()) == true) {
+        if (voteQuestionService.isUserAlreadyVoted(questionService.getById(questionId).get(), securityHelper.getPrincipal()) == true) {
             userId = securityHelper.getPrincipal().getId();
             vote = voteQuestionDtoDao.getVoteByQuestionIdAndUserId(questionId, userId).get().getVote();
         } else {

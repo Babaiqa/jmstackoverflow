@@ -18,11 +18,15 @@ public interface QuestionDtoDao {
 
      List<Long> getPaginationQuestionIdsOrderByNew(int page, int size);
 
-     List<Long> getPaginationQuestionIdsWithoutAnswerOrderByVotes(int page, int size);
+    List<Long> getPaginationQuestionIdsTrackedTagByUserOrderByNew(int page, int size, long id);
+
+    List<Long> getPaginationQuestionIdsWithoutAnswerOrderByVotes(int page, int size);
 
      List<Long> getPaginationQuestionIdsPopularWithTrackedTags(int page, int size, long id);
 
      List<Long> getPaginationQuestionIdsPopularWithIgnoredTags(int page, int size, long id);
 
     List<Long> getPaginationQuestionIdsWithFollowAndWithoutIgnoreTags(int page, int size, long id);
+
+    List<Long> getPaginationQuestionIdsIgnoreTagByUserOrderByNew(int page, int size, long id);
 }
