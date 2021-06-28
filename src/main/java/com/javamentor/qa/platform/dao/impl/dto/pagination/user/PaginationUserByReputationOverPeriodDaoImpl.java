@@ -24,19 +24,19 @@ public class PaginationUserByReputationOverPeriodDaoImpl implements PaginationDa
         int size = (int) parameters.get("size");
         int days = (int) parameters.get("days");
 
-        int fromIndex = page * size - size;
-        int toIndex = page * size;
-
         List<Long> usersIds = (List<Long>) em.unwrap(Session.class)
                 .createQuery("select user.id " +
                         "from User user " +
                         "left outer join Reputation r on r.author.id=user.id " +
-                        "where current_date - (:quantityOfDays)<date(r.persistDate)")
+                        "where current_date - (:quantityOfDays)<date(r.persistDate)" +
+                        "ORDER BY r.count DESC")
                 .setParameter("quantityOfDays", days)
+                .setFirstResult(page * size - size)
+                .setMaxResults(size)
                 .unwrap(org.hibernate.query.Query.class)
                 .getResultList();
 
-        List<UserDtoList> userDtoLists = (List<UserDtoList>) em.unwrap(Session.class)
+        return (List<UserDtoList>) em.unwrap(Session.class)
                 .createQuery("select user.id as user_id, " +
                         "user.fullName as full_name, " +
                         "user.imageLink as link_image, " +
@@ -51,18 +51,11 @@ public class PaginationUserByReputationOverPeriodDaoImpl implements PaginationDa
                         "where user.id in (:ids) " +
                         "group by user.id, user.fullName, user.imageLink, tag.id, tag.name " +
                         "order by reputation DESC"
-//                        "order by user.id, tag.id"
                 )
                 .setParameter("ids", usersIds)
                 .unwrap(org.hibernate.query.Query.class)
                 .setResultTransformer(new UserDtoListTranformer())
                 .getResultList();
-
-        if (toIndex > userDtoLists.size()){
-            toIndex = userDtoLists.size();
-        }
-
-        return userDtoLists.subList(fromIndex, toIndex);
     }
 
     @Override
