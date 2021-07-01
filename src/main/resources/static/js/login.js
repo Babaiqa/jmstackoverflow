@@ -4,14 +4,19 @@ const btn = document.getElementById('show-password')
 let email = document.getElementById('email')
 let password = document.getElementById('password')
 let token = ''
+let remCheckBox = document.getElementById('remember')
+let remFlag
 
 
 formLogin.addEventListener('submit', (event) => {
 
+    remCheckBox.checked ? remFlag = true : remFlag = false
+
     event.preventDefault()
     const data = {
         username: email.value.toString(),
-        password: password.value.toString()
+        password: password.value.toString(),
+        rememberMeFlag: remFlag
     }
 
     fetch('http://localhost:5557/api/auth/token', {
@@ -53,7 +58,6 @@ function showPassword() {
         btn.innerHTML = '&#x2605;'
     }
 }
-
 
 
 
