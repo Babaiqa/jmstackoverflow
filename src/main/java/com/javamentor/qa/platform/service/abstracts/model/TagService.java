@@ -11,4 +11,6 @@ public interface TagService extends ReadWriteService<Tag, Long> {
 
     void addTagToQuestion(List<Long> tagId, Question question);
     Optional<Tag> getTagByName(String name);
+
+    void deleteTagFromQuestion(Long tagId, Long questionId);
 }

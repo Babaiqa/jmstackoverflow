@@ -9,4 +9,6 @@ public interface TagDao extends ReadWriteDao<Tag, Long>{
     Optional<Tag> getTagByName(String name);
 
     void addTagToQuestion(Tag tag);
+
+    void deleteTagFromQuestion(Long tagId, Long questionId);
 }

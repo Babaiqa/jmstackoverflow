@@ -27,4 +27,15 @@ public class TagDaoImpl extends ReadWriteDaoImpl<Tag, Long> implements TagDao {
     public void addTagToQuestion(Tag tag) {
         entityManager.persist(tag);
     }
+
+    @Override
+    public void deleteTagFromQuestion(Long tagId, Long questionId) {
+        entityManager
+                //.createQuery("DELETE from Question.tags where Question.id =:questionId and Tag.id = :tagId")
+                .createNativeQuery("delete from QUESTION_HAS_TAG where question_id = :questionId and tag_id = :tagId")
+                .setParameter("tagId", tagId)
+                .setParameter("questionId", questionId)
+                .executeUpdate();
+    }
+
 }
