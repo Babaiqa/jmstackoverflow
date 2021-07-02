@@ -16,7 +16,6 @@ public class JwtUtils {
     @Value("${rest.app.jwtSecretKey}")
     private String jwtSecretKey;
 
-    @Value("${rest.app.jwtExpirationsMs}")
     private long jwtExpirationMs;
 
     @Value("${rest.app.jwtType}")
@@ -61,7 +60,13 @@ public class JwtUtils {
         }
     }
 
-    public TokenDto getTokenDto (Authentication authentication) {
+    public TokenDto getTokenDto (Authentication authentication, boolean rememberMeFlag) {
+
+        if (rememberMeFlag){
+            jwtExpirationMs = 31536000000L; // 1 year
+        } else {
+            jwtExpirationMs = 86400000; // 1 day (24 hours)
+        }
         TokenDto tokenDto = new TokenDto();
         tokenDto.setJwtToken(generateJwtToken(authentication));
         tokenDto.setJwtType(jwtType);
