@@ -3,11 +3,15 @@ class QuestionPage {
         this.questionId = questionId;
         this.questionService = new QuestionService();
         this.answerService = new AnswerService();
-        this.indexMap = new Map()
+        this.indexMap = new Map();
+        this.userService = new UserService();
     }
+
+
 
     populateQuestionPage() {
         this.questionService.getQuestionById(this.questionId)
+
             .then(response => {
                 const date = new Date(response.persistDateTime)
                 const stringDate = ('0' + date.getDate()).slice(-2) + "."
@@ -30,6 +34,7 @@ class QuestionPage {
                     "                </p>\n" +
                     "            </div>\n"
                 )
+
                 $('#question-area').children().remove()
                 $('#question-area').append(
                     "                    <div class=\"row\">\n" +
@@ -101,13 +106,26 @@ class QuestionPage {
                     "                    </div>"
                 )
                 this.getCommentsById(response.id);
-                response.listTagDto.forEach(tag => {
-                    $('#question-tags').append(
-                        "                                    <div class=\"mb-1\">\n" +
-                        tag.name +
-                        "                                    </div>")
+
+                new UserService().getRoleOfPrincipal().then((text) => {
+                    if (text === "MODER") {
+                        response.listTagDto.forEach(tag => {
+
+                                $('#question-tags').append(
+                                    "<div class=\"mb-1\" id=\"" + tag.id + "\"> "+ tag.name +" <span class='close' id='close-tag' onclick='deleteTagFromQuestion("+tag.id+", "+this.questionId+")'  style='font-size: 100%; margin-left: 5px;'>X</span></div>")
+                        })
+                    } else {
+                        response.listTagDto.forEach(tag => {
+                            $('#question-tags').append(
+                                "<div class=\"mb-1\"> "+ tag.name +" </div>")
+
+                        })
+                    }
                 })
+
+
             })
+
         this.answerService.getAnswerListByQuestionId(this.questionId)
             .then(response => {
                 $('#answer-area').children().remove()
@@ -224,6 +242,7 @@ class QuestionPage {
                     index++;
                 })
             })
+
     }
 
     getColorForButtons(id){
@@ -279,6 +298,8 @@ class QuestionPage {
                 )
             })
     }
+
+
     getAnswerCommentsById(answerId, questionId) {
         new AnswerService().getCommentsByAnswerIdQuestionId(answerId, questionId)
             .then(comments => {
@@ -310,6 +331,7 @@ class QuestionPage {
                 )
             })
     }
+
 }
 
 function callAnswerService(e, answerId, questionId) {
@@ -344,4 +366,19 @@ function getSummernoteTo(id) {
     $( `#getcommentareasp${id}`).toggle();
     $( `#summer_head${id}`).toggle();
 
+}
+
+function deleteTagFromQuestion(tagId, questionId) {
+    let query = '/api/moder/' + tagId + '/' + questionId + '/delete';
+    return fetch(query, {
+        method: 'DELETE',
+        headers: new Headers({
+            'Content-Type': 'application/json',
+            'Authorization': $.cookie("token")
+        })
+    }).then(function (response) {
+        $('#'+tagId+'').toggle();
+        return response.json();
+
+    })
 }

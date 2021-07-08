@@ -96,11 +96,11 @@ public class ModerController {
                                                    @PathVariable Long tagId,
                                                    @ApiParam(name = "questionId", value = "questionId. Type Long", required = true, example = "1")
                                                    @PathVariable Long questionId) {
-//        Optional<Tag> tag = tagService.getById(tagId);
-//        if (!tag.isPresent()) {
-//
-//            return ResponseEntity.badRequest().body("Tag was not found");
-//        }
+        Optional<Tag> tag = tagService.getById(tagId);
+        if (!tag.isPresent()) {
+
+            return ResponseEntity.badRequest().body("Tag was not found");
+        }
         tagService.deleteTagFromQuestion(tagId, questionId);
         return ResponseEntity.ok("The tag was removed by a moderator");
 

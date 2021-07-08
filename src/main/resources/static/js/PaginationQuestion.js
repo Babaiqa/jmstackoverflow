@@ -12,9 +12,11 @@ class PaginationQuestion {
             this.questions = this.questionService.findPagination(this.page, this.size);
         } else if (this.type === 'popular') {
             this.questions = this.questionService.findPaginationPopular(this.page, this.size);
-        } else if (this.type === 'withTags') {
+        }
+        else if (this.type === 'withTags') {
             this.questions = this.questionService.getQuestionsWithGivenTags(this.page, this.size, this.id);
-        } else if (this.type === 'withoutAnswers') {
+        }
+        else if (this.type === 'withoutAnswers') {
             this.questions = this.questionService.getQuestionsWithoutAnswers(this.page, this.size)
         } else if (this.type === 'new') {
             this.questions = this.questionService.findPaginationNew(this.page, this.size);
@@ -38,7 +40,17 @@ class PaginationQuestion {
                     + ('0' + date.getMinutes()).slice(-2)
 
                 let shuffledNames = response.items[i].listTagDto.map(i => i.name);
-                let text = shuffledNames.map(i => `<a href="#" class="mb-1"> ${i} </a>`).join('');
+                // let tagId = response.items[i].listTagDto.map(i => i.id);
+                // ${i} <span class='close'  onclick='deleteTagFromQuestion(${tagId}, ${questionId})' style='font-size: 100%; margin-left: 5px;'>X</span>
+                //let questionId = response.items.map(i => i.id);
+
+
+                let text = shuffledNames.map(i =>
+                    `<a href="#" class="mb-1"> 
+               
+                     </a>
+                    `
+                ).join('');
 
                 $('.questionsTable').append(
                     "<div class=\"question-card d-flex\">" +
@@ -119,6 +131,25 @@ class PaginationQuestion {
         this.questionsPagesNavigation()
 
     }
+
+    // deleteTagFromQuestion(idTag, idQuestion) {
+    //     let query = '/api/moder/' + idTag + '/' + idQuestion + '/delete';
+    //     return fetch(query, {
+    //         method: 'DELETE',
+    //         headers: new Headers({
+    //             'Content-Type': 'application/json',
+    //             'Authorization': $.cookie("token")
+    //         })
+    //     }).then(function (response) {
+    //         if (!response.ok) {
+    //             let error = new Error();
+    //             error.response = response.text();
+    //             throw  error;
+    //         }
+    //         return response.json();
+    //     }).catch(error => error.response.then(message => console.log(message)));
+    // }
+
 
     questionsPagesNavigation() {
         var size = this.size;

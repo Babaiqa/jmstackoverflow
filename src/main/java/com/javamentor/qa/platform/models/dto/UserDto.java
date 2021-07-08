@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.models.dto;
 
+import com.javamentor.qa.platform.models.entity.user.Role;
 import lombok.*;
 
 import java.io.Serializable;

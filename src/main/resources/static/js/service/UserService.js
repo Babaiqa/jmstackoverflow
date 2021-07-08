@@ -5,6 +5,25 @@ class UserService {
         return this.getResponse(query);
     }
 
+    getRoleOfPrincipal(){
+        let query = '/api/user/principal-role';
+
+        return fetch(query, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'text/plain',
+                'Authorization': $.cookie("token")
+        })
+    })
+            .then((response) =>{
+                return response.text()
+                    .then((text) => {
+                    return text;
+                })
+            })
+    }
+
+
     createUser(userRegistrationDto) {
         fetch('/api/user/registration', {
             method: 'POST',
