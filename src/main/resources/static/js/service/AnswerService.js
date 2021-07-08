@@ -156,4 +156,15 @@ class AnswerService {
             }
         }).catch(error => console.log(error.message))
     }
+
+    deleteCommentByModer(id) {
+        let query = '/api/moder/' + id + '/delete';
+        return fetch(query, {
+            method: 'PATCH',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': $.cookie("token")
+            })
+        }).catch(error => console.log(error.message))
+    }
 }
