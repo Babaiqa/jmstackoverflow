@@ -1,0 +1,10 @@
+question:
+  - id: 1
+    description: "some description for first question"
+    title: "Question number one"
+    user_id: 1
+    persist_date: "2020-10-25 13:58:56"
+    is_deleted: false
+    last_redaction_date: "2020-01-02 13:58:56"
+
+
