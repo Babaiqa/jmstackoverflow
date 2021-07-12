@@ -17,7 +17,9 @@ public class UserAuthorizationDto {
     @NotBlank(groups = OnCreate.class, message = "Username not by empty")
     private String username;
 
-    @NotNull(groups = OnCreate.class, message = "Username not by null")
-    @NotBlank(groups = OnCreate.class, message = "Username not by empty")
+    @NotNull(groups = OnCreate.class, message = "Password not by null")
+    @NotBlank(groups = OnCreate.class, message = "Password not by empty")
     private String password;
+
+    private boolean rememberMeFlag;
 }

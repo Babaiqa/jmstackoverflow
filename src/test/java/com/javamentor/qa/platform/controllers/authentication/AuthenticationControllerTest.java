@@ -28,7 +28,7 @@ class AuthenticationControllerTest extends AbstractIntegrationTest {
     @Test
     void getTokenStatusOk() throws Exception {
         UserAuthorizationDto user = new UserAuthorizationDto("Test1@mail.ru",
-                "password0");
+                "password0", false);
         String jsonRequest = objectMapper.writeValueAsString(user);
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders
@@ -52,7 +52,7 @@ class AuthenticationControllerTest extends AbstractIntegrationTest {
     @Test
     void getTokenWrongPassword() throws Exception {
         UserAuthorizationDto user = new UserAuthorizationDto("Test1@mail.ru",
-                "password");
+                "password", false);
         String jsonRequest = objectMapper.writeValueAsString(user);
 
         this.mockMvc.perform(MockMvcRequestBuilders
@@ -66,7 +66,7 @@ class AuthenticationControllerTest extends AbstractIntegrationTest {
     @Test
     void getTokenWrongUserName() throws Exception {
         UserAuthorizationDto user = new UserAuthorizationDto("est1@mail.ru",
-                "password0");
+                "password0", false);
         String jsonRequest = objectMapper.writeValueAsString(user);
 
         this.mockMvc.perform(MockMvcRequestBuilders

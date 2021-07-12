@@ -131,7 +131,7 @@ class QuestionPage {
                 $('#answer-area').children().remove()
                 $('#answer-area').append(
                     "                    <div info class=\"row justify-content-between m-2 py-5\">\n" +
-                    "                        <div style=\"font-size: 150%\">\n" +
+                    "                        <div style=\"font-size: 150%\" id='numberAnswers'>\n" +
                     "                            " + response.length + " Ответ\n" +
                     "                        </div>\n" +
                     "                        <div>\n" +
@@ -159,7 +159,7 @@ class QuestionPage {
                     let isHelpful = elem.isHelpful;
 
                     $('#answer-area').append(
-                        "<div answer1 class=\"row\">\n" +
+                        "<div answer1 class=\"row\" id='answer'>\n" +
                         "    <div vote-area-answer class=\"col-1\">\n" +
                         '        <a  class="btn  btn-sm m-0 p-0" onclick="new AnswerService().getUpVoteAnswer(' + this.questionId + ',' + elem.id + ',' + index + ')">' +
                         '             <svg   width=\"36\" height=\"36\" >\n' +
@@ -186,6 +186,9 @@ class QuestionPage {
                         "                                        <a href=\"#\">Поделиться</a>\n" +
                         "                                        <a href=\"#\">Править</a>\n" +
                         "                                        <a href=\"#\">Отслеживать</a>\n" +
+                        "                                           <div class='deleteAnswer'>" +
+                        "                                               <a href=\"\" onclick=\"callAnswerServiceToDelete(event, " + elem.id + ")\">Удалить</a>\n" +
+                        "                                           </div>     " +
                         "                                    </div>\n" +
                         "                                    <div>\n" +
                         "                                        <div style=\"width: 250px\">\n" +
@@ -238,6 +241,7 @@ class QuestionPage {
                         "                        </div>\n" +
                         "                    </div>\n" +
                         "                    <hr/>")
+                    document.getElementById('answer').id=elem.id
                     this.getAnswerCommentsById(elem.id, elem.questionId);
                     index++;
                 })
@@ -330,6 +334,7 @@ class QuestionPage {
                     }
                 )
             })
+        getUserPrincipal()
     }
 
 }
@@ -344,6 +349,32 @@ function callQuestionService(e, questionId) {
     e.preventDefault();
     new QuestionService().setCommentByQuestionId(questionId);
     closeSummernote("");
+}
+// answerId = id of element with this answer
+function callAnswerServiceToDelete(e, answerId) {
+    e.preventDefault();
+    new AnswerService().deleteCommentByModer(answerId);
+    document.getElementById(answerId).remove()
+    let textOfNumberAnswer = document.getElementById("numberAnswers").textContent
+    textOfNumberAnswer = String(textOfNumberAnswer.replace(/[^0-9]/g,"") - 1) + ' Ответ'
+    $("#numberAnswers").text(textOfNumberAnswer)
+}
+
+function getUserPrincipal(){
+    fetch('/api/auth/principal', {
+        method: 'GET',
+        headers: new Headers({
+            'Content-Type': 'application/json',
+            'Authorization': $.cookie("token")
+        })
+    })
+        .then(response => response.json())
+        .then(function(response) {
+            if (response['role'] == 'MODER' || response['role'] == 'ADMIN') {
+            } else {
+                $(".deleteAnswer").remove();
+            }
+        }).catch(error => console.log(error.message));
 }
 
 function closeSummernote(id) {

@@ -59,7 +59,7 @@ AuthenticationController {
         context.setAuthentication(authentication);
 
         return context.getAuthentication().isAuthenticated() ?
-                ResponseEntity.ok(jwtUtils.getTokenDto(authentication)) :
+                ResponseEntity.ok(jwtUtils.getTokenDto(authentication, auth.isRememberMeFlag())) :
                 ResponseEntity.badRequest().body("Error: User is not Authenticated");
 
     }
