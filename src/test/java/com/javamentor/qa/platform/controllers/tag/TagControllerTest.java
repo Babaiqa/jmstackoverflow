@@ -843,33 +843,4 @@ class TagControllerTest extends AbstractIntegrationTest {
                 .andExpect(content().string("The ignored tag has already been added"));
     }
 
-    @Test
-    @WithMockUser(username = "principal@mail.ru", roles = {"MODER"})
-    public void deleteTagFromQuestionStatusOk() throws Exception {
-
-        mockMvc.perform(delete(DELETE_Q10_T1))
-                .andExpect(status().isOk())
-                .andExpect(content().string("The tag was removed by a moderator"));
-
-        Long tagForCheckId = null;
-
-        try{
-            Query query = entityManager.createNativeQuery("select tag_id from question_has_tag where question_id = 10 and tag_id = 1;");
-            tagForCheckId = (Long) query.getSingleResult();
-        } catch (NoResultException exception) {
-            System.out.println(exception.getMessage());
-        }
-        Assertions.assertNull(tagForCheckId);
-
-    }
-
-    @Test
-    @WithMockUser(username = "principal@mail.ru", roles = {"MODER"})
-    public void deleteTagFromQuestionStatusBadRequest() throws Exception {
-
-        mockMvc.perform(delete(DELETE_Q10_T10))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Tag was not found"));
-
-    }
 }
