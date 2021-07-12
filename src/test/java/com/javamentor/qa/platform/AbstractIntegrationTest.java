@@ -27,7 +27,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @PropertySource(encoding = "UTF-8", value = "/config/application-error-message.properties")
 @AutoConfigureMockMvc
 @DBRider
-@DBUnit(caseSensitiveTableNames = true, allowEmptyFields = true, schema = "public")
+@DBUnit(caseSensitiveTableNames = true, allowEmptyFields = true, schema = "test")
 @ActiveProfiles("local")
 public abstract class AbstractIntegrationTest {
 
