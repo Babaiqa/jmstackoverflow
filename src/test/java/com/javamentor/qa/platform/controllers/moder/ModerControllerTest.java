@@ -98,15 +98,16 @@ public class ModerControllerTest extends AbstractIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("The tag was removed by a moderator"));
 
-        Long tagForCheckId = null;
+        String noResultException = null;
 
         try{
             Query query = entityManager.createNativeQuery("select tag_id from question_has_tag where question_id = 10 and tag_id = 1;");
-            tagForCheckId = (Long) query.getSingleResult();
+            Long tagForCheckId = (Long) query.getSingleResult();
         } catch (NoResultException exception) {
             System.out.println(exception.getMessage());
+            noResultException = "noResultException";
         }
-        Assertions.assertNull(tagForCheckId);
+        Assertions.assertSame("noResultException", noResultException);
 
     }
 
