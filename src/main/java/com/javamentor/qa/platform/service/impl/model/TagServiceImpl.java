@@ -54,4 +54,10 @@ public class TagServiceImpl extends ReadWriteServiceImpl<Tag, Long> implements T
     public Optional<Tag> getTagByName(String name){
         return tagDao.getTagByName(name);
     }
+
+    @Override
+    @Transactional
+    public void deleteTagFromQuestion(Long tagId, Long questionId) {
+        tagDao.deleteTagFromQuestion(tagId, questionId);
+    }
 }

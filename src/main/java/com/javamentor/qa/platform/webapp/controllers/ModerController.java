@@ -3,11 +3,13 @@ package com.javamentor.qa.platform.webapp.controllers;
 import com.javamentor.qa.platform.models.dto.QuestionDto;
 import com.javamentor.qa.platform.models.dto.QuestionUpdateDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +31,16 @@ public class ModerController {
     private final QuestionService questionService;
     private final SecurityHelper securityHelper;
     private final AnswerService answerService;
+    private final TagService tagService;
 
     @Autowired
     public ModerController(QuestionConverter questionConverter,
-                           QuestionService questionService, AnswerService answerService, SecurityHelper securityHelper) {
+                           QuestionService questionService, AnswerService answerService, SecurityHelper securityHelper, TagService tagService) {
         this.questionConverter = questionConverter;
         this.questionService = questionService;
         this.answerService = answerService;
         this.securityHelper = securityHelper;
+        this.tagService = tagService;
     }
 
     @PutMapping("/question/{id}")
@@ -79,5 +83,26 @@ public class ModerController {
         }
         answerService.markAnswerAsDeleted(answerId);
         return ResponseEntity.ok("Answer was deleted by moderator");
+    }
+
+    @DeleteMapping("/{tagId}/{questionId}/delete")
+    @ApiOperation(value = "Delete tag from question by moderator", notes = "This method deletes tag from question")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "The tag has been removed", response = String.class),
+            @ApiResponse(code = 400, message = "Tag has not been deleted", response = String.class)
+    })
+    @Secured({"ROLE_ADMIN", "ROLE_MODER"})
+    public ResponseEntity<?> deleteTagFromQuestion(@ApiParam(name = "tagId", value = "tagId. Type Long", required = true, example = "1")
+                                                   @PathVariable Long tagId,
+                                                   @ApiParam(name = "questionId", value = "questionId. Type Long", required = true, example = "1")
+                                                   @PathVariable Long questionId) {
+        Optional<Tag> tag = tagService.getById(tagId);
+        if (!tag.isPresent()) {
+
+            return ResponseEntity.badRequest().body("Tag was not found");
+        }
+        tagService.deleteTagFromQuestion(tagId, questionId);
+        return ResponseEntity.ok("The tag was removed by a moderator");
+
     }
 }

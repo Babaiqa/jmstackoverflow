@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.webapp.controllers;
 import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import com.javamentor.qa.platform.models.util.OnUpdate;
@@ -14,12 +15,14 @@ import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.converters.UserConverter;
 import io.swagger.annotations.*;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -305,6 +308,27 @@ public class UserController {
         return ResponseEntity.ok(userPublicInfoDto);
     }
 
+    /////////////////////////////////////////////////////////////
+    @GetMapping("principal-role")
+    @ApiOperation(value = "Get principal's roles", response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Principal's roles", response = String.class),
+            @ApiResponse(code = 400, message = "User not found", response = String.class)
+    })
+    @Validated(OnUpdate.class)
+    public ResponseEntity<?> getRoleOfPrincipal() {
+
+        Optional<User> optionalUser = userService.getUserById(securityHelper.getPrincipal().getId());
+
+        if(!optionalUser.isPresent()) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+        String role = optionalUser.get().getRole().getName();
+//        Object jsonRole = new JSONObject()
+//                .put("role", role);
+
+        return ResponseEntity.ok(role);
+    }
 
     @PostMapping("public-info")
     @ApiOperation(value = "Update user public info", response = String.class)

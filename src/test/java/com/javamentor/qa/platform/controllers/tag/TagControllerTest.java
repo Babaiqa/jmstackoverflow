@@ -24,8 +24,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -55,6 +54,8 @@ class TagControllerTest extends AbstractIntegrationTest {
     private static final String NEW_TAG = "/api/tag/new/order";
     private static final String BAD_REQUEST_MESSAGE = "Номер страницы и размер должны быть положительными. Максимальное количество записей на странице 100";
     private static final String REQUEST_PARAM_FOR_ADD_TAGS = "name";
+    private static final String DELETE_Q10_T1 = "/api/moder/1/10/delete";
+    private static final String DELETE_Q10_T10 = "/api/moder/10/10/delete";
 
     // Тесты запросов популярных тэгов
     @Test
@@ -841,4 +842,5 @@ class TagControllerTest extends AbstractIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("The ignored tag has already been added"));
     }
+
 }
