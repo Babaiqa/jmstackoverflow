@@ -39,16 +39,17 @@ public class Message {
     private LocalDateTime persistDate;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    private User userSender;
+    @JoinColumn(name = "user_sender_id_check_id")
+    private User userSenderIdCheck;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "chat_id")
     private Chat chat;
 
 
-    public Message(String message, User userSender, Chat chat) {
+    public Message(String message, User userSenderIdCheck, Chat chat) {
         this.message = message;
-        this.userSender = userSender;
+        this.userSenderIdCheck = userSenderIdCheck;
         this.chat = chat;
     }
 
@@ -61,11 +62,11 @@ public class Message {
                 Objects.equals(message, message1.message) &&
                 Objects.equals(lastRedactionDate, message1.lastRedactionDate) &&
                 Objects.equals(persistDate, message1.persistDate) &&
-                Objects.equals(userSender, message1.userSender);
+                Objects.equals(userSenderIdCheck, message1.userSenderIdCheck);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, message, lastRedactionDate, persistDate, userSender);
+        return Objects.hash(id, message, lastRedactionDate, persistDate, userSenderIdCheck);
     }
 }

@@ -14,6 +14,7 @@ import com.javamentor.qa.platform.models.entity.chat.Message;
 import com.javamentor.qa.platform.security.util.SecurityHelper;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.SingleChatDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.ChatService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
 import com.javamentor.qa.platform.service.abstracts.model.MessageService;
@@ -127,7 +128,7 @@ public class ChatController {
 
 
     @MessageMapping("/message/{chatId}")
-    public ResponseEntity proceedMessage(@DestinationVariable String chatId, Map<String, String> message) throws Exception {
+    public ResponseEntity<?> proceedMessage(@DestinationVariable String chatId, Map<String, String> message) throws Exception {
         String messageText = message.get("message");
         String currentUserId = message.get("userSender");
 
@@ -188,7 +189,8 @@ public class ChatController {
             return ResponseEntity.badRequest().body("Title don`t exists");
         }
         Set<User> userSet = new HashSet<>();
-        userSet.add(userService.getById(userId).get());
+
+        userSet.add((userService.getById(userId)).orElse(null));
 
         GroupChat groupChat = new GroupChat();
         groupChat.setChat(Chat.builder()
@@ -205,26 +207,26 @@ public class ChatController {
     @ResponseBody
     @ApiOperation(value = "add single chat", response = String.class)
     @ApiResponses({
-            @ApiResponse(code = 200, message = "adds single chat", response = SingleChat.class),
+            @ApiResponse(code = 200, message = "adds single chat", response = SingleChatDto.class),
             @ApiResponse(code = 400, message = "single chat was not added", response = String.class)
     })
-    public ResponseEntity<?> addSingleChat(@Valid @RequestBody CreateSingleChatDto createSingleChatDto, @RequestParam String message){
+    public ResponseEntity<?> addSingleChat(@Valid @RequestBody CreateSingleChatDto createSingleChatDto){
         User user = securityHelper.getPrincipal();
 
-        if(!userService.existsById(createSingleChatDto.getUserTwoId())){
-            ResponseEntity.badRequest().body("userTwoId doesn't exist");
+        if(!userService.existsById(createSingleChatDto.getUserRecipientId())){
+            ResponseEntity.badRequest().body("userRecipient doesn't exist");
         }
 
-        createSingleChatDto.setUserOneId(user.getId());
+        createSingleChatDto.setUserSenderId(user.getId());
         SingleChat singleChat = singleChatConverter.createSingleChatDtoToSingleChat(createSingleChatDto);
         singleChatService.persist(singleChat);
-        messageService.persist(new Message(message, user, singleChat.getChat()));
+        messageService.persist(new Message(createSingleChatDto.getMessage(), user, singleChat.getChat()));
         Map<String, String> messageMap = new HashMap<>();
-        messageMap.put("message", message);
+        messageMap.put("message", createSingleChatDto.getMessage());
         messageMap.put("userSender", user.getId().toString());
         simpMessagingTemplate.convertAndSend("/chat/" + singleChat.getId() + "/message", messageMap);
         SingleChatDto singleChatDto = singleChatConverter.singleChatToSingleChatDto(singleChat);
-        singleChatDto.setMessage(message);
+        singleChatDto.setMessage(createSingleChatDto.getMessage());
         return ResponseEntity.ok(singleChatDto);
     }
 }

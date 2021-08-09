@@ -1,5 +1,5 @@
 
-function getListSingleChat(page, size) {                                // Get всех chats
+async function getListSingleChat(page, size) {                                // Get всех chats
     let query = '/api/chat/single?page=' + page + '&size=' + size;
     return fetch(query, {
         method: 'GET',
@@ -18,7 +18,7 @@ function getListSingleChat(page, size) {                                // Get �
     }).catch(error => error.response.then(message => console.log(message)));
 }
 
-function getAllMessageSingleChat(id, page, size) {                              // get списка сообщений пользователя
+async function getAllMessageSingleChat(id, page, size) {                              // get списка сообщений пользователя
     let query = '/api/chat/' + id + '/message?page=' + page + '&size=' + size;
     return fetch(query, {
         method: 'GET',

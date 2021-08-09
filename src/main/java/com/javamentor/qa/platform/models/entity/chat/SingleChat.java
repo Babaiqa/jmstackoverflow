@@ -25,10 +25,10 @@ public class SingleChat{
     private Chat chat = new Chat(ChatType.SINGLE);
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    private User userOne;
+    private User userSender;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    private User useTwo;
+    private User userRecipient;
 
     @PrePersist
     private void prePersistFunction() {
@@ -54,12 +54,12 @@ public class SingleChat{
         SingleChat that = (SingleChat) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(chat, that.chat) &&
-                Objects.equals(userOne, that.userOne) &&
-                Objects.equals(useTwo, that.useTwo);
+                Objects.equals(userSender, that.userSender) &&
+                Objects.equals(userRecipient, that.userRecipient);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, chat, userOne, useTwo);
+        return Objects.hash(id, chat, userSender, userRecipient);
     }
 }

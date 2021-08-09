@@ -25,13 +25,13 @@ public class SingleChatResultTransformer implements ResultTransformer {
                     SingleChatDto singleChatDtoTemp = new SingleChatDto();
                     singleChatDtoTemp.setId(((Number)tuple[aliasToIndexMapTrans.get("id")]).longValue());
                     singleChatDtoTemp.setTitle((String)tuple[aliasToIndexMapTrans.get("title")]);
-                    singleChatDtoTemp.setUserOneId(((Number)tuple[aliasToIndexMapTrans.get("user_one_id")]).longValue());
-                    singleChatDtoTemp.setUserTwoId(((Number)tuple[aliasToIndexMapTrans.get("use_two_id")]).longValue());
+                    singleChatDtoTemp.setUserSenderId(((Number)tuple[aliasToIndexMapTrans.get("user_sender_id")]).longValue());
+                    singleChatDtoTemp.setUserRecipientId(((Number)tuple[aliasToIndexMapTrans.get("user_recipient_id")]).longValue());
                     singleChatDtoTemp.setNickname((String)tuple[aliasToIndexMapTrans.get("full_name")]);
                     singleChatDtoTemp.setImageLink((String)tuple[aliasToIndexMapTrans.get("image_link")]);
                     singleChatDtoTemp.setMessage((String)tuple[aliasToIndexMapTrans.get("message")]);
-                    singleChatDtoTemp.setUserSenderId(((Number)tuple[aliasToIndexMapTrans.get("user_sender_id")]).longValue());
-                    singleChatDtoTemp.setLastRedactionDate(((Timestamp)tuple[aliasToIndexMapTrans.get("lastredactiondate")]));
+                    singleChatDtoTemp.setUserSenderIdCheck(((Number)tuple[aliasToIndexMapTrans.get("user_sender_id_check_id")]).longValue());
+                    singleChatDtoTemp.setLastRedactionDate(((Timestamp)tuple[aliasToIndexMapTrans.get("last_redaction_date")]));
                     return singleChatDtoTemp;
                 });
     }

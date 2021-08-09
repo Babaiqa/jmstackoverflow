@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository(value = "paginationSingleChat")
 
@@ -25,34 +26,33 @@ public class PaginationSingleChatDaoImpl implements PaginationDao<SingleChatDto>
         long userId = (long)parameters.get("userId");
 
          return entityManager.unwrap(Session.class)
-                .createNativeQuery("SELECT distinct  ch.id, " +
+                .createNativeQuery("SELECT distinct ch.id, " +
                         "ch.title, " +
-                        "sc.user_one_id, " +
-                        "sc.use_two_id, " +
+                        "sc.user_sender_id, " +
+                        "sc.user_recipient_id, " +
                         "u.full_name, " +
                         "u.image_link, " +
                         "(select m.message from Message m where ch.id = m.chat_id order by m.last_redaction_date desc fetch first row only ), " +
-                        "(select m.user_sender_id from Message m where ch.id = m.chat_id order by m.last_redaction_date desc fetch first row only ), " +
-                        "(select m.last_redaction_date from Message m where ch.id = m.chat_id order by m.last_redaction_date desc fetch first row only ) as lastredactiondate " +
+                        "(select m.user_sender_id_check_id from Message m where ch.id = m.chat_id order by m.last_redaction_date desc fetch first row only ), " +
+                        "(select m.last_redaction_date from Message m where ch.id = m.chat_id order by m.last_redaction_date desc fetch first row only ) as last_redaction_date " +
                         "FROM Chat ch " +
                         "join singel_chat sc on sc.chat_id = ch.id " +
-                        "join user_entity u on u.id = (select m.user_sender_id from Message m where ch.id = m.chat_id order by m.last_redaction_date desc fetch first row only ) " +
-                        "where  sc.chat_id = ch.id and (sc.user_one_id = :userId or sc.use_two_id = :userId )" +
-                        "order by lastredactiondate desc ")
+                        "join user_entity u on u.id = (select m.user_sender_id_check_id from Message m where ch.id = m.chat_id order by m.last_redaction_date desc fetch first row only ) " +
+                        "where sc.chat_id = ch.id and (sc.user_sender_id = :userId or sc.user_recipient_id = :userId )" +
+                        "order by last_redaction_date desc ")
                  .unwrap(Query.class)
                  .setParameter("userId", userId)
-                .setFirstResult(page * size - size)
-                .setMaxResults(size)
-                .setResultTransformer(new SingleChatResultTransformer())
-                .getResultList();
-
+                 .setFirstResult(page * size - size)
+                 .setMaxResults(size)
+                 .setResultTransformer(new SingleChatResultTransformer())
+                 .getResultList();
     }
 
     @Override
     public int getCount(Map<String, Object> parameters) {
         long userId = (long)parameters.get("userId");
         return (int)(long) entityManager.createQuery("select count(sc) from SingleChat sc " +
-                "where sc.userOne.id = :userId or sc.useTwo.id = :userId ")
+                "where sc.userSender.id = :userId or sc.userRecipient.id = :userId ")
                 .setParameter("userId", userId)
                 .getSingleResult();
     }

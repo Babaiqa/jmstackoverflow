@@ -31,11 +31,11 @@ public class PaginationMessageDaoImpl implements PaginationDao<MessageDto> {
                         "ms.message," +
                         "ms.lastRedactionDate," +
                         "ms.persistDate," +
-                        "ms.userSender.id," +
+                        "ms.userSenderIdCheck.id," +
                         "ms.chat.id," +
-                        "ms.userSender.imageLink )" +
+                        "ms.userSenderIdCheck.imageLink )" +
                         "from Message ms  " +
-                        "join User u on ms.userSender.id = u.id " +
+                        "join User u on ms.userSenderIdCheck.id = u.id " +
                         "where ms.chat.id =: chatId order by ms.lastRedactionDate desc ")
                 .unwrap(Query.class)
                 .setParameter("chatId", chatId)

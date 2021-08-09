@@ -24,7 +24,7 @@ public class PaginationChatsByUserDaoImpl implements PaginationDao<ChatDto> {
         int page = (int)parameters.get("page");
         int size = (int)parameters.get("size");
 
-        List<ChatDto> chats = (List<ChatDto>) entityManager.unwrap(Session.class)
+        return (List<ChatDto>) entityManager.unwrap(Session.class)
                 .createNativeQuery("SELECT c.id as id, " +
                         "c.title as title, " +
                         "c.persist_date as persistDate, " +
@@ -40,14 +40,12 @@ public class PaginationChatsByUserDaoImpl implements PaginationDao<ChatDto> {
                         "c.chat_type as chatType " +
                         "FROM singel_chat as sc " +
                         "JOIN chat c on c.id = sc.chat_id " +
-                        "WHERE sc.user_one_id = :id OR sc.use_two_id = :id")
+                        "WHERE sc.user_sender_id = :id OR sc.user_recipient_id = :id")
                 .setParameter("id", userId)
                 .unwrap(Query.class)
                 .setFirstResult(page * size - size)
                 .setMaxResults(size)
                 .getResultList();
-
-        return chats;
     }
 
     @Override
@@ -61,7 +59,7 @@ public class PaginationChatsByUserDaoImpl implements PaginationDao<ChatDto> {
         BigInteger scs = (BigInteger) entityManager.createNativeQuery("select count(*)\n" +
                 "FROM singel_chat as sc\n" +
                 "JOIN chat c on c.id = sc.chat_id\n" +
-                "WHERE sc.user_one_id = :id OR sc.use_two_id = :id")
+                "WHERE sc.user_sender_id = :id OR sc.user_recipient_id = :id")
                 .setParameter("id", userId)
                 .getSingleResult();
         return gcs.intValue() + scs.intValue();

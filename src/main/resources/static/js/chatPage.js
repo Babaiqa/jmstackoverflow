@@ -12,13 +12,13 @@ $(document).ready(function () {
 function showListChat(page, size){                                        // показываем все чаты пользователя
     getListSingleChat(page, size).then(function (json) {
         $('#listChats').children().remove();
-        if(json.totalResultCount != 0) {
+        if(typeof json.totalResultCount !== 'undefined' && json.totalResultCount !== null) {
             let nowDate = new Date();
             for (let i = 0; i < json.items.length; i++) {               // parse date
                 let date = new Date(json.items[i].lastRedactionDate);
-                if (nowDate.getFullYear() == date.getFullYear() && nowDate.getMonth() == date.getMonth() && nowDate.getDate() == date.getDate()){
+                if (nowDate.getFullYear() === date.getFullYear() && nowDate.getMonth() === date.getMonth() && nowDate.getDate() === date.getDate()){
                     date = ('0' + date.getHours()).slice(-2) + ':'  + ('0' + date.getMinutes()).slice(-2);
-                } else if(nowDate.getFullYear() == date.getFullYear() && nowDate.getMonth() == date.getMonth() && (Math.abs(nowDate.getDate() - date.getDate()) == 1)) {
+                } else if(nowDate.getFullYear() === date.getFullYear() && nowDate.getMonth() === date.getMonth() && (Math.abs(nowDate.getDate() - date.getDate()) === 1)) {
                     date = "Вчера";
                 } else {
                     date = ('0' + date.getDate()).slice(-2) + '.' + ('0' + (date.getMonth()+1)).slice(-2) + '.' + date.getFullYear();
@@ -27,7 +27,7 @@ function showListChat(page, size){                                        // п�
                     <a href="#" class="list-group-item list-group-item-action list-group-item-light singleChat rounded-0 sh" 
                     id="sh${json.items[i].id}" onclick="showFirstPageMessage(${json.items[i].id})">
                     <div class="media">
-                    <img src="${json.items[i].imageLink}" alt="${json.items[i].nickname}" width="50" class="rounded-circle">
+                    <img src="${json.items[i].linkImage}" alt="${json.items[i].nickname}" width="50" class="rounded-circle">
                         <div class="media-body ml-4">
                             <div class="d-flex align-items-center justify-content-between mb-1">
                                  <h6 class="mb-0">${json.items[i].nickname}</h6><small class="small font-weight">${date}</small>
@@ -47,7 +47,7 @@ function showListChat(page, size){                                        // п�
             return;
         }
         $('#sh' + json.items[0].id).click().addClass('active');        // выбираем 1 чат из списка
-        if(json.totalPageCount != 1) {                                      // если страницы больше 1
+        if(json.totalPageCount > 1) {                                      // если страницы больше 1
             $('#questionsPagesNavigation').children().remove();             // пагинация
             var currentPageNumber = json.currentPageNumber;
             var nextPage = json.currentPageNumber + 1;
@@ -55,20 +55,20 @@ function showListChat(page, size){                                        // п�
             var totalPageCount = json.totalPageCount;
             var previousPage = json.currentPageNumber - 1;
             var startPageCount = 1;
-            if (currentPageNumber != 1) {
+            if (currentPageNumber > 1) {
                 $('#questionsPagesNavigation').append(
                     '<li class=page-item><a class=page-link href=# onclick=showListChat(' + previousPage + ',' + size + ')>Назад</a></li>'
                     + '<li class=page-item><a class=page-link href=# onclick=showListChat(' + startPageCount + ',' + size + ')>' + startPageCount + '</a></li>'
                 );
             }
 
-            if (currentPageNumber == totalPageCount) {
+            if (currentPageNumber === totalPageCount) {
                 $('#questionsPagesNavigation').append(
                     '<li class=page-item active><a class=page-link href=# >' + currentPageNumber + '</a></li>'
                 );
             }
 
-            if (nextPage == totalPageCount) {
+            if (nextPage === totalPageCount) {
                 $('#questionsPagesNavigation').append(
                     '<li class=page-item active><a class=page-link href=# >' + currentPageNumber + '</a></li>'
                     + '<li class=page-item><a class=page-link href=# onclick=showListChat(' + nextPage + ',' + size + ')>' + nextPage + '</a></li>'
@@ -76,7 +76,7 @@ function showListChat(page, size){                                        // п�
                 );
             }
 
-            if (secondNextPage == totalPageCount) {
+            if (secondNextPage === totalPageCount) {
                 $('#questionsPagesNavigation').append(
                     '<li class=page-item active><a class=page-link href=# >' + currentPageNumber + '</a></li>'
                     + '<li class=page-item><a class=page-link href=# onclick=showListChat(' + nextPage + ',' + size + ')>' + nextPage + '</a></li>'
@@ -115,12 +115,12 @@ function showFirstPageMessage(id){                                              
         console.log(response);
         for(let i = (response.items.length - 1); i >= 0; i--){
             let date = new Date(response.items[i].lastRedactionDate);
-            if (nowDate.getFullYear() == date.getFullYear() && nowDate.getMonth() == date.getMonth() && nowDate.getDate() == date.getDate()){
+            if (nowDate.getFullYear() === date.getFullYear() && nowDate.getMonth() === date.getMonth() && nowDate.getDate() === date.getDate()){
                 date = ('0' + date.getHours()).slice(-2) + ':'  + ('0' + date.getMinutes()).slice(-2);
             } else {
                 date = ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ' ' + ('0' + date.getDate()).slice(-2) + '.' + ('0' + (date.getMonth()+1)).slice(-2) + '.' + date.getFullYear();
             }
-            if(principal == response.items[i].userSenderId){
+            if(principal === response.items[i].userSender){
                 $('#chatBox').append(`
                    <div class="media w-50 ml-auto mb-3" id="mes${response.items[i].id}">
                         <div class="media-body">
@@ -134,7 +134,7 @@ function showFirstPageMessage(id){                                              
             } else {
                 $('#chatBox').append(`
                     <div class="media w-50 mb-3" id="mes${response.items[i].id}">
-                    <img src="${response.items[i].imageLink}" alt="user" width="50" class="rounded-circle">
+                    <img src="${response.items[i].linkImage}" alt="user" width="50" class="rounded-circle">
                           <div class="media-body ml-3">
                               <div class="bg-light rounded py-2 px-3 mb-2">
                                  <p class="text-small mb-0 text-muted">${response.items[i].message}</p>
@@ -164,7 +164,7 @@ function showFirstPageMessage(id){                                              
 }
 
 document.getElementById("chatBox").addEventListener('scroll', function () { // message pagination
-    if(($('#chatBox').scrollTop() < 300) && (showNextPageMessage == true)){                // запрос get при 200 px от верхней границы
+    if(($('#chatBox').scrollTop() < 300) && (showNextPageMessage === true)){                // запрос get при 200 px от верхней границы
         showNextPageMessage = false;
         currentPageNumberMessage += 1;
         getAllMessageSingleChat(chatId, currentPageNumberMessage, itemsOnPageMessage).then(function (response){
@@ -178,12 +178,12 @@ document.getElementById("chatBox").addEventListener('scroll', function () { // m
                     continue;
                 }
                 let date = new Date(response.items[i].lastRedactionDate);
-                if (nowDate.getFullYear() == date.getFullYear() && nowDate.getMonth() == date.getMonth() && nowDate.getDate() == date.getDate()){
+                if (nowDate.getFullYear() === date.getFullYear() && nowDate.getMonth() === date.getMonth() && nowDate.getDate() === date.getDate()){
                     date = ('0' + date.getHours()).slice(-2) + ':'  + ('0' + date.getMinutes()).slice(-2);
                 } else {
                     date = ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ' ' + ('0' + date.getDate()).slice(-2) + '.' + ('0' + (date.getMonth()+1)).slice(-2) + '.' + date.getFullYear();
                 }
-                if(principal == response.items[i].userSenderId){
+                if(principal === response.items[i].userSender){
                     $('#chatBox').prepend(`
                         <div class="media w-50 ml-auto mb-3" id="mes${response.items[i].id}">
                             <div class="media-body">
@@ -197,7 +197,7 @@ document.getElementById("chatBox").addEventListener('scroll', function () { // m
                 } else {
                     $('#chatBox').prepend(`
                         <div class="media w-50 mb-3" id="mes'${response.items[i].id}">
-                        <img src="${response.items[i].imageLink}" alt="user" width="50" class="rounded-circle">
+                        <img src="${response.items[i].linkImage}" alt="user" width="50" class="rounded-circle">
                             <div class="media-body ml-3">
                                   <div class="bg-light rounded py-2 px-3 mb-2">
                                       <p class="text-small mb-0 text-muted">${response.items[i].message}</p>

@@ -286,8 +286,8 @@ public class TestDataInitService {
             Message message1 = new Message("Text single message" + i, users.get(randomUserOne), singleChat.getChat());
             Message message2 = new Message("Text single message" + i, users.get(randomUserTwo), singleChat.getChat());
 
-            singleChat.setUserOne(users.get(randomUserOne));
-            singleChat.setUseTwo(users.get(randomUserTwo));
+            singleChat.setUserSender(users.get(randomUserOne));
+            singleChat.setUserRecipient(users.get(randomUserTwo));
             singleChatService.persist(singleChat);
             messageService.persist(message1);
             messageService.persist(message2);

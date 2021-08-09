@@ -23,7 +23,7 @@ public class Chat {
     @GeneratedValue(generator = "Chat_seq")
     private Long id;
 
-    @Column
+    @Column(name = "title")
     private String title;
 
     @Column(name = "persist_date", updatable = false)
@@ -32,7 +32,7 @@ public class Chat {
     private LocalDateTime persistDate;
 
     @Enumerated
-    @Column(columnDefinition = "smallint")
+    @Column(name = "chat_type", columnDefinition = "smallint")
     private ChatType chatType;
 
 
