@@ -10,37 +10,40 @@ function bindEvents() {
 function connectToChat() {
 
     console.log("connecting to chat...")
-    let socket = new SockJS("/message");
+    let socket = new SockJS('message');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
-    console.log("connected to: " + frame);
+        console.log("connected to: " + frame);
     });
 }
 
 function subscribeToChat(id) {
     chatId = id;
     $lovelyMe = $('#lovelyMe').attr('val');
-    stompClient.subscribe("/chat/" + id + "/message", function (response) {
+    stompClient.subscribe('/chat/' + id + '/message', function (response) {
         let data = JSON.parse(response.body);
-        if (data.userSender != $lovelyMe) {
+        if (data.userSender !== $lovelyMe) {
         render(data.message);
         }
     });
 }
 
-function sendMsg(userSender, message, chatId) {
-    stompClient.send("/app/message/" + chatId, {}, JSON.stringify({
+async function sendMsg(userSender, message, chatId) {
+    stompClient.send('/app/message/' + chatId, {}, JSON.stringify({
         message: message,
         userSender: userSender,
         chat: chatId
     }));
 }
 
+
 function sendMessage(chatId) {
     let message = $('#inputMessage').val();
     $lovelyMe = $('#lovelyMe').attr('val');
-    sendMsg($lovelyMe, message, chatId)
-    showFirstPageMessage(chatId);                   // chatPage.js
+    sendMsg($lovelyMe, message, chatId).then(r => {
+        showFirstPageMessage(chatId)
+        return r;
+    });                   // chatPage.js
 }
 
 function render(message) {
@@ -67,11 +70,11 @@ function scrollToBottom() {
     $('#chatBox').scrollTop($('#chatBox')[0].scrollHeight);
 }
 
-function getCurrentTime() {
+async function getCurrentTime() {
     return new Date().toLocaleTimeString().replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3");
 }
 
-function addMessageEnter(event) {
+async function addMessageEnter(event) {
     // enter was pressed
     if (event.keyCode === 13) {
         sendMessage(chatId);

@@ -41,15 +41,15 @@ public class User implements UserDetails {
     @GenericField(projectable = Projectable.YES)
     private Long id;
 
-    @Column
+    @Column(name = "email")
     @NonNull
     private String email;
 
-    @Column
+    @Column(name = "password")
     @NonNull
     private String password;
 
-    @Column
+    @Column(name = "full_name")
     @GenericField(projectable = Projectable.YES)
     private String fullName;
 
@@ -64,7 +64,7 @@ public class User implements UserDetails {
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;
 
-    @Column
+    @Column (name = "city")
     private String city;
 
     @Column(name = "link_site")
@@ -76,7 +76,7 @@ public class User implements UserDetails {
     @Column(name = "link_vk")
     private String linkVk;
 
-    @Column
+    @Column (name = "about")
     private String about;
 
     @Column(name = "image_link")
@@ -87,7 +87,7 @@ public class User implements UserDetails {
     @UpdateTimestamp
     private LocalDateTime lastUpdateDateTime;
 
-    @Column
+    @Column (name = "nickname")
     private String nickname;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Role.class, cascade = {CascadeType.REFRESH})

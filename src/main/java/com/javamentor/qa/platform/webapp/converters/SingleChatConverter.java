@@ -18,16 +18,13 @@ public abstract class SingleChatConverter {
 
     @Mapping(source = "singleChat.id", target = "id")
     @Mapping(source = "singleChat.chat.title", target = "title")
-    @Mapping(source = "singleChat.userOne.id", target = "userOneId")
-    @Mapping(source = "singleChat.useTwo.id", target = "userTwoId")
-    @Mapping(source = "singleChat.userOne.id", target = "userSenderId")
-    @Mapping(target = "imageLink", ignore = true)
-    @Mapping(target = "nickname", ignore = true)
-    @Mapping(target = "lastRedactionDate", ignore = true)
+    @Mapping(source = "singleChat.userSender.id", target = "userSenderId")
+    @Mapping(source = "singleChat.userRecipient.id", target = "userRecipientId")
+    @Mapping(source = "singleChat.userSender.id", target = "userSenderIdCheck")
     public abstract SingleChatDto singleChatToSingleChatDto(SingleChat singleChat);
 
-    @Mapping(target = "userOne", source = "userOneId", qualifiedByName = "mapUser")
-    @Mapping(target = "useTwo", source = "userTwoId", qualifiedByName = "mapUser")
+    @Mapping(target = "userSender", source = "userSenderId", qualifiedByName = "mapUser")
+    @Mapping(target = "userRecipient", source = "userRecipientId", qualifiedByName = "mapUser")
     @Mapping(target = "chat.chatType", source = "chatType")
     @Mapping(source = "title", target = "chat.title")
     public abstract SingleChat createSingleChatDtoToSingleChat(CreateSingleChatDto createSingleChatDto);

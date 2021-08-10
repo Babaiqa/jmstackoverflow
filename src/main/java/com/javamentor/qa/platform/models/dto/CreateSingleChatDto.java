@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.models.dto;
 
 import com.javamentor.qa.platform.models.entity.chat.ChatType;
+import com.javamentor.qa.platform.models.entity.chat.Message;
 import com.javamentor.qa.platform.models.util.OnCreate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,10 +22,12 @@ public class CreateSingleChatDto implements Serializable {
     @NotBlank(groups = OnCreate.class, message = "Значение title не должно быть пустым")
     @NotNull String title;
 
-    @NotNull(groups = OnCreate.class, message = "Значение UserTwo отсутствует")
-    private Long userTwoId;
+    @NotNull(groups = OnCreate.class, message = "Значение UserRecipient отсутствует")
+    private Long userRecipientId;
 
-    private Long userOneId;
+    private Long userSenderId;
 
     private ChatType chatType = ChatType.SINGLE;
+
+    String message;
 }

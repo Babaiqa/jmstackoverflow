@@ -7,6 +7,34 @@
 
 </head>
 <body>
+    <div class="modal" tabindex="-1" id="sendMessageFromUserPage">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Написать сообщение</h5>
+                    <div>
+                        <span id="id${user.id}" type="text" hidden></span>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" data-target="sendMessageFromUserPage" aria-hidden="true">x</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row justify-content-center align-items-center">
+                        <div class="form-group align-content-center text-center">
+                            <label for="message"><b>Сообщение</b></label>
+                            <input class="form-control text-center" style="width: 300px; height: 150px;" type="text" id="message" placeholder="Введите текст сообщения">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" data-target="sendMessageFromUserPage"> Отмена </button>
+<!--                    <a href="/chat">-->
+                    <button id="sendBtn" onclick="sendMessageFromUser(event)" type="submit" class="btn btn-primary"> Отправить сообщение </button>
+<!--                    </a>-->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div th:fragment="userPage" class="snippet-hidden align-self-start" id="userPage">
 
         <!-- HEADER START-->
@@ -85,6 +113,10 @@
                                 <p>
                                     "Тестовая заметка"
                                 </p>
+                            </div>
+
+                            <div>
+                                <button class="btn btn-primary" type="submit" value="Написать сообщение" data-toggle="modal" data-target="#sendMessageFromUserPage">Написать сообщение</button>
                             </div>
                         </div>
 
@@ -659,5 +691,6 @@
             integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
             crossorigin="anonymous"></script>
     <script src="/static/js/fillProfile.js"></script>
+<script src="/static/js/sendMessageUserPage.js"></script>
 </body>
 </html>

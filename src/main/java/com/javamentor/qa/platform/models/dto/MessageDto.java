@@ -16,7 +16,7 @@ public class MessageDto  implements Serializable {
     private String message;
     private LocalDateTime lastRedactionDate;
     private LocalDateTime persistDate;
-    private Long userSenderId;
+    private Long userSenderIdCheck;
     private Long chatId;
     private String imageLink;
 
@@ -27,7 +27,7 @@ public class MessageDto  implements Serializable {
                 ", message='" + message +
                 ", lastRedactionDate=" + lastRedactionDate +
                 ", persistDate=" + persistDate +
-                ", userSenderId=" + userSenderId +
+                ", userSenderIdCheck=" + userSenderIdCheck +
                 ", chatId=" + chatId +
                 ", imageLink=" + imageLink +
                 '}';
@@ -39,11 +39,11 @@ public class MessageDto  implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MessageDto that = (MessageDto) o;
-        return Objects.equals(id, that.id) && Objects.equals(message, that.message) && Objects.equals(lastRedactionDate, that.lastRedactionDate) && Objects.equals(persistDate, that.persistDate) && Objects.equals(userSenderId, that.userSenderId) && Objects.equals(chatId, that.chatId);
+        return Objects.equals(id, that.id) && Objects.equals(message, that.message) && Objects.equals(lastRedactionDate, that.lastRedactionDate) && Objects.equals(persistDate, that.persistDate) && Objects.equals(userSenderIdCheck, that.userSenderIdCheck) && Objects.equals(chatId, that.chatId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, message, lastRedactionDate, persistDate, userSenderId, chatId);
+        return Objects.hash(id, message, lastRedactionDate, persistDate, userSenderIdCheck, chatId);
     }
 }

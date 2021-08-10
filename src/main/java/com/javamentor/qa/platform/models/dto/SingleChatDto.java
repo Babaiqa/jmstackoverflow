@@ -17,26 +17,26 @@ public class SingleChatDto implements Serializable {
 
     private Long id;
     private String title;
-    private Long userOneId;
-    private Long userTwoId;
+    private Long userSenderId;
+    private Long userRecipientId;
     private String nickname;
     private String imageLink;
     private String message;
-    private Long userSenderId;
     private Timestamp lastRedactionDate;
+    private Long userSenderIdCheck;
 
     @Override
     public String toString() {
         return "SingleChatDto{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", userOneId=" + userOneId +
-                ", userTwoId=" + userTwoId +
+                ", userSender=" + userSenderId +
+                ", userRecipient=" + userRecipientId +
                 ", nickname='" + nickname + '\'' +
                 ", imageLink='" + imageLink + '\'' +
                 ", message='" + message + '\'' +
                 ", lastRedactionDate=" + lastRedactionDate +
-                ", userSenderId=" + userSenderId +
+                ", userSenderIdCheck=" + userSenderIdCheck +
                 '}';
     }
 
@@ -45,11 +45,11 @@ public class SingleChatDto implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SingleChatDto that = (SingleChatDto) o;
-        return Objects.equals(id, that.id) && Objects.equals(title, that.title) && Objects.equals(userOneId, that.userOneId) && Objects.equals(userTwoId, that.userTwoId) && Objects.equals(nickname, that.nickname) && Objects.equals(imageLink, that.imageLink) && Objects.equals(message, that.message) && Objects.equals(lastRedactionDate, that.lastRedactionDate) && Objects.equals(userSenderId, that.userSenderId);
+        return Objects.equals(id, that.id) && Objects.equals(title, that.title) && Objects.equals(userSenderId, that.userSenderId) && Objects.equals(userRecipientId, that.userRecipientId) && Objects.equals(nickname, that.nickname) && Objects.equals(imageLink, that.imageLink) && Objects.equals(message, that.message) && Objects.equals(lastRedactionDate, that.lastRedactionDate) && Objects.equals(userSenderIdCheck, that.userSenderIdCheck);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, userOneId, userTwoId, nickname, imageLink, message, lastRedactionDate, userSenderId);
+        return Objects.hash(id, title, userSenderId, userRecipientId, nickname, imageLink, message, lastRedactionDate, userSenderIdCheck);
     }
 }
